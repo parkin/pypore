@@ -1,0 +1,72 @@
+#!/usr/bin/env python
+'''
+This program is for finding events in files and displaying the results.
+'''
+from sys import exit
+from Tkinter import Tk
+from tkFileDialog import askopenfilenames
+from tkMessageBox import showinfo, showerror
+from DataFileOpener import openData
+from scipy import fft, arange
+import numpy as np
+import matplotlib.pyplot as plt
+from array import array
+
+def plotSpectrum(data,rate):
+    n = len(data)
+    k = np.arange(n)
+    T = n/rate
+    frq = k/T # Two sides frequency range
+    frq = frq[range(n/2)] # one side frequency range
+    
+    Y = fft(data)/n # fft and normalization
+    Y = Y[range(n/2)]
+    
+    plt.plot(frq,abs(Y),'r')
+
+# Open a file chooser gui
+Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
+filenames = askopenfilenames(initialdir='data',title='Open Data Files', filetypes=[('all files', '.*'), ('Chimera Data', '.log')])  # Show an Open Files dialog and return the filenames choesen
+if len(filenames) < 1:
+    showinfo('', 'No files selected. Exiting.')
+    exit()
+
+datadict = openData(filenames[0])
+if not 'data' in datadict:
+    print datadict
+    exit()
+data = datadict['data']
+print data.shape
+ADCSAMPLERATE = datadict['SETUP_ADCSAMPLERATE'][0][0]
+
+n=500000
+
+# gROOT.Reset()
+# c1 = TCanvas( 'c1', 'Data', 200, 10, 700, 500 )
+# 
+# n=10000
+# if n > len(data):
+#     n = len(data)
+# timestep = 1/ADCSAMPLERATE
+# x=np.zeros(n)
+# for i in range(0,n):
+#     x[i]=timestep*i
+# 
+# gr = TGraph(n,x,data)
+# gr.GetXaxis().SetTitle("Time (s)")
+# gr.GetYaxis().SetTitle("Current")
+# gr.Draw("AL")
+# c1.Update();
+
+Ts = 1/ADCSAMPLERATE
+t = arange(0,Ts*n,Ts)
+
+plt.subplot(2,1,1)
+plt.plot(t,data[0:n])
+plt.subplot(2,1,2)
+plt.yscale('log')
+plt.xscale('log')
+plotSpectrum(data[0:n], ADCSAMPLERATE)
+
+plt.show()
+
