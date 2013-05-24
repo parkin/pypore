@@ -1,1 +1,2 @@
-# This is my README
+# Running
+To run, in shell do './eventanalysis'

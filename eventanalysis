@@ -2,71 +2,240 @@
 '''
 This program is for finding events in files and displaying the results.
 '''
-from sys import exit
-from Tkinter import Tk
-from tkFileDialog import askopenfilenames
-from tkMessageBox import showinfo, showerror
+import sys
+from PyQt4 import QtGui, QtCore
+from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as NavigationToolbar
 from DataFileOpener import openData
-from scipy import fft, arange
+from scipy import fft, arange, signal
 import numpy as np
 import matplotlib.pyplot as plt
-from array import array
 
-def plotSpectrum(data,rate):
+class MyApp(QtGui.QMainWindow):
+    
+    def __init__(self, parent=None):
+        super(MyApp, self).__init__()
+        
+        self.setWindowTitle('Translocation Event Analysis')
+        
+        self.create_menu()
+        self.create_main_frame()
+        self.create_status_bar()
+        
+        
+    def initUI(self):      
+
+        self.textEdit = QtGui.QTextEdit()
+        self.setCentralWidget(self.textEdit)
+        self.statusBar()
+
+        openFile = QtGui.QAction(QtGui.QIcon('open.png'), 'Open', self)
+        openFile.setShortcut('Ctrl+O')
+        openFile.setStatusTip('Open new File')
+        openFile.triggered.connect(self.showDialog)
+
+        menubar = self.menuBar()
+        fileMenu = menubar.addMenu('&File')
+        fileMenu.addAction(openFile)       
+        
+        self.setGeometry(300, 300, 350, 300)
+        self.setWindowTitle('File dialog')
+        self.show()
+        
+    def open_files(self):
+        self.listWidget.clear()
+
+        fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open file', 'data')
+        print fnames
+        for w in fnames:
+            item = QtGui.QListWidgetItem(w)
+            self.listWidget.addItem(item)
+        
+#         f = open(fname, 'r')
+#         
+#         with f:        
+#             data = f.read()
+#             self.textEdit.setText(data) 
+
+    def on_draw(self):
+        print 'on_draw'
+        
+    def file_item_doubleclick(self, item):
+        '''
+        Open the file, parse data, then pass to plotData
+        '''
+        print str(item)
+        datadict = openData(str(item.text()))
+        if not 'data' in datadict:
+            print datadict
+            return
+        self.plotData(datadict)
+            
+    def create_main_frame(self):
+        self.main_frame = QtGui.QWidget()
+        
+        # Create the mpl Figure and FigCanvas objects. 
+        # 5x4 inches, 100 dots-per-inch
+        #
+        self.dpi = 100
+        self.fig = plt.Figure((6.0, 5.0), dpi=self.dpi)
+        self.canvas = FigureCanvas(self.fig)
+        
+        # Create a list for files want to analyze
+        self.listWidget = QtGui.QListWidget()
+        self.listWidget.itemDoubleClicked.connect(self.file_item_doubleclick)
+        
+        # Since we have only one plot, we can use add_axes 
+        # instead of add_subplot, but then the subplot
+        # configuration tool in the navigation toolbar wouldn't
+        # work.
+        #
+        self.axes = self.fig.add_subplot(111)
+        
+        # Create the navigation toolbar, tied to the canvas
+        #
+        self.mpl_toolbar = NavigationToolbar(self.canvas, self.main_frame)
+        
+        # Other GUI controls
+        # 
+        self.textbox = QtGui.QLineEdit()
+        self.textbox.setMinimumWidth(200)
+        self.connect(self.textbox, QtCore.SIGNAL('editingFinished ()'), self.on_draw)
+        
+        self.draw_button = QtGui.QPushButton("&Draw")
+        self.connect(self.draw_button, QtCore.SIGNAL('clicked()'), self.on_draw)
+        
+        self.grid_cb = QtGui.QCheckBox("Show &Grid")
+        self.grid_cb.setChecked(False)
+        self.connect(self.grid_cb, QtCore.SIGNAL('stateChanged(int)'), self.on_draw)
+        
+        #
+        # Layout with box sizers
+        # 
+        hbox = QtGui.QHBoxLayout()
+        
+        for w in [  self.textbox, self.draw_button, self.grid_cb, ]:
+            hbox.addWidget(w)
+            hbox.setAlignment(w, QtCore.Qt.AlignVCenter)
+        
+        vbox = QtGui.QVBoxLayout()
+        vbox.addWidget(self.canvas)
+        vbox.addWidget(self.mpl_toolbar)
+        vbox.addLayout(hbox)
+        vbox.addWidget(self.listWidget)
+        
+        self.main_frame.setLayout(vbox)
+        self.setCentralWidget(self.main_frame)
+        
+        
+    def create_status_bar(self):
+        self.status_text = QtGui.QLabel("Status")
+        self.statusBar().addWidget(self.status_text, 1)
+    
+    def create_menu(self):
+        '''
+        Creates File menu with Open
+        '''
+        self.file_menu = self.menuBar().addMenu("&File")
+        
+        load_file_action = self.create_action("&Open",
+            shortcut="Ctrl+O", slot=self.open_files,
+            tip="Open data Files")
+        quit_action = self.create_action("&Quit", slot=self.close,
+            shortcut="Ctrl+Q", tip="Close the application")
+        
+        self.add_actions(self.file_menu,
+            (load_file_action, None, quit_action))
+        
+#         self.help_menu = self.menuBar().addMenu("&Help")
+#         about_action = self.create_action("&About", 
+#             shortcut='F1', slot=self.on_about, 
+#             tip='About the demo')
+#         
+#         self.add_actions(self.help_menu, (about_action,))
+
+    def add_actions(self, target, actions):
+        for action in actions:
+            if action is None:
+                target.addSeparator()
+            else:
+                target.addAction(action)
+
+    def create_action(self, text, slot=None, shortcut=None,
+                        icon=None, tip=None, checkable=False,
+                        signal="triggered()"):
+        action = QtGui.QAction(text, self)
+        if icon is not None:
+            action.setIcon(QIcon(":/%s.png" % icon))
+        if shortcut is not None:
+            action.setShortcut(shortcut)
+        if tip is not None:
+            action.setToolTip(tip)
+            action.setStatusTip(tip)
+        if slot is not None:
+            self.connect(action, QtCore.SIGNAL(signal), slot)
+        if checkable:
+            action.setCheckable(True)
+        return action
+    
+    def plotData(self, datadict):
+        '''
+        Plots waveform in datadict
+        pass in Data dictionary, with data at 'data' and sample rate at 'SETUP_ADCSAMPLERATE'
+        '''
+        self.axes.clear()
+        # Read the first file, store data in dictionary
+        data = datadict['data']
+        ADCSAMPLERATE = datadict['SETUP_ADCSAMPLERATE'][0][0]
+    
+        n = len(data)
+        n = 10000
+    
+        decimated = data
+        if n > 1000000:
+            decimated = signal.decimate(data, int(len(data) / 1000000))
+        Ts = 1 / ADCSAMPLERATE
+        t = arange(0, Ts * n, Ts * n / len(decimated))
+        print len(data), len(decimated[0:n-1]), len(t)
+    
+        # Ts = 1/ADCSAMPLERATE
+        # t = arange(0,Ts*n,Ts*n/len(decimated))
+        self.axes.plot(t[:n],decimated[:n])
+        self.axes.set_xlabel('Time (s)')
+        self.axes.set_ylabel('Current (nA)')
+        
+        self.canvas.draw()
+
+def plotSpectrum(data, rate):
     n = len(data)
     k = np.arange(n)
-    T = n/rate
-    frq = k/T # Two sides frequency range
-    frq = frq[range(n/2)] # one side frequency range
+    T = n / rate
+    frq = k / T  # Two sides frequency range
+    frq = frq[range(n / 2)]  # one side frequency range
     
-    Y = fft(data)/n # fft and normalization
-    Y = Y[range(n/2)]
+    Y = fft(data) / n  # fft and normalization
+    Y = Y[range(n / 2)]
     
-    plt.plot(frq,abs(Y),'r')
+    decimated = frq
+    if len(frq) > 1000000:
+        decimated = signal.decimate(Y, int(len(data) / 1000000))
+    t = arange(frq[0], frq[len(frq) - 1], (frq[len(frq) - 1] - frq[0]) / len(decimated))
+    
+    plt.plot(t, decimated, 'r')
+    plt.xlim([frq[0], frq[n / 2 - 1]])
+    plt.xlabel('Freq (Hz)')
+    plt.ylabel('|Y(freq)|')
 
-# Open a file chooser gui
-Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
-filenames = askopenfilenames(initialdir='data',title='Open Data Files', filetypes=[('all files', '.*'), ('Chimera Data', '.log')])  # Show an Open Files dialog and return the filenames choesen
-if len(filenames) < 1:
-    showinfo('', 'No files selected. Exiting.')
-    exit()
 
-datadict = openData(filenames[0])
-if not 'data' in datadict:
-    print datadict
-    exit()
-data = datadict['data']
-print data.shape
-ADCSAMPLERATE = datadict['SETUP_ADCSAMPLERATE'][0][0]
+def main():
+    
+    app = QtGui.QApplication(sys.argv)
+    ex = MyApp()
+    ex.show()
+    app.exec_()
+    sys.exit()
 
-n=500000
 
-# gROOT.Reset()
-# c1 = TCanvas( 'c1', 'Data', 200, 10, 700, 500 )
-# 
-# n=10000
-# if n > len(data):
-#     n = len(data)
-# timestep = 1/ADCSAMPLERATE
-# x=np.zeros(n)
-# for i in range(0,n):
-#     x[i]=timestep*i
-# 
-# gr = TGraph(n,x,data)
-# gr.GetXaxis().SetTitle("Time (s)")
-# gr.GetYaxis().SetTitle("Current")
-# gr.Draw("AL")
-# c1.Update();
-
-Ts = 1/ADCSAMPLERATE
-t = arange(0,Ts*n,Ts)
-
-plt.subplot(2,1,1)
-plt.plot(t,data[0:n])
-plt.subplot(2,1,2)
-plt.yscale('log')
-plt.xscale('log')
-plotSpectrum(data[0:n], ADCSAMPLERATE)
-
-plt.show()
+if __name__ == '__main__':
+    main()
 
