@@ -43,6 +43,9 @@ class MyApp(QtGui.QMainWindow):
         self.show()
         
     def open_files(self):
+        '''
+        Opens file dialog box, adds names of files to open to list
+        '''
         self.listWidget.clear()
 
         fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open file', 'data')
@@ -51,12 +54,6 @@ class MyApp(QtGui.QMainWindow):
             item = QtGui.QListWidgetItem(w)
             self.listWidget.addItem(item)
         
-#         f = open(fname, 'r')
-#         
-#         with f:        
-#             data = f.read()
-#             self.textEdit.setText(data) 
-
     def on_draw(self):
         print 'on_draw'
         
@@ -64,13 +61,12 @@ class MyApp(QtGui.QMainWindow):
         '''
         Open the file, parse data, then pass to plotData
         '''
-        print str(item)
         datadict = openData(str(item.text()))
         if not 'data' in datadict:
             print datadict
             return
         self.plotData(datadict)
-            
+        
     def create_main_frame(self):
         self.main_frame = QtGui.QWidget()
         
@@ -102,8 +98,8 @@ class MyApp(QtGui.QMainWindow):
         self.textbox.setMinimumWidth(200)
         self.connect(self.textbox, QtCore.SIGNAL('editingFinished ()'), self.on_draw)
         
-        self.draw_button = QtGui.QPushButton("&Draw")
-        self.connect(self.draw_button, QtCore.SIGNAL('clicked()'), self.on_draw)
+        self.analyze_button = QtGui.QPushButton("&Analyze")
+        self.connect(self.analyze_button, QtCore.SIGNAL('clicked()'), self.on_analyze)
         
         self.grid_cb = QtGui.QCheckBox("Show &Grid")
         self.grid_cb.setChecked(False)
@@ -114,7 +110,7 @@ class MyApp(QtGui.QMainWindow):
         # 
         hbox = QtGui.QHBoxLayout()
         
-        for w in [  self.textbox, self.draw_button, self.grid_cb, ]:
+        for w in [  self.textbox, self.analyze_button, self.grid_cb, ]:
             hbox.addWidget(w)
             hbox.setAlignment(w, QtCore.Qt.AlignVCenter)
         
@@ -166,7 +162,7 @@ class MyApp(QtGui.QMainWindow):
                         signal="triggered()"):
         action = QtGui.QAction(text, self)
         if icon is not None:
-            action.setIcon(QIcon(":/%s.png" % icon))
+            action.setIcon(QtGui.QIcon(":/%s.png" % icon))
         if shortcut is not None:
             action.setShortcut(shortcut)
         if tip is not None:
@@ -189,22 +185,60 @@ class MyApp(QtGui.QMainWindow):
         ADCSAMPLERATE = datadict['SETUP_ADCSAMPLERATE'][0][0]
     
         n = len(data)
-        n = 10000
     
         decimated = data
         if n > 1000000:
             decimated = signal.decimate(data, int(len(data) / 1000000))
         Ts = 1 / ADCSAMPLERATE
         t = arange(0, Ts * n, Ts * n / len(decimated))
-        print len(data), len(decimated[0:n-1]), len(t)
+        print len(data), len(decimated[0:n - 1]), len(t)
     
         # Ts = 1/ADCSAMPLERATE
         # t = arange(0,Ts*n,Ts*n/len(decimated))
-        self.axes.plot(t[:n],decimated[:n])
+        self.axes.plot(t[:n], decimated[:n])
         self.axes.set_xlabel('Time (s)')
         self.axes.set_ylabel('Current (nA)')
         
         self.canvas.draw()
+        
+    def on_analyze(self):
+        '''
+        Searches for events in the file that is currently highlighted in the files list.
+        '''
+        currItem = self.listWidget.currentItem()
+        if currItem == None:
+            return
+        
+        datadict = openData(str(currItem.text()))
+        if not 'data' in datadict:
+            print datadict
+            return
+        
+        events = self.find_events(datadict)
+        
+    def find_events(self,datadict,threshold_type='noise',threshold_level=1.,
+                    threshold_direction='negative', min_event_length=1., max_event_length=1000.):
+        '''
+        Finds all the events in 'data'.
+        
+        Parameters: 
+          datadict - must have data in 'data', sample rate in 'SETUP_ADCSAMPLERATE'
+          threshold_type - 'noise' for noise-based threshold
+                         - 'current' for current based 
+          threshold_level - std deviations for 'noise', nA for 'current'
+          threshold_direction - 'positive' or 'negative'
+          min_event_length - in microseconds
+          max_event_length - in microseconds
+          
+        Returns:
+          Struct containing all events found events
+          
+        '''
+        data = datadict['data']
+        sample_rate = datadict['SETUP_ADCSAMPLERATE']
+        
+        # TODO
+        return
 
 def plotSpectrum(data, rate):
     n = len(data)
