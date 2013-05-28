@@ -65,7 +65,8 @@ class MyApp(QtGui.QMainWindow):
         if not 'data' in datadict:
             print datadict
             return
-        self.plotData(datadict)
+        self.axes_trace.clear()
+        self.plotData(datadict, self.axes_trace)
         
     def create_main_frame(self):
         self.main_frame = QtGui.QWidget()
@@ -86,7 +87,8 @@ class MyApp(QtGui.QMainWindow):
         # configuration tool in the navigation toolbar wouldn't
         # work.
         #
-        self.axes = self.fig.add_subplot(111)
+        self.axes_trace = self.fig.add_subplot(211)
+        self.axes_event = self.fig.add_subplot(212)
         
         # Create the navigation toolbar, tied to the canvas
         #
@@ -174,34 +176,37 @@ class MyApp(QtGui.QMainWindow):
             action.setCheckable(True)
         return action
     
-    def plotData(self, datadict, plot_range = 'all'):
+    def plotData(self, datadict, axes, plot_range='all'):
+        if axes is None:
+            axes = self.axes_trace
         '''
         Plots waveform in datadict
         pass in Data dictionary, with data at 'data' and sample rate at 'SETUP_ADCSAMPLERATE'
         Can pass in range as [start,stop], or 'all' for 0:n
         '''
-        self.axes.clear()
         # Read the first file, store data in dictionary
         data = datadict['data']
         ADCSAMPLERATE = datadict['SETUP_ADCSAMPLERATE'][0][0]
     
         n = len(data)
-        if plot_range == 'all' or len(plot_range) != 2:
-            plot_range = [0,n]
+        # If problem with input, just plot all the data
+        if plot_range == 'all' or len(plot_range) != 2 or plot_range[1] <= plot_range[0]:
+            plot_range = [0, n]
+        else:  # no problems!
+            n = plot_range[1] - plot_range[0]
     
-        decimated = data
+        decimated = data[plot_range[0]:plot_range[1]]
         # Decimate the data if too many points, so matplotlib can still plot
         if n > 1000000:
             decimated = signal.decimate(data, int(len(data) / 1000000))
         Ts = 1 / ADCSAMPLERATE
-        t = arange(0, Ts * n, Ts * n / len(decimated))
-        print len(data), len(decimated[0:n - 1]), len(t)
+        t = arange(Ts * plot_range[0], Ts * plot_range[1], Ts * n / len(decimated))
     
         # Ts = 1/ADCSAMPLERATE
         # t = arange(0,Ts*n,Ts*n/len(decimated))
-        self.axes.plot(t[plot_range[0]:plot_range[1]], decimated[plot_range[0]:plot_range[1]])
-        self.axes.set_xlabel('Time (s)')
-        self.axes.set_ylabel('Current (nA)')
+        axes.plot(t[:n], decimated[:n])
+        axes.set_xlabel('Time (s)')
+        axes.set_ylabel('Current (nA)')
         
         self.canvas.draw()
         
@@ -217,19 +222,42 @@ class MyApp(QtGui.QMainWindow):
         if not 'data' in datadict:
             print datadict
             return
-        
+
+#         n = len(datadict['data'])
+#         local_mean, local_stddev = self.local_mean_stddev(datadict['data'][0:n], 0.95)
+#         self.axes_trace.clear()
+#         self.plotData(datadict, self.axes_trace, [0, n])
+#         datadict['data'] = local_mean
+#         self.plotData(datadict, self.axes_trace, [0, n])
+#         datadict['data'] = local_stddev
+#         self.plotData(datadict, self.axes_event, [0, n])
         events = self.find_events(datadict)
+
+    def local_mean_stddev(self, data, a=0.95):
+        '''
+        Does a recursive low-pass filter to estimate the mean and standard deviation at each point
         
-    def find_events(self, datadict, threshold_type='noise', threshold_level=1.,
+        Returns an array of size len(data)
+        '''
+        local_mean = np.zeros(len(data))
+        local_variance = np.zeros(len(data))
+        local_mean[0] = data[0]
+        local_variance[0] = 0.
+        for i in range(1, len(data)):
+            local_mean[i] = a * local_mean[i - 1] + (1 - a) * data[i]
+            local_variance[i] = a * local_variance[i - 1] + (1 - a) * (data[i] - local_mean[i]) ** 2
+        return local_mean, local_variance ** .5
+    
+    def find_events(self, datadict, threshold_type='adaptive', a=0.93,
                     threshold_direction='negative', min_event_length=10., max_event_length=1000.):
         '''
         Finds all the events in 'data'.
         
         Parameters: 
           datadict - must have data in 'data', sample rate in 'SETUP_ADCSAMPLERATE'
-          threshold_type - 'noise' for noise-based threshold
-                         - 'current' for current based 
-          threshold_level - std deviations for 'noise', nA for 'current'
+          threshold_type - 'adaptive' for adaptive-based threshold
+                         - 'current' for current based TODO
+          a - filter parameter for 'noise'. Should be close to 1, less than 1. nA for 'current'
           threshold_direction - 'positive' or 'negative'
           min_event_length - in microseconds
           max_event_length - in microseconds
@@ -251,35 +279,59 @@ class MyApp(QtGui.QMainWindow):
         if n < 100:
             return 'Not enough datapoints in file.'
         
-        i = int(min_event_steps/2)
+        local_mean = data[0]
+        local_variance = 0.
+        S = 5. # Starting threshold parameter
+        E = 2. # Ending threshold parameter
+        threshold = data[0]
         
-        look_step = int(min_event_steps/2)
+        i = 100
+        # initialize mean/variance with first x datapoints
+        for k in range(1, i):
+            local_mean = a * local_mean + (1 - a) * data[k]
+            local_variance = a * local_variance + (1 - a) * (data[k] - local_mean) ** 2
+            threshold = local_mean - S*local_variance**.5
         
-        negpos = -1
-        if not threshold_direction == 'negative':
-            negpos = 1 
+        i= 100
+        event_count = 0
+        # search for events.  Keep track of a filtered local (adapting!) mean and variance,
+        # and use them to decide a threshold for events.  See
+        # http://pubs.rsc.org/en/content/articlehtml/2012/nr/c2nr30951c for more details.
+        while i < len(data):
+            # could this be an event?
+            event_start = 0
+            event_end = 0
+            # is event?
+            if data[i] < threshold:
+                # Set ending threshold
+                threshold = local_mean - E*local_variance**.5 
+                event_start = i
+                done = False
+                event_i = i
+                # loop until event ends
+                while not done and (event_i)-event_start < max_event_steps:
+                    if data[event_i] > threshold:
+                        event_end = event_i
+                        break
+                    event_i = event_i +1 
+                if event_end-event_start > min_event_length:
+                    event_count = event_count + 1
+                    print "Event ", event_count, ":", event_start/sample_rate, "-", event_end/sample_rate
+                    i = event_end
+                    if i == 0:
+                        i = i + max_event_length
+                    self.axes_event.clear()
+                    self.plotData(datadict, axes=self.axes_event, plot_range=[event_start-50,event_end+50])
+                    self.plotData(datadict, axes=self.axes_event, plot_range=[event_start,event_end])
+                    QtGui.QApplication.processEvents()
+            local_mean = a * local_mean + (1 - a) * data[i]
+            local_variance = a * local_variance + (1 - a) * (data[i] - local_mean) ** 2
+            threshold = local_mean - S*local_variance**.5 
+            i = i + 1
             
-        count = 0
+        print "Number of events:", event_count
         
-        while i < n-max_event_steps/2:
-            background = data[i-look_step:i]
-            background_mean = np.mean(background)
-            background_std = np.std(background)
-            
-            x = np.mean(data[i-3:i+3]) - negpos*np.std(data[i-3:i+3])
-            y = background_mean + negpos*background_std
-            if negpos*(y-x) < 0:
-                count = count+1
-                self.plotData(datadict, [i-max_event_length, i+max_event_length])
-                raw_input('Press ENTER to continue')
-            
-            print 1.0*i/n, count
-            i = i+look_step
         
-        print count
-        # TODO
-        return
-
 def plotSpectrum(data, rate):
     n = len(data)
     k = np.arange(n)

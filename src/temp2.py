@@ -79,12 +79,12 @@ class AppForm(QMainWindow):
         
         x = range(len(self.data))
 
-        # clear the axes and redraw the plot anew
+        # clear the axes_trace and redraw the plot anew
         #
-        self.axes.clear()        
-        self.axes.grid(self.grid_cb.isChecked())
+        self.axes_trace.clear()        
+        self.axes_trace.grid(self.grid_cb.isChecked())
         
-        self.axes.bar(
+        self.axes_trace.bar(
             left=x, 
             height=self.data, 
             width=self.slider.value() / 100.0, 
@@ -110,7 +110,7 @@ class AppForm(QMainWindow):
         # configuration tool in the navigation toolbar wouldn't
         # work.
         #
-        self.axes = self.fig.add_subplot(111)
+        self.axes_trace = self.fig.add_subplot(111)
         
         # Bind the 'pick' event for clicking on one of the bars
         #
