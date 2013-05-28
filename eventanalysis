@@ -282,7 +282,7 @@ class MyApp(QtGui.QMainWindow):
         local_mean = data[0]
         local_variance = 0.
         S = 5. # Starting threshold parameter
-        E = 2. # Ending threshold parameter
+        E = 1. # Ending threshold parameter
         threshold = data[0]
         
         i = 100
@@ -323,6 +323,7 @@ class MyApp(QtGui.QMainWindow):
                     self.axes_event.clear()
                     self.plotData(datadict, axes=self.axes_event, plot_range=[event_start-50,event_end+50])
                     self.plotData(datadict, axes=self.axes_event, plot_range=[event_start,event_end])
+                    self.plotData(datadict, axes=self.axes_trace, plot_range=[event_start-50,event_end+50])
                     QtGui.QApplication.processEvents()
             local_mean = a * local_mean + (1 - a) * data[i]
             local_variance = a * local_variance + (1 - a) * (data[i] - local_mean) ** 2
