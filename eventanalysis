@@ -174,10 +174,11 @@ class MyApp(QtGui.QMainWindow):
             action.setCheckable(True)
         return action
     
-    def plotData(self, datadict):
+    def plotData(self, datadict, plot_range = 'all'):
         '''
         Plots waveform in datadict
         pass in Data dictionary, with data at 'data' and sample rate at 'SETUP_ADCSAMPLERATE'
+        Can pass in range as [start,stop], or 'all' for 0:n
         '''
         self.axes.clear()
         # Read the first file, store data in dictionary
@@ -185,8 +186,11 @@ class MyApp(QtGui.QMainWindow):
         ADCSAMPLERATE = datadict['SETUP_ADCSAMPLERATE'][0][0]
     
         n = len(data)
+        if plot_range == 'all' or len(plot_range) != 2:
+            plot_range = [0,n]
     
         decimated = data
+        # Decimate the data if too many points, so matplotlib can still plot
         if n > 1000000:
             decimated = signal.decimate(data, int(len(data) / 1000000))
         Ts = 1 / ADCSAMPLERATE
@@ -195,7 +199,7 @@ class MyApp(QtGui.QMainWindow):
     
         # Ts = 1/ADCSAMPLERATE
         # t = arange(0,Ts*n,Ts*n/len(decimated))
-        self.axes.plot(t[:n], decimated[:n])
+        self.axes.plot(t[plot_range[0]:plot_range[1]], decimated[plot_range[0]:plot_range[1]])
         self.axes.set_xlabel('Time (s)')
         self.axes.set_ylabel('Current (nA)')
         
@@ -216,8 +220,8 @@ class MyApp(QtGui.QMainWindow):
         
         events = self.find_events(datadict)
         
-    def find_events(self,datadict,threshold_type='noise',threshold_level=1.,
-                    threshold_direction='negative', min_event_length=1., max_event_length=1000.):
+    def find_events(self, datadict, threshold_type='noise', threshold_level=1.,
+                    threshold_direction='negative', min_event_length=10., max_event_length=1000.):
         '''
         Finds all the events in 'data'.
         
@@ -235,8 +239,44 @@ class MyApp(QtGui.QMainWindow):
           
         '''
         data = datadict['data']
-        sample_rate = datadict['SETUP_ADCSAMPLERATE']
+        sample_rate = datadict['SETUP_ADCSAMPLERATE'][0][0]
+        timestep = 1 / sample_rate
         
+        # Min and Max number of points in an event
+        min_event_steps = int(min_event_length * 1e-6 / timestep)
+        max_event_steps = int(max_event_length * 1e-6 / timestep)
+        
+        n = len(data)
+        
+        if n < 100:
+            return 'Not enough datapoints in file.'
+        
+        i = int(min_event_steps/2)
+        
+        look_step = int(min_event_steps/2)
+        
+        negpos = -1
+        if not threshold_direction == 'negative':
+            negpos = 1 
+            
+        count = 0
+        
+        while i < n-max_event_steps/2:
+            background = data[i-look_step:i]
+            background_mean = np.mean(background)
+            background_std = np.std(background)
+            
+            x = np.mean(data[i-3:i+3]) - negpos*np.std(data[i-3:i+3])
+            y = background_mean + negpos*background_std
+            if negpos*(y-x) < 0:
+                count = count+1
+                self.plotData(datadict, [i-max_event_length, i+max_event_length])
+                raw_input('Press ENTER to continue')
+            
+            print 1.0*i/n, count
+            i = i+look_step
+        
+        print count
         # TODO
         return
 
