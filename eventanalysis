@@ -4,12 +4,10 @@ This program is for finding events in files and displaying the results.
 '''
 import sys
 from PyQt4 import QtGui, QtCore
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as NavigationToolbar
+import PyQt4.Qwt5 as Qwt
 from DataFileOpener import openData
 from scipy import fft, arange, signal
 import numpy as np
-import matplotlib.pyplot as plt
 
 class MyApp(QtGui.QMainWindow):
     
@@ -31,14 +29,14 @@ class MyApp(QtGui.QMainWindow):
 
         openFile = QtGui.QAction(QtGui.QIcon('open.png'), 'Open', self)
         openFile.setShortcut('Ctrl+O')
-        openFile.setStatusTip('Open new File')
+        openFile.setStatusTip('Open New File')
         openFile.triggered.connect(self.showDialog)
 
         menubar = self.menuBar()
         fileMenu = menubar.addMenu('&File')
         fileMenu.addAction(openFile)       
         
-        self.setGeometry(300, 300, 350, 300)
+#         self.setGeometry(300, 300, 350, 300)
         self.setWindowTitle('File dialog')
         self.show()
         
@@ -65,69 +63,80 @@ class MyApp(QtGui.QMainWindow):
         if not 'data' in datadict:
             print datadict
             return
-        self.axes_trace.clear()
-        self.plotData(datadict, self.axes_trace)
+#         self.axes_trace.clear()
+#         self.plotData(datadict, self.axes_trace)
+
+        self.plot.clear()
+        self.plot.setAxisTitle(Qwt.QwtPlot.xBottom, 'x -->')
+        self.plot.setAxisTitle(Qwt.QwtPlot.yLeft, 'y -->')
+        data = datadict['data']
+        sample_rate = datadict['SETUP_ADCSAMPLERATE']
+        Ts = 1 / sample_rate
+        n = len(data)
+        plot_range = [0, n]
+        print "size", n
+        
+        curve = Qwt.QwtPlotCurve("Current Trace")
+        curve.setData(arange(Ts * plot_range[0], Ts * plot_range[1], Ts), data[plot_range[0]:plot_range[1]])
+        curve.attach(self.plot)
+        
+        self.plot.replot()
+        
+        
         
     def create_main_frame(self):
         self.main_frame = QtGui.QWidget()
         
-        # Create the mpl Figure and FigCanvas objects. 
-        # 5x4 inches, 100 dots-per-inch
-        #
-        self.dpi = 100
-        self.fig = plt.Figure((6.0, 5.0), dpi=self.dpi)
-        self.canvas = FigureCanvas(self.fig)
+        # Create Qwt plot
+        self.plot = Qwt.QwtPlot(self)
+        self.plot.setCanvasBackground(QtCore.Qt.white)
         
         # Create a list for files want to analyze
         self.listWidget = QtGui.QListWidget()
         self.listWidget.itemDoubleClicked.connect(self.file_item_doubleclick)
         
-        # Since we have only one plot, we can use add_axes 
-        # instead of add_subplot, but then the subplot
-        # configuration tool in the navigation toolbar wouldn't
-        # work.
-        #
-        self.axes_trace = self.fig.add_subplot(211)
-        self.axes_event = self.fig.add_subplot(212)
-        
-        # Create the navigation toolbar, tied to the canvas
-        #
-        self.mpl_toolbar = NavigationToolbar(self.canvas, self.main_frame)
-        
         # Other GUI controls
         # 
-        self.textbox = QtGui.QLineEdit()
-        self.textbox.setMinimumWidth(200)
-        self.connect(self.textbox, QtCore.SIGNAL('editingFinished ()'), self.on_draw)
-        
         self.analyze_button = QtGui.QPushButton("&Analyze")
         self.connect(self.analyze_button, QtCore.SIGNAL('clicked()'), self.on_analyze)
         
-        self.grid_cb = QtGui.QCheckBox("Show &Grid")
-        self.grid_cb.setChecked(False)
-        self.connect(self.grid_cb, QtCore.SIGNAL('stateChanged(int)'), self.on_draw)
+        self.tab_widget = QtGui.QTabWidget()
+        self.plot_event_zoomed = Qwt.QwtPlot(self)
+        self.plot_event_zoomed.setCanvasBackground(QtCore.Qt.white)
+        tab2 = QtGui.QWidget()
+        
+        # Create event zoom in in tab
+        
+        self.tab_widget.addTab(self.plot_event_zoomed, "Display Data")
+        self.tab_widget.addTab(tab2, "Filter and Histogram")
+        
+        
         
         #
         # Layout with box sizers
         # 
+        
         hbox = QtGui.QHBoxLayout()
         
-        for w in [  self.textbox, self.analyze_button, self.grid_cb, ]:
+        for w in [  self.analyze_button, ]:
             hbox.addWidget(w)
             hbox.setAlignment(w, QtCore.Qt.AlignVCenter)
         
-        vbox = QtGui.QVBoxLayout()
-        vbox.addWidget(self.canvas)
-        vbox.addWidget(self.mpl_toolbar)
-        vbox.addLayout(hbox)
-        vbox.addWidget(self.listWidget)
+        hbox_all = QtGui.QHBoxLayout()
+        hbox_all.addLayout(hbox, 1)
+        hbox_all.addWidget(self.plot, 3)
         
-        self.main_frame.setLayout(vbox)
+        vbox_all = QtGui.QVBoxLayout()
+        vbox_all.addWidget(self.listWidget)
+        vbox_all.addLayout(hbox_all)
+        vbox_all.addWidget(self.tab_widget)
+        
+        self.main_frame.setLayout(vbox_all)
         self.setCentralWidget(self.main_frame)
         
         
     def create_status_bar(self):
-        self.status_text = QtGui.QLabel("Status")
+        self.status_text = QtGui.QLabel("")
         self.statusBar().addWidget(self.status_text, 1)
     
     def create_menu(self):
@@ -177,13 +186,13 @@ class MyApp(QtGui.QMainWindow):
         return action
     
     def plotData(self, datadict, axes, plot_range='all'):
-        if axes is None:
-            axes = self.axes_trace
         '''
         Plots waveform in datadict
         pass in Data dictionary, with data at 'data' and sample rate at 'SETUP_ADCSAMPLERATE'
         Can pass in range as [start,stop], or 'all' for 0:n
         '''
+        if axes is None:
+            axes = self.axes_trace
         # Read the first file, store data in dictionary
         data = datadict['data']
         ADCSAMPLERATE = datadict['SETUP_ADCSAMPLERATE'][0][0]
@@ -198,9 +207,12 @@ class MyApp(QtGui.QMainWindow):
         decimated = data[plot_range[0]:plot_range[1]]
         # Decimate the data if too many points, so matplotlib can still plot
         if n > 1000000:
+            self.status_text.setText("Decimating Data")
             decimated = signal.decimate(data, int(len(data) / 1000000))
         Ts = 1 / ADCSAMPLERATE
         t = arange(Ts * plot_range[0], Ts * plot_range[1], Ts * n / len(decimated))
+        
+        self.status_text.setText("Plotting Data")
     
         # Ts = 1/ADCSAMPLERATE
         # t = arange(0,Ts*n,Ts*n/len(decimated))
@@ -209,6 +221,7 @@ class MyApp(QtGui.QMainWindow):
         axes.set_ylabel('Current (nA)')
         
         self.canvas.draw()
+        self.status_text.setText("Plotting done")
         
     def on_analyze(self):
         '''
@@ -281,8 +294,8 @@ class MyApp(QtGui.QMainWindow):
         
         local_mean = data[0]
         local_variance = 0.
-        S = 5. # Starting threshold parameter
-        E = 1. # Ending threshold parameter
+        S = 5.  # Starting threshold parameter
+        E = 1.  # Ending threshold parameter
         threshold = data[0]
         
         i = 100
@@ -290,9 +303,9 @@ class MyApp(QtGui.QMainWindow):
         for k in range(1, i):
             local_mean = a * local_mean + (1 - a) * data[k]
             local_variance = a * local_variance + (1 - a) * (data[k] - local_mean) ** 2
-            threshold = local_mean - S*local_variance**.5
+            threshold = local_mean - S * local_variance ** .5
         
-        i= 100
+        i = 100
         event_count = 0
         # search for events.  Keep track of a filtered local (adapting!) mean and variance,
         # and use them to decide a threshold for events.  See
@@ -304,30 +317,30 @@ class MyApp(QtGui.QMainWindow):
             # is event?
             if data[i] < threshold:
                 # Set ending threshold
-                threshold = local_mean - E*local_variance**.5 
+                threshold = local_mean - E * local_variance ** .5 
                 event_start = i
                 done = False
                 event_i = i
                 # loop until event ends
-                while not done and (event_i)-event_start < max_event_steps:
+                while not done and (event_i) - event_start < max_event_steps:
                     if data[event_i] > threshold:
                         event_end = event_i
                         break
-                    event_i = event_i +1 
-                if event_end-event_start > min_event_length:
+                    event_i = event_i + 1 
+                if event_end - event_start > min_event_steps:
                     event_count = event_count + 1
-                    print "Event ", event_count, ":", event_start/sample_rate, "-", event_end/sample_rate
+                    print "Event ", event_count, ":", (event_end - event_start) / sample_rate, "s"
                     i = event_end
                     if i == 0:
                         i = i + max_event_length
                     self.axes_event.clear()
-                    self.plotData(datadict, axes=self.axes_event, plot_range=[event_start-50,event_end+50])
-                    self.plotData(datadict, axes=self.axes_event, plot_range=[event_start,event_end])
-                    self.plotData(datadict, axes=self.axes_trace, plot_range=[event_start-50,event_end+50])
+                    self.plotData(datadict, axes=self.axes_event, plot_range=[event_start - 50, event_end + 50])
+                    self.plotData(datadict, axes=self.axes_event, plot_range=[event_start, event_end])
+                    self.plotData(datadict, axes=self.axes_trace, plot_range=[event_start - 50, event_end + 50])
                     QtGui.QApplication.processEvents()
             local_mean = a * local_mean + (1 - a) * data[i]
             local_variance = a * local_variance + (1 - a) * (data[i] - local_mean) ** 2
-            threshold = local_mean - S*local_variance**.5 
+            threshold = local_mean - S * local_variance ** .5 
             i = i + 1
             
         print "Number of events:", event_count

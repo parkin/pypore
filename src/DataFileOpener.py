@@ -16,9 +16,16 @@ def openData(filename):
     '''
     if '.log' in filename:
         return _openChimera(filename)
+    if '.hkd' in filename:
+        return _openHeka(filename)
         
     else:
         return 'File not specified with correct extension. Possibilities are: \'.log\''
+    
+def _openHeka(filename):
+    datafile = open(filename)
+    datatype = 'uint16'
+    # TODO
         
 def _openChimera(filename):
     # remove 'log' append 'mat'
