@@ -20,25 +20,8 @@ class MyApp(QtGui.QMainWindow):
         self.create_main_frame()
         self.create_status_bar()
         
+        self.showMaximized()
         
-    def initUI(self):      
-
-        self.textEdit = QtGui.QTextEdit()
-        self.setCentralWidget(self.textEdit)
-        self.statusBar()
-
-        openFile = QtGui.QAction(QtGui.QIcon('open.png'), 'Open', self)
-        openFile.setShortcut('Ctrl+O')
-        openFile.setStatusTip('Open New File')
-        openFile.triggered.connect(self.showDialog)
-
-        menubar = self.menuBar()
-        fileMenu = menubar.addMenu('&File')
-        fileMenu.addAction(openFile)       
-        
-#         self.setGeometry(300, 300, 350, 300)
-        self.setWindowTitle('File dialog')
-        self.show()
         
     def open_files(self):
         '''
@@ -59,9 +42,9 @@ class MyApp(QtGui.QMainWindow):
         '''
         Open the file, parse data, then pass to plotData
         '''
-        datadict = openData(str(item.text()))
-        if not 'data' in datadict:
-            print datadict
+        self.datadict = openData(str(item.text()))
+        if not 'data' in self.datadict:
+            print self.datadict
             return
 #         self.axes_trace.clear()
 #         self.plotData(datadict, self.axes_trace)
@@ -69,8 +52,8 @@ class MyApp(QtGui.QMainWindow):
         self.plot.clear()
         self.plot.setAxisTitle(Qwt.QwtPlot.xBottom, 'x -->')
         self.plot.setAxisTitle(Qwt.QwtPlot.yLeft, 'y -->')
-        data = datadict['data']
-        sample_rate = datadict['SETUP_ADCSAMPLERATE']
+        data = self.datadict['data']
+        sample_rate = self.datadict['SETUP_ADCSAMPLERATE']
         Ts = 1 / sample_rate
         n = len(data)
         plot_range = [0, n]
@@ -94,6 +77,7 @@ class MyApp(QtGui.QMainWindow):
         # Create a list for files want to analyze
         self.listWidget = QtGui.QListWidget()
         self.listWidget.itemDoubleClicked.connect(self.file_item_doubleclick)
+        self.listWidget.setMaximumHeight(40)
         
         # Other GUI controls
         # 
