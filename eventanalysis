@@ -3,16 +3,41 @@
 This program is for finding events in files and displaying the results.
 '''
 import sys
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtGui, QtCore, Qt
 import PyQt4.Qwt5 as Qwt
 from DataFileOpener import openData
 from scipy import fft, arange, signal
 import numpy as np
 
+class PlotThread(QtCore.QThread):
+    def __init__(self, axes, datadict = '', plot_range='all', filename = ''):
+        QtCore.QThread.__init__(self)
+        self.plot_options = {'axes': axes, 'datadict': datadict, 'plot_range': plot_range}
+        self.filename = filename
+    
+    def __del__(self):
+        '''
+        If the object instantiating this thread gets deleted, the thread will be deleted, causing
+        a segfault, unless we implement this destructor.
+        '''
+        self.wait()
+    
+    def run(self):
+        print 'run!'
+        if not self.filename == '' or self.plot_options['datadict'] == '':
+            print 'loading file!'
+            self.plot_options['datadict'] = openData(self.filename)
+        self.emit(QtCore.SIGNAL('plotData(PyQt_PyObject)'), self.plot_options)
+        print 'run done!'
+            
+        
+            
 class MyApp(QtGui.QMainWindow):
     
     def __init__(self, parent=None):
         super(MyApp, self).__init__()
+        
+        self.threadPool = []
         
         self.setWindowTitle('Translocation Event Analysis')
         
@@ -20,7 +45,21 @@ class MyApp(QtGui.QMainWindow):
         self.create_main_frame()
         self.create_status_bar()
         
+        self.__initZooming()
+        
         self.showMaximized()
+        
+    def __initZooming(self):
+        """Initialize zooming
+        """
+
+        self.zoomer = Qwt.QwtPlotZoomer(Qwt.QwtPlot.xBottom,
+                                        Qwt.QwtPlot.yLeft,
+                                        Qwt.QwtPicker.DragSelection,
+                                        Qwt.QwtPicker.AlwaysOff,
+                                        self.plot.canvas())
+        self.zoomer.setRubberBandPen(Qt.QPen(Qt.Qt.black))
+        
         
         
     def open_files(self):
@@ -42,28 +81,10 @@ class MyApp(QtGui.QMainWindow):
         '''
         Open the file, parse data, then pass to plotData
         '''
-        self.datadict = openData(str(item.text()))
-        if not 'data' in self.datadict:
-            print self.datadict
-            return
-#         self.axes_trace.clear()
-#         self.plotData(datadict, self.axes_trace)
-
-        self.plot.clear()
-        self.plot.setAxisTitle(Qwt.QwtPlot.xBottom, 'x -->')
-        self.plot.setAxisTitle(Qwt.QwtPlot.yLeft, 'y -->')
-        data = self.datadict['data']
-        sample_rate = self.datadict['SETUP_ADCSAMPLERATE']
-        Ts = 1 / sample_rate
-        n = len(data)
-        plot_range = [0, n]
-        print "size", n
-        
-        curve = Qwt.QwtPlotCurve("Current Trace")
-        curve.setData(arange(Ts * plot_range[0], Ts * plot_range[1], Ts), data[plot_range[0]:plot_range[1]])
-        curve.attach(self.plot)
-        
-        self.plot.replot()
+        # adding by emitting signal in different thread
+        self.threadPool.append( PlotThread(self.plot, filename=str(item.text())) )
+        self.connect( self.threadPool[len(self.threadPool)-1], QtCore.SIGNAL('plotData(PyQt_PyObject)'), self.plotData )
+        self.threadPool[len(self.threadPool)-1].start()
         
         
         
@@ -169,43 +190,55 @@ class MyApp(QtGui.QMainWindow):
             action.setCheckable(True)
         return action
     
-    def plotData(self, datadict, axes, plot_range='all'):
+#     def plotData(self, data, axes, plot_range='all'):
+    def plotData(self, plot_options):
         '''
         Plots waveform in datadict
         pass in Data dictionary, with data at 'data' and sample rate at 'SETUP_ADCSAMPLERATE'
         Can pass in range as [start,stop], or 'all' for 0:n
         '''
+        axes = plot_options['axes']
         if axes is None:
-            axes = self.axes_trace
+            axes = self.plot
         # Read the first file, store data in dictionary
-        data = datadict['data']
-        ADCSAMPLERATE = datadict['SETUP_ADCSAMPLERATE'][0][0]
+        data = plot_options['datadict']['data']
+        sample_rate = plot_options['datadict']['SETUP_ADCSAMPLERATE'][0][0]
+        plot_range = plot_options['plot_range']
     
         n = len(data)
-        # If problem with input, just plot all the data
+#         # If problem with input, just plot all the data
+#         print 'decimating'
         if plot_range == 'all' or len(plot_range) != 2 or plot_range[1] <= plot_range[0]:
             plot_range = [0, n]
-        else:  # no problems!
-            n = plot_range[1] - plot_range[0]
+#         else:  # no problems!
+#             n = plot_range[1] - plot_range[0]
+#         print 'decimated'
     
-        decimated = data[plot_range[0]:plot_range[1]]
-        # Decimate the data if too many points, so matplotlib can still plot
-        if n > 1000000:
-            self.status_text.setText("Decimating Data")
-            decimated = signal.decimate(data, int(len(data) / 1000000))
-        Ts = 1 / ADCSAMPLERATE
-        t = arange(Ts * plot_range[0], Ts * plot_range[1], Ts * n / len(decimated))
+        axes.clear()
+        axes.setAxisTitle(Qwt.QwtPlot.xBottom, 'Time')
+        axes.setAxisTitle(Qwt.QwtPlot.yLeft, 'Current')
+        Ts = 1 / sample_rate
+#         plot_range = [0, n]
+        print "size", n
         
-        self.status_text.setText("Plotting Data")
-    
-        # Ts = 1/ADCSAMPLERATE
-        # t = arange(0,Ts*n,Ts*n/len(decimated))
-        axes.plot(t[:n], decimated[:n])
-        axes.set_xlabel('Time (s)')
-        axes.set_ylabel('Current (nA)')
+        curve = Qwt.QwtPlotCurve("Current Trace")
+        curve.setData(arange(Ts * plot_range[0], Ts * plot_range[1], Ts), data[plot_range[0]:plot_range[1]])
+        curve.attach(axes)
         
-        self.canvas.draw()
-        self.status_text.setText("Plotting done")
+        self.clearZoomStack()
+        print 'plotting'
+#         axes.replot()
+        print 'replotted'
+        
+    def clearZoomStack(self):
+        """Auto scale and clear the zoom stack
+        """
+
+        self.plot.setAxisAutoScale(Qwt.QwtPlot.xBottom)
+        self.plot.setAxisAutoScale(Qwt.QwtPlot.yLeft)
+        self.plot.replot()
+        self.zoomer.setZoomBase()
+
         
     def on_analyze(self):
         '''
