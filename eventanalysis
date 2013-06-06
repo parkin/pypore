@@ -177,7 +177,6 @@ class MyApp(QtGui.QMainWindow):
         self.listWidget.clear()
 
         fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open file', 'data')
-        print fnames
         for w in fnames:
             item = QtGui.QListWidgetItem(w)
             self.listWidget.addItem(item)
@@ -195,9 +194,13 @@ class MyApp(QtGui.QMainWindow):
     def create_main_frame(self):
         self.main_frame = QtGui.QWidget()
         
+        scrollArea = QtGui.QScrollArea()
+        scrollArea.setWidgetResizable(True)
+        
         # Create Qwt plot
         self.plot = Qwt.QwtPlot(self)
         self.plot.setCanvasBackground(QtCore.Qt.white)
+        self.plot.setMinimumSize(400, 200)
         
         # Create a list for files want to analyze
         self.listWidget = QtGui.QListWidget()
@@ -210,6 +213,7 @@ class MyApp(QtGui.QMainWindow):
         self.connect(self.analyze_button, QtCore.SIGNAL('clicked()'), self.on_analyze)
         
         self.tab_widget = QtGui.QTabWidget()
+        self.tab_widget.setMinimumSize(450, 250)
         self.plot_event_zoomed = Qwt.QwtPlot(self)
         self.plot_event_zoomed.setCanvasBackground(QtCore.Qt.white)
         tab2 = QtGui.QWidget()
@@ -240,8 +244,14 @@ class MyApp(QtGui.QMainWindow):
         vbox_all.addLayout(hbox_all)
         vbox_all.addWidget(self.tab_widget)
         
+#         scrollArea.setLayout(vbox_all)
+#         
+#         vbox2 = QtGui.QVBoxLayout()
+#         vbox2.addWidget(scrollArea)
+        
         self.main_frame.setLayout(vbox_all)
-        self.setCentralWidget(self.main_frame)
+        scrollArea.setWidget(self.main_frame)
+        self.setCentralWidget(scrollArea)
         
         
     def create_status_bar(self):
@@ -312,26 +322,21 @@ class MyApp(QtGui.QMainWindow):
     
         n = len(data)
 #         # If problem with input, just plot all the data
-#         print 'decimating'
         if plot_range == 'all' or len(plot_range) != 2 or plot_range[1] <= plot_range[0]:
             plot_range = [0, n]
         else:  # no problems!
             n = plot_range[1] - plot_range[0]
-#         print 'decimated'
     
         axes.clear()
         axes.setAxisTitle(Qwt.QwtPlot.xBottom, 'Time')
         axes.setAxisTitle(Qwt.QwtPlot.yLeft, 'Current')
         Ts = 1 / sample_rate
-        print "size", n
         
         curve = Qwt.QwtPlotCurve("Current Trace")
         curve.setData(arange(Ts * plot_range[0], Ts * plot_range[1], Ts), data[plot_range[0]:plot_range[1]])
         curve.attach(axes)
         
-        print 'plotting'
         axes.replot()
-        print 'replotted'
         
     def on_analyze(self):
         '''
@@ -340,6 +345,7 @@ class MyApp(QtGui.QMainWindow):
         currItem = self.listWidget.currentItem()
         if currItem == None:
             return
+        # Start analyzing data in new thread.
         self.threadPool.append( AnalyzeDataThread(self.plot_event_zoomed, str(currItem.text())))
         self.connect( self.threadPool[len(self.threadPool)-1], QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), self._analyze_data_thread_callback )
         self.threadPool[len(self.threadPool)-1].start()
