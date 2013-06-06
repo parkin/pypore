@@ -10,10 +10,17 @@ from scipy import fft, arange, signal
 import numpy as np
 
 class PlotThread(QtCore.QThread):
-    def __init__(self, axes, datadict = '', plot_range='all', filename = ''):
+    def __init__(self, axes, datadict = '', plot_range='all', filename = '', 
+                 threshold_type='adaptive', a=0.93, 
+                 threshold_direction='negative', min_event_length=10., max_event_length=1000.):
         QtCore.QThread.__init__(self)
         self.plot_options = {'axes': axes, 'datadict': datadict, 'plot_range': plot_range}
         self.filename = filename
+        self.threshold_type = threshold_type
+        self.a = a
+        self.threshold_direction = threshold_direction
+        self.min_event_length = min_event_length
+        self.max_event_length = max_event_length
     
     def __del__(self):
         '''
@@ -23,12 +30,113 @@ class PlotThread(QtCore.QThread):
         self.wait()
     
     def run(self):
-        print 'run!'
         if not self.filename == '' or self.plot_options['datadict'] == '':
-            print 'loading file!'
             self.plot_options['datadict'] = openData(self.filename)
         self.emit(QtCore.SIGNAL('plotData(PyQt_PyObject)'), self.plot_options)
-        print 'run done!'
+        
+
+class AnalyzeDataThread(QtCore.QThread):
+    def __init__(self, axes, filename = '',threshold_type='adaptive', a=0.93, 
+                 threshold_direction='negative', min_event_length=10., max_event_length=1000.):
+        QtCore.QThread.__init__(self)
+        self.plot_options = {'axes': axes}
+        self.filename = filename
+        self.threshold_type = threshold_type
+        self.a = a
+        self.threshold_direction = threshold_direction
+        self.min_event_length = min_event_length
+        self.max_event_length = max_event_length
+    
+    def __del__(self):
+        '''
+        If the object instantiating this thread gets deleted, the thread will be deleted, causing
+        a segfault, unless we implement this destructor.
+        '''
+        self.wait()
+    
+    def run(self):
+        '''
+        Finds all the events in 'data'.
+        
+        Parameters: 
+          datadict - must have data in 'data', sample rate in 'SETUP_ADCSAMPLERATE'
+          threshold_type - 'adaptive' for adaptive-based threshold
+                         - 'current' for current based TODO
+          a - filter parameter for 'noise'. Should be close to 1, less than 1. nA for 'current'
+          threshold_direction - 'positive' or 'negative'
+          min_event_length - in microseconds
+          max_event_length - in microseconds
+          
+        Returns:
+          Struct containing all events found events
+          
+        '''
+        if not self.filename == '' or self.plot_options['datadict'] == '':
+            self.plot_options['datadict'] = openData(self.filename)
+        data = self.plot_options['datadict']['data']
+        sample_rate = self.plot_options['datadict']['SETUP_ADCSAMPLERATE'][0][0]
+        timestep = 1 / sample_rate
+        
+        # Min and Max number of points in an event
+        self.min_event_steps = int(self.min_event_length * 1e-6 / timestep)
+        self.max_event_steps = int(self.max_event_length * 1e-6 / timestep)
+        
+        n = len(data)
+        
+        if n < 100:
+            return 'Not enough datapoints in file.'
+        
+        local_mean = data[0]
+        local_variance = 0.
+        S = 5.  # Starting threshold parameter
+        E = 1.  # Ending threshold parameter
+        threshold = data[0]
+        
+        i = 100
+        # initialize mean/variance with first x datapoints
+        for k in range(1, i):
+            local_mean = self.a * local_mean + (1 - self.a) * data[k]
+            local_variance = self.a * local_variance + (1 - self.a) * (data[k] - local_mean) ** 2
+            threshold = local_mean - S * local_variance ** .5
+        
+        i = 100
+        n = len(data)
+        event_count = 0
+        # search for events.  Keep track of a filtered local (adapting!) mean and variance,
+        # and use them to decide a threshold for events.  See
+        # http://pubs.rsc.org/en/content/articlehtml/2012/nr/c2nr30951c for more details.
+        while i < n:
+            # could this be an event?
+            event_start = 0
+            event_end = 0
+            # is event?
+            if data[i] < threshold:
+                # Set ending threshold
+                threshold = local_mean - E * local_variance ** .5 
+                event_start = i
+                done = False
+                event_i = i
+                # loop until event ends
+                while not done and (event_i) - event_start < self.max_event_steps:
+                    if data[event_i] > threshold:
+                        event_end = event_i
+                        break
+                    event_i = event_i + 1 
+                if event_end - event_start > self.min_event_steps:
+                    event_count = event_count + 1
+                    i = event_end
+                    if i == 0:
+                        i = i + max_event_length
+                    self.plot_options['plot_range'] = [event_start - 50, event_end + 50]
+                    self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'plot_options': self.plot_options})
+            local_mean = self.a * local_mean + (1 - self.a) * data[i]
+            local_variance = self.a * local_variance + (1 - self.a) * (data[i] - local_mean) ** 2
+            threshold = local_mean - S * local_variance ** .5 
+            i = i + 1
+            if i % 10000 == 0:
+                self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'status_text': 'Event Count: ' + str(event_count) + ' Percent Done: ' + str(100.*i/n)})
+          
+        self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'status_text': 'Done. Found ' + str(event_count) + 'events.'})  
             
         
             
@@ -47,7 +155,7 @@ class MyApp(QtGui.QMainWindow):
         
         self.__initZooming()
         
-        self.showMaximized()
+#         self.showMaximized()
         
     def __initZooming(self):
         """Initialize zooming
@@ -74,9 +182,6 @@ class MyApp(QtGui.QMainWindow):
             item = QtGui.QListWidgetItem(w)
             self.listWidget.addItem(item)
         
-    def on_draw(self):
-        print 'on_draw'
-        
     def file_item_doubleclick(self, item):
         '''
         Open the file, parse data, then pass to plotData
@@ -85,7 +190,6 @@ class MyApp(QtGui.QMainWindow):
         self.threadPool.append( PlotThread(self.plot, filename=str(item.text())) )
         self.connect( self.threadPool[len(self.threadPool)-1], QtCore.SIGNAL('plotData(PyQt_PyObject)'), self.plotData )
         self.threadPool[len(self.threadPool)-1].start()
-        
         
         
     def create_main_frame(self):
@@ -194,6 +298,7 @@ class MyApp(QtGui.QMainWindow):
     def plotData(self, plot_options):
         '''
         Plots waveform in datadict
+        Pass in plot_options, a dictionary with 'plot_range', 'axes'
         pass in Data dictionary, with data at 'data' and sample rate at 'SETUP_ADCSAMPLERATE'
         Can pass in range as [start,stop], or 'all' for 0:n
         '''
@@ -210,35 +315,23 @@ class MyApp(QtGui.QMainWindow):
 #         print 'decimating'
         if plot_range == 'all' or len(plot_range) != 2 or plot_range[1] <= plot_range[0]:
             plot_range = [0, n]
-#         else:  # no problems!
-#             n = plot_range[1] - plot_range[0]
+        else:  # no problems!
+            n = plot_range[1] - plot_range[0]
 #         print 'decimated'
     
         axes.clear()
         axes.setAxisTitle(Qwt.QwtPlot.xBottom, 'Time')
         axes.setAxisTitle(Qwt.QwtPlot.yLeft, 'Current')
         Ts = 1 / sample_rate
-#         plot_range = [0, n]
         print "size", n
         
         curve = Qwt.QwtPlotCurve("Current Trace")
         curve.setData(arange(Ts * plot_range[0], Ts * plot_range[1], Ts), data[plot_range[0]:plot_range[1]])
         curve.attach(axes)
         
-        self.clearZoomStack()
         print 'plotting'
-#         axes.replot()
+        axes.replot()
         print 'replotted'
-        
-    def clearZoomStack(self):
-        """Auto scale and clear the zoom stack
-        """
-
-        self.plot.setAxisAutoScale(Qwt.QwtPlot.xBottom)
-        self.plot.setAxisAutoScale(Qwt.QwtPlot.yLeft)
-        self.plot.replot()
-        self.zoomer.setZoomBase()
-
         
     def on_analyze(self):
         '''
@@ -247,121 +340,15 @@ class MyApp(QtGui.QMainWindow):
         currItem = self.listWidget.currentItem()
         if currItem == None:
             return
+        self.threadPool.append( AnalyzeDataThread(self.plot_event_zoomed, str(currItem.text())))
+        self.connect( self.threadPool[len(self.threadPool)-1], QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), self._analyze_data_thread_callback )
+        self.threadPool[len(self.threadPool)-1].start()
         
-        datadict = openData(str(currItem.text()))
-        if not 'data' in datadict:
-            print datadict
-            return
-
-#         n = len(datadict['data'])
-#         local_mean, local_stddev = self.local_mean_stddev(datadict['data'][0:n], 0.95)
-#         self.axes_trace.clear()
-#         self.plotData(datadict, self.axes_trace, [0, n])
-#         datadict['data'] = local_mean
-#         self.plotData(datadict, self.axes_trace, [0, n])
-#         datadict['data'] = local_stddev
-#         self.plotData(datadict, self.axes_event, [0, n])
-        events = self.find_events(datadict)
-
-    def local_mean_stddev(self, data, a=0.95):
-        '''
-        Does a recursive low-pass filter to estimate the mean and standard deviation at each point
-        
-        Returns an array of size len(data)
-        '''
-        local_mean = np.zeros(len(data))
-        local_variance = np.zeros(len(data))
-        local_mean[0] = data[0]
-        local_variance[0] = 0.
-        for i in range(1, len(data)):
-            local_mean[i] = a * local_mean[i - 1] + (1 - a) * data[i]
-            local_variance[i] = a * local_variance[i - 1] + (1 - a) * (data[i] - local_mean[i]) ** 2
-        return local_mean, local_variance ** .5
-    
-    def find_events(self, datadict, threshold_type='adaptive', a=0.93,
-                    threshold_direction='negative', min_event_length=10., max_event_length=1000.):
-        '''
-        Finds all the events in 'data'.
-        
-        Parameters: 
-          datadict - must have data in 'data', sample rate in 'SETUP_ADCSAMPLERATE'
-          threshold_type - 'adaptive' for adaptive-based threshold
-                         - 'current' for current based TODO
-          a - filter parameter for 'noise'. Should be close to 1, less than 1. nA for 'current'
-          threshold_direction - 'positive' or 'negative'
-          min_event_length - in microseconds
-          max_event_length - in microseconds
-          
-        Returns:
-          Struct containing all events found events
-          
-        '''
-        data = datadict['data']
-        sample_rate = datadict['SETUP_ADCSAMPLERATE'][0][0]
-        timestep = 1 / sample_rate
-        
-        # Min and Max number of points in an event
-        min_event_steps = int(min_event_length * 1e-6 / timestep)
-        max_event_steps = int(max_event_length * 1e-6 / timestep)
-        
-        n = len(data)
-        
-        if n < 100:
-            return 'Not enough datapoints in file.'
-        
-        local_mean = data[0]
-        local_variance = 0.
-        S = 5.  # Starting threshold parameter
-        E = 1.  # Ending threshold parameter
-        threshold = data[0]
-        
-        i = 100
-        # initialize mean/variance with first x datapoints
-        for k in range(1, i):
-            local_mean = a * local_mean + (1 - a) * data[k]
-            local_variance = a * local_variance + (1 - a) * (data[k] - local_mean) ** 2
-            threshold = local_mean - S * local_variance ** .5
-        
-        i = 100
-        event_count = 0
-        # search for events.  Keep track of a filtered local (adapting!) mean and variance,
-        # and use them to decide a threshold for events.  See
-        # http://pubs.rsc.org/en/content/articlehtml/2012/nr/c2nr30951c for more details.
-        while i < len(data):
-            # could this be an event?
-            event_start = 0
-            event_end = 0
-            # is event?
-            if data[i] < threshold:
-                # Set ending threshold
-                threshold = local_mean - E * local_variance ** .5 
-                event_start = i
-                done = False
-                event_i = i
-                # loop until event ends
-                while not done and (event_i) - event_start < max_event_steps:
-                    if data[event_i] > threshold:
-                        event_end = event_i
-                        break
-                    event_i = event_i + 1 
-                if event_end - event_start > min_event_steps:
-                    event_count = event_count + 1
-                    print "Event ", event_count, ":", (event_end - event_start) / sample_rate, "s"
-                    i = event_end
-                    if i == 0:
-                        i = i + max_event_length
-                    self.axes_event.clear()
-                    self.plotData(datadict, axes=self.axes_event, plot_range=[event_start - 50, event_end + 50])
-                    self.plotData(datadict, axes=self.axes_event, plot_range=[event_start, event_end])
-                    self.plotData(datadict, axes=self.axes_trace, plot_range=[event_start - 50, event_end + 50])
-                    QtGui.QApplication.processEvents()
-            local_mean = a * local_mean + (1 - a) * data[i]
-            local_variance = a * local_variance + (1 - a) * (data[i] - local_mean) ** 2
-            threshold = local_mean - S * local_variance ** .5 
-            i = i + 1
-            
-        print "Number of events:", event_count
-        
+    def _analyze_data_thread_callback(self, results):
+        if 'plot_options' in results:
+            self.plotData(results['plot_options'])
+        if 'status_text' in results:
+            self.status_text.setText(results['status_text'])
         
 def plotSpectrum(data, rate):
     n = len(data)
