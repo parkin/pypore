@@ -36,6 +36,9 @@ class PlotThread(QtCore.QThread):
         
 
 class AnalyzeDataThread(QtCore.QThread):
+    '''
+    Class for searching for events in a separate thread.  
+    '''
     def __init__(self, axes, filename = '',threshold_type='adaptive', a=0.93, 
                  threshold_direction='negative', min_event_length=10., max_event_length=1000.):
         QtCore.QThread.__init__(self)
@@ -122,6 +125,7 @@ class AnalyzeDataThread(QtCore.QThread):
                         event_end = event_i
                         break
                     event_i = event_i + 1 
+                # is the event long enough?
                 if event_end - event_start > self.min_event_steps:
                     event_count = event_count + 1
                     i = event_end
@@ -181,9 +185,10 @@ class MyApp(QtGui.QMainWindow):
             item = QtGui.QListWidgetItem(w)
             self.listWidget.addItem(item)
         
-    def file_item_doubleclick(self, item):
+    def _on_file_item_doubleclick(self, item):
         '''
-        Open the file, parse data, then pass to plotData
+        Called when a file list item is double clicked.
+        Starts the plotting thread, which opens the file, parses data, then passes to plotData
         '''
         # adding by emitting signal in different thread
         self.threadPool.append( PlotThread(self.plot, filename=str(item.text())) )
@@ -192,6 +197,9 @@ class MyApp(QtGui.QMainWindow):
         
         
     def create_main_frame(self):
+        '''
+        Initializes the main gui frame.
+        '''
         self.main_frame = QtGui.QWidget()
         
         scrollArea = QtGui.QScrollArea()
@@ -204,7 +212,7 @@ class MyApp(QtGui.QMainWindow):
         
         # Create a list for files want to analyze
         self.listWidget = QtGui.QListWidget()
-        self.listWidget.itemDoubleClicked.connect(self.file_item_doubleclick)
+        self.listWidget.itemDoubleClicked.connect(self._on_file_item_doubleclick)
         self.listWidget.setMaximumHeight(40)
         
         # Other GUI controls
@@ -255,6 +263,9 @@ class MyApp(QtGui.QMainWindow):
         
         
     def create_status_bar(self):
+        '''
+        Creates a status bar with a text widget.
+        '''
         self.status_text = QtGui.QLabel("")
         self.statusBar().addWidget(self.status_text, 1)
     
@@ -308,7 +319,7 @@ class MyApp(QtGui.QMainWindow):
     def plotData(self, plot_options):
         '''
         Plots waveform in datadict
-        Pass in plot_options, a dictionary with 'plot_range', 'axes'
+        Pass in plot_options, a dictionary with 'plot_range', 'axes', and 'datadict  '
         pass in Data dictionary, with data at 'data' and sample rate at 'SETUP_ADCSAMPLERATE'
         Can pass in range as [start,stop], or 'all' for 0:n
         '''
