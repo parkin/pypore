@@ -102,6 +102,9 @@ class AnalyzeDataThread(QtCore.QThread):
             local_variance = self.a * local_variance + (1 - self.a) * (data[k] - local_mean) ** 2
             threshold = local_mean - S * local_variance ** .5
         
+        save_file = {}
+        save_file['All'] = []
+        
         i = 100
         n = len(data)
         event_count = 0
@@ -133,13 +136,17 @@ class AnalyzeDataThread(QtCore.QThread):
                         i = i + max_event_length
                     self.plot_options['plot_range'] = [event_start - 50, event_end + 50]
                     self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'plot_options': self.plot_options})
+#                     save_file['All'][]
             local_mean = self.a * local_mean + (1 - self.a) * data[i]
             local_variance = self.a * local_variance + (1 - self.a) * (data[i] - local_mean) ** 2
             threshold = local_mean - S * local_variance ** .5 
             i = i + 1
             if i % 10000 == 0:
                 self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'status_text': 'Event Count: ' + str(event_count) + ' Percent Done: ' + str(100.*i/n)})
-          
+                
+        
+        save_file['filename'] = self.filename
+        save_file['targetsamplerate2'] = sample_rate
         self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'status_text': 'Done. Found ' + str(event_count) + 'events.'})  
             
         
@@ -158,7 +165,6 @@ class MyApp(QtGui.QMainWindow):
         self.create_status_bar()
         
         self.__initZooming()
-        
 #         self.showMaximized()
         
     def __initZooming(self):
