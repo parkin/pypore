@@ -33,7 +33,7 @@ class PlotThread(QtCore.QThread):
     def run(self):
         if not self.filename == '' or self.plot_options['datadict'] == '':
             self.plot_options['datadict'] = openData(self.filename)
-        self.emit(QtCore.SIGNAL('plotData(PyQt_PyObject)'), self.plot_options)
+        self.emit(QtCore.SIGNAL('plotData(PyQt_PyObject)'), {'plot_options': self.plot_options, 'status_text': ''})
         
 
 class AnalyzeDataThread(QtCore.QThread):
@@ -133,7 +133,7 @@ class AnalyzeDataThread(QtCore.QThread):
                 if event_end - event_start -1 > self.min_event_steps:
                     i = event_end -1
                     if i == 0:
-                        i = i + max_event_length
+                        i = i + self.max_event_length
                     self.plot_options['plot_range'] = [event_start - 50, event_end + 50]
                     self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'plot_options': self.plot_options})
                     save_file['Events'].append({})
@@ -210,9 +210,16 @@ class MyApp(QtGui.QMainWindow):
         Starts the plotting thread, which opens the file, parses data, then passes to plotData
         '''
         # adding by emitting signal in different thread
+        self.status_text.setText('Plotting...')
         self.threadPool.append( PlotThread(self.plot, filename=str(item.text())) )
-        self.connect( self.threadPool[len(self.threadPool)-1], QtCore.SIGNAL('plotData(PyQt_PyObject)'), self.plotData )
+        self.connect( self.threadPool[len(self.threadPool)-1], QtCore.SIGNAL('plotData(PyQt_PyObject)'), self._on_file_item_doubleclick_callback )
         self.threadPool[len(self.threadPool)-1].start()
+        
+    def _on_file_item_doubleclick_callback(self, results):
+        if 'plot_options' in results:
+            self.plotData(results['plot_options'])
+        if 'status_text' in results:
+            self.status_text.setText(results['status_text'])
         
         
     def create_main_frame(self):
@@ -399,10 +406,10 @@ def plotSpectrum(data, rate):
         decimated = signal.decimate(Y, int(len(data) / 1000000))
     t = arange(frq[0], frq[len(frq) - 1], (frq[len(frq) - 1] - frq[0]) / len(decimated))
     
-    plt.plot(t, decimated, 'r')
-    plt.xlim([frq[0], frq[n / 2 - 1]])
-    plt.xlabel('Freq (Hz)')
-    plt.ylabel('|Y(freq)|')
+#     plt.plot(t, decimated, 'r')
+#     plt.xlim([frq[0], frq[n / 2 - 1]])
+#     plt.xlabel('Freq (Hz)')
+#     plt.ylabel('|Y(freq)|')
 
 
 def main():
