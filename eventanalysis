@@ -126,12 +126,12 @@ class AnalyzeDataThread(QtCore.QThread):
                 # loop until event ends
                 while not done and (event_i) - event_start < self.max_event_steps:
                     if data[event_i] > threshold:
-                        event_end = event_i
+                        event_end = event_i - 1
                         break
                     event_i = event_i + 1 
                 # is the event long enough?
-                if event_end - event_start -1 > self.min_event_steps:
-                    i = event_end -1
+                if event_end - event_start > self.min_event_steps:
+                    i = event_end
                     if i == 0:
                         i = i + self.max_event_length
                     self.plot_options['plot_range'] = [event_start - 50, event_end + 50]
@@ -190,8 +190,6 @@ class MyApp(QtGui.QMainWindow):
                                         Qwt.QwtPicker.AlwaysOff,
                                         self.plot.canvas())
         self.zoomer.setRubberBandPen(Qt.QPen(Qt.Qt.black))
-        
-        
         
     def open_files(self):
         '''
@@ -391,21 +389,21 @@ class MyApp(QtGui.QMainWindow):
         if 'status_text' in results:
             self.status_text.setText(results['status_text'])
         
-def plotSpectrum(data, rate):
-    n = len(data)
-    k = np.arange(n)
-    T = n / rate
-    frq = k / T  # Two sides frequency range
-    frq = frq[range(n / 2)]  # one side frequency range
-    
-    Y = fft(data) / n  # fft and normalization
-    Y = Y[range(n / 2)]
-    
-    decimated = frq
-    if len(frq) > 1000000:
-        decimated = signal.decimate(Y, int(len(data) / 1000000))
-    t = arange(frq[0], frq[len(frq) - 1], (frq[len(frq) - 1] - frq[0]) / len(decimated))
-    
+# def plotSpectrum(data, rate):
+#     n = len(data)
+#     k = np.arange(n)
+#     T = n / rate
+#     frq = k / T  # Two sides frequency range
+#     frq = frq[range(n / 2)]  # one side frequency range
+#     
+#     Y = fft(data) / n  # fft and normalization
+#     Y = Y[range(n / 2)]
+#     
+#     decimated = frq
+#     if len(frq) > 1000000:
+#         decimated = signal.decimate(Y, int(len(data) / 1000000))
+#     t = arange(frq[0], frq[len(frq) - 1], (frq[len(frq) - 1] - frq[0]) / len(decimated))
+#     
 #     plt.plot(t, decimated, 'r')
 #     plt.xlim([frq[0], frq[n / 2 - 1]])
 #     plt.xlabel('Freq (Hz)')
