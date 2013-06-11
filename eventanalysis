@@ -266,6 +266,13 @@ class MyApp(QtGui.QMainWindow):
         # Layout with box sizers
         # 
         
+        filesLabel = QtGui.QLabel()
+        filesLabel.setText('Files:')
+        
+        hboxfiles = QtGui.QHBoxLayout()
+        hboxfiles.addWidget(filesLabel)
+        hboxfiles.addWidget(self.listWidget)
+        
         hbox = QtGui.QHBoxLayout()
         
         for w in [  self.analyze_button, ]:
@@ -277,7 +284,7 @@ class MyApp(QtGui.QMainWindow):
         hbox_all.addWidget(self.plot, 3)
         
         vbox_all = QtGui.QVBoxLayout()
-        vbox_all.addWidget(self.listWidget)
+        vbox_all.addLayout(hboxfiles)
         vbox_all.addLayout(hbox_all)
         vbox_all.addWidget(self.tab_widget)
         
