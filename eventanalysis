@@ -10,6 +10,7 @@ from scipy import fft, arange, signal
 import scipy.io as sio
 import numpy as np
 
+
 class PlotThread(QtCore.QThread):
     def __init__(self, axes, datadict = '', plot_range='all', filename = '', 
                  threshold_type='adaptive', a=0.93, 
@@ -161,9 +162,8 @@ class AnalyzeDataThread(QtCore.QThread):
             sio.savemat(save_file['filename'], save_file)
             
         self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'status_text': 'Done. Found ' + str(event_count) + ' events.'})  
-            
-        
-            
+  
+    
 class MyApp(QtGui.QMainWindow):
     
     def __init__(self, parent=None):
@@ -190,6 +190,8 @@ class MyApp(QtGui.QMainWindow):
                                         Qwt.QwtPicker.AlwaysOff,
                                         self.plot.canvas())
         self.zoomer.setRubberBandPen(Qt.QPen(Qt.Qt.black))
+        
+        print self.zoomer.minZoomSize()
         
     def open_files(self):
         '''
@@ -350,7 +352,7 @@ class MyApp(QtGui.QMainWindow):
     def plotData(self, plot_options):
         '''
         Plots waveform in datadict
-        Pass in plot_options, a dictionary with 'plot_range', 'axes', and 'datadict  '
+        Pass in plot_options, a dictionary with 'plot_range', 'axes', and 'datadict'
         pass in Data dictionary, with data at 'data' and sample rate at 'SETUP_ADCSAMPLERATE'
         Can pass in range as [start,stop], or 'all' for 0:n
         '''
@@ -372,11 +374,18 @@ class MyApp(QtGui.QMainWindow):
         axes.clear()
         Ts = 1 / sample_rate
         
-        curve = Qwt.QwtPlotCurve("Current Trace")
-        curve.setData(arange(Ts * plot_range[0], Ts * plot_range[1], Ts), data[plot_range[0]:plot_range[1]])
-        curve.attach(axes)
+        times = arange(Ts * plot_range[0], Ts * plot_range[1], Ts)
         
+        curve = Qwt.QwtPlotCurve("Current Trace")
+        curve.setData(times, data[plot_range[0]:plot_range[1]])
+        curve.attach(axes)
         axes.replot()
+        # Set the top of the zoom stack to current plot, if wanted.  False means no replot (we just plotted it!)
+        if 'set_zoom_base' in plot_options:
+            if plot_options['set_zoom_base'] == True:
+                self.zoomer.setZoomBase(False)
+        else:
+            self.zoomer.setZoomBase(False)
         
     def on_analyze(self):
         '''
