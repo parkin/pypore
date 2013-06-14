@@ -8,7 +8,6 @@ import PyQt4.Qwt5 as Qwt
 from DataFileOpener import openData
 from scipy import fft, arange, signal
 import scipy.io as sio
-import numpy as np
 
 
 class PlotThread(QtCore.QThread):
@@ -190,8 +189,6 @@ class MyApp(QtGui.QMainWindow):
                                         Qwt.QwtPicker.AlwaysOff,
                                         self.plot.canvas())
         self.zoomer.setRubberBandPen(Qt.QPen(Qt.Qt.black))
-        
-        print self.zoomer.minZoomSize()
         
     def open_files(self):
         '''
