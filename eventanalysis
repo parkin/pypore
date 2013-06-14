@@ -8,6 +8,7 @@ import PyQt4.Qwt5 as Qwt
 from DataFileOpener import openData
 from scipy import fft, arange, signal
 import scipy.io as sio
+import numpy as np
 
 
 class PlotThread(QtCore.QThread):
@@ -135,11 +136,13 @@ class AnalyzeDataThread(QtCore.QThread):
                     if i == 0:
                         i = i + self.max_event_length
                     self.plot_options['plot_range'] = [event_start - 50, event_end + 50]
-                    self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'plot_options': self.plot_options})
-                    save_file['Events'].append({})
-                    save_file['Events'][event_count]['event_data'] = data[event_start:event_end]
-                    save_file['Events'][event_count]['raw_data'] = data[event_start-50 : event_end + 50]
-                    save_file['Events'][event_count]['baseline'] = local_mean
+                    event = {}
+                    event['event_data'] = data[event_start:event_end]
+                    event['raw_data'] = data[event_start-50 : event_end+50]
+                    event['baseline'] = local_mean
+                    event['delta'] = np.mean(event['event_data'])
+                    self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'plot_options': self.plot_options, 'event': event})
+                    save_file['Events'].append(event)
                     event_count = event_count + 1
             local_mean = self.a * local_mean + (1 - self.a) * data[i]
             local_variance = self.a * local_variance + (1 - self.a) * (data[i] - local_mean) ** 2
@@ -258,8 +261,6 @@ class MyApp(QtGui.QMainWindow):
         
         self.tab_widget.addTab(self.plot_event_zoomed, "Display Data")
         self.tab_widget.addTab(tab2, "Filter and Histogram")
-        
-        
         
         #
         # Layout with box sizers
