@@ -136,11 +136,14 @@ class AnalyzeDataThread(QtCore.QThread):
                     if i == 0:
                         i = i + self.max_event_length
                     self.plot_options['plot_range'] = [event_start - 50, event_end + 50]
+                    self.plot_options['show_event'] = True
                     event = {}
                     event['event_data'] = data[event_start:event_end]
                     event['raw_data'] = data[event_start-50 : event_end+50]
                     event['baseline'] = local_mean
                     event['delta'] = np.mean(event['event_data'])
+                    event['event_start'] = event_start
+                    event['event_end'] = event_end
                     self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'plot_options': self.plot_options, 'event': event})
                     save_file['Events'].append(event)
                     event_count = event_count + 1
@@ -384,7 +387,15 @@ class MyApp(QtGui.QMainWindow):
                 self.zoomer.setZoomBase(False)
         else:
             self.zoomer.setZoomBase(False)
-        
+            
+        if 'show_event' in plot_options:
+            if plot_options['show_event'] == True:
+                curve = Qwt.QwtPlotCurve('Event')
+                curve.setPen(Qt.QPen(QtCore.Qt.green))
+                curve.setData(times, data[plot_range[0]:plot_range[1]])
+                curve.attach(self.plot)
+                self.plot.replot()
+            
     def on_analyze(self):
         '''
         Searches for events in the file that is currently highlighted in the files list.
