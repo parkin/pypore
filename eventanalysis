@@ -144,6 +144,7 @@ class AnalyzeDataThread(QtCore.QThread):
                     event['delta'] = np.mean(event['event_data'])
                     event['event_start'] = event_start
                     event['event_end'] = event_end
+                    event['sample_rate'] = sample_rate
                     self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'plot_options': self.plot_options, 'event': event})
                     save_file['Events'].append(event)
                     event_count = event_count + 1
@@ -388,13 +389,28 @@ class MyApp(QtGui.QMainWindow):
         else:
             self.zoomer.setZoomBase(False)
             
-        if 'show_event' in plot_options:
-            if plot_options['show_event'] == True:
-                curve = Qwt.QwtPlotCurve('Event')
-                curve.setPen(Qt.QPen(QtCore.Qt.green))
-                curve.setData(times, data[plot_range[0]:plot_range[1]])
-                curve.attach(self.plot)
-                self.plot.replot()
+    def plotEventOnMainPlot(self, event):
+        '''
+        Adds an event to the main current trace plot.  
+        Pass in a dictionary with 'event_data', 'sample_rate', 'event_start'
+        '''
+        if not 'raw_data' in event or not 'sample_rate' in event or not 'event_start' in event:
+            print 'incorrectly called plotEventOnMainPlot'
+            return
+        data = event['raw_data']
+        sample_rate = event['sample_rate']
+        event_start = event['event_start']
+        
+        Ts = 1/sample_rate
+        
+        times = arange(Ts*event_start, Ts*(event_start + len(data)), Ts)
+        print len(data)
+        curve = Qwt.QwtPlotCurve('Event')
+        curve.setPen(Qt.QPen(QtCore.Qt.green))
+        curve.setData(times, data)
+        curve.attach(self.plot)
+        self.plot.replot()
+        
             
     def on_analyze(self):
         '''
@@ -411,6 +427,8 @@ class MyApp(QtGui.QMainWindow):
     def _analyze_data_thread_callback(self, results):
         if 'plot_options' in results:
             self.plotData(results['plot_options'])
+        if 'event' in results:
+            self.plotEventOnMainPlot(results['event'])
         if 'status_text' in results:
             self.status_text.setText(results['status_text'])
         
