@@ -12,8 +12,8 @@ import numpy as np
 
 
 class PlotThread(QtCore.QThread):
-    def __init__(self, axes, datadict = '', plot_range='all', filename = '', 
-                 threshold_type='adaptive', a=0.93, 
+    def __init__(self, axes, datadict='', plot_range='all', filename='',
+                 threshold_type='adaptive', a=0.93,
                  threshold_direction='negative', min_event_length=10., max_event_length=1000.):
         QtCore.QThread.__init__(self)
         self.plot_options = {'axes': axes, 'datadict': datadict, 'plot_range': plot_range}
@@ -41,7 +41,7 @@ class AnalyzeDataThread(QtCore.QThread):
     '''
     Class for searching for events in a separate thread.  
     '''
-    def __init__(self, axes, filename = '',threshold_type='adaptive', a=0.93, 
+    def __init__(self, axes, filename='', threshold_type='adaptive', a=0.93,
                  threshold_direction='negative', min_event_length=10., max_event_length=1000.):
         QtCore.QThread.__init__(self)
         self.plot_options = {'axes': axes}
@@ -139,7 +139,7 @@ class AnalyzeDataThread(QtCore.QThread):
                     self.plot_options['show_event'] = True
                     event = {}
                     event['event_data'] = data[event_start:event_end]
-                    event['raw_data'] = data[event_start-50 : event_end+50]
+                    event['raw_data'] = data[event_start - 50 : event_end + 50]
                     event['baseline'] = local_mean
                     event['delta'] = np.mean(event['event_data'])
                     event['event_start'] = event_start
@@ -153,12 +153,12 @@ class AnalyzeDataThread(QtCore.QThread):
             threshold = local_mean - S * local_variance ** .5 
             i = i + 1
             if i % 50000 == 0:
-                self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'status_text': 'Event Count: ' + str(event_count) + ' Percent Done: ' + str(100.*i/n)})
+                self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'status_text': 'Event Count: ' + str(event_count) + ' Percent Done: ' + str(100.*i / n)})
                 
         if event_count > 0:
             save_file_name = list(self.filename)
             # Remove the .mat off the end
-            for i in range(0,4):
+            for i in range(0, 4):
                 save_file_name.pop()
                 
             save_file_name.append('_Events.mat')
@@ -167,7 +167,7 @@ class AnalyzeDataThread(QtCore.QThread):
             save_file['event_count'] = event_count
             sio.savemat(save_file['filename'], save_file)
             
-        self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'status_text': 'Done. Found ' + str(event_count) + ' events.'})  
+        self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'status_text': 'Done. Found ' + str(event_count) + ' events.', 'done': True})  
   
     
 class MyApp(QtGui.QMainWindow):
@@ -204,9 +204,17 @@ class MyApp(QtGui.QMainWindow):
         self.listWidget.clear()
 
         fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open file', 'data')
+        areFilesOpened = False
         for w in fnames:
+            areFilesOpened = True
             item = QtGui.QListWidgetItem(w)
             self.listWidget.addItem(item)
+            
+        if areFilesOpened:
+            self.analyze_button.setEnabled(False)
+
+    def _on_file_item_selection_changed(self):
+        self.analyze_button.setEnabled(True)
         
     def _on_file_item_doubleclick(self, item):
         '''
@@ -215,9 +223,9 @@ class MyApp(QtGui.QMainWindow):
         '''
         # adding by emitting signal in different thread
         self.status_text.setText('Plotting...')
-        self.threadPool.append( PlotThread(self.plot, filename=str(item.text())) )
-        self.connect( self.threadPool[len(self.threadPool)-1], QtCore.SIGNAL('plotData(PyQt_PyObject)'), self._on_file_item_doubleclick_callback )
-        self.threadPool[len(self.threadPool)-1].start()
+        self.threadPool.append(PlotThread(self.plot, filename=str(item.text())))
+        self.connect(self.threadPool[len(self.threadPool) - 1], QtCore.SIGNAL('plotData(PyQt_PyObject)'), self._on_file_item_doubleclick_callback)
+        self.threadPool[len(self.threadPool) - 1].start()
         
     def _on_file_item_doubleclick_callback(self, results):
         if 'plot_options' in results:
@@ -245,13 +253,19 @@ class MyApp(QtGui.QMainWindow):
         
         # Create a list for files want to analyze
         self.listWidget = QtGui.QListWidget()
+        self.listWidget.itemSelectionChanged.connect(self._on_file_item_selection_changed)
         self.listWidget.itemDoubleClicked.connect(self._on_file_item_doubleclick)
-        self.listWidget.setMaximumHeight(40)
+        self.listWidget.setMaximumHeight(50)
         
         # Other GUI controls
         # 
         self.analyze_button = QtGui.QPushButton("&Analyze")
         self.connect(self.analyze_button, QtCore.SIGNAL('clicked()'), self.on_analyze)
+        self.analyze_button.setEnabled(False)
+        
+        self.stop_analyze_button = QtGui.QPushButton("&Stop")
+        self.connect(self.stop_analyze_button, QtCore.SIGNAL('clicked()'), self.on_analyze_stop)
+        self.stop_analyze_button.setEnabled(False)
         
         self.tab_widget = QtGui.QTabWidget()
         self.tab_widget.setMinimumSize(450, 250)
@@ -279,7 +293,7 @@ class MyApp(QtGui.QMainWindow):
         
         hbox = QtGui.QHBoxLayout()
         
-        for w in [  self.analyze_button, ]:
+        for w in [  self.analyze_button, self.stop_analyze_button]:
             hbox.addWidget(w)
             hbox.setAlignment(w, QtCore.Qt.AlignVCenter)
         
@@ -395,22 +409,28 @@ class MyApp(QtGui.QMainWindow):
         Pass in a dictionary with 'event_data', 'sample_rate', 'event_start'
         '''
         if not 'raw_data' in event or not 'sample_rate' in event or not 'event_start' in event:
-            print 'incorrectly called plotEventOnMainPlot'
+            print 'incorrectly called plotEventOnMainPlot.  Need \'raw_data\', \'sample_rate\', and \'event_start\'' 
             return
         data = event['raw_data']
         sample_rate = event['sample_rate']
         event_start = event['event_start']
         
-        Ts = 1/sample_rate
+        Ts = 1 / sample_rate
         
-        times = arange(Ts*event_start, Ts*(event_start + len(data)), Ts)
-        print len(data)
+        times = arange(Ts * event_start, Ts * (event_start + len(data)), Ts)
         curve = Qwt.QwtPlotCurve('Event')
         curve.setPen(Qt.QPen(QtCore.Qt.green))
         curve.setData(times, data)
         curve.attach(self.plot)
         self.plot.replot()
         
+    def on_analyze_stop(self):
+        for w in self.threadPool:
+            print w
+            if isinstance(w, AnalyzeDataThread):
+                w.terminate()
+        self.stop_analyze_button.setEnabled(False)
+        self.status_text.setText('Analyze aborted.')
             
     def on_analyze(self):
         '''
@@ -420,9 +440,12 @@ class MyApp(QtGui.QMainWindow):
         if currItem == None:
             return
         # Start analyzing data in new thread.
-        self.threadPool.append( AnalyzeDataThread(self.plot_event_zoomed, str(currItem.text())))
-        self.connect( self.threadPool[len(self.threadPool)-1], QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), self._analyze_data_thread_callback )
-        self.threadPool[len(self.threadPool)-1].start()
+        thread = AnalyzeDataThread(self.plot_event_zoomed, str(currItem.text()))
+        self.threadPool.append(thread)
+        self.connect(self.threadPool[len(self.threadPool) - 1], QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), self._analyze_data_thread_callback)
+        self.threadPool[len(self.threadPool) - 1].start()
+        
+        self.stop_analyze_button.setEnabled(True)
         
     def _analyze_data_thread_callback(self, results):
         if 'plot_options' in results:
@@ -431,6 +454,9 @@ class MyApp(QtGui.QMainWindow):
             self.plotEventOnMainPlot(results['event'])
         if 'status_text' in results:
             self.status_text.setText(results['status_text'])
+        if 'done' in results:
+            if results['done']:
+                self.stop_analyze_button.setEnabled(False)
         
 # def plotSpectrum(data, rate):
 #     n = len(data)
