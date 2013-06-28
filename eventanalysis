@@ -144,6 +144,7 @@ class AnalyzeDataThread(QtCore.QThread):
                     event['delta'] = np.mean(event['event_data'])
                     event['event_start'] = event_start
                     event['event_end'] = event_end
+                    event['raw_points_per_side'] = 50
                     event['sample_rate'] = sample_rate
                     self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'plot_options': self.plot_options, 'event': event})
                     save_file['Events'].append(event)
@@ -408,16 +409,17 @@ class MyApp(QtGui.QMainWindow):
         Adds an event to the main current trace plot.  
         Pass in a dictionary with 'event_data', 'sample_rate', 'event_start'
         '''
-        if not 'raw_data' in event or not 'sample_rate' in event or not 'event_start' in event:
+        if not 'raw_data' in event or not 'sample_rate' in event or not 'event_start' in event or not 'raw_points_per_side':
             print 'incorrectly called plotEventOnMainPlot.  Need \'raw_data\', \'sample_rate\', and \'event_start\'' 
             return
         data = event['raw_data']
         sample_rate = event['sample_rate']
         event_start = event['event_start']
+        raw_points_per_side = event['raw_points_per_side']
         
         Ts = 1 / sample_rate
         
-        times = arange(Ts * event_start, Ts * (event_start + len(data)), Ts)
+        times = arange(Ts * (event_start - raw_points_per_side), Ts * (event_start - raw_points_per_side + len(data)-1), Ts)
         curve = Qwt.QwtPlotCurve('Event')
         curve.setPen(Qt.QPen(QtCore.Qt.green))
         curve.setData(times, data)
