@@ -251,6 +251,7 @@ class MyApp(QtGui.QMainWindow):
         self.plot.setMinimumSize(400, 200)
         self.plot.setAxisTitle(Qwt.QwtPlot.xBottom, 'Time')
         self.plot.setAxisTitle(Qwt.QwtPlot.yLeft, 'Current')
+        self.plot.setTitle('Trace')
         
         # Create a list for files want to analyze
         self.listWidget = QtGui.QListWidget()
@@ -298,16 +299,23 @@ class MyApp(QtGui.QMainWindow):
             hbox.addWidget(w)
             hbox.setAlignment(w, QtCore.Qt.AlignVCenter)
         
+        
+        # Left vertical layout with settings
+        vbox_left = QtGui.QVBoxLayout()
+        vbox_left.addLayout(hboxfiles)
+        vbox_left.addLayout(hbox)
+        
+        # Right vertical layout with plots and stuff
+        vbox_right = QtGui.QVBoxLayout()
+        vbox_right.addWidget(self.plot)
+        vbox_right.addWidget(self.tab_widget)
+
+        # Layout holding everything        
         hbox_all = QtGui.QHBoxLayout()
-        hbox_all.addLayout(hbox, 1)
-        hbox_all.addWidget(self.plot, 3)
+        hbox_all.addLayout(vbox_left,1)
+        hbox_all.addLayout(vbox_right,3)
         
-        vbox_all = QtGui.QVBoxLayout()
-        vbox_all.addLayout(hboxfiles)
-        vbox_all.addLayout(hbox_all)
-        vbox_all.addWidget(self.tab_widget)
-        
-        self.main_frame.setLayout(vbox_all)
+        self.main_frame.setLayout(hbox_all)
         scrollArea.setWidget(self.main_frame)
         self.setCentralWidget(scrollArea)
         
