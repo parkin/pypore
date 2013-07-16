@@ -251,7 +251,15 @@ class MyApp(QtGui.QMainWindow):
         self.plot.setMinimumSize(400, 200)
         self.plot.setAxisTitle(Qwt.QwtPlot.xBottom, 'Time')
         self.plot.setAxisTitle(Qwt.QwtPlot.yLeft, 'Current')
-        self.plot.setTitle('Trace')
+        self.plot.setTitle('Current Trace')
+        
+        # Create Qwt plot for concatenated events
+        self.plot_concatevents = Qwt.QwtPlot(self)
+        self.plot_concatevents.setCanvasBackground(QtCore.Qt.white)
+        self.plot_concatevents.setMinimumSize(400, 200)
+        self.plot_concatevents.setAxisTitle(Qwt.QwtPlot.xBottom, 'Time')
+        self.plot_concatevents.setAxisTitle(Qwt.QwtPlot.yLeft, 'Current')
+        self.plot_concatevents.setTitle('Concatenated Events')
         
         # Create a list for files want to analyze
         self.listWidget = QtGui.QListWidget()
@@ -308,6 +316,7 @@ class MyApp(QtGui.QMainWindow):
         # Right vertical layout with plots and stuff
         vbox_right = QtGui.QVBoxLayout()
         vbox_right.addWidget(self.plot)
+        vbox_right.addWidget(self.plot_concatevents)
         vbox_right.addWidget(self.tab_widget)
 
         # Layout holding everything        
