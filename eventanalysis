@@ -1,5 +1,8 @@
 #!/usr/bin/env python
+# -*- coding: utf8 -*-
+
 '''
+
 This program is for finding events in files and displaying the results.
 '''
 import sys
@@ -44,6 +47,7 @@ class AnalyzeDataThread(QtCore.QThread):
     def __init__(self, axes, filename='', threshold_type='adaptive', a=0.93,
                  threshold_direction='negative', min_event_length=10., max_event_length=1000.):
         QtCore.QThread.__init__(self)
+        print 'min:', min_event_length, 'max:', max_event_length
         self.plot_options = {'axes': axes}
         self.filename = filename
         self.threshold_type = threshold_type
@@ -68,7 +72,7 @@ class AnalyzeDataThread(QtCore.QThread):
           threshold_type - 'adaptive' for adaptive-based threshold
                          - 'current' for current based TODO
           a - filter parameter for 'noise'. Should be close to 1, less than 1. nA for 'current'
-          threshold_direction - 'positive' or 'negative'
+          threshold_direction - 'positive' or 'negative' or 'both'
           min_event_length - in microseconds
           max_event_length - in microseconds
           
@@ -83,8 +87,8 @@ class AnalyzeDataThread(QtCore.QThread):
         timestep = 1 / sample_rate
         
         # Min and Max number of points in an event
-        self.min_event_steps = int(self.min_event_length * 1e-6 / timestep)
-        self.max_event_steps = int(self.max_event_length * 1e-6 / timestep)
+        min_event_steps = int(self.min_event_length * 1e-6 / timestep)
+        max_event_steps = int(self.max_event_length * 1e-6 / timestep)
         
         n = len(data)
         
@@ -107,7 +111,6 @@ class AnalyzeDataThread(QtCore.QThread):
         save_file = {}
         save_file['Events'] = []
         
-        i = 100
         n = len(data)
         event_count = 0
         # search for events.  Keep track of a filtered local (adapting!) mean and variance,
@@ -125,16 +128,16 @@ class AnalyzeDataThread(QtCore.QThread):
                 done = False
                 event_i = i
                 # loop until event ends
-                while not done and (event_i) - event_start < self.max_event_steps:
+                while not done and (event_i) - event_start < max_event_steps:
                     if data[event_i] > threshold:
                         event_end = event_i - 1
                         break
                     event_i = event_i + 1 
                 # is the event long enough?
-                if event_end - event_start > self.min_event_steps:
+                if event_end - event_start > min_event_steps:
                     i = event_end
                     if i == 0:
-                        i = i + self.max_event_length
+                        i = i + max_event_length
                     self.plot_options['plot_range'] = [event_start - 50, event_end + 50]
                     self.plot_options['show_event'] = True
                     event = {}
@@ -155,7 +158,6 @@ class AnalyzeDataThread(QtCore.QThread):
             i = i + 1
             if i % 50000 == 0:
                 self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'status_text': 'Event Count: ' + str(event_count) + ' Percent Done: ' + str(100.*i / n)})
-                
         if event_count > 0:
             save_file_name = list(self.filename)
             # Remove the .mat off the end
@@ -290,16 +292,22 @@ class MyApp(QtGui.QMainWindow):
         self.tab_widget.addTab(self.plot_event_zoomed, "Display Data")
         self.tab_widget.addTab(tab2, "Filter and Histogram")
         
-        #
-        # Layout with box sizers
-        # 
-        
         filesLabel = QtGui.QLabel()
         filesLabel.setText('Files:')
         
         hboxfiles = QtGui.QHBoxLayout()
         hboxfiles.addWidget(filesLabel)
         hboxfiles.addWidget(self.listWidget)
+        
+        # Analysis options
+        self.min_event_length_edit = QtGui.QLineEdit()
+        self.min_event_length_edit.setValidator(QtGui.QDoubleValidator(0, 1e12, 5))
+        self.max_event_length_edit = QtGui.QLineEdit()
+        self.max_event_length_edit.setValidator(QtGui.QDoubleValidator(0, 1e12, 5))
+        self.analysis_options = QtGui.QFormLayout()
+        self.analysis_options.addRow('Data Files:', self.listWidget)
+        self.analysis_options.addRow('Min Event Length [um]:', self.min_event_length_edit)
+        self.analysis_options.addRow('Max Event Length [um]:', self.max_event_length_edit)
         
         hbox = QtGui.QHBoxLayout()
         
@@ -310,7 +318,7 @@ class MyApp(QtGui.QMainWindow):
         
         # Left vertical layout with settings
         vbox_left = QtGui.QVBoxLayout()
-        vbox_left.addLayout(hboxfiles)
+        vbox_left.addLayout(self.analysis_options)
         vbox_left.addLayout(hbox)
         
         # Right vertical layout with plots and stuff
@@ -321,8 +329,8 @@ class MyApp(QtGui.QMainWindow):
 
         # Layout holding everything        
         hbox_all = QtGui.QHBoxLayout()
-        hbox_all.addLayout(vbox_left,1)
-        hbox_all.addLayout(vbox_right,3)
+        hbox_all.addLayout(vbox_left, 1)
+        hbox_all.addLayout(vbox_right, 3)
         
         self.main_frame.setLayout(hbox_all)
         scrollArea.setWidget(self.main_frame)
@@ -436,7 +444,7 @@ class MyApp(QtGui.QMainWindow):
         
         Ts = 1 / sample_rate
         
-        times = arange(Ts * (event_start - raw_points_per_side), Ts * (event_start - raw_points_per_side + len(data)-1), Ts)
+        times = arange(Ts * (event_start - raw_points_per_side), Ts * (event_start - raw_points_per_side + len(data) - 1), Ts)
         curve = Qwt.QwtPlotCurve('Event')
         curve.setPen(Qt.QPen(QtCore.Qt.green))
         curve.setData(times, data)
@@ -458,13 +466,34 @@ class MyApp(QtGui.QMainWindow):
         currItem = self.listWidget.currentItem()
         if currItem == None:
             return
+        
+        self.status_text.setText('Event Count: 0 Percent Done: 0')
+        
+        min_event_length = 10.
+        try:
+            min_event_length = float(self.min_event_length_edit.text())
+        except ValueError:
+            min_event_length = 10.
+        max_event_length = 10000.
+        try:
+            max_event_length = float(self.max_event_length_edit.text())
+        except ValueError:
+            max_event_length = 10000.
+        if min_event_length >= max_event_length:
+            self.status_text.setText('Min Event Length is greater than Max Event Length.  Please fix.')
+            return
+        
         # Start analyzing data in new thread.
-        thread = AnalyzeDataThread(self.plot_event_zoomed, str(currItem.text()))
+        thread = AnalyzeDataThread(self.plot_event_zoomed, str(currItem.text()), min_event_length=min_event_length, max_event_length=max_event_length)
         self.threadPool.append(thread)
         self.connect(self.threadPool[len(self.threadPool) - 1], QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), self._analyze_data_thread_callback)
         self.threadPool[len(self.threadPool) - 1].start()
         
         self.stop_analyze_button.setEnabled(True)
+        
+        # Clear the concatenated_events plot and the single event plot
+        self.plot_concatevents.clear()
+        self.plot_event_zoomed.clear()
         
     def _analyze_data_thread_callback(self, results):
         if 'status_text' in results:
