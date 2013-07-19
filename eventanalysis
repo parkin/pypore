@@ -308,30 +308,87 @@ class MyApp(QtGui.QMainWindow):
         self.max_event_length_edit.setValidator(QtGui.QDoubleValidator(0, 1e12, 5))
         self.fixed_analysis_options = QtGui.QFormLayout()
         self.fixed_analysis_options.addRow('Data Files:', self.listWidget)
-        self.fixed_analysis_options.addRow('Min Event Length [um]:', self.min_event_length_edit)
-        self.fixed_analysis_options.addRow('Max Event Length [um]:', self.max_event_length_edit)
+        self.fixed_analysis_options.addRow('Min Event Length [us]:', self.min_event_length_edit)
+        self.fixed_analysis_options.addRow('Max Event Length [us]:', self.max_event_length_edit)
         
-        self.threshold_options = QtGui.QStackedLayout()
+        # Baseline options
+        baseline_options = QtGui.QStackedLayout()
+        self.baseline_type_combo = QtGui.QComboBox()
+        self.baseline_type_combo.addItems(('Adaptive', 'Fixed'))
+        self.baseline_type_combo.activated.connect(baseline_options.setCurrentIndex)
+        
+        adaptive_options_layout = QtGui.QFormLayout()
+        self.filter_parameter_edit = QtGui.QLineEdit()
+        self.filter_parameter_edit.setValidator(QtGui.QDoubleValidator(0, 10, 5))
+        self.filter_parameter_edit.setText('0.93') 
+        adaptive_options_layout.addRow('Filter Parameter \'a\':', self.filter_parameter_edit)
+        # need to cast to widget to add to QStackedLayout
+        adaptive_options_widget = QtGui.QWidget()
+        adaptive_options_widget.setLayout(adaptive_options_layout)
+        
+        fixed_options_layout = QtGui.QFormLayout()
+        self.fixed_baseline_edit = QtGui.QLineEdit()
+        self.fixed_baseline_edit.setValidator(QtGui.QDoubleValidator(-9999,9999,9))
+        self.fixed_baseline_edit.setText('0.0')
+        fixed_options_layout.addRow('Baseline Current:', self.fixed_baseline_edit)
+        fixed_options_widget = QtGui.QWidget()
+        fixed_options_widget.setLayout(fixed_options_layout)
+        
+        baseline_options.addWidget(adaptive_options_widget)
+        baseline_options.addWidget(fixed_options_widget)
+        
+        
+        baseline_form = QtGui.QFormLayout()
+        baseline_form.addRow('Baseline Type:', self.baseline_type_combo)
+        
+        # Threshold options
+        threshold_options = QtGui.QStackedLayout()
         self.threshold_type_combo = QtGui.QComboBox()
         self.threshold_type_combo.addItem('Noise Based')
-        self.threshold_type_combo.addItem('Absolute Drop')
-        self.threshold_type_combo.activated.connect(self._on_threshold_combo_change)
-        self.fixed_analysis_options.addRow('Threshold Type:', self.threshold_type_combo)
+        self.threshold_type_combo.addItem('Absolute Change')
+        self.threshold_type_combo.addItem('Percentage Change')
+        self.threshold_type_combo.activated.connect(threshold_options.setCurrentIndex)
+        
+        threshold_form = QtGui.QFormLayout()
+        self.threshold_direction_combo = QtGui.QComboBox()
+        self.threshold_direction_combo.addItems(('Both', 'Positive', 'Negative'))
+        threshold_form.addRow('Threshold Direction:', self.threshold_direction_combo)
+        threshold_form.addRow('Threshold Type:', self.threshold_type_combo)
         
         noise_based_options_layout = QtGui.QFormLayout()
-        noise_based_options_layout.addRow('Noise:', QtGui.QLineEdit())
+        self.threshold_stdev_start = QtGui.QLineEdit()
+        self.threshold_stdev_start.setValidator(QtGui.QDoubleValidator(-9999,9999,4))
+        self.threshold_stdev_start.setText('5.0')
+        noise_based_options_layout.addRow('Start StdDev:', self.threshold_stdev_start)
+        self.threshold_stdev_end = QtGui.QLineEdit()
+        self.threshold_stdev_end.setValidator(QtGui.QDoubleValidator(-9999,9999,4))
+        self.threshold_stdev_end.setText('1.0')
+        noise_based_options_layout.addRow('End StdDev:', self.threshold_stdev_end)
         
         absolute_drop_options_layout = QtGui.QFormLayout()
-        absolute_drop_options_layout.addRow('Absolute:', QtGui.QLineEdit())
+        self.absolute_change_edit = QtGui.QLineEdit()
+        self.absolute_change_edit.setValidator(QtGui.QDoubleValidator(-9999,9999,9))
+        self.absolute_change_edit.setText('0.1')
+        absolute_drop_options_layout.addRow('Absolute Change [uA]:', self.absolute_change_edit)
         
-        self.noise_based_options = QtGui.QWidget()
-        self.noise_based_options.setLayout(noise_based_options_layout)
+        percentage_change_options_layout = QtGui.QFormLayout()
+        self.percentage_change_edit = QtGui.QLineEdit()
+        self.percentage_change_edit.setValidator(QtGui.QDoubleValidator(0,9999,5))
+        self.percentage_change_edit.setText('10.0')
+        percentage_change_options_layout.addRow('Percent Change:', self.percentage_change_edit)
         
-        self.absolute_drop_options = QtGui.QWidget()
-        self.absolute_drop_options.setLayout(absolute_drop_options_layout)
+        noise_based_options = QtGui.QWidget()
+        noise_based_options.setLayout(noise_based_options_layout)
         
-        self.threshold_options.addWidget(self.noise_based_options)
-        self.threshold_options.addWidget(self.absolute_drop_options)
+        absolute_drop_options = QtGui.QWidget()
+        absolute_drop_options.setLayout(absolute_drop_options_layout)
+        
+        percentage_change_options_widget = QtGui.QWidget()
+        percentage_change_options_widget.setLayout(percentage_change_options_layout)
+        
+        threshold_options.addWidget(noise_based_options)
+        threshold_options.addWidget(absolute_drop_options)
+        threshold_options.addWidget(percentage_change_options_widget)
         
         
         hbox = QtGui.QHBoxLayout()
@@ -344,7 +401,10 @@ class MyApp(QtGui.QMainWindow):
         # Left vertical layout with settings
         vbox_left = QtGui.QVBoxLayout()
         vbox_left.addLayout(self.fixed_analysis_options)
-        vbox_left.addLayout(self.threshold_options)
+        vbox_left.addLayout(baseline_form)
+        vbox_left.addLayout(baseline_options)
+        vbox_left.addLayout(threshold_form)
+        vbox_left.addLayout(threshold_options)
         vbox_left.addLayout(hbox)
         
         # Right vertical layout with plots and stuff
@@ -361,9 +421,6 @@ class MyApp(QtGui.QMainWindow):
         self.main_frame.setLayout(hbox_all)
         scrollArea.setWidget(self.main_frame)
         self.setCentralWidget(scrollArea)
-        
-    def _on_threshold_combo_change(self,index):
-        self.threshold_options.setCurrentIndex(index)
         
         
     def create_status_bar(self):
