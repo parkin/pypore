@@ -301,13 +301,38 @@ class MyApp(QtGui.QMainWindow):
         
         # Analysis options
         self.min_event_length_edit = QtGui.QLineEdit()
+        self.min_event_length_edit.setText('10.0')
         self.min_event_length_edit.setValidator(QtGui.QDoubleValidator(0, 1e12, 5))
         self.max_event_length_edit = QtGui.QLineEdit()
+        self.max_event_length_edit.setText('1000.0')
         self.max_event_length_edit.setValidator(QtGui.QDoubleValidator(0, 1e12, 5))
-        self.analysis_options = QtGui.QFormLayout()
-        self.analysis_options.addRow('Data Files:', self.listWidget)
-        self.analysis_options.addRow('Min Event Length [um]:', self.min_event_length_edit)
-        self.analysis_options.addRow('Max Event Length [um]:', self.max_event_length_edit)
+        self.fixed_analysis_options = QtGui.QFormLayout()
+        self.fixed_analysis_options.addRow('Data Files:', self.listWidget)
+        self.fixed_analysis_options.addRow('Min Event Length [um]:', self.min_event_length_edit)
+        self.fixed_analysis_options.addRow('Max Event Length [um]:', self.max_event_length_edit)
+        
+        self.threshold_options = QtGui.QStackedLayout()
+        self.threshold_type_combo = QtGui.QComboBox()
+        self.threshold_type_combo.addItem('Noise Based')
+        self.threshold_type_combo.addItem('Absolute Drop')
+        self.threshold_type_combo.activated.connect(self._on_threshold_combo_change)
+        self.fixed_analysis_options.addRow('Threshold Type:', self.threshold_type_combo)
+        
+        noise_based_options_layout = QtGui.QFormLayout()
+        noise_based_options_layout.addRow('Noise:', QtGui.QLineEdit())
+        
+        absolute_drop_options_layout = QtGui.QFormLayout()
+        absolute_drop_options_layout.addRow('Absolute:', QtGui.QLineEdit())
+        
+        self.noise_based_options = QtGui.QWidget()
+        self.noise_based_options.setLayout(noise_based_options_layout)
+        
+        self.absolute_drop_options = QtGui.QWidget()
+        self.absolute_drop_options.setLayout(absolute_drop_options_layout)
+        
+        self.threshold_options.addWidget(self.noise_based_options)
+        self.threshold_options.addWidget(self.absolute_drop_options)
+        
         
         hbox = QtGui.QHBoxLayout()
         
@@ -318,7 +343,8 @@ class MyApp(QtGui.QMainWindow):
         
         # Left vertical layout with settings
         vbox_left = QtGui.QVBoxLayout()
-        vbox_left.addLayout(self.analysis_options)
+        vbox_left.addLayout(self.fixed_analysis_options)
+        vbox_left.addLayout(self.threshold_options)
         vbox_left.addLayout(hbox)
         
         # Right vertical layout with plots and stuff
@@ -335,6 +361,9 @@ class MyApp(QtGui.QMainWindow):
         self.main_frame.setLayout(hbox_all)
         scrollArea.setWidget(self.main_frame)
         self.setCentralWidget(scrollArea)
+        
+    def _on_threshold_combo_change(self,index):
+        self.threshold_options.setCurrentIndex(index)
         
         
     def create_status_bar(self):
