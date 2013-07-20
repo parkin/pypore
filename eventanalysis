@@ -22,7 +22,7 @@ class PlotThread(QtCore.QThread):
         self.plot_options = {'axes': axes, 'datadict': datadict, 'plot_range': plot_range}
         self.filename = filename
         self.threshold_type = threshold_type
-        self.a = a
+        self.filter_parameter = a
         self.threshold_direction = threshold_direction
         self.min_event_length = min_event_length
         self.max_event_length = max_event_length
@@ -30,7 +30,7 @@ class PlotThread(QtCore.QThread):
     def __del__(self):
         '''
         If the object instantiating this thread gets deleted, the thread will be deleted, causing
-        a segfault, unless we implement this destructor.
+        filter_parameter segfault, unless we implement this destructor.
         '''
         self.wait()
     
@@ -42,24 +42,18 @@ class PlotThread(QtCore.QThread):
 
 class AnalyzeDataThread(QtCore.QThread):
     '''
-    Class for searching for events in a separate thread.  
+    Class for searching for events in filter_parameter separate thread.  
     '''
-    def __init__(self, axes, filename='', threshold_type='adaptive', a=0.93,
-                 threshold_direction='negative', min_event_length=10., max_event_length=1000.):
+    def __init__(self, parameters):
+#     def __init__(self, axes, filename='', threshold_type='adaptive', filter_parameter=0.93,
+#                  threshold_direction='negative', min_event_length=10., max_event_length=1000.):
         QtCore.QThread.__init__(self)
-        print 'min:', min_event_length, 'max:', max_event_length
-        self.plot_options = {'axes': axes}
-        self.filename = filename
-        self.threshold_type = threshold_type
-        self.a = a
-        self.threshold_direction = threshold_direction
-        self.min_event_length = min_event_length
-        self.max_event_length = max_event_length
+        self.parameters = parameters
     
     def __del__(self):
         '''
         If the object instantiating this thread gets deleted, the thread will be deleted, causing
-        a segfault, unless we implement this destructor.
+        filter_parameter segfault, unless we implement this destructor.
         '''
         self.wait()
     
@@ -71,7 +65,7 @@ class AnalyzeDataThread(QtCore.QThread):
           datadict - must have data in 'data', sample rate in 'SETUP_ADCSAMPLERATE'
           threshold_type - 'adaptive' for adaptive-based threshold
                          - 'current' for current based TODO
-          a - filter parameter for 'noise'. Should be close to 1, less than 1. nA for 'current'
+          filter_parameter - filter parameter for 'noise'. Should be close to 1, less than 1. nA for 'current'
           threshold_direction - 'positive' or 'negative' or 'both'
           min_event_length - in microseconds
           max_event_length - in microseconds
@@ -80,15 +74,25 @@ class AnalyzeDataThread(QtCore.QThread):
           Struct containing all events found events
           
         '''
-        if not self.filename == '' or self.plot_options['datadict'] == '':
-            self.plot_options['datadict'] = openData(self.filename)
+        self.plot_options = {}
+        self.plot_options['axes'] = self.parameters['axes']
+        if not self.parameters['filename'] == '' or self.plot_options['datadict'] == '':
+            self.plot_options['datadict'] = openData(self.parameters['filename'])
         data = self.plot_options['datadict']['data']
         sample_rate = self.plot_options['datadict']['SETUP_ADCSAMPLERATE'][0][0]
         timestep = 1 / sample_rate
         
         # Min and Max number of points in an event
-        min_event_steps = int(self.min_event_length * 1e-6 / timestep)
-        max_event_steps = int(self.max_event_length * 1e-6 / timestep)
+        min_event_steps = int(self.parameters['min_event_length'] * 1e-6 / timestep)
+        max_event_steps = int(self.parameters['max_event_length'] * 1e-6 / timestep)
+        
+        # Threshold direction.  -1 for negative, 0 for both, +1 for positive
+        direction = 0
+        if self.parameters['threshold_direction'] == 'Positive':
+            direction = 1
+        elif self.parameters['threshold_direction'] == 'Negative':
+            direction = -1
+        
         
         n = len(data)
         
@@ -97,24 +101,25 @@ class AnalyzeDataThread(QtCore.QThread):
         
         local_mean = data[0]
         local_variance = 0.
-        S = 5.  # Starting threshold parameter
-        E = 1.  # Ending threshold parameter
+        start_stddev = self.parameters['start_stddev']  # Starting threshold parameter
+        end_stddev = self.parameters['end_stddev']  # Ending threshold parameter
+        filter_parameter = self.parameters['filter_parameter'] # filter parameter 'a'
         threshold = data[0]
         
         i = 100
         # initialize mean/variance with first i datapoints
         for k in range(0, i):
-            local_mean = self.a * local_mean + (1 - self.a) * data[k]
-            local_variance = self.a * local_variance + (1 - self.a) * (data[k] - local_mean) ** 2
-            threshold = local_mean - S * local_variance ** .5
+            local_mean = filter_parameter * local_mean + (1 - filter_parameter) * data[k]
+            local_variance = filter_parameter * local_variance + (1 - filter_parameter) * (data[k] - local_mean) ** 2
+            threshold = local_mean - start_stddev * local_variance ** .5
         
         save_file = {}
         save_file['Events'] = []
         
         n = len(data)
         event_count = 0
-        # search for events.  Keep track of a filtered local (adapting!) mean and variance,
-        # and use them to decide a threshold for events.  See
+        # search for events.  Keep track of filter_parameter filtered local (adapting!) mean and variance,
+        # and use them to decide filter_parameter threshold for events.  See
         # http://pubs.rsc.org/en/content/articlehtml/2012/nr/c2nr30951c for more details.
         while i < n:
             # could this be an event?
@@ -123,7 +128,7 @@ class AnalyzeDataThread(QtCore.QThread):
             # is event?
             if data[i] < threshold:
                 # Set ending threshold
-                threshold = local_mean - E * local_variance ** .5 
+                threshold = local_mean - end_stddev * local_variance ** .5 
                 event_start = i
                 done = False
                 event_i = i
@@ -152,9 +157,9 @@ class AnalyzeDataThread(QtCore.QThread):
                     self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'plot_options': self.plot_options, 'event': event})
                     save_file['Events'].append(event)
                     event_count = event_count + 1
-            local_mean = self.a * local_mean + (1 - self.a) * data[i]
-            local_variance = self.a * local_variance + (1 - self.a) * (data[i] - local_mean) ** 2
-            threshold = local_mean - S * local_variance ** .5 
+            local_mean = filter_parameter * local_mean + (1 - filter_parameter) * data[i]
+            local_variance = filter_parameter * local_variance + (1 - filter_parameter) * (data[i] - local_mean) ** 2
+            threshold = local_mean - start_stddev * local_variance ** .5 
             i = i + 1
             if i % 50000 == 0:
                 self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'status_text': 'Event Count: ' + str(event_count) + ' Percent Done: ' + str(100.*i / n)})
@@ -221,7 +226,7 @@ class MyApp(QtGui.QMainWindow):
         
     def _on_file_item_doubleclick(self, item):
         '''
-        Called when a file list item is double clicked.
+        Called when filter_parameter file list item is double clicked.
         Starts the plotting thread, which opens the file, parses data, then passes to plotData
         '''
         # adding by emitting signal in different thread
@@ -243,7 +248,7 @@ class MyApp(QtGui.QMainWindow):
         '''
         self.main_frame = QtGui.QWidget()
         
-        # Put everything in a scroll area
+        # Put everything in filter_parameter scroll area
         scrollArea = QtGui.QScrollArea()
         scrollArea.setWidgetResizable(True)
         
@@ -263,7 +268,7 @@ class MyApp(QtGui.QMainWindow):
         self.plot_concatevents.setAxisTitle(Qwt.QwtPlot.yLeft, 'Current')
         self.plot_concatevents.setTitle('Concatenated Events')
         
-        # Create a list for files want to analyze
+        # Create filter_parameter list for files want to analyze
         self.listWidget = QtGui.QListWidget()
         self.listWidget.itemSelectionChanged.connect(self._on_file_item_selection_changed)
         self.listWidget.itemDoubleClicked.connect(self._on_file_item_doubleclick)
@@ -321,16 +326,16 @@ class MyApp(QtGui.QMainWindow):
         self.filter_parameter_edit = QtGui.QLineEdit()
         self.filter_parameter_edit.setValidator(QtGui.QDoubleValidator(0, 10, 5))
         self.filter_parameter_edit.setText('0.93') 
-        adaptive_options_layout.addRow('Filter Parameter \'a\':', self.filter_parameter_edit)
+        adaptive_options_layout.addRow('Filter Parameter \'filter_parameter\':', self.filter_parameter_edit)
         # need to cast to widget to add to QStackedLayout
         adaptive_options_widget = QtGui.QWidget()
         adaptive_options_widget.setLayout(adaptive_options_layout)
         
         fixed_options_layout = QtGui.QFormLayout()
-        self.fixed_baseline_edit = QtGui.QLineEdit()
-        self.fixed_baseline_edit.setValidator(QtGui.QDoubleValidator(-9999,9999,9))
-        self.fixed_baseline_edit.setText('0.0')
-        fixed_options_layout.addRow('Baseline Current:', self.fixed_baseline_edit)
+        self.baseline_current_edit = QtGui.QLineEdit()
+        self.baseline_current_edit.setValidator(QtGui.QDoubleValidator(-9999,9999,9))
+        self.baseline_current_edit.setText('0.0')
+        fixed_options_layout.addRow('Baseline Current:', self.baseline_current_edit)
         fixed_options_widget = QtGui.QWidget()
         fixed_options_widget.setLayout(fixed_options_layout)
         
@@ -425,7 +430,7 @@ class MyApp(QtGui.QMainWindow):
         
     def create_status_bar(self):
         '''
-        Creates a status bar with a text widget.
+        Creates filter_parameter status bar with filter_parameter text widget.
         '''
         self.status_text = QtGui.QLabel("")
         self.statusBar().addWidget(self.status_text, 1)
@@ -480,7 +485,7 @@ class MyApp(QtGui.QMainWindow):
     def plotData(self, plot_options):
         '''
         Plots waveform in datadict
-        Pass in plot_options, a dictionary with 'plot_range', 'axes', and 'datadict'
+        Pass in plot_options, filter_parameter dictionary with 'plot_range', 'axes', and 'datadict'
         pass in Data dictionary, with data at 'data' and sample rate at 'SETUP_ADCSAMPLERATE'
         Can pass in range as [start,stop], or 'all' for 0:n
         '''
@@ -518,7 +523,7 @@ class MyApp(QtGui.QMainWindow):
     def plotEventOnMainPlot(self, event):
         '''
         Adds an event to the main current trace plot.  
-        Pass in a dictionary with 'event_data', 'sample_rate', 'event_start'
+        Pass in filter_parameter dictionary with 'event_data', 'sample_rate', 'event_start'
         '''
         if not 'raw_data' in event or not 'sample_rate' in event or not 'event_start' in event or not 'raw_points_per_side':
             print 'incorrectly called plotEventOnMainPlot.  Need \'raw_data\', \'sample_rate\', and \'event_start\'' 
@@ -553,24 +558,21 @@ class MyApp(QtGui.QMainWindow):
         if currItem == None:
             return
         
-        self.status_text.setText('Event Count: 0 Percent Done: 0')
-        
-        min_event_length = 10.
-        try:
-            min_event_length = float(self.min_event_length_edit.text())
-        except ValueError:
-            min_event_length = 10.
-        max_event_length = 10000.
-        try:
-            max_event_length = float(self.max_event_length_edit.text())
-        except ValueError:
-            max_event_length = 10000.
-        if min_event_length >= max_event_length:
-            self.status_text.setText('Min Event Length is greater than Max Event Length.  Please fix.')
+        parameters = self.get_current_analysis_parameters()
+        if 'error' in parameters:
+            self.status_text.setText(parameters['error'])
             return
         
+        # Add axes and the filename to the parameters
+        parameters['axes'] = self.plot_event_zoomed
+        parameters['filename'] = str(currItem.text())
+        
+        print parameters
+        
+        self.status_text.setText('Event Count: 0 Percent Done: 0')
+        
         # Start analyzing data in new thread.
-        thread = AnalyzeDataThread(self.plot_event_zoomed, str(currItem.text()), min_event_length=min_event_length, max_event_length=max_event_length)
+        thread = AnalyzeDataThread(parameters)
         self.threadPool.append(thread)
         self.connect(self.threadPool[len(self.threadPool) - 1], QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), self._analyze_data_thread_callback)
         self.threadPool[len(self.threadPool) - 1].start()
@@ -580,6 +582,68 @@ class MyApp(QtGui.QMainWindow):
         # Clear the concatenated_events plot and the single event plot
         self.plot_concatevents.clear()
         self.plot_event_zoomed.clear()
+        
+    def get_current_analysis_parameters(self):
+        '''
+        Returns filter_parameter dictionary holding the current analysis parameters set by the user.  Returns an entry 'error' if there were
+        invalid inputs.
+        '''
+        parameters = {}
+        # Get Min_event length in microseconds
+        try:
+            parameters['min_event_length'] = float(self.min_event_length_edit.text())
+        except ValueError:
+            parameters['error'] = 'Could not read float from Min Event Length text box.  Please fix.'
+            return parameters
+        # Get Max Event Length in microseconds
+        try:
+            parameters['max_event_length'] = float(self.max_event_length_edit.text())
+        except ValueError:
+            parameters['error'] = 'Could not read float from Max Event Length text box.  Please fix.'
+            return parameters
+        if parameters['min_event_length'] >= parameters['max_event_length']:
+            parameters['max_event_length'] = 'Min Event Length is greater than Max Event Length.  Please fix.'
+            return parameters
+        
+        parameters['baseline_type'] = str(self.baseline_type_combo.currentText())
+        if parameters['baseline_type'] == 'Adaptive':
+            try:
+                parameters['filter_parameter'] = float(self.filter_parameter_edit.text())
+            except ValueError:
+                parameters['error'] = 'Could not read float from Filter Parameter text box.  Please fix.'
+                return
+        elif parameters['baseline_type'] == 'Fixed':
+            try:
+                parameters['baseline_current'] = float(self.baseline_current_edit.text())
+            except ValueError:
+                parameters['error'] = 'Could not read float from Baseline Current text box.  Please fix.'
+               
+        parameters['threshold_direction'] = str(self.threshold_direction_combo.currentText()) 
+        parameters['threshold_type'] = str(self.threshold_type_combo.currentText())
+        if parameters['threshold_type'] == 'Noise Based':
+            try:
+                parameters['start_stddev'] = float(self.threshold_stdev_start.text())
+            except ValueError:
+                parameters['error'] = 'Could not read float from Start StdDev text box.  Please fix.'
+            try:
+                parameters['end_stddev'] = float(self.threshold_stdev_end.text())
+            except ValueError:
+                parameters['error'] = 'Could not read float from End StdDev text box.  Please fix.'
+        elif parameters['threshold_type'] == 'Absolute Change':
+            try:
+                parameters['absolute_change'] = float(self.absolute_change_edit.text())
+            except ValueError:
+                parameters['error'] = 'Could not read float from Absolute Change.  Please fix.'
+        elif parameters['threshold_type'] == 'Percentage Change':
+            try:
+                parameters['percent_change'] = float(self.percentage_change_edit.text())
+            except ValueError:
+                parameters['error'] = 'Could not read float from Percent Change text box.  Please fix.'
+        
+        return parameters
+        
+        
+        
         
     def _analyze_data_thread_callback(self, results):
         if 'status_text' in results:
