@@ -188,7 +188,7 @@ class MyApp(QtGui.QMainWindow):
         self.threshold_type_combo = QtGui.QComboBox()
         self.threshold_type_combo.addItem('Noise Based')
         self.threshold_type_combo.addItem('Absolute Change')
-        self.threshold_type_combo.addItem('Percentage Change')
+        self.threshold_type_combo.addItem('Percent Change')
         self.threshold_type_combo.activated.connect(threshold_options.setCurrentIndex)
         
         threshold_form = QtGui.QFormLayout()
