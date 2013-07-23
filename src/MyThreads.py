@@ -40,6 +40,15 @@ class AnalyzeDataThread(QtCore.QThread):
     '''
     Class for searching for events in filter_parameter separate thread.  
     '''
+    # Threshold types
+    THRESHOLD_NOISE_BASED = 0
+    THRESHOLD_ABSOLUTE_CHANGE = 1
+    THRESHOLD_PERCENTAGE_CHANGE = 2
+    
+    # Baseline types
+    BASELINE_ADAPTIVE = 3
+    BASELINE_FIXED = 4
+    
     def __init__(self, parameters):
 #     def __init__(self, axes, filename='', threshold_type='adaptive', filter_parameter=0.93,
 #                  threshold_direction='negative', min_event_length=10., max_event_length=1000.):
@@ -59,7 +68,7 @@ class AnalyzeDataThread(QtCore.QThread):
         
         Parameters: 
           datadict - must have data in 'data', sample rate in 'SETUP_ADCSAMPLERATE'
-          threshold_type - 'adaptive' for adaptive-based threshold
+          threshold_type - 'adaptive' for adaptive-based threshold_start
                          - 'current' for current based TODO
           filter_parameter - filter parameter for 'noise'. Should be close to 1, less than 1. nA for 'current'
           threshold_direction - 'positive' or 'negative' or 'both'
@@ -98,21 +107,34 @@ class AnalyzeDataThread(QtCore.QThread):
         if n < 100:
             return 'Not enough datapoints in file.'
         
+        
         local_mean = data[0]
         local_variance = 0.
-        start_stddev = self.parameters['start_stddev']  # Starting threshold parameter
-        end_stddev = self.parameters['end_stddev']  # Ending threshold parameter
+        
+        i = 0
         filter_parameter = self.parameters['filter_parameter'] # filter parameter 'a'
-        
-        # distance from mean to define an event
-        threshold = data[0]
-        
-        i = 100
-        # initialize mean/variance with first i datapoints
-        for k in range(0, i):
-            local_mean = filter_parameter * local_mean + (1 - filter_parameter) * data[k]
-            local_variance = filter_parameter * local_variance + (1 - filter_parameter) * (data[k] - local_mean) ** 2
-            threshold = start_stddev * local_variance ** .5
+        if self.parameters['threshold_type'] == 'Absolute Change':
+            threshold_start = self.parameters['absolute_change_start']
+            threshold_end = self.parameters['absolute_change_end']
+            threshold_type = self.THRESHOLD_ABSOLUTE_CHANGE
+        elif self.parameters['threshold_type'] == 'Percentage Change':
+            
+            threshold_type = self.THRESHOLD_PERCENTAGE_CHANGE
+        else: # noise based
+            start_stddev = self.parameters['start_stddev']  # Starting threshold_start parameter
+            end_stddev = self.parameters['end_stddev']  # Ending threshold_start parameter
+            
+            i = 100
+            # initialize mean/variance with first i datapoints
+            for k in range(0, i):
+                local_mean = filter_parameter * local_mean + (1 - filter_parameter) * data[k]
+                local_variance = filter_parameter * local_variance + (1 - filter_parameter) * (data[k] - local_mean) ** 2
+    
+            # distance from mean to define an event.  noise based unless otherwise chosen.
+            threshold_start = start_stddev * local_variance ** .5
+            threshold_end = data[0]
+            threshold_type = self.THRESHOLD_NOISE_BASED
+
         
         save_file = {}
         save_file['Events'] = []
@@ -122,31 +144,32 @@ class AnalyzeDataThread(QtCore.QThread):
         isEvent = False
         wasEventPositive = False # Was the event an up spike?
         # search for events.  Keep track of filter_parameter filtered local (adapting!) mean and variance,
-        # and use them to decide filter_parameter threshold for events.  See
+        # and use them to decide filter_parameter threshold_start for events.  See
         # http://pubs.rsc.org/en/content/articlehtml/2012/nr/c2nr30951c for more details.
         while i < n:
             # could this be an event?
             event_start = 0
             event_end = 0
             # Detecting a negative event
-            if (directionNegative and data[i] < local_mean - threshold):
+            if (directionNegative and data[i] < local_mean - threshold_start):
                 isEvent = True
                 wasEventPositive = False
             # Detecting a positive event
-            elif (directionPositive and data[i] > local_mean + threshold):
+            elif (directionPositive and data[i] > local_mean + threshold_start):
                 isEvent = True
                 wasEventPositive = True
             if isEvent:
                 isEvent = False
-                # Set ending threshold
-                threshold = end_stddev * local_variance ** .5 
+                # Set ending threshold_start
+                if threshold_type == self.THRESHOLD_NOISE_BASED:
+                    threshold_end = end_stddev * local_variance ** .5 
                 event_start = i
                 done = False
                 event_i = i
                 # loop until event ends
                 while not done and event_i - event_start < max_event_steps:
                     event_i = event_i + 1
-                    if (not wasEventPositive and data[event_i] > local_mean - threshold) or (wasEventPositive and data[event_i] < local_mean + threshold):
+                    if (not wasEventPositive and data[event_i] > local_mean - threshold_end) or (wasEventPositive and data[event_i] < local_mean + threshold_end):
                         event_end = event_i - 1
                         done = True
                         break
@@ -169,7 +192,8 @@ class AnalyzeDataThread(QtCore.QThread):
                     event_count = event_count + 1
             local_mean = filter_parameter * local_mean + (1 - filter_parameter) * data[i]
             local_variance = filter_parameter * local_variance + (1 - filter_parameter) * (data[i] - local_mean) ** 2
-            threshold = start_stddev * local_variance ** .5 
+            if threshold_type == self.THRESHOLD_NOISE_BASED:
+                threshold_start = start_stddev * local_variance ** .5 
             i = i + 1
             if i % 50000 == 0:
                 self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'status_text': 'Event Count: ' + str(event_count) + ' Percent Done: ' + str(100.*i / n)})
