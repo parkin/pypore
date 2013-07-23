@@ -208,16 +208,24 @@ class MyApp(QtGui.QMainWindow):
         noise_based_options_layout.addRow('End StdDev:', self.threshold_stdev_end)
         
         absolute_drop_options_layout = QtGui.QFormLayout()
-        self.absolute_change_edit = QtGui.QLineEdit()
-        self.absolute_change_edit.setValidator(QtGui.QDoubleValidator(-9999,9999,9))
-        self.absolute_change_edit.setText('0.1')
-        absolute_drop_options_layout.addRow('Absolute Change [uA]:', self.absolute_change_edit)
+        self.absolute_change_start_edit = QtGui.QLineEdit()
+        self.absolute_change_start_edit.setValidator(QtGui.QDoubleValidator(-9999,9999,9))
+        self.absolute_change_start_edit.setText('0.1')
+        absolute_drop_options_layout.addRow('Absolute Change Start [uA]:', self.absolute_change_start_edit)
+        self.absolute_change_end_edit = QtGui.QLineEdit()
+        self.absolute_change_end_edit.setValidator(QtGui.QDoubleValidator(-9999,9999,9))
+        self.absolute_change_end_edit.setText('0.0')
+        absolute_drop_options_layout.addRow('Absolute Change End [uA]:', self.absolute_change_end_edit)
         
         percentage_change_options_layout = QtGui.QFormLayout()
-        self.percentage_change_edit = QtGui.QLineEdit()
-        self.percentage_change_edit.setValidator(QtGui.QDoubleValidator(0,9999,5))
-        self.percentage_change_edit.setText('10.0')
-        percentage_change_options_layout.addRow('Percent Change:', self.percentage_change_edit)
+        self.percentage_change_start_edit = QtGui.QLineEdit()
+        self.percentage_change_start_edit.setValidator(QtGui.QDoubleValidator(0,9999,5))
+        self.percentage_change_start_edit.setText('10.0')
+        percentage_change_options_layout.addRow('Percent Change Start:', self.percentage_change_start_edit)
+        self.percentage_change_end_edit = QtGui.QLineEdit()
+        self.percentage_change_end_edit.setValidator(QtGui.QDoubleValidator(0,9999,5))
+        self.percentage_change_end_edit.setText('0.0')
+        percentage_change_options_layout.addRow('Percent Change End:', self.percentage_change_end_edit)
         
         noise_based_options = QtGui.QWidget()
         noise_based_options.setLayout(noise_based_options_layout)
@@ -468,14 +476,22 @@ class MyApp(QtGui.QMainWindow):
                 parameters['error'] = 'Could not read float from End StdDev text box.  Please fix.'
         elif parameters['threshold_type'] == 'Absolute Change':
             try:
-                parameters['absolute_change'] = float(self.absolute_change_edit.text())
+                parameters['absolute_change_start'] = float(self.absolute_change_start_edit.text())
             except ValueError:
-                parameters['error'] = 'Could not read float from Absolute Change.  Please fix.'
+                parameters['error'] = 'Could not read float from Absolute Change Start.  Please fix.'
+            try:
+                parameters['absolute_change_end'] = float(self.absolute_change_end_edit.text())
+            except ValueError:
+                parameters['error'] = 'Could not read float from Absolute Change End.  Please fix.'
         elif parameters['threshold_type'] == 'Percentage Change':
             try:
-                parameters['percent_change'] = float(self.percentage_change_edit.text())
+                parameters['percent_change_start'] = float(self.percentage_change_start_edit.text())
             except ValueError:
-                parameters['error'] = 'Could not read float from Percent Change text box.  Please fix.'
+                parameters['error'] = 'Could not read float from Percent Change Start text box.  Please fix.'
+            try:
+                parameters['percent_change_end'] = float(self.percentage_change_end_edit.text())
+            except ValueError:
+                parameters['error'] = 'Could not read float from Percet Change End text box.  Please fix.'
         
         return parameters
         
