@@ -87,11 +87,17 @@ class AnalyzeDataThread(QtCore.QThread):
         max_event_steps = int(self.parameters['max_event_length'] * 1e-6 / timestep)
         
         # Threshold direction.  -1 for negative, 0 for both, +1 for positive
-        direction = 0
+        directionPositive = False
+        directionNegative = False
         if self.parameters['threshold_direction'] == 'Positive':
-            direction = 1
+            directionPositive = True
         elif self.parameters['threshold_direction'] == 'Negative':
-            direction = -1
+            directionNegative = True
+        elif self.parameters['threshold_direction'] == 'Both':
+            directionNegative = True
+            directionPositive = True
+            
+        print 'pos:', directionPositive, 'neg:', directionNegative
         
         
         n = len(data)
@@ -104,6 +110,8 @@ class AnalyzeDataThread(QtCore.QThread):
         start_stddev = self.parameters['start_stddev']  # Starting threshold parameter
         end_stddev = self.parameters['end_stddev']  # Ending threshold parameter
         filter_parameter = self.parameters['filter_parameter'] # filter parameter 'a'
+        
+        # distance from mean to define an event
         threshold = data[0]
         
         i = 100
@@ -111,13 +119,15 @@ class AnalyzeDataThread(QtCore.QThread):
         for k in range(0, i):
             local_mean = filter_parameter * local_mean + (1 - filter_parameter) * data[k]
             local_variance = filter_parameter * local_variance + (1 - filter_parameter) * (data[k] - local_mean) ** 2
-            threshold = local_mean - start_stddev * local_variance ** .5
+            threshold = start_stddev * local_variance ** .5
         
         save_file = {}
         save_file['Events'] = []
         
         n = len(data)
         event_count = 0
+        isEvent = False
+        wasEventPositive = False # Was the event an up spike?
         # search for events.  Keep track of filter_parameter filtered local (adapting!) mean and variance,
         # and use them to decide filter_parameter threshold for events.  See
         # http://pubs.rsc.org/en/content/articlehtml/2012/nr/c2nr30951c for more details.
@@ -125,19 +135,29 @@ class AnalyzeDataThread(QtCore.QThread):
             # could this be an event?
             event_start = 0
             event_end = 0
-            # is event?
-            if data[i] < threshold:
+            # Detecting a negative event
+            if (directionNegative and data[i] < local_mean - threshold):
+                isEvent = True
+                wasEventPositive = False
+            # Detecting a positive event
+            elif (directionPositive and data[i] > local_mean + threshold):
+                isEvent = True
+                wasEventPositive = True
+            if isEvent:
+                isEvent = False
                 # Set ending threshold
-                threshold = local_mean - end_stddev * local_variance ** .5 
+                threshold = end_stddev * local_variance ** .5 
                 event_start = i
                 done = False
                 event_i = i
                 # loop until event ends
-                while not done and (event_i) - event_start < max_event_steps:
-                    if data[event_i] > threshold:
+                while not done and event_i - event_start < max_event_steps:
+                    event_i = event_i + 1
+                    print event_i
+                    if (not wasEventPositive and data[event_i] > local_mean - threshold) or (wasEventPositive and data[event_i] < local_mean + threshold):
                         event_end = event_i - 1
+                        done = True
                         break
-                    event_i = event_i + 1 
                 # is the event long enough?
                 if event_end - event_start > min_event_steps:
                     i = event_end
@@ -159,7 +179,7 @@ class AnalyzeDataThread(QtCore.QThread):
                     event_count = event_count + 1
             local_mean = filter_parameter * local_mean + (1 - filter_parameter) * data[i]
             local_variance = filter_parameter * local_variance + (1 - filter_parameter) * (data[i] - local_mean) ** 2
-            threshold = local_mean - start_stddev * local_variance ** .5 
+            threshold = start_stddev * local_variance ** .5 
             i = i + 1
             if i % 50000 == 0:
                 self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'status_text': 'Event Count: ' + str(event_count) + ' Percent Done: ' + str(100.*i / n)})
@@ -326,7 +346,7 @@ class MyApp(QtGui.QMainWindow):
         self.filter_parameter_edit = QtGui.QLineEdit()
         self.filter_parameter_edit.setValidator(QtGui.QDoubleValidator(0, 10, 5))
         self.filter_parameter_edit.setText('0.93') 
-        adaptive_options_layout.addRow('Filter Parameter \'filter_parameter\':', self.filter_parameter_edit)
+        adaptive_options_layout.addRow('Filter Parameter \'a\':', self.filter_parameter_edit)
         # need to cast to widget to add to QStackedLayout
         adaptive_options_widget = QtGui.QWidget()
         adaptive_options_widget.setLayout(adaptive_options_layout)
