@@ -225,7 +225,6 @@ class AnalyzeDataThread(QtCore.QThread):
                     print 'Number of level_values:', n_levels
                     # CUSUM stuff
                     level_values = [] # Holds the current values of the level_values
-                    levels = range(event_start,event_end)
                     for q in range(0,n_levels):
                         start_index = event_start
                         if q > 0:
@@ -234,9 +233,6 @@ class AnalyzeDataThread(QtCore.QThread):
                         if q < n_levels-1:
                             end_index = level_start_times[q]
                         level_values.append(np.mean(data[start_index:end_index]))
-                        print 'Level value:', level_values[q]
-                        for r in range(0,(start_index-end_index+1)):
-                            levels[r] = level_values[q]
                     # end CUSUM
                     self.plot_options['plot_range'] = [event_start - 50, event_end + 50]
                     self.plot_options['show_event'] = True
@@ -251,7 +247,6 @@ class AnalyzeDataThread(QtCore.QThread):
                     event['sample_rate'] = sample_rate
                     event['cusum_indexes'] = level_start_times
                     event['cusum_values'] = level_values
-                    event['cusum_levels_data'] = levels
                     self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'plot_options': self.plot_options, 'event': event})
                     save_file['Events'].append(event)
                     event_count = event_count + 1

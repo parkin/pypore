@@ -374,7 +374,6 @@ class MyApp(QtGui.QMainWindow):
             print 'incorrectly called plotEventOnMainPlot.  Need \'raw_data\', \'sample_rate\', \'cusum_levels_data\', and \'event_start\'' 
             return
         data = event['raw_data']
-        levels_data = event['cusum_levels_data']
         levels_index = event['cusum_indexes']
         levels_values = event['cusum_values']
         sample_rate = event['sample_rate']
