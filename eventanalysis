@@ -370,21 +370,39 @@ class MyApp(QtGui.QMainWindow):
         Adds an event to the main current trace plot.  
         Pass in filter_parameter dictionary with 'event_data', 'sample_rate', 'event_start'
         '''
-        if not 'raw_data' in event or not 'sample_rate' in event or not 'event_start' in event or not 'raw_points_per_side':
-            print 'incorrectly called plotEventOnMainPlot.  Need \'raw_data\', \'sample_rate\', and \'event_start\'' 
+        if not 'raw_data' in event or not 'sample_rate' in event or not 'event_start' in event or not 'raw_points_per_side' or not 'cusum_levels_data' in event:
+            print 'incorrectly called plotEventOnMainPlot.  Need \'raw_data\', \'sample_rate\', \'cusum_levels_data\', and \'event_start\'' 
             return
         data = event['raw_data']
+        levels_data = event['cusum_levels_data']
+        levels_index = event['cusum_indexes']
+        levels_values = event['cusum_values']
         sample_rate = event['sample_rate']
         event_start = event['event_start']
+        event_end = event['event_end']
+        baseline = event['baseline']
         raw_points_per_side = event['raw_points_per_side']
         
         Ts = 1 / sample_rate
         
         times = arange(Ts * (event_start - raw_points_per_side), Ts * (event_start - raw_points_per_side + len(data) - 1), Ts)
+        times2 = [event_start*Ts]
+        levels2 = [levels_values[0]]
+        for i in range(1,len(levels_values)):
+            times2.append(levels_index[i-1]*Ts)
+            levels2.append(levels_values[i-1])
+            times2.append(levels_index[i-1]*Ts)
+            levels2.append(levels_values[i])
+        times2.append(event_end*Ts)
+        levels2.append(levels_values[len(levels_values)-1])
         curve = Qwt.QwtPlotCurve('Event')
         curve.setPen(Qt.QPen(QtCore.Qt.green))
         curve.setData(times, data)
         curve.attach(self.plot)
+        curve2 = Qwt.QwtPlotCurve('Levels')
+        curve2.setPen(Qt.QPen(QtCore.Qt.blue))
+        curve2.setData(times2, levels2)
+        curve2.attach(self.plot)
         self.plot.replot()
         
     def on_analyze_stop(self):

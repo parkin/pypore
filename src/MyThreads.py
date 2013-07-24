@@ -164,8 +164,21 @@ class AnalyzeDataThread(QtCore.QThread):
                 if threshold_type == self.THRESHOLD_NOISE_BASED:
                     threshold_end = end_stddev * local_variance ** .5 
                 event_start = i
+                event_end = i+1
                 done = False
                 event_i = i
+                # CUSUM stuff
+                mean_estimate = data[i]
+                level_start_times = []
+                sn = sp = Sn = Sp = Gn = Gp = var_estimate = 0
+                n_levels = 1 # We're already starting with one level
+                delta = 0.1
+                h = delta/(local_variance)**.5
+                print 'h', h
+                min_index_p = min_index_n = i
+                min_Sp = min_Sn = 99999
+                ko = i
+                
                 # loop until event ends
                 while not done and event_i - event_start < max_event_steps:
                     event_i = event_i + 1
@@ -173,9 +186,58 @@ class AnalyzeDataThread(QtCore.QThread):
                         event_end = event_i - 1
                         done = True
                         break
-                # is the event long enough?
-                if event_end - event_start > min_event_steps:
+                    # new mean = old_mean + (new_sample - old_mean)/(N)
+                    new_mean = mean_estimate + (data[event_i]-mean_estimate)/(1+event_i-ko)
+                    # New variance recursion relation 
+                    var_estimate = ((event_i - ko)*var_estimate + (data[event_i]-mean_estimate)*(data[event_i] - new_mean))/(1+event_i-ko)
+                    mean_estimate = new_mean
+                    sp = (delta/var_estimate)*(data[event_i] - mean_estimate - delta/2)
+                    sn = -(delta/var_estimate)*(data[event_i] - mean_estimate + delta/2)
+                    Sp = Sp + sp
+                    Sn = Sn + sn
+                    Gp = max(0, Gp+sp)
+                    Gn = max(0, Gn+sn)
+                    if Sp < min_Sp:
+                        min_Sp = Sp
+                        min_index_p = event_i
+                    if Sn < min_Sn:
+                        min_Sn = Sn
+                        min_index_n = event_i
+                    # Did we detect a change?
+                    if Gp > h or Gn > h:
+                        level_start_times.append(min_index_n)
+                        if Gp > h:
+                            level_start_times[n_levels-1] = min_index_p
+                        n_levels = n_levels + 1
+                        # reset stuff
+                        mean_estimate = data[i]
+                        sn = sp = Sn = Sp = Gn = Gp = var_estimate = 0
+                        min_index_p = min_index_n = event_i
+                        min_Sp = min_Sn = 99999
+                        ko = event_i
+                        
+                    
+                
+                if event_end - event_start < max_event_steps:
                     i = event_end
+                # is the event long enough?
+                if done and event_end - event_start > min_event_steps:
+                    print 'Number of level_values:', n_levels
+                    # CUSUM stuff
+                    level_values = [] # Holds the current values of the level_values
+                    levels = range(event_start,event_end)
+                    for q in range(0,n_levels):
+                        start_index = event_start
+                        if q > 0:
+                            start_index = level_start_times[q-1]
+                        end_index = event_end
+                        if q < n_levels-1:
+                            end_index = level_start_times[q]
+                        level_values.append(np.mean(data[start_index:end_index]))
+                        print 'Level value:', level_values[q]
+                        for r in range(0,(start_index-end_index+1)):
+                            levels[r] = level_values[q]
+                    # end CUSUM
                     self.plot_options['plot_range'] = [event_start - 50, event_end + 50]
                     self.plot_options['show_event'] = True
                     event = {}
@@ -187,6 +249,9 @@ class AnalyzeDataThread(QtCore.QThread):
                     event['event_end'] = event_end
                     event['raw_points_per_side'] = 50
                     event['sample_rate'] = sample_rate
+                    event['cusum_indexes'] = level_start_times
+                    event['cusum_values'] = level_values
+                    event['cusum_levels_data'] = levels
                     self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'plot_options': self.plot_options, 'event': event})
                     save_file['Events'].append(event)
                     event_count = event_count + 1
