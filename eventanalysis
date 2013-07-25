@@ -14,7 +14,6 @@ import scipy.io as sio
 import numpy as np
 from MyThreads import AnalyzeDataThread, PlotThread
 
-
 class MyApp(QtGui.QMainWindow):
     
     def __init__(self, parent=None):
@@ -357,6 +356,10 @@ class MyApp(QtGui.QMainWindow):
         curve = Qwt.QwtPlotCurve("Current Trace")
         curve.setData(times, data[plot_range[0]:plot_range[1]])
         curve.attach(axes)
+        # TODO fix differences in size of x and y array
+        print 'rangex:', len(times), 'rangey:',len(data[plot_range[0]:(plot_range[1]+1)])
+        print 'x1', curve.x(curve.dataSize()-1)
+        print 'x2', times[len(times)-1]
         axes.replot()
         # Set the top of the zoom stack to current plot, if wanted.  False means no replot (we just plotted it!)
         if 'set_zoom_base' in plot_options:
@@ -364,6 +367,13 @@ class MyApp(QtGui.QMainWindow):
                 self.zoomer.setZoomBase(False)
         else:
             self.zoomer.setZoomBase(False)
+        
+        print 'items:', self.plot.itemList()
+            
+    def addEventToConcatEventPlot(self, event):
+        '''
+        Adds an event to the concatenated events plot.
+        '''
             
     def plotEventOnMainPlot(self, event):
         '''
@@ -516,14 +526,12 @@ class MyApp(QtGui.QMainWindow):
         
         return parameters
         
-        
-        
-        
     def _analyze_data_thread_callback(self, results):
         if 'status_text' in results:
             self.status_text.setText(results['status_text'])
         if 'event' in results:
             self.plotEventOnMainPlot(results['event'])
+            self.addEventToConcatEventPlot(results['event'])
         if 'plot_options' in results:
             self.plotData(results['plot_options'])
         if 'done' in results:
