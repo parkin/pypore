@@ -5,7 +5,9 @@ This project is for translocation event finding/analysis.  The aim is to use onl
 To run, in shell do './eventanalysis'
 
 # TODO
-* Finish on-analyze
-* Put in boxes for threshold (nA or noise based) and (positive or negative)
-* Make the bigger to fit multiple plots
+* Use one file format for data files.  Make a tool for converting other files, like Heka or Chimera or others.
+* Allow user to only analyze a section of the graph by highlighting the graph.
+* Allow user to calculate the baseline by highlighting a section of the graph.
+* Make more interactive tools for the graphs
 * Make it possible to choose different algorithms (event finding, etc.) or import your own.
+
