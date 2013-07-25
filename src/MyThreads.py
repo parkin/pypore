@@ -271,6 +271,8 @@ class AnalyzeDataThread(QtCore.QThread):
             save_file['filename'] = "".join(save_file_name)
             save_file['sample_rate'] = sample_rate
             save_file['event_count'] = event_count
+            # save the user's analysis parameters
+            save_file['parameters'] = self.parameters
             sio.savemat(save_file['filename'], save_file)
             
         self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'status_text': 'Done. Found ' + str(event_count) + ' events.  Saved database to ' + str(save_file['filename']), 'done': True})  
