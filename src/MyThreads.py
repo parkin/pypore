@@ -10,6 +10,7 @@ from PyQt4 import QtCore
 from DataFileOpener import openData
 import scipy.io as sio
 import numpy as np
+import datetime
 
 class PlotThread(QtCore.QThread):
     def __init__(self, axes, datadict='', plot_range='all', filename='',
@@ -264,10 +265,12 @@ class AnalyzeDataThread(QtCore.QThread):
             for i in range(0, 4):
                 save_file_name.pop()
                 
-            save_file_name.append('_Events.mat')
+            # Get a string with the current year/month/day/hour/minute to label the file
+            day_time = datetime.datetime.now().strftime("%Y%m%d_%H%M")
+            save_file_name.append('_Events_' + day_time + '.mat')
             save_file['filename'] = "".join(save_file_name)
             save_file['sample_rate'] = sample_rate
             save_file['event_count'] = event_count
             sio.savemat(save_file['filename'], save_file)
             
-        self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'status_text': 'Done. Found ' + str(event_count) + ' events.', 'done': True})  
+        self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'status_text': 'Done. Found ' + str(event_count) + ' events.  Saved database to ' + str(save_file['filename']), 'done': True})  
