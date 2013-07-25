@@ -174,7 +174,6 @@ class AnalyzeDataThread(QtCore.QThread):
                 n_levels = 1 # We're already starting with one level
                 delta = 0.1
                 h = delta/(local_variance)**.5
-                print 'h', h
                 min_index_p = min_index_n = i
                 min_Sp = min_Sn = 99999
                 ko = i
@@ -205,8 +204,10 @@ class AnalyzeDataThread(QtCore.QThread):
                         min_index_n = event_i
                     # Did we detect a change?
                     if Gp > h or Gn > h:
+                        minindex = min_index_n
                         level_start_times.append(min_index_n)
                         if Gp > h:
+                            minindex = min_index_p
                             level_start_times[n_levels-1] = min_index_p
                         n_levels = n_levels + 1
                         # reset stuff
@@ -214,8 +215,8 @@ class AnalyzeDataThread(QtCore.QThread):
                         sn = sp = Sn = Sp = Gn = Gp = var_estimate = 0
                         min_index_p = min_index_n = event_i
                         min_Sp = min_Sn = 99999
-                        ko = event_i
-                        
+                        # Go back to 1 after the level change found
+                        ko = event_i = minindex+1
                     
                 
                 if event_end - event_start < max_event_steps:
@@ -258,7 +259,7 @@ class AnalyzeDataThread(QtCore.QThread):
             if i % 50000 == 0:
                 self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'status_text': 'Event Count: ' + str(event_count) + ' Percent Done: ' + str(100.*i / n)})
         if event_count > 0:
-            save_file_name = list(self.filename)
+            save_file_name = list(self.parameters['filename'])
             # Remove the .mat off the end
             for i in range(0, 4):
                 save_file_name.pop()

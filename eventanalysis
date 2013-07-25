@@ -170,7 +170,7 @@ class MyApp(QtGui.QMainWindow):
         
         fixed_options_layout = QtGui.QFormLayout()
         self.baseline_current_edit = QtGui.QLineEdit()
-        self.baseline_current_edit.setValidator(QtGui.QDoubleValidator(-9999,9999,9))
+        self.baseline_current_edit.setValidator(QtGui.QDoubleValidator(-9999, 9999, 9))
         self.baseline_current_edit.setText('0.0')
         fixed_options_layout.addRow('Baseline Current:', self.baseline_current_edit)
         fixed_options_widget = QtGui.QWidget()
@@ -199,31 +199,31 @@ class MyApp(QtGui.QMainWindow):
         
         noise_based_options_layout = QtGui.QFormLayout()
         self.threshold_stdev_start = QtGui.QLineEdit()
-        self.threshold_stdev_start.setValidator(QtGui.QDoubleValidator(-9999,9999,4))
+        self.threshold_stdev_start.setValidator(QtGui.QDoubleValidator(-9999, 9999, 4))
         self.threshold_stdev_start.setText('5.0')
         noise_based_options_layout.addRow('Start StdDev:', self.threshold_stdev_start)
         self.threshold_stdev_end = QtGui.QLineEdit()
-        self.threshold_stdev_end.setValidator(QtGui.QDoubleValidator(-9999,9999,4))
+        self.threshold_stdev_end.setValidator(QtGui.QDoubleValidator(-9999, 9999, 4))
         self.threshold_stdev_end.setText('1.0')
         noise_based_options_layout.addRow('End StdDev:', self.threshold_stdev_end)
         
         absolute_drop_options_layout = QtGui.QFormLayout()
         self.absolute_change_start_edit = QtGui.QLineEdit()
-        self.absolute_change_start_edit.setValidator(QtGui.QDoubleValidator(-9999,9999,9))
+        self.absolute_change_start_edit.setValidator(QtGui.QDoubleValidator(-9999, 9999, 9))
         self.absolute_change_start_edit.setText('0.1')
         absolute_drop_options_layout.addRow('Absolute Change Start [uA]:', self.absolute_change_start_edit)
         self.absolute_change_end_edit = QtGui.QLineEdit()
-        self.absolute_change_end_edit.setValidator(QtGui.QDoubleValidator(-9999,9999,9))
+        self.absolute_change_end_edit.setValidator(QtGui.QDoubleValidator(-9999, 9999, 9))
         self.absolute_change_end_edit.setText('0.0')
         absolute_drop_options_layout.addRow('Absolute Change End [uA]:', self.absolute_change_end_edit)
         
         percentage_change_options_layout = QtGui.QFormLayout()
         self.percentage_change_start_edit = QtGui.QLineEdit()
-        self.percentage_change_start_edit.setValidator(QtGui.QDoubleValidator(0,9999,5))
+        self.percentage_change_start_edit.setValidator(QtGui.QDoubleValidator(0, 9999, 5))
         self.percentage_change_start_edit.setText('10.0')
         percentage_change_options_layout.addRow('Percent Change Start:', self.percentage_change_start_edit)
         self.percentage_change_end_edit = QtGui.QLineEdit()
-        self.percentage_change_end_edit.setValidator(QtGui.QDoubleValidator(0,9999,5))
+        self.percentage_change_end_edit.setValidator(QtGui.QDoubleValidator(0, 9999, 5))
         self.percentage_change_end_edit.setText('0.0')
         percentage_change_options_layout.addRow('Percent Change End:', self.percentage_change_end_edit)
         
@@ -370,8 +370,8 @@ class MyApp(QtGui.QMainWindow):
         Adds an event to the main current trace plot.  
         Pass in filter_parameter dictionary with 'event_data', 'sample_rate', 'event_start'
         '''
-        if not 'raw_data' in event or not 'sample_rate' in event or not 'event_start' in event or not 'raw_points_per_side' or not 'cusum_levels_data' in event:
-            print 'incorrectly called plotEventOnMainPlot.  Need \'raw_data\', \'sample_rate\', \'cusum_levels_data\', and \'event_start\'' 
+        if not 'raw_data' in event or not 'sample_rate' in event or not 'event_start' in event or not 'raw_points_per_side' or not 'cusum_indexes' in event or not 'cusum_values' in event:
+            print 'incorrectly called plotEventOnMainPlot.  Need \'raw_data\', \'sample_rate\', \'cusum_indexes\', \'cusum_values\', and \'event_start\'' 
             return
         data = event['raw_data']
         levels_index = event['cusum_indexes']
@@ -385,15 +385,19 @@ class MyApp(QtGui.QMainWindow):
         Ts = 1 / sample_rate
         
         times = arange(Ts * (event_start - raw_points_per_side), Ts * (event_start - raw_points_per_side + len(data) - 1), Ts)
-        times2 = [event_start*Ts]
-        levels2 = [levels_values[0]]
-        for i in range(1,len(levels_values)):
-            times2.append(levels_index[i-1]*Ts)
-            levels2.append(levels_values[i-1])
-            times2.append(levels_index[i-1]*Ts)
+        times2 = [(event_start - raw_points_per_side) * Ts, (event_start-1)*Ts, event_start*Ts]
+        levels2 = [baseline, baseline, levels_values[0]]
+        for i in range(1, len(levels_values)):
+            times2.append(levels_index[i - 1] * Ts)
+            levels2.append(levels_values[i - 1])
+            times2.append((levels_index[i - 1]+1) * Ts)
             levels2.append(levels_values[i])
-        times2.append(event_end*Ts)
-        levels2.append(levels_values[len(levels_values)-1])
+        times2.append(event_end * Ts)
+        levels2.append(levels_values[len(levels_values) - 1])
+        times2.append((event_end + 1)* Ts)
+        levels2.append(baseline)
+        times2.append((event_end + raw_points_per_side)* Ts)
+        levels2.append(baseline)
         curve = Qwt.QwtPlotCurve('Event')
         curve.setPen(Qt.QPen(QtCore.Qt.green))
         curve.setData(times, data)
@@ -508,7 +512,7 @@ class MyApp(QtGui.QMainWindow):
             try:
                 parameters['percent_change_end'] = float(self.percentage_change_end_edit.text())
             except ValueError:
-                parameters['error'] = 'Could not read float from Percet Change End text box.  Please fix.'
+                parameters['error'] = 'Could not read float from Percent Change End text box.  Please fix.'
         
         return parameters
         
