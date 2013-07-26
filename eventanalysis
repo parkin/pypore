@@ -379,6 +379,7 @@ class MyApp(QtGui.QMainWindow):
         if len(items) > 0:
             # Get the most recent curve added
             prev_curve = items[len(items)-1]
+            # Get the time of the last data point in the previous curve
             last_time = prev_curve.x(prev_curve.dataSize()-1)
             times = times + last_time + 1/sample_rate
         curve.setData(times, data)
@@ -528,7 +529,7 @@ class MyApp(QtGui.QMainWindow):
                 parameters['absolute_change_end'] = float(self.absolute_change_end_edit.text())
             except ValueError:
                 parameters['error'] = 'Could not read float from Absolute Change End.  Please fix.'
-        elif parameters['threshold_type'] == 'Percentage Change':
+        elif parameters['threshold_type'] == 'Percent Change':
             try:
                 parameters['percent_change_start'] = float(self.percentage_change_start_edit.text())
             except ValueError:

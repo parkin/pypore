@@ -118,7 +118,7 @@ class AnalyzeDataThread(QtCore.QThread):
             threshold_start = self.parameters['absolute_change_start']
             threshold_end = self.parameters['absolute_change_end']
             threshold_type = self.THRESHOLD_ABSOLUTE_CHANGE
-        elif self.parameters['threshold_type'] == 'Percentage Change':
+        elif self.parameters['threshold_type'] == 'Percent Change':
             
             threshold_type = self.THRESHOLD_PERCENTAGE_CHANGE
         else: # noise based
@@ -151,6 +151,8 @@ class AnalyzeDataThread(QtCore.QThread):
             # could this be an event?
             event_start = 0
             event_end = 0
+            if threshold_type == self.THRESHOLD_PERCENTAGE_CHANGE:
+                threshold_start = local_mean * self.parameters['percent_change_start']/100.
             # Detecting a negative event
             if (directionNegative and data[i] < local_mean - threshold_start):
                 isEvent = True
@@ -161,9 +163,11 @@ class AnalyzeDataThread(QtCore.QThread):
                 wasEventPositive = True
             if isEvent:
                 isEvent = False
-                # Set ending threshold_start
+                # Set ending threshold_end
                 if threshold_type == self.THRESHOLD_NOISE_BASED:
                     threshold_end = end_stddev * local_variance ** .5 
+                elif threshold_type == self.THRESHOLD_PERCENTAGE_CHANGE:
+                    threshold_end = local_mean * self.parameters['percent_change_end'] / 100.
                 event_start = i
                 event_end = i+1
                 done = False
