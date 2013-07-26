@@ -346,20 +346,16 @@ class MyApp(QtGui.QMainWindow):
         if plot_range == 'all' or len(plot_range) != 2 or plot_range[1] <= plot_range[0]:
             plot_range = [0, n]
         else:  # no problems!
-            n = plot_range[1] - plot_range[0]
+            n = plot_range[1] - plot_range[0] + 1
     
         axes.clear()
         Ts = 1 / sample_rate
         
-        times = arange(Ts * plot_range[0], Ts * plot_range[1], Ts)
+        times = arange(Ts * plot_range[0], Ts * (plot_range[1]+1), Ts)
         
         curve = Qwt.QwtPlotCurve("Current Trace")
-        curve.setData(times, data[plot_range[0]:plot_range[1]])
+        curve.setData(times, data[plot_range[0]:(plot_range[1]+1)])
         curve.attach(axes)
-        # TODO fix differences in size of x and y array
-        print 'rangex:', len(times), 'rangey:',len(data[plot_range[0]:(plot_range[1]+1)])
-        print 'x1', curve.x(curve.dataSize()-1)
-        print 'x2', times[len(times)-1]
         axes.replot()
         # Set the top of the zoom stack to current plot, if wanted.  False means no replot (we just plotted it!)
         if 'set_zoom_base' in plot_options:
@@ -368,12 +364,30 @@ class MyApp(QtGui.QMainWindow):
         else:
             self.zoomer.setZoomBase(False)
         
-        print 'items:', self.plot.itemList()
-            
     def addEventToConcatEventPlot(self, event):
         '''
         Adds an event to the concatenated events plot.
         '''
+        items = self.plot_concatevents.itemList()
+        data = event['raw_data']
+        curve = Qwt.QwtPlotCurve('Concat Event ' + str(len(items)+1))
+        sample_rate = event['sample_rate']
+        baseline = event['baseline']
+        #  move the baseline to zero
+        data = data - baseline
+        times = arange(0, len(data))/sample_rate
+        if len(items) > 0:
+            # Get the most recent curve added
+            prev_curve = items[len(items)-1]
+            last_time = prev_curve.x(prev_curve.dataSize()-1)
+            times = times + last_time + 1/sample_rate
+        curve.setData(times, data)
+        if len(items) % 2 == 0 :
+            curve.setPen(Qt.QPen(QtCore.Qt.green))
+        else:
+            curve.setPen(Qt.QPen(QtCore.Qt.blue))
+        curve.attach(self.plot_concatevents)
+        self.plot_concatevents.replot()
             
     def plotEventOnMainPlot(self, event):
         '''
