@@ -114,17 +114,17 @@ class PrintFilter(QwtPlotPrintFilter):
 
     # __init___()
     
-    def color(self, c, item):
+    def color(self, c, pair):
         if not (self.options() & QwtPlotPrintFilter.CanvasBackground):
-            if item == QwtPlotPrintFilter.MajorGrid:
+            if pair == QwtPlotPrintFilter.MajorGrid:
                 return Qt.darkGray
-            elif item == QwtPlotPrintFilter.MinorGrid:
+            elif pair == QwtPlotPrintFilter.MinorGrid:
                 return Qt.gray
-        if item == QwtPlotPrintFilter.Title:
+        if pair == QwtPlotPrintFilter.Title:
             return Qt.red
-        elif item == QwtPlotPrintFilter.AxisScale:
+        elif pair == QwtPlotPrintFilter.AxisScale:
             return Qt.green
-        elif item == QwtPlotPrintFilter.AxisTitle:
+        elif pair == QwtPlotPrintFilter.AxisTitle:
             return Qt.blue
         return c
 

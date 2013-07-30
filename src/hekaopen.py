@@ -7,15 +7,19 @@ Created on Jul 29, 2013
 
 import numpy as np
 
-encoding_dict = [[np.dtype(np.uint8), 1], [np.dtype(np.uint16), 2], [np.dtype(np.uint32), 4], [np.dtype(np.int8), 1], [np.dtype(np.int16), 2], [np.dtype(np.int32), 4], [np.dtype(np.single), 4], [np.dtype(np.double), 8]]
+encodings = [np.dtype(np.uint8), np.dtype(np.uint16), np.dtype(np.uint32), np.dtype(np.int8), np.dtype(np.int16), np.dtype(np.int32), np.dtype(np.single), np.dtype(np.double)]
+
+print np.dtype(np.uint8).byteorder
+dt = np.dtype(np.uint32)
+dt = dt.newbyteorder()
+print dt.itemsize
 
 # Starts out little endian for some reason.  Need big-endian.
-for i in encoding_dict:
-    print i
-    i[0] = i[0].newbyteorder()
+for i in range(0, len(encodings)):
+    encodings[i] = encodings[i].newbyteorder()
 
 def getEncoding(integer):
-    return encoding_dict[integer]
+    return encodings[integer]
 
 f = open('/home/parkin/Eclipse/drndiclabworkspace/com.parkin.python.drniclab/data/kim.hkd')
 
@@ -78,8 +82,8 @@ print channel_list
 per_file_params = []
 for pair in per_file_param_list:
     encoding = getEncoding(pair[1])
-    byte = f.read(encoding[1])
-    per_file_params.append([pair[0], np.frombuffer(byte, encoding[0])[0]])
+    byte = f.read(encoding.itemsize)
+    per_file_params.append([pair[0], np.frombuffer(byte, encoding)[0]])
     
 print per_file_params
 
