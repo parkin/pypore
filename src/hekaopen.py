@@ -8,13 +8,13 @@ Created on Jul 29, 2013
 import numpy as np
 import os
 
-def getByteLength(list):
+def getByteLength(param_list):
     '''
     Returns the length in bytes of the sum of all the parameters in the list.
     Here, list[i][0] = param, list[i][1] = np.dtype
     '''
     size = 0
-    for i in list:
+    for i in param_list:
         size = size + i[1].itemsize
     return size
 
@@ -122,3 +122,4 @@ if not remainder == 0:
     print 'Error, data file ends with incomplete block'
 points_per_channel = per_file_params['Points per block'] * num_blocks_in_file
 print 'Number of points per channel:', points_per_channel
+
