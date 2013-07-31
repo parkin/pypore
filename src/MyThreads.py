@@ -271,12 +271,13 @@ class AnalyzeDataThread(QtCore.QThread):
                 save_file_name.pop()
                 
             # Get a string with the current year/month/day/hour/minute to label the file
-            day_time = datetime.datetime.now().strftime("%Y%m%d_%H%M")
+            day_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
             save_file_name.append('_Events_' + day_time + '.mat')
             save_file['filename'] = "".join(save_file_name)
             save_file['sample_rate'] = sample_rate
             save_file['event_count'] = event_count
             # save the user's analysis parameters
+            self.parameters.pop('axes',None) # remove the axes before saving.
             save_file['parameters'] = self.parameters
             sio.savemat(save_file['filename'], save_file)
             
