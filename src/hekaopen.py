@@ -7,6 +7,7 @@ Created on Jul 29, 2013
 
 import numpy as np
 import os
+import pylab as pl
 
 def getByteLength(param_list):
     '''
@@ -87,8 +88,8 @@ print channel_list
 # Read per-file parameters
 per_file_params = {}
 for pair in per_file_param_list:
-    byte = f.read(pair[1].itemsize)
     dt = pair[1]
+    byte = f.read(dt.itemsize)
     per_file_params[pair[0]] = np.frombuffer(byte,dt)[0]
 
 print 'Per-file params: -----------------'   
@@ -121,5 +122,46 @@ remainder = (filesize - per_file_header_length)%total_bytes_per_block
 if not remainder == 0:
     print 'Error, data file ends with incomplete block'
 points_per_channel = per_file_params['Points per block'] * num_blocks_in_file
+points_per_block_per_channel = per_file_params['Points per block']
+print 'Number of blocks in file:', num_blocks_in_file
 print 'Number of points per channel:', points_per_channel
 
+# Read block 
+#
+
+# Read block header
+print 'Read block: ----------------------------'
+per_block_params = {}
+for i in per_block_param_list:
+    dt = i[1]
+    byte = f.read(dt.itemsize)
+    per_block_params[i[0]] = np.frombuffer(byte,dt)[0]
+    
+print 'Per block params:', per_block_params
+
+# Read per channel header
+per_channel_block_params = []
+for j in channel_list:
+    channel_params = {}
+    for i in per_channel_block_param_list:
+        dt = i[1]
+        byte = f.read(dt.itemsize)
+        channel_params[i[0]] = np.frombuffer(byte,dt)[0]
+    per_channel_block_params.append(channel_params)
+
+print 'Per channel params:', per_channel_block_params
+
+# Read data
+data = []
+dt = encodings[4] # int16
+for j in channel_list:
+#     dataj = np.zeros(points_per_block_per_channel)
+    bytes = f.read(dt.itemsize * points_per_block_per_channel)
+    values = np.frombuffer(bytes,dt,-1)*per_channel_block_params[0]['Scale']
+    data.append(values)
+#     for i in range(0,points_per_block_per_channel):
+#         dataj[i] = np.frombuffer()
+print data
+
+pl.plot(data[0])
+pl.show()
