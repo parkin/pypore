@@ -3,3 +3,5 @@
 data/*
 .settings/*
 *.pyc
+src/demos/
+src/demos/*
