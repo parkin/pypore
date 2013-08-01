@@ -11,6 +11,49 @@ import PyQt4.Qwt5 as Qwt
 from scipy import arange
 from MyThreads import AnalyzeDataThread, PlotThread
 
+# zoom picture? copied from BodeDemo
+zoom_xpm = ['32 32 8 1',
+            '# c #000000',
+            'b c #c0c0c0',
+            'a c #ffffff',
+            'e c #585858',
+            'd c #a0a0a4',
+            'c c #0000ff',
+            'f c #00ffff',
+            '. c None',
+            '..######################........',
+            '.#a#baaaaaaaaaaaaaaaaaa#........',
+            '#aa#baaaaaaaaaaaaaccaca#........',
+            '####baaaaaaaaaaaaaaaaca####.....',
+            '#bbbbaaaaaaaaaaaacccaaa#da#.....',
+            '#aaaaaaaaaaaaaaaacccaca#da#.....',
+            '#aaaaaaaaaaaaaaaaaccaca#da#.....',
+            '#aaaaaaaaaabe###ebaaaaa#da#.....',
+            '#aaaaaaaaa#########aaaa#da#.....',
+            '#aaaaaaaa###dbbbb###aaa#da#.....',
+            '#aaaaaaa###aaaaffb###aa#da#.....',
+            '#aaaaaab##aaccaaafb##ba#da#.....',
+            '#aaaaaae#daaccaccaad#ea#da#.....',
+            '#aaaaaa##aaaaaaccaab##a#da#.....',
+            '#aaaaaa##aacccaaaaab##a#da#.....',
+            '#aaaaaa##aaccccaccab##a#da#.....',
+            '#aaaaaae#daccccaccad#ea#da#.....',
+            '#aaaaaab##aacccaaaa##da#da#.....',
+            '#aaccacd###aaaaaaa###da#da#.....',
+            '#aaaaacad###daaad#####a#da#.....',
+            '#acccaaaad##########da##da#.....',
+            '#acccacaaadde###edd#eda#da#.....',
+            '#aaccacaaaabdddddbdd#eda#a#.....',
+            '#aaaaaaaaaaaaaaaaaadd#eda##.....',
+            '#aaaaaaaaaaaaaaaaaaadd#eda#.....',
+            '#aaaaaaaccacaaaaaaaaadd#eda#....',
+            '#aaaaaaaaaacaaaaaaaaaad##eda#...',
+            '#aaaaaacccaaaaaaaaaaaaa#d#eda#..',
+            '########################dd#eda#.',
+            '...#dddddddddddddddddddddd##eda#',
+            '...#aaaaaaaaaaaaaaaaaaaaaa#.####',
+            '...########################..##.']
+
 class MyApp(QtGui.QMainWindow):
     
     def __init__(self, parent=None):
@@ -44,6 +87,11 @@ class MyApp(QtGui.QMainWindow):
                                         Qwt.QwtPicker.AlwaysOff,
                                         self.plot_concatevents.canvas())
         self.zoomer_concatEvents.setRubberBandPen(Qt.QPen(Qt.Qt.black))
+        self.zoomer.setEnabled(False)
+    
+    def zoom(self, on):
+        self.zoomer.setEnabled(on)
+        self.zoomer.zoom(0)
         
     def open_files(self):
         '''
@@ -51,7 +99,7 @@ class MyApp(QtGui.QMainWindow):
         '''
         self.listWidget.clear()
 
-        fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open file', 'data')
+        fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open file', '../data')
         areFilesOpened = False
         for w in fnames:
             areFilesOpened = True
@@ -99,6 +147,20 @@ class MyApp(QtGui.QMainWindow):
         self.plot.setAxisTitle(Qwt.QwtPlot.xBottom, 'Time')
         self.plot.setAxisTitle(Qwt.QwtPlot.yLeft, 'Current')
         self.plot.setTitle('Current Trace')
+        
+        # Zoom button for plot
+        toolBar = QtGui.QToolBar(self)
+        self.addToolBar(toolBar)
+        
+        btnZoom = QtGui.QToolButton(toolBar)
+        btnZoom.setText("Zoom")
+        btnZoom.setIcon(QtGui.QIcon(QtGui.QPixmap(zoom_xpm)))
+        btnZoom.setCheckable(True)
+        btnZoom.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
+        toolBar.addWidget(btnZoom)
+        self.connect(btnZoom,
+                     QtCore.SIGNAL('toggled(bool)'),
+                     self.zoom)
         
         # Create Qwt plot for concatenated events
         self.plot_concatevents = Qwt.QwtPlot(self)
@@ -263,6 +325,7 @@ class MyApp(QtGui.QMainWindow):
         # Right vertical layout with plots and stuff
         vbox_right = QtGui.QVBoxLayout()
         vbox_right.addWidget(self.plot)
+        vbox_right.addWidget(toolBar)
         vbox_right.addWidget(self.plot_concatevents)
         vbox_right.addWidget(self.tab_widget)
 
