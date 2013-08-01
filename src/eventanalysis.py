@@ -8,10 +8,7 @@ This program is for finding events in files and displaying the results.
 import sys
 from PyQt4 import QtGui, QtCore, Qt
 import PyQt4.Qwt5 as Qwt
-from DataFileOpener import openData
-from scipy import fft, arange, signal
-import scipy.io as sio
-import numpy as np
+from scipy import arange
 from MyThreads import AnalyzeDataThread, PlotThread
 
 class MyApp(QtGui.QMainWindow):
