@@ -88,10 +88,14 @@ class MyApp(QtGui.QMainWindow):
                                         self.plot_concatevents.canvas())
         self.zoomer_concatEvents.setRubberBandPen(Qt.QPen(Qt.Qt.black))
         self.zoomer.setEnabled(False)
-    
+        
+        self.magnifier = Qwt.QwtPlotMagnifier(self.plot.canvas())
+        self.magnifier.setEnabled(False)
+        
     def zoom(self, on):
         self.zoomer.setEnabled(on)
         self.zoomer.zoom(0)
+        self.magnifier.setEnabled(True)
         
     def open_files(self):
         '''
