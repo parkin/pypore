@@ -14,6 +14,8 @@ def openData(filename):
     
     Assumes '.log' extension is Chimera data.  Chimera data requires a '.mat'
      file with the same name to be in the same folder.
+     
+    Assumes '.hkd' extension is Heka data.
     '''
     if '.log' in filename:
         return _openChimera(filename)
@@ -24,6 +26,11 @@ def openData(filename):
         return 'File not specified with correct extension. Possibilities are: \'.log\''
     
 def _openChimera(filename):
+    '''
+    Reads files created by the Chimera acquisition software.  It requires a
+    name.log file with the data, and a name.mat file containing the
+    parameters of the run.
+    '''
     # remove 'log' append 'mat'
     s = list(filename)
     s.pop()
@@ -111,38 +118,36 @@ def _openHeka(filename):
         block = _readHekaNextBlock(f, per_file_params, per_block_param_list, per_channel_param_list, channel_list, points_per_channel_per_block)
         data[i*points_per_channel_per_block:(i+1)*points_per_channel_per_block] = block['data'][0]
         
+    # return dictionary
+    # samplerate is i [[]] because of how chimera data is returned.
     specsfile = {'data': data, 'SETUP_ADCSAMPLERATE': [[1.0/per_file_params['Sampling interval']]]}
     
     return specsfile
     
 def _readHekaNextBlock(f, per_file_params, per_block_param_list, per_channel_param_list, channel_list, points_per_channel_per_block):
     '''
-    Reads the next block of heka data
+    Reads the next block of heka data.
+    Returns a dictionary with 'data', 'per_block_params', and 'per_channel_params'.
     '''
     
     # Read block header
     per_block_params = _readHekaHeaderParams(f, per_block_param_list)
-        
+    
     # Read per channel header
     per_channel_block_params = []
     for j in channel_list:
         channel_params = {}
+        # i[0] = name, i[1] = datatype
         for i in per_channel_param_list:
-            dt = i[1]
-            byte = f.read(dt.itemsize)
-            channel_params[i[0]] = np.frombuffer(byte,dt)[0]
+            channel_params[i[0]] = np.fromfile(f, i[1], 1)[0]
         per_channel_block_params.append(channel_params)
     
     # Read data
     data = []
     dt = np.dtype('>i2') # int16
     for j in channel_list:
-    #     dataj = np.zeros(points_per_channel)
-        bytess = f.read(dt.itemsize * points_per_channel_per_block)
-        values = np.frombuffer(bytess,dt,-1)*per_channel_block_params[0]['Scale']
+        values = np.fromfile(f, dt, points_per_channel_per_block) * per_channel_block_params[0]['Scale']
         data.append(values)
-    #     for i in range(0,points_per_channel):
-    #         dataj[i] = np.frombuffer()
     
     block = {'data': data,'per_block_params': per_block_params, 'per_channel_params': per_channel_block_params}
     
@@ -161,10 +166,9 @@ def _getParamListByteLength(param_list):
 def _readHekaHeaderParams(f, param_list):
     
     params = {}
+    # pair[0] = name, pair[1] = np.datatype
     for pair in param_list:
-        dt = pair[1]
-        bytess = f.read(dt.itemsize)
-        params[pair[0]] = np.frombuffer(bytess,dt)[0]
+        params[pair[0]] = np.fromfile(f, pair[1], 1)[0]
     return params
         
 def _readHekaHeaderParamList(f, datatype, encodings):
@@ -178,14 +182,13 @@ def _readHekaHeaderParamList(f, datatype, encodings):
         item[0] = name
         item[1] = numpy datatype
     '''
-    # Read per-file params
     param_list = []
     f.read(3)  # read null characters?
-    byte = f.read(1) # containts number of parameters in list
-    for i in range(0, np.frombuffer(byte, np.uint8)[0]):
-        byte1 = f.read(1) # number of 
-        bytes2 = f.read(datatype.itemsize) # read value of parameter
-        param_list.append([bytes2.strip(), encodings[np.frombuffer(byte1, np.uint8)[0]]])
+    num_params = np.fromfile(f, np.uint8, 1)[0]
+    for i in range(0, num_params):
+        type_code = np.fromfile(f, np.uint8,1)[0]
+        name = np.fromfile(f, datatype, 1)[0].strip()
+        param_list.append([name, encodings[type_code]])
     return param_list
 
 
