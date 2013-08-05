@@ -59,6 +59,8 @@ class MyApp(QtGui.QMainWindow):
     def __init__(self, parent=None):
         super(MyApp, self).__init__()
         
+        self.events = [] # holds the events from the most recent analysis run
+        
         self.threadPool = []
         
         self.setWindowTitle('Translocation Event Analysis')
@@ -88,6 +90,13 @@ class MyApp(QtGui.QMainWindow):
                                         self.plot_concatevents.canvas())
         self.zoomer_concatEvents.setRubberBandPen(Qt.QPen(Qt.Qt.black))
         self.zoomer.setEnabled(False)
+        
+        self.zoomer_event = Qwt.QwtPlotZoomer(Qwt.QwtPlot.xBottom,
+                                        Qwt.QwtPlot.yLeft,
+                                        Qwt.QwtPicker.DragSelection,
+                                        Qwt.QwtPicker.AlwaysOff,
+                                        self.plot_event_zoomed.canvas())
+        self.zoomer_event.setRubberBandPen(Qt.QPen(Qt.Qt.black))
         
         self.magnifier = Qwt.QwtPlotMagnifier(self.plot.canvas())
         self.magnifier.setEnabled(False)
@@ -190,6 +199,8 @@ class MyApp(QtGui.QMainWindow):
         self.connect(self.stop_analyze_button, QtCore.SIGNAL('clicked()'), self.on_analyze_stop)
         self.stop_analyze_button.setEnabled(False)
         
+        # Tab widget for event stuff
+        
         self.tab_widget = QtGui.QTabWidget()
         self.tab_widget.setMinimumSize(450, 250)
         self.plot_event_zoomed = Qwt.QwtPlot(self)
@@ -198,9 +209,38 @@ class MyApp(QtGui.QMainWindow):
         self.plot_event_zoomed.setAxisTitle(Qwt.QwtPlot.yLeft, 'Current')
         tab2 = QtGui.QWidget()
         
-        # Create event zoom in in tab
+        eventSelectToolbar = QtGui.QToolBar(self)
+        self.addToolBar(eventSelectToolbar)
         
-        self.tab_widget.addTab(self.plot_event_zoomed, "Display Data")
+        btnPrevious = QtGui.QPushButton(eventSelectToolbar)
+        btnPrevious.setText("Previous")
+        btnPrevious.clicked.connect(self.previousClicked)
+        eventSelectToolbar.addWidget(btnPrevious)
+        
+        self.eventDisplayedEdit = QtGui.QLineEdit()
+        self.eventDisplayedEdit.setText('0')
+        self.eventDisplayedEdit.setMaxLength(int(len(self.events)/10)+1)
+        self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(0,len(self.events)))
+        self.eventDisplayedEdit.textChanged.connect(self._eventDisplayEditOnChange)
+        eventSelectToolbar.addWidget(self.eventDisplayedEdit)
+        
+        self.eventCountText = QtGui.QLabel()
+        self.eventCountText.setText('/' + str(len(self.events)))
+        eventSelectToolbar.addWidget(self.eventCountText)
+        
+        btnNext = QtGui.QPushButton(eventSelectToolbar)
+        btnNext.setText("Next")
+        btnNext.clicked.connect(self.nextClicked)
+        eventSelectToolbar.addWidget(btnNext)
+        
+        displayDataLayout = QtGui.QVBoxLayout()
+        displayDataLayout.addWidget(self.plot_event_zoomed)
+        displayDataLayout.addWidget(eventSelectToolbar)
+        
+        displayDataWidget = QtGui.QWidget() # widget container for layout
+        displayDataWidget.setLayout(displayDataLayout)
+
+        self.tab_widget.addTab(displayDataWidget, "Display Data")
         self.tab_widget.addTab(tab2, "Filter and Histogram")
         
         filesLabel = QtGui.QLabel()
@@ -342,6 +382,24 @@ class MyApp(QtGui.QMainWindow):
         scrollArea.setWidget(self.main_frame)
         self.setCentralWidget(scrollArea)
         
+    def _eventDisplayEditOnChange(self, text):
+        if len(text) < 1:
+            return
+        eventCount = int(self.eventDisplayedEdit.text())
+        self.plotEvent(self.events[eventCount-1])
+        return
+        
+    def previousClicked(self):
+        eventCount = int(self.eventDisplayedEdit.text())
+        if eventCount > 1:
+            self.eventDisplayedEdit.setText(str(eventCount-1))
+        return
+        
+    def nextClicked(self):
+        eventCount = int(self.eventDisplayedEdit.text())
+        if eventCount < len(self.events):
+            self.eventDisplayedEdit.setText(str(eventCount+1))
+        return
         
     def create_status_bar(self):
         '''
@@ -461,15 +519,17 @@ class MyApp(QtGui.QMainWindow):
         curve.attach(self.plot_concatevents)
         self.plot_concatevents.replot()
         self.zoomer_concatEvents.setZoomBase(False)
-            
-    def plotEventOnMainPlot(self, event):
+        
+    def plotEvent(self, event):
         '''
-        Adds an event to the main current trace plot.  
-        Pass in filter_parameter dictionary with 'event_data', 'sample_rate', 'event_start'
+        Plots the event on the plot with 
         '''
-        if not 'raw_data' in event or not 'sample_rate' in event or not 'event_start' in event or not 'raw_points_per_side' or not 'cusum_indexes' in event or not 'cusum_values' in event:
-            print 'incorrectly called plotEventOnMainPlot.  Need \'raw_data\', \'sample_rate\', \'cusum_indexes\', \'cusum_values\', and \'event_start\'' 
-            return
+        
+        self.plot_event_zoomed.clear()
+        self._plotEventToPlot(event, self.plot_event_zoomed)
+        self.zoomer_event.setZoomBase(False)
+        
+    def _plotEventToPlot(self, event, plot):
         data = event['raw_data']
         levels_index = event['cusum_indexes']
         levels_values = event['cusum_values']
@@ -498,12 +558,23 @@ class MyApp(QtGui.QMainWindow):
         curve = Qwt.QwtPlotCurve('Event')
         curve.setPen(Qt.QPen(QtCore.Qt.green))
         curve.setData(times, data)
-        curve.attach(self.plot)
+        curve.attach(plot)
         curve2 = Qwt.QwtPlotCurve('Levels')
         curve2.setPen(Qt.QPen(QtCore.Qt.blue))
         curve2.setData(times2, levels2)
-        curve2.attach(self.plot)
-        self.plot.replot()
+        curve2.attach(plot)
+        
+        plot.replot()
+            
+    def plotEventOnMainPlot(self, event):
+        '''
+        Adds an event to the main current trace plot.  
+        Pass in filter_parameter dictionary with 'event_data', 'sample_rate', 'event_start'
+        '''
+        if not 'raw_data' in event or not 'sample_rate' in event or not 'event_start' in event or not 'raw_points_per_side' or not 'cusum_indexes' in event or not 'cusum_values' in event:
+            print 'incorrectly called plotEventOnMainPlot.  Need \'raw_data\', \'sample_rate\', \'cusum_indexes\', \'cusum_values\', and \'event_start\'' 
+            return
+        self._plotEventToPlot(event, self.plot)
         
     def on_analyze_stop(self):
         for w in self.threadPool:
@@ -525,6 +596,9 @@ class MyApp(QtGui.QMainWindow):
         if 'error' in parameters:
             self.status_text.setText(parameters['error'])
             return
+        
+        # Clear the current events
+        self.events = []
         
         # Add axes and the filename to the parameters
         parameters['axes'] = self.plot_event_zoomed
@@ -619,7 +693,16 @@ class MyApp(QtGui.QMainWindow):
         if 'event' in results:
             self.plotEventOnMainPlot(results['event'])
             self.addEventToConcatEventPlot(results['event'])
-        if 'plot_options' in results:
+            if len(self.events) < 1:
+                self.plotEvent(results['event'])
+                self.eventDisplayedEdit
+            self.events.append(results['event'])
+            self.eventDisplayedEdit.setMaxLength(int(len(self.events)/10)+1)
+            self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(1,len(self.events)))
+            self.eventCountText.setText('/' + str(len(self.events)))
+            if len(self.events) < 2:
+                self.eventDisplayedEdit.setText('1')
+        elif 'plot_options' in results:
             self.plotData(results['plot_options'])
         if 'done' in results:
             if results['done']:
