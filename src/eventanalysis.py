@@ -16,7 +16,10 @@ from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as Naviga
 from matplotlib.figure import Figure
 
 from scipy import arange
+
+# My stuff
 from pypore import AnalyzeDataThread, PlotThread
+from views import FileListItem
 
 # zoom picture? copied from BodeDemo
 zoom_xpm = ['32 32 8 1',
@@ -123,7 +126,7 @@ class MyApp(QtGui.QMainWindow):
         areFilesOpened = False
         for w in fnames:
             areFilesOpened = True
-            item = QtGui.QListWidgetItem(w)
+            item = FileListItem(w)
             self.listWidget.addItem(item)
             
         if areFilesOpened:
@@ -139,7 +142,7 @@ class MyApp(QtGui.QMainWindow):
         '''
         # adding by emitting signal in different thread
         self.status_text.setText('Plotting...')
-        self.threadPool.append(PlotThread(self.plot, filename=str(item.text())))
+        self.threadPool.append(PlotThread(self.plot, filename=str(item.getFilename())))
         self.connect(self.threadPool[len(self.threadPool) - 1], QtCore.SIGNAL('plotData(PyQt_PyObject)'), self._on_file_item_doubleclick_callback)
         self.threadPool[len(self.threadPool) - 1].start()
         
@@ -312,26 +315,6 @@ class MyApp(QtGui.QMainWindow):
         
         return tab_widget
         
-        ##################
-#         # Tab widget for event stuff
-#         
-# #         self.tab_widget = QtGui.QTabWidget()
-# #         self.tab_widget.setMinimumSize(450, 250)
-#         
-#         # Filter and Histogram tab.  Use matplotlib cuz can't figure out pyqwt histogram
-#         self.fig = Figure()
-#         self.canvas = FigureCanvas(self.fig)
-# #         self.canvas.setParent(self.tab_widget)
-#         self.axes = self.fig.add_subplot(111)
-#         
-#         self.canvas.setMinimumSize(400, 200)
-#         
-# #         self.tab_widget.addTab(displayDataWidget, "Display Data")
-# #         self.tab_widget.addTab(self.canvas, "Filter and Histogram")
-# #         
-# #         vbox_right = QtGui.QVBoxLayout()
-# #         vbox_right.addWidget(self.tab_widget)
-    
     def _create_eventfinder_plot_widget(self):
         # Create Qwt plot
         self.plot = Qwt.QwtPlot(self)
@@ -425,12 +408,6 @@ class MyApp(QtGui.QMainWindow):
         
         self.canvas.setMinimumSize(400, 200)
         
-#         self.tab_widget.addTab(displayDataWidget, "Display Data")
-#         self.tab_widget.addTab(self.canvas, "Filter and Histogram")
-#         
-#         vbox_right = QtGui.QVBoxLayout()
-#         vbox_right.addWidget(self.tab_widget)
-
         return self.canvas
         
     
