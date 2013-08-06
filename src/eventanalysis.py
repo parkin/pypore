@@ -19,7 +19,7 @@ from scipy import arange
 
 # My stuff
 from pypore import AnalyzeDataThread, PlotThread
-from views import FileListItem
+from views import FileListItem, FilterListItem
 
 # zoom picture? copied from BodeDemo
 zoom_xpm = ['32 32 8 1',
@@ -139,6 +139,8 @@ class MyApp(QtGui.QMainWindow):
         fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open data file', '../data')
         if len(fnames) > 0:
             self.listWidget.clear()
+        else:
+            return
         areFilesOpened = False
         for w in fnames:
             areFilesOpened = True
@@ -155,9 +157,19 @@ class MyApp(QtGui.QMainWindow):
         fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open event database', '../data', '*.mat')
         if len(fnames) > 0:
             self.listEventWidget.clear()
+        else:
+            return
+        areFilesOpened = False
         for w in fnames:
+            areFilesOpened = True
             item = FileListItem(w)
             self.listEventWidget.addItem(item)
+            
+        if areFilesOpened:
+            self.btnAddFilter.setEnabled(False)
+            
+    def _on_event_file_selection_changed(self):
+        self.btnAddFilter.setEnabled(True)
             
     def _on_file_item_selection_changed(self):
         self.analyze_button.setEnabled(True)
@@ -330,6 +342,7 @@ class MyApp(QtGui.QMainWindow):
 #         self.listEventWidget.itemSelectionChanged.connect(self._on_file_item_selection_changed)
 #         self.listEventWidget.itemDoubleClicked.connect(self._on_file_item_doubleclick)
         self.listEventWidget.setMaximumHeight(50)
+        self.listEventWidget.itemSelectionChanged.connect(self._on_event_file_selection_changed)
         
         files_options = QtGui.QFormLayout()
         files_options.addRow('Event Databases:', self.listEventWidget)
@@ -338,7 +351,7 @@ class MyApp(QtGui.QMainWindow):
         self.event_color = QtGui.QColor('blue')
         pickColorBtn = QtGui.QPushButton()
         pickColorBtn.setText('Choose a Color')
-        pickColorBtn.clicked.connect(self.colorPickerClicked)
+        pickColorBtn.clicked.connect(self.colorPickerBtnClicked)
         
         self.frm = QtGui.QFrame()
         self.frm.setStyleSheet("QWidget { background-color: %s }" 
@@ -348,8 +361,22 @@ class MyApp(QtGui.QMainWindow):
         
         files_options.addRow(pickColorBtn, self.frm)
         
+        ## List of filters created
+        self.btnAddFilter = QtGui.QPushButton('Add selections as filter')
+        self.btnAddFilter.clicked.connect(self.addFilterClicked)
+        self.btnAddFilter.setEnabled(False)
+        formFilter = QtGui.QFormLayout()
+        formFilter.addRow('Filters:', self.btnAddFilter)
+        self.listFilterWidget = QtGui.QListWidget()
+        vbox = QtGui.QVBoxLayout()
+        vbox.addLayout(formFilter)
+        vbox.addWidget(self.listFilterWidget)
+        btnRemoveFilter = QtGui.QPushButton('Remove selected filter')
+        vbox.addWidget(btnRemoveFilter)
+        
         vbox_left = QtGui.QVBoxLayout()
         vbox_left.addLayout(files_options)
+        vbox_left.addLayout(vbox)
         
         vbox_left_widget = QtGui.QWidget()
         vbox_left_widget.setLayout(vbox_left)
@@ -358,7 +385,24 @@ class MyApp(QtGui.QMainWindow):
         
         return scrollArea
     
-    def colorPickerClicked(self):
+    def addFilterClicked(self):
+        currItem = self.listEventWidget.currentItem()
+        if currItem == None:
+            return
+        
+        params = self._getCurrentEventAnalysisParams()
+        
+        item = FilterListItem(currItem.getFilename(), params)
+        self.listFilterWidget.addItem(item)
+        
+#         self.
+        
+    def _getCurrentEventAnalysisParams(self):
+        params = {}
+        params['color'] = self.event_color
+        return params
+    
+    def colorPickerBtnClicked(self):
         col = QtGui.QColorDialog.getColor(initial=self.event_color)
         
         if col.isValid():
@@ -467,9 +511,12 @@ class MyApp(QtGui.QMainWindow):
         self.fig = Figure()
         self.canvas = FigureCanvas(self.fig)
 #         self.canvas.setParent(self.tab_widget)
-        self.axes = self.fig.add_subplot(111)
+        self.axes = self.fig.add_subplot(221)
+        self.axes2 = self.fig.add_subplot(222)
+        self.axes3 = self.fig.add_subplot(223)
+        self.axes4 = self.fig.add_subplot(224)
         
-        self.canvas.setMinimumSize(400, 200)
+        self.canvas.setMinimumSize(500, 400)
         
         return self.canvas
         
