@@ -6,8 +6,15 @@
 This program is for finding events in files and displaying the results.
 '''
 import sys
+
 from PyQt4 import QtGui, QtCore, Qt
 import PyQt4.Qwt5 as Qwt
+
+import matplotlib
+from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as NavigationToolbar
+from matplotlib.figure import Figure
+
 from scipy import arange
 from MyThreads import AnalyzeDataThread, PlotThread
 
@@ -142,46 +149,9 @@ class MyApp(QtGui.QMainWindow):
         if 'status_text' in results:
             self.status_text.setText(results['status_text'])
         
-        
-    def create_main_frame(self):
-        '''
-        Initializes the main gui frame.
-        '''
-        self.main_frame = QtGui.QWidget()
-        
-        # Put everything in filter_parameter scroll area
+    def _create_left_side(self):
         scrollArea = QtGui.QScrollArea()
         scrollArea.setWidgetResizable(True)
-        
-        # Create Qwt plot
-        self.plot = Qwt.QwtPlot(self)
-        self.plot.setCanvasBackground(QtCore.Qt.white)
-        self.plot.setMinimumSize(400, 200)
-        self.plot.setAxisTitle(Qwt.QwtPlot.xBottom, 'Time')
-        self.plot.setAxisTitle(Qwt.QwtPlot.yLeft, 'Current')
-        self.plot.setTitle('Current Trace')
-        
-        # Zoom button for plot
-        toolBar = QtGui.QToolBar(self)
-        self.addToolBar(toolBar)
-        
-        btnZoom = QtGui.QToolButton(toolBar)
-        btnZoom.setText("Zoom")
-        btnZoom.setIcon(QtGui.QIcon(QtGui.QPixmap(zoom_xpm)))
-        btnZoom.setCheckable(True)
-        btnZoom.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
-        toolBar.addWidget(btnZoom)
-        self.connect(btnZoom,
-                     QtCore.SIGNAL('toggled(bool)'),
-                     self.zoom)
-        
-        # Create Qwt plot for concatenated events
-        self.plot_concatevents = Qwt.QwtPlot(self)
-        self.plot_concatevents.setCanvasBackground(QtCore.Qt.white)
-        self.plot_concatevents.setMinimumSize(400, 200)
-        self.plot_concatevents.setAxisTitle(Qwt.QwtPlot.xBottom, 'Time')
-        self.plot_concatevents.setAxisTitle(Qwt.QwtPlot.yLeft, 'Current')
-        self.plot_concatevents.setTitle('Concatenated Events')
         
         # Create filter_parameter list for files want to analyze
         self.listWidget = QtGui.QListWidget()
@@ -198,50 +168,6 @@ class MyApp(QtGui.QMainWindow):
         self.stop_analyze_button = QtGui.QPushButton("&Stop")
         self.connect(self.stop_analyze_button, QtCore.SIGNAL('clicked()'), self.on_analyze_stop)
         self.stop_analyze_button.setEnabled(False)
-        
-        # Tab widget for event stuff
-        
-        self.tab_widget = QtGui.QTabWidget()
-        self.tab_widget.setMinimumSize(450, 250)
-        self.plot_event_zoomed = Qwt.QwtPlot(self)
-        self.plot_event_zoomed.setCanvasBackground(QtCore.Qt.white)
-        self.plot_event_zoomed.setAxisTitle(Qwt.QwtPlot.xBottom, 'Time')
-        self.plot_event_zoomed.setAxisTitle(Qwt.QwtPlot.yLeft, 'Current')
-        tab2 = QtGui.QWidget()
-        
-        eventSelectToolbar = QtGui.QToolBar(self)
-        self.addToolBar(eventSelectToolbar)
-        
-        btnPrevious = QtGui.QPushButton(eventSelectToolbar)
-        btnPrevious.setText("Previous")
-        btnPrevious.clicked.connect(self.previousClicked)
-        eventSelectToolbar.addWidget(btnPrevious)
-        
-        self.eventDisplayedEdit = QtGui.QLineEdit()
-        self.eventDisplayedEdit.setText('0')
-        self.eventDisplayedEdit.setMaxLength(int(len(self.events)/10)+1)
-        self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(0,len(self.events)))
-        self.eventDisplayedEdit.textChanged.connect(self._eventDisplayEditOnChange)
-        eventSelectToolbar.addWidget(self.eventDisplayedEdit)
-        
-        self.eventCountText = QtGui.QLabel()
-        self.eventCountText.setText('/' + str(len(self.events)))
-        eventSelectToolbar.addWidget(self.eventCountText)
-        
-        btnNext = QtGui.QPushButton(eventSelectToolbar)
-        btnNext.setText("Next")
-        btnNext.clicked.connect(self.nextClicked)
-        eventSelectToolbar.addWidget(btnNext)
-        
-        displayDataLayout = QtGui.QVBoxLayout()
-        displayDataLayout.addWidget(self.plot_event_zoomed)
-        displayDataLayout.addWidget(eventSelectToolbar)
-        
-        displayDataWidget = QtGui.QWidget() # widget container for layout
-        displayDataWidget.setLayout(displayDataLayout)
-
-        self.tab_widget.addTab(displayDataWidget, "Display Data")
-        self.tab_widget.addTab(tab2, "Filter and Histogram")
         
         filesLabel = QtGui.QLabel()
         filesLabel.setText('Files:')
@@ -349,7 +275,6 @@ class MyApp(QtGui.QMainWindow):
         threshold_options.addWidget(absolute_drop_options)
         threshold_options.addWidget(percentage_change_options_widget)
         
-        
         hbox = QtGui.QHBoxLayout()
         
         for w in [  self.analyze_button, self.stop_analyze_button]:
@@ -366,21 +291,128 @@ class MyApp(QtGui.QMainWindow):
         vbox_left.addLayout(threshold_options)
         vbox_left.addLayout(hbox)
         
+        vbox_left_widget = QtGui.QWidget()
+        vbox_left_widget.setLayout(vbox_left)
+        
+        scrollArea.setWidget(vbox_left_widget)
+        
+        return scrollArea
+    
+    def _create_right_side(self):
+        # Put everything in filter_parameter scroll area
+        scrollArea = QtGui.QScrollArea()
+        scrollArea.setWidgetResizable(True)
+        
+        # Create Qwt plot
+        self.plot = Qwt.QwtPlot(self)
+        self.plot.setCanvasBackground(QtCore.Qt.white)
+        self.plot.setMinimumSize(400, 200)
+        self.plot.setAxisTitle(Qwt.QwtPlot.xBottom, 'Time')
+        self.plot.setAxisTitle(Qwt.QwtPlot.yLeft, 'Current')
+        self.plot.setTitle('Current Trace')
+        
+        # Zoom button for plot
+        toolBar = QtGui.QToolBar(self)
+        self.addToolBar(toolBar)
+        
+        btnZoom = QtGui.QToolButton(toolBar)
+        btnZoom.setText("Zoom")
+        btnZoom.setIcon(QtGui.QIcon(QtGui.QPixmap(zoom_xpm)))
+        btnZoom.setCheckable(True)
+        btnZoom.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
+        toolBar.addWidget(btnZoom)
+        self.connect(btnZoom,
+                     QtCore.SIGNAL('toggled(bool)'),
+                     self.zoom)
+        
+        # Create Qwt plot for concatenated events
+        self.plot_concatevents = Qwt.QwtPlot(self)
+        self.plot_concatevents.setCanvasBackground(QtCore.Qt.white)
+        self.plot_concatevents.setMinimumSize(400, 200)
+        self.plot_concatevents.setAxisTitle(Qwt.QwtPlot.xBottom, 'Time')
+        self.plot_concatevents.setAxisTitle(Qwt.QwtPlot.yLeft, 'Current')
+        self.plot_concatevents.setTitle('Concatenated Events')
+        
+        
+        # Tab widget for event stuff
+        
+        self.tab_widget = QtGui.QTabWidget()
+        self.tab_widget.setMinimumSize(450, 250)
+        self.plot_event_zoomed = Qwt.QwtPlot(self)
+        self.plot_event_zoomed.setCanvasBackground(QtCore.Qt.white)
+        self.plot_event_zoomed.setAxisTitle(Qwt.QwtPlot.xBottom, 'Time')
+        self.plot_event_zoomed.setAxisTitle(Qwt.QwtPlot.yLeft, 'Current')
+        
+        eventSelectToolbar = QtGui.QToolBar(self)
+        self.addToolBar(eventSelectToolbar)
+        
+        btnPrevious = QtGui.QPushButton(eventSelectToolbar)
+        btnPrevious.setText("Previous")
+        btnPrevious.clicked.connect(self.previousClicked)
+        eventSelectToolbar.addWidget(btnPrevious)
+        
+        self.eventDisplayedEdit = QtGui.QLineEdit()
+        self.eventDisplayedEdit.setText('0')
+        self.eventDisplayedEdit.setMaxLength(int(len(self.events)/10)+1)
+        self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(0,len(self.events)))
+        self.eventDisplayedEdit.textChanged.connect(self._eventDisplayEditOnChange)
+        eventSelectToolbar.addWidget(self.eventDisplayedEdit)
+        
+        self.eventCountText = QtGui.QLabel()
+        self.eventCountText.setText('/' + str(len(self.events)))
+        eventSelectToolbar.addWidget(self.eventCountText)
+        
+        btnNext = QtGui.QPushButton(eventSelectToolbar)
+        btnNext.setText("Next")
+        btnNext.clicked.connect(self.nextClicked)
+        eventSelectToolbar.addWidget(btnNext)
+        
+        displayDataLayout = QtGui.QVBoxLayout()
+        displayDataLayout.addWidget(self.plot_event_zoomed)
+        displayDataLayout.addWidget(eventSelectToolbar)
+        
+        displayDataWidget = QtGui.QWidget() # widget container for layout
+        displayDataWidget.setLayout(displayDataLayout)
+        
+        # Filter and Histogram tab.  Use matplotlib cuz can't figure out pyqwt histogram
+        self.fig = Figure()
+        self.canvas = FigureCanvas(self.fig)
+        self.canvas.setParent(self.tab_widget)
+        self.axes = self.fig.add_subplot(111)
+
+        self.tab_widget.addTab(displayDataWidget, "Display Data")
+        self.tab_widget.addTab(self.canvas, "Filter and Histogram")
+        
         # Right vertical layout with plots and stuff
         vbox_right = QtGui.QVBoxLayout()
         vbox_right.addWidget(self.plot)
         vbox_right.addWidget(toolBar)
         vbox_right.addWidget(self.plot_concatevents)
         vbox_right.addWidget(self.tab_widget)
+        
+        vbox_right_widget = QtGui.QWidget()
+        vbox_right_widget.setLayout(vbox_right)
+        
+        scrollArea.setWidget(vbox_right_widget)
+        
+        return scrollArea
+        
+    def create_main_frame(self):
+        '''
+        Initializes the main gui frame.
+        '''
+        left_side = self._create_left_side()
+        right_side = self._create_right_side()
+        
 
         # Layout holding everything        
-        hbox_all = QtGui.QHBoxLayout()
-        hbox_all.addLayout(vbox_left, 1)
-        hbox_all.addLayout(vbox_right, 3)
+        self.main_frame = QtGui.QSplitter() # Splitter allows for drag to resize between children
+        self.main_frame.addWidget(left_side)
+        self.main_frame.addWidget(right_side)
         
-        self.main_frame.setLayout(hbox_all)
-        scrollArea.setWidget(self.main_frame)
-        self.setCentralWidget(scrollArea)
+#         self.main_frame.setWid(hbox_all)
+#         scrollArea.setWidget(self.main_frame)
+        self.setCentralWidget(self.main_frame)
         
     def _eventDisplayEditOnChange(self, text):
         if len(text) < 1:
@@ -390,16 +422,25 @@ class MyApp(QtGui.QMainWindow):
         return
         
     def previousClicked(self):
-        eventCount = int(self.eventDisplayedEdit.text())
-        if eventCount > 1:
-            self.eventDisplayedEdit.setText(str(eventCount-1))
-        return
+        self.moveEventDisplayBy(-1)
         
     def nextClicked(self):
-        eventCount = int(self.eventDisplayedEdit.text())
-        if eventCount < len(self.events):
-            self.eventDisplayedEdit.setText(str(eventCount+1))
-        return
+        self.moveEventDisplayBy(1)
+                
+    def moveEventDisplayBy(self, count):
+        '''
+        Changes the event displayed on the event display plot to
+        current value + count
+        '''
+        try:
+            eventCount = int(self.eventDisplayedEdit.text())
+            if eventCount + count > 0 and eventCount + count <= len(self.events):
+                self.eventDisplayedEdit.setText(str(eventCount + count))
+        except ValueError:
+            # if we can't parse the event display text but there are events,
+            # just set to zero
+            if len(self.events) > 0:
+                self.eventDisplayedEdit.setText('0')
         
     def create_status_bar(self):
         '''
@@ -524,6 +565,9 @@ class MyApp(QtGui.QMainWindow):
         '''
         Plots the event on the plot with 
         '''
+        
+        # If I zoom on a plot, then plot a different curve, it doesn't
+        # auto scale...  Need to fix!
         
         self.plot_event_zoomed.clear()
         self._plotEventToPlot(event, self.plot_event_zoomed)
@@ -691,18 +735,18 @@ class MyApp(QtGui.QMainWindow):
         if 'status_text' in results:
             self.status_text.setText(results['status_text'])
         if 'event' in results:
-            self.plotEventOnMainPlot(results['event'])
-            self.addEventToConcatEventPlot(results['event'])
+            event = results['event']
+            self.plotEventOnMainPlot(event)
+            self.addEventToConcatEventPlot(event)
             if len(self.events) < 1:
-                self.plotEvent(results['event'])
+                self.plotEvent(event)
                 self.eventDisplayedEdit
-            self.events.append(results['event'])
+            self.events.append(event)
             self.eventDisplayedEdit.setMaxLength(int(len(self.events)/10)+1)
             self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(1,len(self.events)))
             self.eventCountText.setText('/' + str(len(self.events)))
             if len(self.events) < 2:
                 self.eventDisplayedEdit.setText('1')
-        elif 'plot_options' in results:
             self.plotData(results['plot_options'])
         if 'done' in results:
             if results['done']:
