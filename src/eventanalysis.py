@@ -16,7 +16,7 @@ from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as Naviga
 from matplotlib.figure import Figure
 
 from scipy import arange
-from MyThreads import AnalyzeDataThread, PlotThread
+from pypore import AnalyzeDataThread, PlotThread
 
 # zoom picture? copied from BodeDemo
 zoom_xpm = ['32 32 8 1',
@@ -406,13 +406,11 @@ class MyApp(QtGui.QMainWindow):
         
 
         # Layout holding everything        
-        self.main_frame = QtGui.QSplitter() # Splitter allows for drag to resize between children
-        self.main_frame.addWidget(left_side)
-        self.main_frame.addWidget(right_side)
+        main_frame = QtGui.QSplitter() # Splitter allows for drag to resize between children
+        main_frame.addWidget(left_side)
+        main_frame.addWidget(right_side)
         
-#         self.main_frame.setWid(hbox_all)
-#         scrollArea.setWidget(self.main_frame)
-        self.setCentralWidget(self.main_frame)
+        self.setCentralWidget(main_frame)
         
     def _eventDisplayEditOnChange(self, text):
         if len(text) < 1:
