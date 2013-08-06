@@ -93,6 +93,18 @@ class MyApp(QtGui.QMainWindow):
                                         self.plot.canvas())
         self.zoomer.setRubberBandPen(Qt.QPen(Qt.Qt.black))
         
+        self.picker = Qwt.QwtPlotPicker(
+            Qwt.QwtPlot.xBottom,
+            Qwt.QwtPlot.yLeft,
+            Qwt.QwtPicker.DragSelection,
+#             Qwt.QwtPlotPicker.DragSelection,
+            Qwt.QwtPlotPicker.CrossRubberBand,
+            Qwt.QwtPicker.AlwaysOff,
+            self.plot.canvas())
+        self.picker.setRubberBandPen(Qt.QPen(QtCore.Qt.darkMagenta))
+        self.picker.setTrackerPen(Qt.QPen(QtCore.Qt.cyan))
+        self.picker.connect(self.picker, Qt.SIGNAL('selected(const QwtDoublePoint&)'), self.aSlot)
+        
         self.zoomer_concatEvents = Qwt.QwtPlotZoomer(Qwt.QwtPlot.xBottom,
                                         Qwt.QwtPlot.yLeft,
                                         Qwt.QwtPicker.DragSelection,
@@ -110,6 +122,9 @@ class MyApp(QtGui.QMainWindow):
         
         self.magnifier = Qwt.QwtPlotMagnifier(self.plot.canvas())
         self.magnifier.setEnabled(False)
+    
+    def aSlot(self, aQPointF):
+        print 'aSlot gets:', aQPointF
         
     def zoom(self, on):
         self.zoomer.setEnabled(on)
@@ -120,9 +135,10 @@ class MyApp(QtGui.QMainWindow):
         '''
         Opens file dialog box, adds names of files to open to list
         '''
-        self.listWidget.clear()
 
-        fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open file', '../data')
+        fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open data file', '../data')
+        if len(fnames) > 0:
+            self.listWidget.clear()
         areFilesOpened = False
         for w in fnames:
             areFilesOpened = True
@@ -131,7 +147,18 @@ class MyApp(QtGui.QMainWindow):
             
         if areFilesOpened:
             self.analyze_button.setEnabled(False)
-
+            
+    def open_event_database(self):
+        '''
+        Opens file dialog box, add names of event database files to open list
+        '''
+        fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open event database', '../data', '*.mat')
+        if len(fnames) > 0:
+            self.listEventWidget.clear()
+        for w in fnames:
+            item = FileListItem(w)
+            self.listEventWidget.addItem(item)
+            
     def _on_file_item_selection_changed(self):
         self.analyze_button.setEnabled(True)
         
@@ -164,20 +191,13 @@ class MyApp(QtGui.QMainWindow):
         
         # Other GUI controls
         # 
-        self.analyze_button = QtGui.QPushButton("&Analyze")
+        self.analyze_button = QtGui.QPushButton("&Find Events")
         self.connect(self.analyze_button, QtCore.SIGNAL('clicked()'), self.on_analyze)
         self.analyze_button.setEnabled(False)
         
         self.stop_analyze_button = QtGui.QPushButton("&Stop")
         self.connect(self.stop_analyze_button, QtCore.SIGNAL('clicked()'), self.on_analyze_stop)
         self.stop_analyze_button.setEnabled(False)
-        
-        filesLabel = QtGui.QLabel()
-        filesLabel.setText('Files:')
-        
-        hboxfiles = QtGui.QHBoxLayout()
-        hboxfiles.addWidget(filesLabel)
-        hboxfiles.addWidget(self.listWidget)
         
         # Analysis options
         self.min_event_length_edit = QtGui.QLineEdit()
@@ -186,10 +206,10 @@ class MyApp(QtGui.QMainWindow):
         self.max_event_length_edit = QtGui.QLineEdit()
         self.max_event_length_edit.setText('1000.0')
         self.max_event_length_edit.setValidator(QtGui.QDoubleValidator(0, 1e12, 5))
-        self.fixed_analysis_options = QtGui.QFormLayout()
-        self.fixed_analysis_options.addRow('Data Files:', self.listWidget)
-        self.fixed_analysis_options.addRow('Min Event Length [us]:', self.min_event_length_edit)
-        self.fixed_analysis_options.addRow('Max Event Length [us]:', self.max_event_length_edit)
+        fixed_analysis_options = QtGui.QFormLayout()
+        fixed_analysis_options.addRow('Data Files:', self.listWidget)
+        fixed_analysis_options.addRow('Min Event Length [us]:', self.min_event_length_edit)
+        fixed_analysis_options.addRow('Max Event Length [us]:', self.max_event_length_edit)
         
         # Baseline options
         baseline_options = QtGui.QStackedLayout()
@@ -287,7 +307,7 @@ class MyApp(QtGui.QMainWindow):
         
         # Left vertical layout with settings
         vbox_left = QtGui.QVBoxLayout()
-        vbox_left.addLayout(self.fixed_analysis_options)
+        vbox_left.addLayout(fixed_analysis_options)
         vbox_left.addLayout(baseline_form)
         vbox_left.addLayout(baseline_options)
         vbox_left.addLayout(threshold_form)
@@ -302,8 +322,49 @@ class MyApp(QtGui.QMainWindow):
         return scrollArea
     
     def _create_event_analysis_options(self):
-        # TODO implement me
-        return QtGui.QWidget()
+        scrollArea = QtGui.QScrollArea()
+        scrollArea.setWidgetResizable(True)
+        
+        # Create filter_parameter list for files want to analyze
+        self.listEventWidget = QtGui.QListWidget()
+#         self.listEventWidget.itemSelectionChanged.connect(self._on_file_item_selection_changed)
+#         self.listEventWidget.itemDoubleClicked.connect(self._on_file_item_doubleclick)
+        self.listEventWidget.setMaximumHeight(50)
+        
+        files_options = QtGui.QFormLayout()
+        files_options.addRow('Event Databases:', self.listEventWidget)
+        
+        ## Color Picker
+        self.event_color = QtGui.QColor('blue')
+        pickColorBtn = QtGui.QPushButton()
+        pickColorBtn.setText('Choose a Color')
+        pickColorBtn.clicked.connect(self.colorPickerClicked)
+        
+        self.frm = QtGui.QFrame()
+        self.frm.setStyleSheet("QWidget { background-color: %s }" 
+            % self.event_color.name())
+        self.frm.setMinimumSize(15, 15)
+        self.frm.setMaximumSize(30, 30)
+        
+        files_options.addRow(pickColorBtn, self.frm)
+        
+        vbox_left = QtGui.QVBoxLayout()
+        vbox_left.addLayout(files_options)
+        
+        vbox_left_widget = QtGui.QWidget()
+        vbox_left_widget.setLayout(vbox_left)
+        
+        scrollArea.setWidget(vbox_left_widget)
+        
+        return scrollArea
+    
+    def colorPickerClicked(self):
+        col = QtGui.QColorDialog.getColor(initial=self.event_color)
+        
+        if col.isValid():
+            self.event_color = col
+            self.frm.setStyleSheet("QWidget { background-color: %s }"
+                % col.name())
         
     def _create_left_side(self):
         event_finding_options = self._create_event_finding_options()
@@ -315,7 +376,7 @@ class MyApp(QtGui.QMainWindow):
         
         return tab_widget
         
-    def _create_eventfinder_plot_widget(self):
+    def _create_eventfinder_plots_widget(self):
         # Create Qwt plot
         self.plot = Qwt.QwtPlot(self)
         self.plot.setCanvasBackground(QtCore.Qt.white)
@@ -351,6 +412,8 @@ class MyApp(QtGui.QMainWindow):
         self.plot_event_zoomed.setCanvasBackground(QtCore.Qt.white)
         self.plot_event_zoomed.setAxisTitle(Qwt.QwtPlot.xBottom, 'Time')
         self.plot_event_zoomed.setAxisTitle(Qwt.QwtPlot.yLeft, 'Current')
+        self.plot_event_zoomed.setMinimumSize(400, 200)
+        self.plot_event_zoomed.setTitle('Single Event')
         
         eventSelectToolbar = QtGui.QToolBar(self)
         self.addToolBar(eventSelectToolbar)
@@ -420,7 +483,7 @@ class MyApp(QtGui.QMainWindow):
         scrollArea = QtGui.QScrollArea()
         scrollArea.setWidgetResizable(True)
         
-        event_finding_widget = self._create_eventfinder_plot_widget()
+        event_finding_widget = self._create_eventfinder_plots_widget()
         
         event_analysis_widget = self._create_eventanalysis_plot_widget()
         
@@ -478,7 +541,7 @@ class MyApp(QtGui.QMainWindow):
             # if we can't parse the event display text but there are events,
             # just set to zero
             if len(self.events) > 0:
-                self.eventDisplayedEdit.setText('0')
+                self.eventDisplayedEdit.setText('1')
         
     def create_status_bar(self):
         '''
@@ -493,14 +556,17 @@ class MyApp(QtGui.QMainWindow):
         '''
         self.file_menu = self.menuBar().addMenu("&File")
         
-        load_file_action = self.create_action("&Open",
+        load_data_file_action = self.create_action("&Open Data File",
             shortcut="Ctrl+O", slot=self.open_files,
             tip="Open data Files")
+        load_events_database_action = self.create_action("&Open Events Database",
+            shortcut="Ctrl+E", slot=self.open_event_database, 
+            tip="Open Events Database")
         quit_action = self.create_action("&Quit", slot=self.close,
             shortcut="Ctrl+Q", tip="Close the application")
         
         self.add_actions(self.file_menu,
-            (load_file_action, None, quit_action))
+            (load_data_file_action, load_events_database_action, None, quit_action))
         
 #         self.help_menu = self.menuBar().addMenu("&Help")
 #         about_action = self.create_action("&About", 
@@ -684,9 +750,7 @@ class MyApp(QtGui.QMainWindow):
         
         # Add axes and the filename to the parameters
         parameters['axes'] = self.plot_event_zoomed
-        parameters['filename'] = str(currItem.text())
-        
-        print parameters
+        parameters['filename'] = str(currItem.getFilename())
         
         self.status_text.setText('Event Count: 0 Percent Done: 0')
         
@@ -776,16 +840,12 @@ class MyApp(QtGui.QMainWindow):
             event = results['event']
             self.plotEventOnMainPlot(event)
             self.addEventToConcatEventPlot(event)
-            if len(self.events) < 1:
-                self.plotEvent(event)
-                self.eventDisplayedEdit
             self.events.append(event)
             self.eventDisplayedEdit.setMaxLength(int(len(self.events)/10)+1)
             self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(1,len(self.events)))
             self.eventCountText.setText('/' + str(len(self.events)))
             if len(self.events) < 2:
                 self.eventDisplayedEdit.setText('1')
-            self.plotData(results['plot_options'])
         if 'done' in results:
             if results['done']:
                 self.stop_analyze_button.setEnabled(False)
