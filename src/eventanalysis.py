@@ -148,8 +148,8 @@ class MyApp(QtGui.QMainWindow):
             self.plotData(results['plot_options'])
         if 'status_text' in results:
             self.status_text.setText(results['status_text'])
-        
-    def _create_left_side(self):
+            
+    def _create_event_finding_options(self):
         scrollArea = QtGui.QScrollArea()
         scrollArea.setWidgetResizable(True)
         
@@ -298,11 +298,41 @@ class MyApp(QtGui.QMainWindow):
         
         return scrollArea
     
-    def _create_right_side(self):
-        # Put everything in filter_parameter scroll area
-        scrollArea = QtGui.QScrollArea()
-        scrollArea.setWidgetResizable(True)
+    def _create_event_analysis_options(self):
+        # TODO implement me
+        return QtGui.QWidget()
         
+    def _create_left_side(self):
+        event_finding_options = self._create_event_finding_options()
+        event_analysis_options = self._create_event_analysis_options()
+        
+        tab_widget = QtGui.QTabWidget()
+        tab_widget.addTab(event_finding_options, "Event Finding")
+        tab_widget.addTab(event_analysis_options, "Event Analysis")
+        
+        return tab_widget
+        
+        ##################
+#         # Tab widget for event stuff
+#         
+# #         self.tab_widget = QtGui.QTabWidget()
+# #         self.tab_widget.setMinimumSize(450, 250)
+#         
+#         # Filter and Histogram tab.  Use matplotlib cuz can't figure out pyqwt histogram
+#         self.fig = Figure()
+#         self.canvas = FigureCanvas(self.fig)
+# #         self.canvas.setParent(self.tab_widget)
+#         self.axes = self.fig.add_subplot(111)
+#         
+#         self.canvas.setMinimumSize(400, 200)
+#         
+# #         self.tab_widget.addTab(displayDataWidget, "Display Data")
+# #         self.tab_widget.addTab(self.canvas, "Filter and Histogram")
+# #         
+# #         vbox_right = QtGui.QVBoxLayout()
+# #         vbox_right.addWidget(self.tab_widget)
+    
+    def _create_eventfinder_plot_widget(self):
         # Create Qwt plot
         self.plot = Qwt.QwtPlot(self)
         self.plot.setCanvasBackground(QtCore.Qt.white)
@@ -333,11 +363,7 @@ class MyApp(QtGui.QMainWindow):
         self.plot_concatevents.setAxisTitle(Qwt.QwtPlot.yLeft, 'Current')
         self.plot_concatevents.setTitle('Concatenated Events')
         
-        
-        # Tab widget for event stuff
-        
-        self.tab_widget = QtGui.QTabWidget()
-        self.tab_widget.setMinimumSize(450, 250)
+        # Qwt plot for each event found
         self.plot_event_zoomed = Qwt.QwtPlot(self)
         self.plot_event_zoomed.setCanvasBackground(QtCore.Qt.white)
         self.plot_event_zoomed.setAxisTitle(Qwt.QwtPlot.xBottom, 'Time')
@@ -367,28 +393,65 @@ class MyApp(QtGui.QMainWindow):
         btnNext.clicked.connect(self.nextClicked)
         eventSelectToolbar.addWidget(btnNext)
         
-        displayDataLayout = QtGui.QVBoxLayout()
-        displayDataLayout.addWidget(self.plot_event_zoomed)
-        displayDataLayout.addWidget(eventSelectToolbar)
+        singleEventDisplayLayout = QtGui.QVBoxLayout()
+        singleEventDisplayLayout.addWidget(self.plot_event_zoomed)
+        singleEventDisplayLayout.addWidget(eventSelectToolbar)
         
-        displayDataWidget = QtGui.QWidget() # widget container for layout
-        displayDataWidget.setLayout(displayDataLayout)
+        singleEventDisplayWidet = QtGui.QWidget() # widget container for layout
+        singleEventDisplayWidet.setLayout(singleEventDisplayLayout)
+        
+        eventfinderplots_layout = QtGui.QVBoxLayout()
+        eventfinderplots_layout.addWidget(self.plot)
+        eventfinderplots_layout.addWidget(toolBar)
+        eventfinderplots_layout.addWidget(self.plot_concatevents)
+        eventfinderplots_layout.addWidget(singleEventDisplayWidet)
+        
+        eventfinderplots_widget = QtGui.QWidget()
+        eventfinderplots_widget.setLayout(eventfinderplots_layout)
+        
+        return eventfinderplots_widget
+    
+    def _create_eventanalysis_plot_widget(self):
+        # Tab widget for event stuff
+        
+#         self.tab_widget = QtGui.QTabWidget()
+#         self.tab_widget.setMinimumSize(450, 250)
         
         # Filter and Histogram tab.  Use matplotlib cuz can't figure out pyqwt histogram
         self.fig = Figure()
         self.canvas = FigureCanvas(self.fig)
-        self.canvas.setParent(self.tab_widget)
+#         self.canvas.setParent(self.tab_widget)
         self.axes = self.fig.add_subplot(111)
+        
+        self.canvas.setMinimumSize(400, 200)
+        
+#         self.tab_widget.addTab(displayDataWidget, "Display Data")
+#         self.tab_widget.addTab(self.canvas, "Filter and Histogram")
+#         
+#         vbox_right = QtGui.QVBoxLayout()
+#         vbox_right.addWidget(self.tab_widget)
 
-        self.tab_widget.addTab(displayDataWidget, "Display Data")
-        self.tab_widget.addTab(self.canvas, "Filter and Histogram")
+        return self.canvas
+        
+    
+    def _create_right_side(self):
+        '''
+        Returns a widget holding all of the plots, stuff on right side
+        of gui.
+        '''
+        # Put everything in filter_parameter scroll area
+        scrollArea = QtGui.QScrollArea()
+        scrollArea.setWidgetResizable(True)
+        
+        event_finding_widget = self._create_eventfinder_plot_widget()
+        
+        event_analysis_widget = self._create_eventanalysis_plot_widget()
+        
         
         # Right vertical layout with plots and stuff
         vbox_right = QtGui.QVBoxLayout()
-        vbox_right.addWidget(self.plot)
-        vbox_right.addWidget(toolBar)
-        vbox_right.addWidget(self.plot_concatevents)
-        vbox_right.addWidget(self.tab_widget)
+        vbox_right.addWidget(event_finding_widget)
+        vbox_right.addWidget(event_analysis_widget)
         
         vbox_right_widget = QtGui.QWidget()
         vbox_right_widget.setLayout(vbox_right)
