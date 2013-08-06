@@ -10,4 +10,5 @@ To run, in shell do './eventanalysis'
 * Allow user to calculate the baseline by highlighting a section of the graph.
 * Make more interactive tools for the graphs
 * Make it possible to choose different algorithms (event finding, etc.) or import your own.
+* Put all of the non-gui related things in its own package, so the tools can be used outside of the gui.
 
