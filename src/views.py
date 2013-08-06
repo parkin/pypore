@@ -30,3 +30,19 @@ class FileListItem(QListWidgetItem):
         Return the filename without the file path included.
         '''
         return self.simplename
+
+class FilterListItem(FileListItem):
+    '''
+    Subclass of QListWidgetItem to handle filter list items.
+    '''
+    def __init__(self, filename, params):
+        FileListItem.__init__(self, filename)
+        self.params = params
+        self.setText(self.simplename)
+        if 'color' in params:
+            self.setTextColor(params['color'])
+        else:
+            print 'FilterListItem should be passed params with a \'color\' key'
+        
+    def getParams(self):
+        return self.params
