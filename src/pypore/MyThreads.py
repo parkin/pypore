@@ -238,9 +238,9 @@ class AnalyzeDataThread(QtCore.QThread):
                         start_index = event_start
                         if q > 0:
                             start_index = level_indexes[q-1]
-                        end_index = event_end
+                        end_index = event_end+1
                         if q < n_levels-1:
-                            end_index = level_indexes[q]
+                            end_index = level_indexes[q]+1
                         level_values.append(np.mean(data[start_index:end_index]))
                     # end CUSUM
                     self.plot_options['plot_range'] = [event_start - 50, event_end + 50]
@@ -249,7 +249,7 @@ class AnalyzeDataThread(QtCore.QThread):
                     event['event_data'] = data[event_start:event_end]
                     event['raw_data'] = data[event_start - 50 : event_end + 50]
                     event['baseline'] = local_mean
-                    event['delta'] = np.mean(event['event_data'])
+                    event['current_blockage'] = np.mean(event['event_data']) - local_mean
                     event['event_start'] = event_start
                     event['event_end'] = event_end
                     event['raw_points_per_side'] = 50
