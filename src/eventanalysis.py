@@ -16,6 +16,7 @@ from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as Naviga
 from matplotlib.figure import Figure
 
 from scipy import arange
+import scipy.io as sio
 
 # My stuff
 from pypore import AnalyzeDataThread, PlotThread
@@ -388,7 +389,7 @@ class MyApp(QtGui.QMainWindow):
     
     def addFilterClicked(self):
         items = self.listEventWidget.selectedItems()
-        if items == None:
+        if items == None or len(items) < 1:
             return
         
         params = self._getCurrentEventAnalysisParams()
@@ -401,7 +402,7 @@ class MyApp(QtGui.QMainWindow):
         item = FilterListItem(filenames, params)
         self.listFilterWidget.addItem(item)
         
-#         self.
+        self.plotEventDatabaseAnalyses(filenames, params)
         
     def _getCurrentEventAnalysisParams(self):
         params = {}
@@ -652,7 +653,25 @@ class MyApp(QtGui.QMainWindow):
             action.setCheckable(True)
         return action
     
-#     def plotData(self, data, axes, plot_range='all'):
+    def plotEventDatabaseAnalyses(self, filenames, params):
+        '''
+        Plots event statistics.  
+        '''
+        currentBlockade = []
+        for filename in filenames:
+            database = sio.loadmat(str(filename))
+            events = database['Events']
+            for i in range(0, len(events)):
+                event = events[i][0][0] # extra zeroes come from way scipy.io saves .mat
+                baseline = event['baseline'][0][0][0]
+                levels = event['cusum_values'][0][0]
+                for level in levels:
+                    currentBlockade.append(level - baseline)
+                 
+        self.axes.hist(currentBlockade,5)
+        self.canvas.draw()
+        return
+    
     def plotData(self, plot_options):
         '''
         Plots waveform in datadict
