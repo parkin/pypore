@@ -181,7 +181,7 @@ class MyApp(QtGui.QMainWindow):
         '''
         # adding by emitting signal in different thread
         self.status_text.setText('Plotting...')
-        self.threadPool.append(PlotThread(self.plot, filename=str(item.getFilename())))
+        self.threadPool.append(PlotThread(self.plot, filename=str(item.getFileName())))
         self.connect(self.threadPool[len(self.threadPool) - 1], QtCore.SIGNAL('plotData(PyQt_PyObject)'), self._on_file_item_doubleclick_callback)
         self.threadPool[len(self.threadPool) - 1].start()
         
@@ -387,13 +387,18 @@ class MyApp(QtGui.QMainWindow):
         return scrollArea
     
     def addFilterClicked(self):
-        currItem = self.listEventWidget.currentItem()
-        if currItem == None:
+        items = self.listEventWidget.selectedItems()
+        if items == None:
             return
         
         params = self._getCurrentEventAnalysisParams()
         
-        item = FilterListItem(currItem.getFilename(), params)
+        filenames = []
+        
+        for item in items:
+            filenames.append(item.getFileName())
+        
+        item = FilterListItem(filenames, params)
         self.listFilterWidget.addItem(item)
         
 #         self.
@@ -798,7 +803,7 @@ class MyApp(QtGui.QMainWindow):
         
         # Add axes and the filename to the parameters
         parameters['axes'] = self.plot_event_zoomed
-        parameters['filename'] = str(currItem.getFilename())
+        parameters['filename'] = str(currItem.getFileName())
         
         self.status_text.setText('Event Count: 0 Percent Done: 0')
         

@@ -14,31 +14,41 @@ class FileListItem(QListWidgetItem):
         words = filename.split('/')
         name_without_path = words[len(words)-1]
         QListWidgetItem.__init__(self, name_without_path)
-        self.filename = filename
+        self.filenames = filename
         self.simplename = name_without_path
         
         
-    def getFilename(self):
+    def getFileName(self):
         '''
-        Return the filename with the file path included.
-        ex /home/user/.../filename
+        Return the filenames with the file path included.
+        ex /home/user/.../filenames
         '''
-        return self.filename
+        return self.filenames
     
     def getSimpleName(self):
         '''
-        Return the filename without the file path included.
+        Return the filenames without the file path included.
         '''
         return self.simplename
 
-class FilterListItem(FileListItem):
+class FilterListItem(QListWidgetItem):
     '''
     Subclass of QListWidgetItem to handle filter list items.
     '''
-    def __init__(self, filename, params):
-        FileListItem.__init__(self, filename)
+    def __init__(self, filenames, params):
+        '''
+        Pass in a list of filenames
+        '''
+        self.filenames = filenames
+        self.simplenames = []
+        item_text = ''
+        for filename in filenames:
+            words = filename.split('/')
+            simplename = words[len(words)-1]
+            item_text = item_text + str(simplename) + ', '
+            self.simplenames.append(simplename)
+        QListWidgetItem.__init__(self, item_text)
         self.params = params
-        self.setText(self.simplename)
         if 'color' in params:
             self.setTextColor(params['color'])
         else:
@@ -46,3 +56,21 @@ class FilterListItem(FileListItem):
         
     def getParams(self):
         return self.params
+    
+    def getFileNames(self):
+        return self.filenames
+    
+    def getFileNameAt(self, index):
+        if index < len(self.filenames):
+            return self.filenames[index]
+        else:
+            return None
+    
+    def getSimpleNames(self):
+        return self.simplenames
+    
+    def getSimpleNameAt(self, index):
+        if index < len(self.filenames):
+            return self.simplenames[index]
+        else:
+            return None
