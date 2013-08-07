@@ -183,6 +183,7 @@ class AnalyzeDataThread(QtCore.QThread):
                 min_index_p = min_index_n = i
                 min_Sp = min_Sn = 99999
                 ko = i
+                event_area = data[event_i] - local_mean # integrate the area
                 
                 # loop until event ends
                 while not done and event_i - event_start < max_event_steps:
@@ -191,6 +192,7 @@ class AnalyzeDataThread(QtCore.QThread):
                         event_end = event_i - 1
                         done = True
                         break
+                    event_area = event_area + data[event_i] - local_mean
                     # new mean = old_mean + (new_sample - old_mean)/(N)
                     new_mean = mean_estimate + (data[event_i]-mean_estimate)/(1+event_i-ko)
                     # New variance recursion relation 
@@ -254,6 +256,7 @@ class AnalyzeDataThread(QtCore.QThread):
                     event['sample_rate'] = sample_rate
                     event['cusum_indexes'] = level_indexes
                     event['cusum_values'] = level_values
+                    event['area'] = event_area
                     self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'plot_options': self.plot_options, 'event': event})
                     save_file['Events'].append(event)
                     event_count = event_count + 1
