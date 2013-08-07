@@ -199,7 +199,7 @@ class MyApp(QtGui.QMainWindow):
         self.listWidget = QtGui.QListWidget()
         self.listWidget.itemSelectionChanged.connect(self._on_file_item_selection_changed)
         self.listWidget.itemDoubleClicked.connect(self._on_file_item_doubleclick)
-        self.listWidget.setMaximumHeight(50)
+        self.listWidget.setMaximumHeight(100)
         
         # Other GUI controls
         # 
@@ -341,8 +341,9 @@ class MyApp(QtGui.QMainWindow):
         self.listEventWidget = QtGui.QListWidget()
 #         self.listEventWidget.itemSelectionChanged.connect(self._on_file_item_selection_changed)
 #         self.listEventWidget.itemDoubleClicked.connect(self._on_file_item_doubleclick)
-        self.listEventWidget.setMaximumHeight(50)
+        self.listEventWidget.setMaximumHeight(100)
         self.listEventWidget.itemSelectionChanged.connect(self._on_event_file_selection_changed)
+        self.listEventWidget.setSelectionMode(Qt.QAbstractItemView.ExtendedSelection)
         
         files_options = QtGui.QFormLayout()
         files_options.addRow('Event Databases:', self.listEventWidget)
