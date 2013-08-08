@@ -45,15 +45,37 @@ def openChimeraFile(filename, decimate=False):
 
     ADCBITS = specsfile['SETUP_ADCBITS'][0][0]
     ADCvref = specsfile['SETUP_ADCVREF'][0][0]
-
+    
     datafile = open(filename)
-    datatype = 'uint16'
+    datatype = np.dtype('<u2')
 
     bitmask = (2**16) - 1 - (2**(16-ADCBITS) - 1);
-    rawvalues = np.fromfile(datafile,datatype)
-    readvalues = rawvalues & bitmask
+    if decimate:
+        # Calculate number of points in the dataset
+        filesize = os.path.getsize(filename)
+        num_points = filesize/datatype.itemsize
+        block_size = 5000
+        decimated_size = int(2*num_points/block_size)
+        if num_points%block_size > 0: # will there be a block at the end with < block_size datapoints?
+            decimated_size = decimated_size + 2
+        logdata = np.zeros(decimated_size)
+        i = 0
+        while True:
+            rawvalues = np.fromfile(datafile,datatype,block_size)
+            if rawvalues.size < 1:
+                break
+            readvalues = -ADCvref + (2*ADCvref)*(rawvalues & bitmask)/(2**16)
+            logdata[i] = np.max(readvalues)
+            logdata[i+1] = np.min(readvalues)
+            i = i + 2
+            
+        # Change the sample rate
+        specsfile['SETUP_ADCSAMPLERATE'][0][0] = specsfile['SETUP_ADCSAMPLERATE'][0][0]*2/block_size
+    else:
+        rawvalues = np.fromfile(datafile,datatype)
+        readvalues = rawvalues & bitmask
+        logdata = -ADCvref + (2*ADCvref) * readvalues / (2**16);
 
-    logdata = -ADCvref + (2*ADCvref) * readvalues / (2**16);
     specsfile['data'] = logdata
     return specsfile
 
