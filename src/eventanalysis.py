@@ -412,7 +412,6 @@ class MyApp(QtGui.QMainWindow):
             self.event_color = col
             self.frm.setStyleSheet("QWidget { background-color: %s }"
                 % col.name())
-        print col.getRgbF()
         
     def _create_left_side(self):
         event_finding_options = self._create_event_finding_options()
@@ -652,17 +651,22 @@ class MyApp(QtGui.QMainWindow):
         Plots event statistics.  
         '''
         currentBlockade = []
+        dwellTimes = []
         for filename in filenames:
             database = sio.loadmat(str(filename))
             events = database['Events']
+            sample_rate = database['sample_rate'][0][0]
             for i in range(0, len(events)):
                 event = events[i][0][0] # extra zeroes come from way scipy.io saves .mat
                 baseline = event['baseline'][0][0][0]
                 levels = event['cusum_values'][0][0]
                 for level in levels:
                     currentBlockade.append(level - baseline)
+                dwellTime = (event['event_end'][0][0][0]-event['event_start'][0][0][0])/sample_rate
+                dwellTimes.append(dwellTime)
                  
-        self.axes.hist(currentBlockade, 5, facecolor=params['color'].getRgbF())
+        self.axes.hist(currentBlockade, 20, facecolor=params['color'].getRgbF(), alpha=0.5)
+        self.axes4.hist(dwellTimes, 20, facecolor=params['color'].getRgbF(), alpha=0.5)
         self.canvas.draw()
         return
     
