@@ -233,7 +233,7 @@ class AnalyzeDataThread(QtCore.QThread):
                 if done and event_end - event_start > min_event_steps:
                     print 'Number of level_values:', n_levels
                     # CUSUM stuff
-                    level_values = [] # Holds the current values of the level_values
+                    level_values = np.zeros(n_levels) # Holds the current values of the level_values
                     for q in range(0,n_levels):
                         start_index = event_start
                         if q > 0:
@@ -241,7 +241,7 @@ class AnalyzeDataThread(QtCore.QThread):
                         end_index = event_end+1
                         if q < n_levels-1:
                             end_index = level_indexes[q]+1
-                        level_values.append(np.mean(data[start_index:end_index]))
+                        level_values[q] = np.mean(data[start_index:end_index])
                     # end CUSUM
                     self.plot_options['plot_range'] = [event_start - 50, event_end + 50]
                     self.plot_options['show_event'] = True
