@@ -81,7 +81,6 @@ class MyApp(QtGui.QMainWindow):
         self.create_status_bar()
         
         self.__initZooming()
-#         self.showMaximized()
         
     def __initZooming(self):
         """Initialize zooming
@@ -94,17 +93,17 @@ class MyApp(QtGui.QMainWindow):
                                         self.plot.canvas())
         self.zoomer.setRubberBandPen(Qt.QPen(Qt.Qt.black))
         
-        self.picker = Qwt.QwtPlotPicker(
-            Qwt.QwtPlot.xBottom,
-            Qwt.QwtPlot.yLeft,
-            Qwt.QwtPicker.DragSelection,
-#             Qwt.QwtPlotPicker.DragSelection,
-            Qwt.QwtPlotPicker.CrossRubberBand,
-            Qwt.QwtPicker.AlwaysOff,
-            self.plot.canvas())
-        self.picker.setRubberBandPen(Qt.QPen(QtCore.Qt.darkMagenta))
-        self.picker.setTrackerPen(Qt.QPen(QtCore.Qt.cyan))
-        self.picker.connect(self.picker, Qt.SIGNAL('selected(const QwtDoublePoint&)'), self.aSlot)
+#         self.picker = Qwt.QwtPlotPicker(
+#             Qwt.QwtPlot.xBottom,
+#             Qwt.QwtPlot.yLeft,
+#             Qwt.QwtPicker.DragSelection,
+# #             Qwt.QwtPlotPicker.DragSelection,
+#             Qwt.QwtPlotPicker.CrossRubberBand,
+#             Qwt.QwtPicker.AlwaysOff,
+#             self.plot.canvas())
+#         self.picker.setRubberBandPen(Qt.QPen(QtCore.Qt.darkMagenta))
+#         self.picker.setTrackerPen(Qt.QPen(QtCore.Qt.cyan))
+#         self.picker.connect(self.picker, Qt.SIGNAL('selected(const QwtDoublePoint&)'), self.aSlot)
         
         self.zoomer_concatEvents = Qwt.QwtPlotZoomer(Qwt.QwtPlot.xBottom,
                                         Qwt.QwtPlot.yLeft,
@@ -124,9 +123,6 @@ class MyApp(QtGui.QMainWindow):
         self.magnifier = Qwt.QwtPlotMagnifier(self.plot.canvas())
         self.magnifier.setEnabled(False)
     
-    def aSlot(self, aQPointF):
-        print 'aSlot gets:', aQPointF
-        
     def zoom(self, on):
         self.zoomer.setEnabled(on)
         self.zoomer.zoom(0)
@@ -536,23 +532,22 @@ class MyApp(QtGui.QMainWindow):
         '''
         # Put everything in filter_parameter scroll area
         scrollArea = QtGui.QScrollArea()
+        scrollAreaAnalysis = QtGui.QScrollArea()
         scrollArea.setWidgetResizable(True)
+        scrollAreaAnalysis.setWidgetResizable(True)
         
         event_finding_widget = self._create_eventfinder_plots_widget()
         
         event_analysis_widget = self._create_eventanalysis_plot_widget()
         
-        # Right vertical layout with plots and stuff
-        vbox_right = QtGui.QVBoxLayout()
-        vbox_right.addWidget(event_finding_widget)
-        vbox_right.addWidget(event_analysis_widget)
+        scrollArea.setWidget(event_finding_widget)
+        scrollAreaAnalysis.setWidget(event_analysis_widget)
         
-        vbox_right_widget = QtGui.QWidget()
-        vbox_right_widget.setLayout(vbox_right)
+        tabWidget = QtGui.QTabWidget()
+        tabWidget.addTab(scrollArea, 'Event Finding')
+        tabWidget.addTab(scrollAreaAnalysis, 'Event Analysis')
         
-        scrollArea.setWidget(vbox_right_widget)
-        
-        return scrollArea
+        return tabWidget
         
     def create_main_frame(self):
         '''
