@@ -416,6 +416,7 @@ class MyApp(QtGui.QMainWindow):
             self.event_color = col
             self.frm.setStyleSheet("QWidget { background-color: %s }"
                 % col.name())
+        print col.getRgbF()
         
     def _create_left_side(self):
         event_finding_options = self._create_event_finding_options()
@@ -541,7 +542,6 @@ class MyApp(QtGui.QMainWindow):
         
         event_analysis_widget = self._create_eventanalysis_plot_widget()
         
-        
         # Right vertical layout with plots and stuff
         vbox_right = QtGui.QVBoxLayout()
         vbox_right.addWidget(event_finding_widget)
@@ -561,7 +561,6 @@ class MyApp(QtGui.QMainWindow):
         left_side = self._create_left_side()
         right_side = self._create_right_side()
         
-
         # Layout holding everything        
         main_frame = QtGui.QSplitter() # Splitter allows for drag to resize between children
         main_frame.addWidget(left_side)
@@ -668,7 +667,7 @@ class MyApp(QtGui.QMainWindow):
                 for level in levels:
                     currentBlockade.append(level - baseline)
                  
-        self.axes.hist(currentBlockade,5)
+        self.axes.hist(currentBlockade, 5, facecolor=params['color'].getRgbF())
         self.canvas.draw()
         return
     
