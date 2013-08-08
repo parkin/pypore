@@ -15,7 +15,7 @@ import datetime
 class PlotThread(QtCore.QThread):
     def __init__(self, axes, datadict='', plot_range='all', filename='',
                  threshold_type='adaptive', a=0.93,
-                 threshold_direction='negative', min_event_length=10., max_event_length=1000.):
+                 threshold_direction='negative', min_event_length=10., max_event_length=1000., decimate=False):
         QtCore.QThread.__init__(self)
         self.plot_options = {'axes': axes, 'datadict': datadict, 'plot_range': plot_range}
         self.filename = filename
@@ -24,6 +24,7 @@ class PlotThread(QtCore.QThread):
         self.threshold_direction = threshold_direction
         self.min_event_length = min_event_length
         self.max_event_length = max_event_length
+        self.decimate = decimate
     
     def __del__(self):
         '''
@@ -34,7 +35,7 @@ class PlotThread(QtCore.QThread):
     
     def run(self):
         if not self.filename == '' or self.plot_options['datadict'] == '':
-            self.plot_options['datadict'] = openData(self.filename)
+            self.plot_options['datadict'] = openData(self.filename, self.decimate)
         self.emit(QtCore.SIGNAL('plotData(PyQt_PyObject)'), {'plot_options': self.plot_options, 'status_text': ''})
 
 class AnalyzeDataThread(QtCore.QThread):

@@ -178,7 +178,8 @@ class MyApp(QtGui.QMainWindow):
         '''
         # adding by emitting signal in different thread
         self.status_text.setText('Plotting...')
-        self.threadPool.append(PlotThread(self.plot, filename=str(item.getFileName())))
+        decimates = self.decimateCheckBox.isChecked()
+        self.threadPool.append(PlotThread(self.plot, filename=str(item.getFileName()), decimate = decimates))
         self.connect(self.threadPool[len(self.threadPool) - 1], QtCore.SIGNAL('plotData(PyQt_PyObject)'), self._on_file_item_doubleclick_callback)
         self.threadPool[len(self.threadPool) - 1].start()
         
@@ -445,6 +446,10 @@ class MyApp(QtGui.QMainWindow):
         self.connect(btnZoom,
                      QtCore.SIGNAL('toggled(bool)'),
                      self.zoom)
+        
+        self.decimateCheckBox = QtGui.QCheckBox()
+        self.decimateCheckBox.setText('Decimate')
+        toolBar.addWidget(self.decimateCheckBox)
         
         # Create Qwt plot for concatenated events
         self.plot_concatevents = Qwt.QwtPlot(self)
