@@ -105,7 +105,7 @@ def prepareChimeraFile(filename):
     datatype = np.dtype('<u2')
     
     p = {'ADCBITS': ADCBITS, 'ADCvref': ADCvref, 'datafile': datafile,
-         'datatype': datatype}
+         'datatype': datatype, 'specsfile': specsfile}
     
     return datafile, p
 
