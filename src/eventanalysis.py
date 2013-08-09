@@ -448,6 +448,7 @@ class MyApp(QtGui.QMainWindow):
                      self.zoom)
         
         self.decimateCheckBox = QtGui.QCheckBox()
+        self.decimateCheckBox.setChecked(True)
         self.decimateCheckBox.setText('Decimate')
         toolBar.addWidget(self.decimateCheckBox)
         
@@ -686,7 +687,7 @@ class MyApp(QtGui.QMainWindow):
         if axes is None:
             axes = self.plot
         # Read the first file, store data in dictionary
-        data = plot_options['datadict']['data']
+        data = plot_options['datadict']['data'][0]
         sample_rate = plot_options['datadict']['SETUP_ADCSAMPLERATE'][0][0]
         plot_range = plot_options['plot_range']
     
@@ -801,7 +802,6 @@ class MyApp(QtGui.QMainWindow):
         
     def on_analyze_stop(self):
         for w in self.threadPool:
-            print w
             if isinstance(w, AnalyzeDataThread):
                 w.terminate()
         self.stop_analyze_button.setEnabled(False)

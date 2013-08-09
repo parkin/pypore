@@ -63,8 +63,15 @@ class AnalyzeDataThread(QtCore.QThread):
         filter_parameter segfault, unless we implement this destructor.
         '''
         self.wait()
-    
-    def run(self):
+        
+    def lazyLoading(self):
+        '''
+        Lazily loads large data files.
+        '''
+        # IMPLEMENT ME pleasE
+        return
+        
+    def nonLazyLoading(self):
         '''
         Finds all the events in 'data'.
         
@@ -85,7 +92,7 @@ class AnalyzeDataThread(QtCore.QThread):
         self.plot_options['axes'] = self.parameters['axes']
         if not self.parameters['filename'] == '' or self.plot_options['datadict'] == '':
             self.plot_options['datadict'] = openData(self.parameters['filename'])
-        data = self.plot_options['datadict']['data']
+        data = self.plot_options['datadict']['data'][0]
         sample_rate = self.plot_options['datadict']['SETUP_ADCSAMPLERATE'][0][0]
         timestep = 1 / sample_rate
         
@@ -286,3 +293,6 @@ class AnalyzeDataThread(QtCore.QThread):
             sio.savemat(save_file['filename'], save_file)
             
         self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'status_text': 'Done. Found ' + str(event_count) + ' events.  Saved database to ' + str(save_file['filename']), 'done': True})  
+    
+    def run(self):
+        return self.nonLazyLoading()
