@@ -40,6 +40,26 @@ def prepareDataFile(filename):
         
     return 'File not specified with correct extension. Possibilities are: \'.log\', \'.hkd\''
 
+def getNextBlocks(datafile, params, n=1):
+    '''
+    Gets the next n blocks (~5000 datapoints) of data from filename
+    
+    Pass in an open datafile,
+    params - 
+    n - number of blocks to read and return.
+    
+    Assumes '.log' extension is Chimera data.  Chimera data requires a '.mat'
+     file with the same name to be in the same folder. - not yet implemented
+     
+    Assumes '.hkd' extension is Heka data.
+    '''
+    if '.log' in params['filename']:
+        return getNextChimeraBlocks(datafile, params, n)
+    if '.hkd' in params['filename']:
+        return getNextHekaBlocks(datafile, params, n)
+        
+    return 'File not specified with correct extension. Possibilities are: \'.log\', \'.hkd\''
+
 def openChimeraFile(filename, decimate=False):
     '''
     Reads files created by the Chimera acquisition software.  It requires a
@@ -97,18 +117,48 @@ def prepareChimeraFile(filename):
     s.append('mat')
     # load the matlab file with parameters for the runs
     specsfile = sio.loadmat("".join(s))
+    
+    # Calculate number of points per channel
+    filesize = os.path.getsize(filename)
+    datatype = np.dtype('<u2')
+    points_per_channel_per_block = 5000
+    points_per_channel_total = filesize/datatype.itemsize
 
     ADCBITS = specsfile['SETUP_ADCBITS'][0][0]
     ADCvref = specsfile['SETUP_ADCVREF'][0][0]
     
     datafile = open(filename)
-    datatype = np.dtype('<u2')
+    
+    bitmask = (2**16) - 1 - (2**(16-ADCBITS) - 1);
     
     p = {'ADCBITS': ADCBITS, 'ADCvref': ADCvref, 'datafile': datafile,
-         'datatype': datatype, 'specsfile': specsfile}
+         'datatype': datatype, 'specsfile': specsfile, 
+         'bitmask': bitmask, 'filename': filename,
+         'sample_rate': specsfile['SETUP_ADCSAMPLERATE'][0][0],
+         'points_per_channel_per_block': points_per_channel_per_block,
+         'points_per_channel_total': points_per_channel_total}
     
     return datafile, p
 
+def getNextChimeraBlocks(datafile, params, n):
+    '''
+    '''
+    block_size = params['points_per_channel_per_block']
+    
+    datatype = params['datatype']
+    bitmask = params['bitmask']
+    ADCvref = params['ADCvref']
+    
+    rawvalues = np.fromfile(datafile,datatype, n*block_size)
+    readvalues = rawvalues & bitmask
+    logdata = -ADCvref + (2*ADCvref) * readvalues / (2**16);
+    
+    done = False # eof?
+    if logdata.size < 1:
+        done = True
+    
+    return [logdata], done
+        
 # Data types list, in order specified by the HEKA file header v2.0.
 # Using big-endian.
 # Code 0=uint8,1=uint16,2=uint32,3=int8,4=int16,5=int32,
@@ -174,7 +224,9 @@ def prepareHekaFile(filename):
          'total_bytes_per_block': total_bytes_per_block,  'filesize': filesize,
          'num_blocks_in_file': num_blocks_in_file,
          'points_per_channel_total': points_per_channel_total,
-         'points_per_channel_per_block': points_per_channel_per_block}
+         'points_per_channel_per_block': points_per_channel_per_block,
+         'sample_rate': 1.0/per_file_params['Sampling interval'],
+         'filename': filename}
     
     return f, p
 
@@ -227,6 +279,41 @@ def openHekaFile(filename, decimate=False):
     specsfile = {'data': data, 'SETUP_ADCSAMPLERATE': [[sample_rate]]}
     
     return specsfile
+
+def getNextHekaBlocks(datafile, params, n):
+    per_file_params = params['per_file_params']
+    per_block_param_list = params['per_block_param_list']
+    per_channel_param_list = params['per_channel_param_list']
+    channel_list = params['channel_list']
+    points_per_channel_per_block = params['points_per_channel_per_block']
+    
+    blocks = []
+    totalsize = 0
+    done = False
+    for i in range(0,n):
+        block = _readHekaNextBlock(datafile, per_file_params, 
+                                   per_block_param_list, per_channel_param_list, 
+                                   channel_list, points_per_channel_per_block)
+        blocks.append(block)
+        size = block['data'][0].size
+        totalsize = totalsize + size
+        if size < points_per_channel_per_block: # did we reach the end?
+            break
+        
+    # stitch the data together
+    data = []
+    for i in range(0, len(channel_list)):
+        data.append(np.zeros(totalsize))
+    index = 0
+    for block in blocks:
+        for i in range(0, len(channel_list)):
+            data[i][index:index+block['data'][0].size] = block['data']
+            index = index + block['data'][0].size
+            
+    if data[0].size < 1:
+        done = True
+    
+    return data, done
 
 def _readHekaNextBlock(f, per_file_params, per_block_param_list, per_channel_param_list, channel_list, points_per_channel_per_block):
     '''
