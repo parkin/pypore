@@ -11,6 +11,7 @@ from DataFileOpener import openData, prepareDataFile, getNextBlocks
 import scipy.io as sio
 import numpy as np
 import datetime
+import time
 
 class PlotThread(QtCore.QThread):
     def __init__(self, axes, datadict='', plot_range='all', filename='',
@@ -68,8 +69,14 @@ class AnalyzeDataThread(QtCore.QThread):
         '''
         Lazily loads large data files.
         '''
-        print 'lazyLoading'
-        get_blocks = 3
+        # I did some quick calculation of the rate (with plotting and everything), and
+        # nonLazy - ~96k samples/sec
+        # lazy 10 blocks (50,000 samples) - ~100k samples/sec
+        # lazy 3 blocks ( 15,000 samples) - ~105k samples/sec
+        # lazy 1 block (5,000 samples) - ~108k samples/sec
+        get_blocks = 1
+        
+        raw_points_per_side = 50
         
         # IMPLEMENT ME pleasE
         self.plot_options = {}
@@ -95,10 +102,8 @@ class AnalyzeDataThread(QtCore.QThread):
             directionPositive = True
             
         # allocate memory for data
-        n = params['points_per_channel_per_block'] * get_blocks
         data, doneWithData = getNextBlocks(f, params, get_blocks)
         data = data[0]  # only get channel 1
-        
         
         if data.size < 100:
             print 'Not enough datapoints in file.'
@@ -134,6 +139,9 @@ class AnalyzeDataThread(QtCore.QThread):
         
         save_file = {}
         save_file['Events'] = []
+        
+        dataCache = []
+        rawPointsCache = np.zeros(raw_points_per_side)
         
         n = data.size
         event_count = 0
@@ -187,24 +195,24 @@ class AnalyzeDataThread(QtCore.QThread):
                     event_i = event_i + 1
                     #  If we need to load another block, but are still looking at an event,
                     # just cache the current data
-#                     if event_i % n == 0:
-#                         dataCache, doneWithData = getNextBlocks(f, params, get_blocks)
-#                         dataNeeded = min(max_event_steps, dataCache.size)
-#                         data[n:n + dataNeeded] = dataCache[0][0:dataNeeded]  # only channel 1 data
-#                         if doneWithData:
-#                             break
-                    if (not wasEventPositive and data[event_i] > local_mean - threshold_end) or (wasEventPositive and data[event_i] < local_mean + threshold_end):
+                    if event_i % n == 0:
+                        datas, doneWithData = getNextBlocks(f, params, get_blocks)
+                        dataCache.append(datas[0])
+                        datas = 0 # free
+                        if doneWithData:
+                            break
+                    if (not wasEventPositive and self.getDataAt(data, dataCache, rawPointsCache, event_i) > local_mean - threshold_end) or (wasEventPositive and self.getDataAt(data, dataCache, rawPointsCache, event_i) < local_mean + threshold_end):
                         event_end = event_i - 1
                         done = True
                         break
-                    event_area = event_area + data[event_i] - local_mean
+                    event_area = event_area + self.getDataAt(data, dataCache, rawPointsCache, event_i) - local_mean
                     # new mean = old_mean + (new_sample - old_mean)/(N)
-                    new_mean = mean_estimate + (data[event_i] - mean_estimate) / (1 + event_i - ko)
+                    new_mean = mean_estimate + (self.getDataAt(data, dataCache, rawPointsCache, event_i) - mean_estimate) / (1 + event_i - ko)
                     # New variance recursion relation 
-                    var_estimate = ((event_i - ko) * var_estimate + (data[event_i] - mean_estimate) * (data[event_i] - new_mean)) / (1 + event_i - ko)
+                    var_estimate = ((event_i - ko) * var_estimate + (self.getDataAt(data, dataCache, rawPointsCache, event_i) - mean_estimate) * (self.getDataAt(data, dataCache, rawPointsCache, event_i) - new_mean)) / (1 + event_i - ko)
                     mean_estimate = new_mean
-                    sp = (delta / var_estimate) * (data[event_i] - mean_estimate - delta / 2)
-                    sn = -(delta / var_estimate) * (data[event_i] - mean_estimate + delta / 2)
+                    sp = (delta / var_estimate) * (self.getDataAt(data, dataCache, rawPointsCache, event_i) - mean_estimate - delta / 2)
+                    sn = -(delta / var_estimate) * (self.getDataAt(data, dataCache, rawPointsCache, event_i) - mean_estimate + delta / 2)
                     Sp = Sp + sp
                     Sn = Sn + sn
                     Gp = max(0, Gp + sp)
@@ -234,7 +242,6 @@ class AnalyzeDataThread(QtCore.QThread):
                 i = event_end
                 # is the event long enough?
                 if done and event_end - event_start > min_event_steps:
-                    print 'Number of level_values:', n_levels
                     # CUSUM stuff
                     level_values = np.zeros(n_levels)  # Holds the current values of the level_values
                     for q in range(0, n_levels):
@@ -244,21 +251,20 @@ class AnalyzeDataThread(QtCore.QThread):
                         end_index = event_end + 1
                         if q < n_levels - 1:
                             end_index = level_indexes[q] + 1
-                        level_values[q] = np.mean(data[start_index:end_index])
+                        level_values[q] = np.mean(self.getDataRange(data, dataCache, rawPointsCache, start_index, end_index))
                     for j in range(0, len(level_indexes)):
                         level_indexes[j] = level_indexes[j] + placeInData
                     # end CUSUM
-                    self.plot_options['plot_range'] = [event_start - 50, event_end + 50]
+                    self.plot_options['plot_range'] = [event_start - raw_points_per_side, event_end + raw_points_per_side]
                     self.plot_options['show_event'] = True
                     event = {}
-                    print 'count:', event_count + 1, 'start:', event_start + placeInData, 'end:', event_end + placeInData
-                    event['event_data'] = data[event_start:event_end]
-                    event['raw_data'] = data[event_start - 50 : event_end + 50]
+                    event['event_data'] = self.getDataRange(data, dataCache, rawPointsCache, event_start, event_end)
+                    event['raw_data'] = self.getDataRange(data, dataCache, rawPointsCache, event_start-raw_points_per_side, event_end+raw_points_per_side)
                     event['baseline'] = local_mean
                     event['current_blockage'] = np.mean(event['event_data']) - local_mean
                     event['event_start'] = event_start + placeInData
                     event['event_end'] = event_end + placeInData
-                    event['raw_points_per_side'] = 50
+                    event['raw_points_per_side'] = raw_points_per_side
                     event['sample_rate'] = sample_rate
                     event['cusum_indexes'] = level_indexes
                     event['cusum_values'] = level_values
@@ -266,6 +272,22 @@ class AnalyzeDataThread(QtCore.QThread):
                     self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'plot_options': self.plot_options, 'event': event})
                     save_file['Events'].append(event)
                     event_count = event_count + 1
+                if len(dataCache) > 0:
+                    print 'cache len:', len(dataCache)
+                    if i >= n:
+                        i = i % n
+                        placeInData = placeInData + n
+                        for cache in dataCache:
+                            if i >= cache.size:
+                                i = i % cache.size
+                                placeInData = placeInData + cache.size
+                                rawPointsCache = cache[cache.size-raw_points_per_side:]
+                            else:
+                                data = cache
+                                n = data.size
+                                dataCache = []
+                                break
+                                
             local_mean = filter_parameter * local_mean + (1 - filter_parameter) * data[i]
             local_variance = filter_parameter * local_variance + (1 - filter_parameter) * (data[i] - local_mean) ** 2
             if threshold_type == self.THRESHOLD_NOISE_BASED:
@@ -274,11 +296,14 @@ class AnalyzeDataThread(QtCore.QThread):
             if i >= n:
                 placeInData = placeInData + n
                 i = i % n
+                rawPointsCache = data[data.size - raw_points_per_side:]
                 data, doneWithData = getNextBlocks(f, params, get_blocks)
                 data = data[0]
                 n = data.size
                 if placeInData % 50000 == 0:
-                    self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'status_text': 'Event Count: ' + str(event_count) + ' Percent Done: ' + str(100.*placeInData / points_per_channel_total)})
+                    total_time = time.time() - self.time1
+                    self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), 
+                              {'status_text': 'Event Count: ' + str(event_count) + ' Percent Done: ' + str(100.*placeInData / points_per_channel_total) + ' Rate: ' + str(placeInData/total_time) + ' samples/sec'})
             
             
         if event_count > 0:
@@ -298,10 +323,37 @@ class AnalyzeDataThread(QtCore.QThread):
             save_file['parameters'] = self.parameters
             sio.savemat(save_file['filename'], save_file)
             
-        print 'done lazyLoading'
         self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'status_text': 'Done. Found ' + str(event_count) + ' events.  Saved database to ' + str(save_file['filename']), 'done': True})  
         
         return
+    
+    def getDataAt(self, data, dataCache, rawPointsCache, i):
+        '''
+        Returns data from either data, or dataCache
+        '''
+        if i < 0:
+            return rawPointsCache[rawPointsCache.size + i]
+        if i < data.size:
+            return data[i]
+        else:
+            i = i%data.size
+            for cache in dataCache:
+                if i < cache.size:
+                    return cache[i]
+                else:
+                    i = i%cache.size
+        print 'getDataAt no data found'
+        return None
+    
+    def getDataRange(self, data, dataCache, rawPointsCache, i, n):
+        '''
+        Returns data [0,n)
+        '''
+        ret = np.zeros(n-i)
+        for j in range(i,n):
+            ret[j-i] = self.getDataAt(data, dataCache, rawPointsCache, j)
+            
+        return ret
     
     def nonLazyLoading(self):
         '''
@@ -506,7 +558,9 @@ class AnalyzeDataThread(QtCore.QThread):
                 threshold_start = start_stddev * local_variance ** .5 
             i = i + 1
             if i % 50000 == 0:
-                self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'status_text': 'Event Count: ' + str(event_count) + ' Percent Done: ' + str(100.*i / n)})
+                total_time = time.time() - self.time1
+                self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), 
+                          {'status_text': 'Event Count: ' + str(event_count) + ' Percent Done: ' + str(100.*i / n) + ' Rate: ' + str(i/total_time) + ' samples/sec'})
         if event_count > 0:
             save_file_name = list(self.parameters['filename'])
             # Remove the .mat off the end
@@ -524,8 +578,10 @@ class AnalyzeDataThread(QtCore.QThread):
             save_file['parameters'] = self.parameters
             sio.savemat(save_file['filename'], save_file)
             
-        self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'status_text': 'Done. Found ' + str(event_count) + ' events.  Saved database to ' + str(save_file['filename']), 'done': True})  
+        self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), 
+                  {'status_text': 'Done. Found ' + str(event_count) + ' events.  Saved database to ' + str(save_file['filename']), 'done': True})  
     
     def run(self):
+        self.time1 = time.time()
 #         self.nonLazyLoading()
         self.lazyLoading()
