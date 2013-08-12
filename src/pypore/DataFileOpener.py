@@ -294,6 +294,8 @@ def getNextHekaBlocks(datafile, params, n):
         block = _readHekaNextBlock(datafile, per_file_params, 
                                    per_block_param_list, per_channel_param_list, 
                                    channel_list, points_per_channel_per_block)
+        if block['data'][0].size == 0:
+            return block['data'], True
         blocks.append(block)
         size = block['data'][0].size
         totalsize = totalsize + size
@@ -307,8 +309,8 @@ def getNextHekaBlocks(datafile, params, n):
     index = 0
     for block in blocks:
         for i in range(0, len(channel_list)):
-            data[i][index:index+block['data'][0].size] = block['data']
-            index = index + block['data'][0].size
+            data[i][index:index+block['data'][i].size] = block['data'][i]
+            index = index + block['data'][i].size
             
     if data[0].size < 1:
         done = True
@@ -323,6 +325,8 @@ def _readHekaNextBlock(f, per_file_params, per_block_param_list, per_channel_par
     
     # Read block header
     per_block_params = _readHekaHeaderParams(f, per_block_param_list)
+    if per_block_params == None:
+        return {'data': [np.zeros(0)], 'per_block_params': None, 'per_channel_params': None}
     
     # Read per channel header
     per_channel_block_params = []
@@ -359,7 +363,11 @@ def _readHekaHeaderParams(f, param_list):
     params = {}
     # pair[0] = name, pair[1] = np.datatype
     for pair in param_list:
-        params[pair[0]] = np.fromfile(f, pair[1], 1)[0]
+        array = np.fromfile(f, pair[1], 1)
+        if array.size > 0:
+            params[pair[0]] = array[0]
+        else:
+            return None
     return params
         
 def _readHekaHeaderParamList(f, datatype, encodings):
