@@ -333,7 +333,7 @@ class AnalyzeDataThread(QtCore.QThread):
         '''
         if i < 0:
             return rawPointsCache[rawPointsCache.size + i]
-        if i < data.size:
+        elif i < data.size:
             return data[i]
         else:
             i = i%data.size

@@ -3,7 +3,94 @@ Created on Aug 6, 2013
 
 @author: parkin
 '''
-from PyQt4.QtGui import QListWidgetItem
+from PyQt4 import QtGui, QtCore
+from PyQt4.QtGui import QListWidgetItem, QToolBar
+
+# zoom picture? copied from BodeDemo
+zoom_xpm = ['32 32 8 1',
+            '# c #000000',
+            'b c #c0c0c0',
+            'a c #ffffff',
+            'e c #585858',
+            'd c #a0a0a4',
+            'c c #0000ff',
+            'f c #00ffff',
+            '. c None',
+            '..######################........',
+            '.#a#baaaaaaaaaaaaaaaaaa#........',
+            '#aa#baaaaaaaaaaaaaccaca#........',
+            '####baaaaaaaaaaaaaaaaca####.....',
+            '#bbbbaaaaaaaaaaaacccaaa#da#.....',
+            '#aaaaaaaaaaaaaaaacccaca#da#.....',
+            '#aaaaaaaaaaaaaaaaaccaca#da#.....',
+            '#aaaaaaaaaabe###ebaaaaa#da#.....',
+            '#aaaaaaaaa#########aaaa#da#.....',
+            '#aaaaaaaa###dbbbb###aaa#da#.....',
+            '#aaaaaaa###aaaaffb###aa#da#.....',
+            '#aaaaaab##aaccaaafb##ba#da#.....',
+            '#aaaaaae#daaccaccaad#ea#da#.....',
+            '#aaaaaa##aaaaaaccaab##a#da#.....',
+            '#aaaaaa##aacccaaaaab##a#da#.....',
+            '#aaaaaa##aaccccaccab##a#da#.....',
+            '#aaaaaae#daccccaccad#ea#da#.....',
+            '#aaaaaab##aacccaaaa##da#da#.....',
+            '#aaccacd###aaaaaaa###da#da#.....',
+            '#aaaaacad###daaad#####a#da#.....',
+            '#acccaaaad##########da##da#.....',
+            '#acccacaaadde###edd#eda#da#.....',
+            '#aaccacaaaabdddddbdd#eda#a#.....',
+            '#aaaaaaaaaaaaaaaaaadd#eda##.....',
+            '#aaaaaaaaaaaaaaaaaaadd#eda#.....',
+            '#aaaaaaaccacaaaaaaaaadd#eda#....',
+            '#aaaaaaaaaacaaaaaaaaaad##eda#...',
+            '#aaaaaacccaaaaaaaaaaaaa#d#eda#..',
+            '########################dd#eda#.',
+            '...#dddddddddddddddddddddd##eda#',
+            '...#aaaaaaaaaaaaaaaaaaaaaa#.####',
+            '...########################..##.']
+
+class PlotToolBar(QToolBar):
+    '''
+    A toolbar for plots, with a zoom button, check boxes for options.
+    '''
+    def __init__(self, parent = None, zoomCallback = None):
+        QToolBar.__init__(self, parent)
+        
+        btnZoom = QtGui.QToolButton(self)
+        btnZoom.setText("Zoom")
+        btnZoom.setIcon(QtGui.QIcon(QtGui.QPixmap(zoom_xpm)))
+        btnZoom.setCheckable(True)
+        btnZoom.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
+        self.addWidget(btnZoom)
+        if not zoomCallback == None:
+            self.connect(btnZoom,
+                         QtCore.SIGNAL('toggled(bool)'),
+                         zoomCallback)
+        
+        self.decimateCheckBox = QtGui.QCheckBox()
+        self.decimateCheckBox.setChecked(True)
+        self.decimateCheckBox.setText('Decimate')
+        self.addWidget(self.decimateCheckBox)
+        
+        self.plotDuringCheckBox = QtGui.QCheckBox()
+        self.plotDuringCheckBox.setChecked(True)
+        self.plotDuringCheckBox.setText('Plot Events')
+        self.plotDuringCheckBox.setToolTip('Select to have events plotted during event finding.')
+        self.addWidget(self.plotDuringCheckBox)
+        
+    def isDecimateChecked(self):
+        '''
+        Returns true if the toolbar's decimate checkbox is checked, false
+        otherwise.
+        '''
+        return self.decimateCheckBox.isChecked()
+    
+    def isPlotDuringChecked(self):
+        '''
+        Returns true if the toolbar's plot during checkbox is checked, false
+        otherwise.
+        '''
+        return self.plotDuringCheckBox.isChecked()
 
 class FileListItem(QListWidgetItem):
     '''

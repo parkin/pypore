@@ -20,50 +20,7 @@ import scipy.io as sio
 
 # My stuff
 from pypore import AnalyzeDataThread, PlotThread
-from views import FileListItem, FilterListItem
-
-# zoom picture? copied from BodeDemo
-zoom_xpm = ['32 32 8 1',
-            '# c #000000',
-            'b c #c0c0c0',
-            'a c #ffffff',
-            'e c #585858',
-            'd c #a0a0a4',
-            'c c #0000ff',
-            'f c #00ffff',
-            '. c None',
-            '..######################........',
-            '.#a#baaaaaaaaaaaaaaaaaa#........',
-            '#aa#baaaaaaaaaaaaaccaca#........',
-            '####baaaaaaaaaaaaaaaaca####.....',
-            '#bbbbaaaaaaaaaaaacccaaa#da#.....',
-            '#aaaaaaaaaaaaaaaacccaca#da#.....',
-            '#aaaaaaaaaaaaaaaaaccaca#da#.....',
-            '#aaaaaaaaaabe###ebaaaaa#da#.....',
-            '#aaaaaaaaa#########aaaa#da#.....',
-            '#aaaaaaaa###dbbbb###aaa#da#.....',
-            '#aaaaaaa###aaaaffb###aa#da#.....',
-            '#aaaaaab##aaccaaafb##ba#da#.....',
-            '#aaaaaae#daaccaccaad#ea#da#.....',
-            '#aaaaaa##aaaaaaccaab##a#da#.....',
-            '#aaaaaa##aacccaaaaab##a#da#.....',
-            '#aaaaaa##aaccccaccab##a#da#.....',
-            '#aaaaaae#daccccaccad#ea#da#.....',
-            '#aaaaaab##aacccaaaa##da#da#.....',
-            '#aaccacd###aaaaaaa###da#da#.....',
-            '#aaaaacad###daaad#####a#da#.....',
-            '#acccaaaad##########da##da#.....',
-            '#acccacaaadde###edd#eda#da#.....',
-            '#aaccacaaaabdddddbdd#eda#a#.....',
-            '#aaaaaaaaaaaaaaaaaadd#eda##.....',
-            '#aaaaaaaaaaaaaaaaaaadd#eda#.....',
-            '#aaaaaaaccacaaaaaaaaadd#eda#....',
-            '#aaaaaaaaaacaaaaaaaaaad##eda#...',
-            '#aaaaaacccaaaaaaaaaaaaa#d#eda#..',
-            '########################dd#eda#.',
-            '...#dddddddddddddddddddddd##eda#',
-            '...#aaaaaaaaaaaaaaaaaaaaaa#.####',
-            '...########################..##.']
+from views import FileListItem, FilterListItem, PlotToolBar
 
 class MyApp(QtGui.QMainWindow):
     
@@ -178,7 +135,7 @@ class MyApp(QtGui.QMainWindow):
         '''
         # adding by emitting signal in different thread
         self.status_text.setText('Plotting...')
-        decimates = self.decimateCheckBox.isChecked()
+        decimates = self.plotToolBar.isDecimateChecked()
         self.threadPool.append(PlotThread(self.plot, filename=str(item.getFileName()), decimate = decimates))
         self.connect(self.threadPool[len(self.threadPool) - 1], QtCore.SIGNAL('plotData(PyQt_PyObject)'), self._on_file_item_doubleclick_callback)
         self.threadPool[len(self.threadPool) - 1].start()
@@ -433,24 +390,9 @@ class MyApp(QtGui.QMainWindow):
         self.plot.setAxisTitle(Qwt.QwtPlot.yLeft, 'Current')
         self.plot.setTitle('Current Trace')
         
-        # Zoom button for plot
-        toolBar = QtGui.QToolBar(self)
-        self.addToolBar(toolBar)
-        
-        btnZoom = QtGui.QToolButton(toolBar)
-        btnZoom.setText("Zoom")
-        btnZoom.setIcon(QtGui.QIcon(QtGui.QPixmap(zoom_xpm)))
-        btnZoom.setCheckable(True)
-        btnZoom.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
-        toolBar.addWidget(btnZoom)
-        self.connect(btnZoom,
-                     QtCore.SIGNAL('toggled(bool)'),
-                     self.zoom)
-        
-        self.decimateCheckBox = QtGui.QCheckBox()
-        self.decimateCheckBox.setChecked(True)
-        self.decimateCheckBox.setText('Decimate')
-        toolBar.addWidget(self.decimateCheckBox)
+        # Tool bar for main plot.  Contains zoom button and different checkboxes
+        self.plotToolBar = PlotToolBar(self, self.zoom)
+        self.addToolBar(self.plotToolBar)
         
         # Create Qwt plot for concatenated events
         self.plot_concatevents = Qwt.QwtPlot(self)
@@ -459,6 +401,8 @@ class MyApp(QtGui.QMainWindow):
         self.plot_concatevents.setAxisTitle(Qwt.QwtPlot.xBottom, 'Time')
         self.plot_concatevents.setAxisTitle(Qwt.QwtPlot.yLeft, 'Current')
         self.plot_concatevents.setTitle('Concatenated Events')
+        
+        self.plot_concateventsToolBar = PlotToolBar(self)
         
         # Qwt plot for each event found
         self.plot_event_zoomed = Qwt.QwtPlot(self)
@@ -501,8 +445,9 @@ class MyApp(QtGui.QMainWindow):
         
         eventfinderplots_layout = QtGui.QVBoxLayout()
         eventfinderplots_layout.addWidget(self.plot)
-        eventfinderplots_layout.addWidget(toolBar)
+        eventfinderplots_layout.addWidget(self.plotToolBar)
         eventfinderplots_layout.addWidget(self.plot_concatevents)
+        eventfinderplots_layout.addWidget(self.plot_concateventsToolBar)
         eventfinderplots_layout.addWidget(singleEventDisplayWidet)
         
         eventfinderplots_widget = QtGui.QWidget()
@@ -913,8 +858,10 @@ class MyApp(QtGui.QMainWindow):
             self.status_text.setText(results['status_text'])
         if 'event' in results:
             event = results['event']
-            self.plotEventOnMainPlot(event)
-            self.addEventToConcatEventPlot(event)
+            if self.plotToolBar.isPlotDuringChecked():
+                self.plotEventOnMainPlot(event)
+            if self.plot_concateventsToolBar.isPlotDuringChecked():
+                self.addEventToConcatEventPlot(event)
             self.events.append(event)
             self.eventDisplayedEdit.setMaxLength(int(len(self.events)/10)+1)
             self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(1,len(self.events)))
