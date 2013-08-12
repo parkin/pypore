@@ -304,13 +304,14 @@ def getNextHekaBlocks(datafile, params, n):
         
     # stitch the data together
     data = []
+    index = []
     for i in range(0, len(channel_list)):
         data.append(np.zeros(totalsize))
-    index = 0
+        index.append(0)
     for block in blocks:
         for i in range(0, len(channel_list)):
-            data[i][index:index+block['data'][i].size] = block['data'][i]
-            index = index + block['data'][i].size
+            data[i][index[i]:index[i]+block['data'][i].size] = block['data'][i]
+            index[i] = index[i] + block['data'][i].size
             
     if data[0].size < 1:
         done = True
@@ -336,7 +337,7 @@ def _readHekaNextBlock(f, per_file_params, per_block_param_list, per_channel_par
         for i in per_channel_param_list:
             channel_params[i[0]] = np.fromfile(f, i[1], 1)[0]
         per_channel_block_params.append(channel_params)
-    
+        
     # Read data
     data = []
     dt = np.dtype('>i2') # int16
