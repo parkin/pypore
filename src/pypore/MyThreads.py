@@ -285,8 +285,8 @@ class AnalyzeDataThread(QtCore.QThread):
                             else:
                                 data = cache
                                 n = data.size
-                                dataCache = []
                                 break
+                    dataCache = []
                                 
             local_mean = filter_parameter * local_mean + (1 - filter_parameter) * data[i]
             local_variance = filter_parameter * local_variance + (1 - filter_parameter) * (data[i] - local_mean) ** 2
@@ -342,7 +342,7 @@ class AnalyzeDataThread(QtCore.QThread):
                     return cache[i]
                 else:
                     i = i%cache.size
-        print 'getDataAt no data found'
+        print 'getDataAt no data found, i:', i, 'data.size:', data.size, 'num in cache:', len(dataCache)
         return None
     
     def getDataRange(self, data, dataCache, rawPointsCache, i, n):
