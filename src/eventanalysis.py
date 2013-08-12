@@ -458,13 +458,13 @@ class MyApp(QtGui.QMainWindow):
     def _create_eventanalysis_plot_widget(self):
         # Tab widget for event stuff
         
-#         self.tab_widget = QtGui.QTabWidget()
-#         self.tab_widget.setMinimumSize(450, 250)
+        vbox = QtGui.QVBoxLayout()
+        vwig = QtGui.QWidget()
         
         # Filter and Histogram tab.  Use matplotlib cuz can't figure out pyqwt histogram
         self.fig = Figure()
         self.canvas = FigureCanvas(self.fig)
-#         self.canvas.setParent(self.tab_widget)
+        self.canvas.setParent(vwig)
         self.axes = self.fig.add_subplot(221)
         self.axes2 = self.fig.add_subplot(222)
         self.axes3 = self.fig.add_subplot(223)
@@ -472,7 +472,14 @@ class MyApp(QtGui.QMainWindow):
         
         self.canvas.setMinimumSize(500, 400)
         
-        return self.canvas
+        mpl_toolbar = NavigationToolbar(self.canvas, vwig)
+        
+        vbox.addWidget(self.canvas)
+        vbox.addWidget(mpl_toolbar)
+        
+        vwig.setLayout(vbox)
+        
+        return vwig
         
     
     def _create_right_side(self):
@@ -480,6 +487,8 @@ class MyApp(QtGui.QMainWindow):
         Returns a widget holding all of the plots, stuff on right side
         of gui.
         '''
+        tabWidget = QtGui.QTabWidget()
+        
         # Put everything in filter_parameter scroll area
         scrollArea = QtGui.QScrollArea()
         scrollAreaAnalysis = QtGui.QScrollArea()
@@ -493,7 +502,6 @@ class MyApp(QtGui.QMainWindow):
         scrollArea.setWidget(event_finding_widget)
         scrollAreaAnalysis.setWidget(event_analysis_widget)
         
-        tabWidget = QtGui.QTabWidget()
         tabWidget.addTab(scrollArea, 'Event Finding')
         tabWidget.addTab(scrollAreaAnalysis, 'Event Analysis')
         
@@ -616,8 +624,8 @@ class MyApp(QtGui.QMainWindow):
                 dwellTime = (event['event_end'][0][0][0]-event['event_start'][0][0][0])/sample_rate
                 dwellTimes.append(dwellTime)
                  
-        self.axes.hist(currentBlockade, 20, facecolor=params['color'].getRgbF(), alpha=0.5)
-        self.axes4.hist(dwellTimes, 20, facecolor=params['color'].getRgbF(), alpha=0.5)
+        self.axes.hist(currentBlockade, 100, facecolor=params['color'].getRgbF(), alpha=0.5)
+        self.axes4.hist(dwellTimes, 100, facecolor=params['color'].getRgbF(), alpha=0.5)
         self.canvas.draw()
         return
     
