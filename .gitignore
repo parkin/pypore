@@ -5,3 +5,5 @@ data/*
 *.pyc
 src/demos/
 src/demos/*
+META-INF/
+build.properties

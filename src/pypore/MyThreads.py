@@ -6,7 +6,8 @@ Created on Jul 23, 2013
 @author: parkin
 '''
 
-from PyQt4 import QtCore
+import PySide
+from pyqtgraph import QtCore
 from DataFileOpener import openData, prepareDataFile, getNextBlocks
 import scipy.io as sio
 import numpy as np
@@ -14,6 +15,10 @@ import datetime
 import time
 
 class PlotThread(QtCore.QThread):
+    dataReady = QtCore.Signal(object)
+    
+    cancelled = False
+    
     def __init__(self, axes, datadict='', plot_range='all', filename='',
                  threshold_type='adaptive', a=0.93,
                  threshold_direction='negative', min_event_length=10., max_event_length=1000., decimate=False):
@@ -37,7 +42,10 @@ class PlotThread(QtCore.QThread):
     def run(self):
         if not self.filename == '' or self.plot_options['datadict'] == '':
             self.plot_options['datadict'] = openData(self.filename, self.decimate)
-        self.emit(QtCore.SIGNAL('plotData(PyQt_PyObject)'), {'plot_options': self.plot_options, 'status_text': ''})
+#         self.emit(QtCore.SIGNAL('plotData(PyQt_PyObject)'), {'plot_options': self.plot_options, 'status_text': ''})
+        if self.cancelled:
+            return
+        self.dataReady.emit({'plot_options': self.plot_options, 'status_text': ''})
 
 class AnalyzeDataThread(QtCore.QThread):
     '''
@@ -51,6 +59,10 @@ class AnalyzeDataThread(QtCore.QThread):
     # Baseline types
     BASELINE_ADAPTIVE = 3
     BASELINE_FIXED = 4
+    
+    dataReady = QtCore.Signal(object)
+    
+    cancelled = False
     
     def __init__(self, parameters):
 #     def __init__(self, axes, filename='', threshold_type='adaptive', filter_parameter=0.93,
@@ -146,6 +158,7 @@ class AnalyzeDataThread(QtCore.QThread):
         n = data.size
         event_count = 0
         i = 0
+        prevI = 0
         isEvent = False
         wasEventPositive = False  # Was the event an up spike?
         placeInData = 0
@@ -269,7 +282,7 @@ class AnalyzeDataThread(QtCore.QThread):
                     event['cusum_indexes'] = level_indexes
                     event['cusum_values'] = level_values
                     event['area'] = event_area
-                    self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'plot_options': self.plot_options, 'event': event})
+                    self.dataReady.emit({'plot_options': self.plot_options, 'event': event})
                     save_file['Events'].append(event)
                     event_count = event_count + 1
                 if len(dataCache) > 0:
@@ -302,8 +315,11 @@ class AnalyzeDataThread(QtCore.QThread):
                 n = data.size
                 if placeInData % 50000 == 0:
                     total_time = time.time() - self.time1
-                    self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), 
-                              {'status_text': 'Event Count: ' + str(event_count) + ' Percent Done: ' + str(100.*placeInData / points_per_channel_total) + ' Rate: ' + str(placeInData/total_time) + ' samples/sec'})
+                    self.dataReady.emit({'status_text': 'Event Count: ' + str(event_count) + ' Percent Done: ' + str(100.*placeInData / points_per_channel_total) + ' Rate: ' + str((placeInData-prevI)/total_time) + ' samples/sec'})
+                    self.time1 = time.time()
+                    prevI = placeInData
+            if self.cancelled:
+                return
             
             
         if event_count > 0:
@@ -323,7 +339,7 @@ class AnalyzeDataThread(QtCore.QThread):
             save_file['parameters'] = self.parameters
             sio.savemat(save_file['filename'], save_file)
             
-        self.emit(QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), {'status_text': 'Done. Found ' + str(event_count) + ' events.  Saved database to ' + str(save_file['filename']), 'done': True})  
+        self.dataReady.emit({'status_text': 'Done. Found ' + str(event_count) + ' events.  Saved database to ' + str(save_file['filename']), 'done': True})
         
         return
     

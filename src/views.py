@@ -3,8 +3,8 @@ Created on Aug 6, 2013
 
 @author: parkin
 '''
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtGui import QListWidgetItem, QToolBar
+import PySide
+from pyqtgraph import QtGui
 
 # zoom picture? copied from BodeDemo
 zoom_xpm = ['32 32 8 1',
@@ -49,23 +49,12 @@ zoom_xpm = ['32 32 8 1',
             '...#aaaaaaaaaaaaaaaaaaaaaa#.####',
             '...########################..##.']
 
-class PlotToolBar(QToolBar):
+class PlotToolBar(QtGui.QToolBar):
     '''
     A toolbar for plots, with a zoom button, check boxes for options.
     '''
-    def __init__(self, parent = None, zoomCallback = None):
-        QToolBar.__init__(self, parent)
-        
-        btnZoom = QtGui.QToolButton(self)
-        btnZoom.setText("Zoom")
-        btnZoom.setIcon(QtGui.QIcon(QtGui.QPixmap(zoom_xpm)))
-        btnZoom.setCheckable(True)
-        btnZoom.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
-        self.addWidget(btnZoom)
-        if not zoomCallback == None:
-            self.connect(btnZoom,
-                         QtCore.SIGNAL('toggled(bool)'),
-                         zoomCallback)
+    def __init__(self, parent = None):
+        QtGui.QToolBar.__init__(self, parent)
         
         self.decimateCheckBox = QtGui.QCheckBox()
         self.decimateCheckBox.setChecked(True)
@@ -92,7 +81,7 @@ class PlotToolBar(QToolBar):
         '''
         return self.plotDuringCheckBox.isChecked()
 
-class FileListItem(QListWidgetItem):
+class FileListItem(QtGui.QListWidgetItem):
     '''
     Subclass of QListWidgetItem to handle filenames with long file paths.
     '''
@@ -100,7 +89,7 @@ class FileListItem(QListWidgetItem):
     def __init__(self, filename):
         words = filename.split('/')
         name_without_path = words[len(words)-1]
-        QListWidgetItem.__init__(self, name_without_path)
+        QtGui.QListWidgetItem.__init__(self, name_without_path)
         self.filenames = filename
         self.simplename = name_without_path
         
@@ -118,7 +107,7 @@ class FileListItem(QListWidgetItem):
         '''
         return self.simplename
 
-class FilterListItem(QListWidgetItem):
+class FilterListItem(QtGui.QListWidgetItem):
     '''
     Subclass of QListWidgetItem to handle filter list items.
     '''
@@ -134,7 +123,7 @@ class FilterListItem(QListWidgetItem):
             simplename = words[len(words)-1]
             item_text = item_text + str(simplename) + ', '
             self.simplenames.append(simplename)
-        QListWidgetItem.__init__(self, item_text)
+        QtGui.QListWidgetItem.__init__(self, item_text)
         self.params = params
         if 'color' in params:
             self.setTextColor(params['color'])

@@ -7,15 +7,13 @@ This program is for finding events in files and displaying the results.
 '''
 import sys
 
-from PyQt4 import QtGui, QtCore, Qt
-import PyQt4.Qwt5 as Qwt
+import PySide
+import pyqtgraph as pg
+from pyqtgraph import QtGui, QtCore
 
-import matplotlib
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as NavigationToolbar
-from matplotlib.figure import Figure
+import time
 
-from scipy import arange
+from scipy import arange, linspace
 import scipy.io as sio
 
 # My stuff
@@ -24,10 +22,11 @@ from views import FileListItem, FilterListItem, PlotToolBar
 
 class MyApp(QtGui.QMainWindow):
     
-    def __init__(self, parent=None):
+    def __init__(self, app, parent=None):
         super(MyApp, self).__init__()
         
         self.events = [] # holds the events from the most recent analysis run
+        self.app = app
         
         self.threadPool = []
         
@@ -37,60 +36,13 @@ class MyApp(QtGui.QMainWindow):
         self.create_main_frame()
         self.create_status_bar()
         
-        self.__initZooming()
-        
-    def __initZooming(self):
-        """Initialize zooming
-        """
-
-        self.zoomer = Qwt.QwtPlotZoomer(Qwt.QwtPlot.xBottom,
-                                        Qwt.QwtPlot.yLeft,
-                                        Qwt.QwtPicker.DragSelection,
-                                        Qwt.QwtPicker.AlwaysOff,
-                                        self.plot.canvas())
-        self.zoomer.setRubberBandPen(Qt.QPen(Qt.Qt.black))
-        
-#         self.picker = Qwt.QwtPlotPicker(
-#             Qwt.QwtPlot.xBottom,
-#             Qwt.QwtPlot.yLeft,
-#             Qwt.QwtPicker.DragSelection,
-# #             Qwt.QwtPlotPicker.DragSelection,
-#             Qwt.QwtPlotPicker.CrossRubberBand,
-#             Qwt.QwtPicker.AlwaysOff,
-#             self.plot.canvas())
-#         self.picker.setRubberBandPen(Qt.QPen(QtCore.Qt.darkMagenta))
-#         self.picker.setTrackerPen(Qt.QPen(QtCore.Qt.cyan))
-#         self.picker.connect(self.picker, Qt.SIGNAL('selected(const QwtDoublePoint&)'), self.aSlot)
-        
-        self.zoomer_concatEvents = Qwt.QwtPlotZoomer(Qwt.QwtPlot.xBottom,
-                                        Qwt.QwtPlot.yLeft,
-                                        Qwt.QwtPicker.DragSelection,
-                                        Qwt.QwtPicker.AlwaysOff,
-                                        self.plot_concatevents.canvas())
-        self.zoomer_concatEvents.setRubberBandPen(Qt.QPen(Qt.Qt.black))
-        self.zoomer.setEnabled(False)
-        
-        self.zoomer_event = Qwt.QwtPlotZoomer(Qwt.QwtPlot.xBottom,
-                                        Qwt.QwtPlot.yLeft,
-                                        Qwt.QwtPicker.DragSelection,
-                                        Qwt.QwtPicker.AlwaysOff,
-                                        self.plot_event_zoomed.canvas())
-        self.zoomer_event.setRubberBandPen(Qt.QPen(Qt.Qt.black))
-        
-        self.magnifier = Qwt.QwtPlotMagnifier(self.plot.canvas())
-        self.magnifier.setEnabled(False)
     
-    def zoom(self, on):
-        self.zoomer.setEnabled(on)
-        self.zoomer.zoom(0)
-        self.magnifier.setEnabled(True)
-        
     def open_files(self):
         '''
         Opens file dialog box, adds names of files to open to list
         '''
 
-        fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open data file', '../data')
+        fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open data file', '../data')[0]
         if len(fnames) > 0:
             self.listWidget.clear()
         else:
@@ -136,8 +88,9 @@ class MyApp(QtGui.QMainWindow):
         # adding by emitting signal in different thread
         self.status_text.setText('Plotting...')
         decimates = self.plotToolBar.isDecimateChecked()
-        self.threadPool.append(PlotThread(self.plot, filename=str(item.getFileName()), decimate = decimates))
-        self.connect(self.threadPool[len(self.threadPool) - 1], QtCore.SIGNAL('plotData(PyQt_PyObject)'), self._on_file_item_doubleclick_callback)
+        thread = PlotThread(self.p1, filename=str(item.getFileName()), decimate = decimates)
+        thread.dataReady.connect(self._on_file_item_doubleclick_callback)
+        self.threadPool.append(thread)
         self.threadPool[len(self.threadPool) - 1].start()
         
     def _on_file_item_doubleclick_callback(self, results):
@@ -203,7 +156,6 @@ class MyApp(QtGui.QMainWindow):
         
         baseline_options.addWidget(adaptive_options_widget)
         baseline_options.addWidget(fixed_options_widget)
-        
         
         baseline_form = QtGui.QFormLayout()
         baseline_form.addRow('Baseline Type:', self.baseline_type_combo)
@@ -298,7 +250,7 @@ class MyApp(QtGui.QMainWindow):
 #         self.listEventWidget.itemDoubleClicked.connect(self._on_file_item_doubleclick)
         self.listEventWidget.setMaximumHeight(100)
         self.listEventWidget.itemSelectionChanged.connect(self._on_event_file_selection_changed)
-        self.listEventWidget.setSelectionMode(Qt.QAbstractItemView.ExtendedSelection)
+        self.listEventWidget.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         
         files_options = QtGui.QFormLayout()
         files_options.addRow('Event Databases:', self.listEventWidget)
@@ -382,35 +334,25 @@ class MyApp(QtGui.QMainWindow):
         return tab_widget
         
     def _create_eventfinder_plots_widget(self):
-        # Create Qwt plot
-        self.plot = Qwt.QwtPlot(self)
-        self.plot.setCanvasBackground(QtCore.Qt.white)
-        self.plot.setMinimumSize(400, 200)
-        self.plot.setAxisTitle(Qwt.QwtPlot.xBottom, 'Time')
-        self.plot.setAxisTitle(Qwt.QwtPlot.yLeft, 'Current')
-        self.plot.setTitle('Current Trace')
-        
-        # Tool bar for main plot.  Contains zoom button and different checkboxes
-        self.plotToolBar = PlotToolBar(self, self.zoom)
-        self.addToolBar(self.plotToolBar)
+        # Main plot
+        self.plotwid = pg.PlotWidget(title = 'Current Trace', name='Plot')
+        self.plotwid.setMinimumSize(400, 200)
+        self.p1 = self.plotwid.plot() # create an empty plot curve to be filled later
         
         # Create Qwt plot for concatenated events
-        self.plot_concatevents = Qwt.QwtPlot(self)
-        self.plot_concatevents.setCanvasBackground(QtCore.Qt.white)
-        self.plot_concatevents.setMinimumSize(400, 200)
-        self.plot_concatevents.setAxisTitle(Qwt.QwtPlot.xBottom, 'Time')
-        self.plot_concatevents.setAxisTitle(Qwt.QwtPlot.yLeft, 'Current')
-        self.plot_concatevents.setTitle('Concatenated Events')
         
-        self.plot_concateventsToolBar = PlotToolBar(self)
+        self.plot_concatevents = pg.PlotWidget(title = 'Concatenated Events', name='Concat')
+        self.plot_concatevents.setMinimumSize(400, 200)
+        self.plot_concatevents.show()
         
         # Qwt plot for each event found
-        self.plot_event_zoomed = Qwt.QwtPlot(self)
-        self.plot_event_zoomed.setCanvasBackground(QtCore.Qt.white)
-        self.plot_event_zoomed.setAxisTitle(Qwt.QwtPlot.xBottom, 'Time')
-        self.plot_event_zoomed.setAxisTitle(Qwt.QwtPlot.yLeft, 'Current')
-        self.plot_event_zoomed.setMinimumSize(400, 200)
-        self.plot_event_zoomed.setTitle('Single Event')
+        self.plot_event_zoomed = pg.PlotWidget(title = 'Single Event', name='Single')
+        self.plot_event_zoomed_event = self.plot_event_zoomed.plot()
+        self.plot_event_zoomed_levels = self.plot_event_zoomed.plot()
+        
+        # Tool bar for main plot.  Contains zoom button and different checkboxes
+        self.plotToolBar = PlotToolBar(self)
+        self.addToolBar(self.plotToolBar)
         
         eventSelectToolbar = QtGui.QToolBar(self)
         self.addToolBar(eventSelectToolbar)
@@ -436,48 +378,19 @@ class MyApp(QtGui.QMainWindow):
         btnNext.clicked.connect(self.nextClicked)
         eventSelectToolbar.addWidget(btnNext)
         
-        singleEventDisplayLayout = QtGui.QVBoxLayout()
-        singleEventDisplayLayout.addWidget(self.plot_event_zoomed)
-        singleEventDisplayLayout.addWidget(eventSelectToolbar)
+        eventfinderplots_layout = pg.LayoutWidget()
+        eventfinderplots_layout.addWidget(self.plotToolBar, row=1, col=0, colspan=3)
+        eventfinderplots_layout.addWidget(self.plotwid, row=2, col=0, colspan=3)
+        eventfinderplots_layout.addWidget(self.plot_concatevents, row=3, col=0, colspan=3)
+        eventfinderplots_layout.addWidget(self.plot_event_zoomed, row=4, col=0, colspan=3)
+        eventfinderplots_layout.addWidget(eventSelectToolbar, row=5, col=0, colspan=3)
         
-        singleEventDisplayWidet = QtGui.QWidget() # widget container for layout
-        singleEventDisplayWidet.setLayout(singleEventDisplayLayout)
-        
-        eventfinderplots_layout = QtGui.QVBoxLayout()
-        eventfinderplots_layout.addWidget(self.plot)
-        eventfinderplots_layout.addWidget(self.plotToolBar)
-        eventfinderplots_layout.addWidget(self.plot_concatevents)
-        eventfinderplots_layout.addWidget(self.plot_concateventsToolBar)
-        eventfinderplots_layout.addWidget(singleEventDisplayWidet)
-        
-        eventfinderplots_widget = QtGui.QWidget()
-        eventfinderplots_widget.setLayout(eventfinderplots_layout)
-        
-        return eventfinderplots_widget
+        return eventfinderplots_layout
     
     def _create_eventanalysis_plot_widget(self):
         # Tab widget for event stuff
         
-        vbox = QtGui.QVBoxLayout()
         vwig = QtGui.QWidget()
-        
-        # Filter and Histogram tab.  Use matplotlib cuz can't figure out pyqwt histogram
-        self.fig = Figure()
-        self.canvas = FigureCanvas(self.fig)
-        self.canvas.setParent(vwig)
-        self.axes = self.fig.add_subplot(221)
-        self.axes2 = self.fig.add_subplot(222)
-        self.axes3 = self.fig.add_subplot(223)
-        self.axes4 = self.fig.add_subplot(224)
-        
-        self.canvas.setMinimumSize(500, 400)
-        
-        mpl_toolbar = NavigationToolbar(self.canvas, vwig)
-        
-        vbox.addWidget(self.canvas)
-        vbox.addWidget(mpl_toolbar)
-        
-        vwig.setLayout(vbox)
         
         return vwig
         
@@ -525,7 +438,7 @@ class MyApp(QtGui.QMainWindow):
         if len(text) < 1:
             return
         eventCount = int(self.eventDisplayedEdit.text())
-        self.plotEvent(self.events[eventCount-1])
+        self.plotSingleEvent(self.events[eventCount-1])
         return
         
     def previousClicked(self):
@@ -587,7 +500,7 @@ class MyApp(QtGui.QMainWindow):
                 target.addSeparator()
             else:
                 target.addAction(action)
-
+                
     def create_action(self, text, slot=None, shortcut=None,
                         icon=None, tip=None, checkable=False,
                         signal="triggered()"):
@@ -651,62 +564,50 @@ class MyApp(QtGui.QMainWindow):
         else:  # no problems!
             n = plot_range[1] - plot_range[0] + 1
     
-        axes.clear()
         Ts = 1 / sample_rate
         
-        times = arange(Ts * plot_range[0], Ts * (plot_range[1]+1), Ts)
+        times = arange(Ts * plot_range[0], Ts * (plot_range[1]), Ts)
+        yData = data[plot_range[0]:(plot_range[1]+1)]
         
-        curve = Qwt.QwtPlotCurve("Current Trace")
-        curve.setData(times, data[plot_range[0]:(plot_range[1]+1)])
-        curve.attach(axes)
-        axes.replot()
-        # Set the top of the zoom stack to current plot, if wanted.  False means no replot (we just plotted it!)
-        if 'set_zoom_base' in plot_options:
-            if plot_options['set_zoom_base'] == True:
-                self.zoomer.setZoomBase(False)
-        else:
-            self.zoomer.setZoomBase(False)
+        self.p1.setData(x=times,y=yData)
         
     def addEventToConcatEventPlot(self, event):
         '''
         Adds an event to the concatenated events plot.
         '''
-        items = self.plot_concatevents.itemList()
-        data = event['raw_data']
-        curve = Qwt.QwtPlotCurve('Concat Event ' + str(len(items)+1))
-        sample_rate = event['sample_rate']
-        baseline = event['baseline']
-        #  move the baseline to zero
-        data = data - baseline
-        times = arange(0, len(data))/sample_rate
-        if len(items) > 0:
-            # Get the most recent curve added
-            prev_curve = items[len(items)-1]
-            # Get the time of the last data point in the previous curve
-            last_time = prev_curve.x(prev_curve.dataSize()-1)
-            times = times + last_time + 1/sample_rate
-        curve.setData(times, data)
-        if len(items) % 2 == 0 :
-            curve.setPen(Qt.QPen(QtCore.Qt.green))
+        # get the most recent event in concatplot to append to
+        times, data, _, _ = self.getEventAndLevelsData(event)
+        dataItems = self.plot_concatevents.listDataItems()
+        plotItem = self.plot_concatevents.getPlotItem()
+        print dataItems
+        print plotItem.listDataItems()
+        if len(dataItems) > 0:
+            prevX = dataItems[len(dataItems)-1].dataBounds(0)[1] 
         else:
-            curve.setPen(Qt.QPen(QtCore.Qt.blue))
-        curve.attach(self.plot_concatevents)
-        self.plot_concatevents.replot()
-        self.zoomer_concatEvents.setZoomBase(False)
+            prevX = 2*times[0]
+        times = times + (prevX - times[0])
+        data = data - event['baseline']
+        time1 = time.time()
+        path = pg.arrayToQPath(times.flatten(), data.flatten())
+        item = QtGui.QGraphicsPathItem(path)
+        item.setPen(pg.mkPen('w'))
+        self.plot_concatevents.addItem(item)
+#         self.plot_concatevents.plot(x=times,y=data)
+#         self.plot_concatevents.update()
+        self.app.processEvents()
+        print 'Plot time:', time.time() - time1
         
-    def plotEvent(self, event):
+    def plotSingleEvent(self, event):
         '''
         Plots the event on the plot with 
         '''
         
-        # If I zoom on a plot, then plot a different curve, it doesn't
-        # auto scale...  Need to fix!
+        times, data, times2, levels2 = self.getEventAndLevelsData(event)
         
-        self.plot_event_zoomed.clear()
-        self._plotEventToPlot(event, self.plot_event_zoomed)
-        self.zoomer_event.setZoomBase(False)
+        self.plot_event_zoomed_event.setData(x=times,y=data)
+        self.plot_event_zoomed_levels.setData(x=times2,y=levels2)
         
-    def _plotEventToPlot(self, event, plot):
+    def getEventAndLevelsData(self, event):
         data = event['raw_data']
         levels_index = event['cusum_indexes']
         levels_values = event['cusum_values']
@@ -718,7 +619,7 @@ class MyApp(QtGui.QMainWindow):
         
         Ts = 1 / sample_rate
         
-        times = arange(Ts * (event_start - raw_points_per_side), Ts * (event_start - raw_points_per_side + len(data) - 1), Ts)
+        times = linspace(Ts * (event_start - raw_points_per_side), Ts * (event_start - raw_points_per_side + len(data) - 1), len(data))
         times2 = [(event_start - raw_points_per_side) * Ts, (event_start-1)*Ts, event_start*Ts]
         levels2 = [baseline, baseline, levels_values[0]]
         for i in range(1, len(levels_values)):
@@ -732,17 +633,9 @@ class MyApp(QtGui.QMainWindow):
         levels2.append(baseline)
         times2.append((event_end + raw_points_per_side)* Ts)
         levels2.append(baseline)
-        curve = Qwt.QwtPlotCurve('Event')
-        curve.setPen(Qt.QPen(QtCore.Qt.green))
-        curve.setData(times, data)
-        curve.attach(plot)
-        curve2 = Qwt.QwtPlotCurve('Levels')
-        curve2.setPen(Qt.QPen(QtCore.Qt.blue))
-        curve2.setData(times2, levels2)
-        curve2.attach(plot)
+        return times, data, times2, levels2
         
-        plot.replot()
-            
+        
     def plotEventOnMainPlot(self, event):
         '''
         Adds an event to the main current trace plot.  
@@ -751,12 +644,14 @@ class MyApp(QtGui.QMainWindow):
         if not 'raw_data' in event or not 'sample_rate' in event or not 'event_start' in event or not 'raw_points_per_side' or not 'cusum_indexes' in event or not 'cusum_values' in event:
             print 'incorrectly called plotEventOnMainPlot.  Need \'raw_data\', \'sample_rate\', \'cusum_indexes\', \'cusum_values\', and \'event_start\'' 
             return
-        self._plotEventToPlot(event, self.plot)
+        return
+#         self._plotEventToPlot(event, self.plot)
         
     def on_analyze_stop(self):
         for w in self.threadPool:
             if isinstance(w, AnalyzeDataThread):
-                w.terminate()
+                w.cancelled = True
+                w.wait()
         self.stop_analyze_button.setEnabled(False)
         self.status_text.setText('Analyze aborted.')
             
@@ -764,8 +659,10 @@ class MyApp(QtGui.QMainWindow):
         '''
         Searches for events in the file that is currently highlighted in the files list.
         '''
-        currItem = self.listWidget.currentItem()
-        if currItem == None:
+        selectedItems = self.listWidget.selectedItems()
+        if len(selectedItems) > 0:
+            currItem = selectedItems[0]
+        else:
             return
         
         parameters = self.get_current_analysis_parameters()
@@ -784,9 +681,9 @@ class MyApp(QtGui.QMainWindow):
         
         # Start analyzing data in new thread.
         thread = AnalyzeDataThread(parameters)
+        thread.dataReady.connect(self._analyze_data_thread_callback)
         self.threadPool.append(thread)
-        self.connect(self.threadPool[len(self.threadPool) - 1], QtCore.SIGNAL('_analyze_data_thread_callback(PyQt_PyObject)'), self._analyze_data_thread_callback)
-        self.threadPool[len(self.threadPool) - 1].start()
+        thread.start()
         
         self.stop_analyze_button.setEnabled(True)
         
@@ -868,7 +765,6 @@ class MyApp(QtGui.QMainWindow):
             event = results['event']
             if self.plotToolBar.isPlotDuringChecked():
                 self.plotEventOnMainPlot(event)
-            if self.plot_concateventsToolBar.isPlotDuringChecked():
                 self.addEventToConcatEventPlot(event)
             self.events.append(event)
             self.eventDisplayedEdit.setMaxLength(int(len(self.events)/10)+1)
@@ -903,8 +799,9 @@ class MyApp(QtGui.QMainWindow):
 
 def main():
     
-    app = QtGui.QApplication(sys.argv)
-    ex = MyApp()
+#     app = QtGui.QApplication(sys.argv)
+    app = pg.mkQApp()
+    ex = MyApp(app)
     ex.show()
     app.exec_()
     sys.exit()
