@@ -612,8 +612,6 @@ class MyApp(QtGui.QMainWindow):
 #         item.setPen(pg.mkPen('w'))
 #         self.plot_concatevents.addItem(item)
         self.plot_concatevents.plot(x=times,y=data)
-        self.plot_concatevents.update()
-#         self.app.processEvents()
         print 'Plot time:', time.time() - time1
         
     def plotSingleEvent(self, event):
@@ -626,7 +624,7 @@ class MyApp(QtGui.QMainWindow):
         self.plot_event_zoomed.clear()
         self.plot_event_zoomed.plot(x=times,y=data)
         self.plot_event_zoomed.plot(x=times2,y=levels2, pen=pg.mkPen('g'))
-        self.plot_event_zoomed.update()
+#         self.plot_event_zoomed.update()
 #         self.app.processEvents()
 #         self.plot_event_zoomed_event.setData(x=times,y=data)
 #         self.plot_event_zoomed_levels.setData(x=times2,y=levels2)
@@ -671,7 +669,7 @@ class MyApp(QtGui.QMainWindow):
         times, data, times2, levels2 = self.getEventAndLevelsData(event)
         self.plotwid.plot(x=times,y=data, pen=pg.mkPen('y'))
         self.plotwid.plot(x=times2,y=levels2, pen=pg.mkPen('g'))
-        self.plotwid.update()
+#         self.plotwid.update()
         
     def on_analyze_stop(self):
         for w in self.threadPool:

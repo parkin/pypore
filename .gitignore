@@ -7,3 +7,4 @@ src/demos/
 src/demos/*
 META-INF/
 build.properties
+src/profile_dump
