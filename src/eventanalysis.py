@@ -29,6 +29,8 @@ class MyApp(QtGui.QMainWindow):
         self.events = [] # holds the events from the most recent analysis run
         self.app = app
         
+        pg.setConfigOption('leftButtonPan', False)
+        
         self.threadPool = []
         
         self.setWindowTitle('Translocation Event Analysis')
