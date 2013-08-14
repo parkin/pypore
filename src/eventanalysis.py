@@ -23,6 +23,8 @@ import numpy as np
 from pypore import AnalyzeDataThread, PlotThread
 from views import FileListItem, FilterListItem, PlotToolBar
 
+from pypore.DataFileOpener import prepareDataFile
+
 class MyApp(QtGui.QMainWindow):
     
     def __init__(self, app, parent=None):
@@ -47,7 +49,7 @@ class MyApp(QtGui.QMainWindow):
         Opens file dialog box, adds names of files to open to list
         '''
 
-        fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open data file', '../data')[0]
+        fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open data file', '../data', "All types(*.hkd *.log);;Heka files *.hkd(*.hkd);;Chimera files *.log(*.log)")[0]
         if len(fnames) > 0:
             self.listWidget.clear()
         else:
@@ -55,8 +57,13 @@ class MyApp(QtGui.QMainWindow):
         areFilesOpened = False
         for w in fnames:
             areFilesOpened = True
-            item = FileListItem(w)
-            self.listWidget.addItem(item)
+            f, params = prepareDataFile(w)
+            if 'error' in params:
+                self.status_text.setText(params['error'])
+            else:
+                f.close()
+                item = FileListItem(w, params)
+                self.listWidget.addItem(item)
             
         if areFilesOpened:
             self.analyze_button.setEnabled(False)
@@ -869,7 +876,6 @@ class MyApp(QtGui.QMainWindow):
             if singlePlot:
                 self.eventDisplayedEdit.setText('1')
             self.app.processEvents()  
-            time4 = time.time()
             self.analyzethread.readyForEvents = True
         if 'event' in results:
             event = results['event']
