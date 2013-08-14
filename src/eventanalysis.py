@@ -347,8 +347,9 @@ class MyApp(QtGui.QMainWindow):
         
         # Qwt plot for each event found
         self.plot_event_zoomed = pg.PlotWidget(title = 'Single Event', name='Single')
-        self.plot_event_zoomed_event = self.plot_event_zoomed.plot()
-        self.plot_event_zoomed_levels = self.plot_event_zoomed.plot()
+#         self.plot_event_zoomed_event = self.plot_event_zoomed.plot()
+#         self.plot_event_zoomed_levels = self.plot_event_zoomed.plot()
+        self.plot_event_zoomed.setMinimumSize(400, 200)
         
         # Tool bar for main plot.  Contains zoom button and different checkboxes
         self.plotToolBar = PlotToolBar(self)
@@ -604,8 +605,12 @@ class MyApp(QtGui.QMainWindow):
         
         times, data, times2, levels2 = self.getEventAndLevelsData(event)
         
-        self.plot_event_zoomed_event.setData(x=times,y=data)
-        self.plot_event_zoomed_levels.setData(x=times2,y=levels2)
+        self.plot_event_zoomed.clear()
+        self.plot_event_zoomed.plot(x=times,y=data)
+        self.plot_event_zoomed.plot(x=times2,y=levels2)
+        self.app.processEvents()
+#         self.plot_event_zoomed_event.setData(x=times,y=data)
+#         self.plot_event_zoomed_levels.setData(x=times2,y=levels2)
         
     def getEventAndLevelsData(self, event):
         data = event['raw_data']
@@ -765,7 +770,7 @@ class MyApp(QtGui.QMainWindow):
             event = results['event']
             if self.plotToolBar.isPlotDuringChecked():
                 self.plotEventOnMainPlot(event)
-                self.addEventToConcatEventPlot(event)
+#                 self.addEventToConcatEventPlot(event)
             self.events.append(event)
             self.eventDisplayedEdit.setMaxLength(int(len(self.events)/10)+1)
             self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(1,len(self.events)))
