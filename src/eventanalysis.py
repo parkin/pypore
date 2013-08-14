@@ -7,15 +7,17 @@ This program is for finding events in files and displaying the results.
 '''
 import sys
 
-import PySide
+import PySide # here to force pyqtgraph to use pyside
 import pyqtgraph as pg
-from pyqtgraph import QtGui, QtCore
+from pyqtgraph import QtGui, QtCore, PlotData
 from pyqtgraph.widgets.LayoutWidget import LayoutWidget
 
 import time
 
 from scipy import arange, linspace
 import scipy.io as sio
+
+import numpy as np
 
 # My stuff
 from pypore import AnalyzeDataThread, PlotThread
@@ -63,7 +65,7 @@ class MyApp(QtGui.QMainWindow):
         '''
         Opens file dialog box, add names of event database files to open list
         '''
-        fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open event database', '../data', '*.mat')
+        fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open event database', '../data', '*.mat')[0]
         if len(fnames) > 0:
             self.listEventWidget.clear()
         else:
@@ -149,11 +151,14 @@ class MyApp(QtGui.QMainWindow):
         adaptive_options_widget = QtGui.QWidget()
         adaptive_options_widget.setLayout(adaptive_options_layout)
         
+        chooseBaselineBtn = QtGui.QPushButton('Baseline:')
+        chooseBaselineBtn.setToolTip('Click to choose the baseline from the plot.')
+        
         fixed_options_layout = QtGui.QFormLayout()
         self.baseline_current_edit = QtGui.QLineEdit()
         self.baseline_current_edit.setValidator(QtGui.QDoubleValidator(-9999, 9999, 9))
         self.baseline_current_edit.setText('0.0')
-        fixed_options_layout.addRow('Baseline Current:', self.baseline_current_edit)
+        fixed_options_layout.addRow(chooseBaselineBtn, self.baseline_current_edit)
         fixed_options_widget = QtGui.QWidget()
         fixed_options_widget.setLayout(fixed_options_layout)
         
@@ -392,7 +397,14 @@ class MyApp(QtGui.QMainWindow):
     def _create_eventanalysis_plot_widget(self):
         # Tab widget for event stuff
         
-        vwig = QtGui.QWidget()
+        vwig = pg.GraphicsLayoutWidget()
+        self.plot_eventdepth = vwig.addPlot(title='Event Depth')
+        self.plot_eventdur_eventdepth = vwig.addPlot(title='Duration vs. Depth')
+        
+        vwig.nextRow()
+        
+        self.plot_scatterselect = vwig.addPlot(title='Single Event')
+        self.plot_eventdur = vwig.addPlot(title='Event Duration')
         
         return vwig
         
@@ -538,10 +550,18 @@ class MyApp(QtGui.QMainWindow):
                     currentBlockade.append(level - baseline)
                 dwellTime = (event['event_end'][0][0][0]-event['event_start'][0][0][0])/sample_rate
                 dwellTimes.append(dwellTime)
+                
+        color = params['color']
+        newcolor = QtGui.QColor(color.red(),color.green(),color.blue(),128)
                  
-        self.axes.hist(currentBlockade, 100, facecolor=params['color'].getRgbF(), alpha=0.5)
-        self.axes4.hist(dwellTimes, 100, facecolor=params['color'].getRgbF(), alpha=0.5)
-        self.canvas.draw()
+        y_dt,x_dt = np.histogram(dwellTimes, bins=40)        
+        curve_dt = pg.PlotCurveItem(x_dt, y_dt, stepMode=True, fillLevel=0, brush=newcolor)
+        self.plot_eventdur.addItem(curve_dt)
+        
+        y_cb,x_cb = np.histogram(currentBlockade, bins=40)        
+        curve_cb = pg.PlotCurveItem(x_cb, y_cb, stepMode=True, fillLevel=0, brush=newcolor)
+        self.plot_eventdepth.addItem(curve_cb)
+        
         return
     
     def plotData(self, plot_options):
