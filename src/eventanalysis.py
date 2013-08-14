@@ -607,8 +607,9 @@ class MyApp(QtGui.QMainWindow):
         
         self.plot_event_zoomed.clear()
         self.plot_event_zoomed.plot(x=times,y=data)
-        self.plot_event_zoomed.plot(x=times2,y=levels2)
-        self.app.processEvents()
+        self.plot_event_zoomed.plot(x=times2,y=levels2, pen=pg.mkPen('g'))
+        self.plot_event_zoomed.update()
+#         self.app.processEvents()
 #         self.plot_event_zoomed_event.setData(x=times,y=data)
 #         self.plot_event_zoomed_levels.setData(x=times2,y=levels2)
         
@@ -649,8 +650,10 @@ class MyApp(QtGui.QMainWindow):
         if not 'raw_data' in event or not 'sample_rate' in event or not 'event_start' in event or not 'raw_points_per_side' or not 'cusum_indexes' in event or not 'cusum_values' in event:
             print 'incorrectly called plotEventOnMainPlot.  Need \'raw_data\', \'sample_rate\', \'cusum_indexes\', \'cusum_values\', and \'event_start\'' 
             return
-        return
-#         self._plotEventToPlot(event, self.plot)
+        times, data, times2, levels2 = self.getEventAndLevelsData(event)
+        self.plotwid.plot(x=times,y=data, pen=pg.mkPen('y'))
+        self.plotwid.plot(x=times2,y=levels2, pen=pg.mkPen('g'))
+        self.plotwid.update()
         
     def on_analyze_stop(self):
         for w in self.threadPool:
