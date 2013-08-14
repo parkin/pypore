@@ -32,13 +32,19 @@ def prepareDataFile(filename):
      file with the same name to be in the same folder. - not yet implemented
      
     Assumes '.hkd' extension is Heka data.
+    
+    Returns
+    datafile, params
+    
+    If there was an error opening the files, params will have 'error' key
+    with string description
     '''
     if '.log' in filename:
         return prepareChimeraFile(filename)
     if '.hkd' in filename:
         return prepareHekaFile(filename)
         
-    return 'File not specified with correct extension. Possibilities are: \'.log\', \'.hkd\''
+    return 0,{'error': 'File not specified with correct extension. Possibilities are: \'.log\', \'.hkd\''}
 
 def getNextBlocks(datafile, params, n=1):
     '''
@@ -116,7 +122,10 @@ def prepareChimeraFile(filename):
     s.pop()
     s.append('mat')
     # load the matlab file with parameters for the runs
-    specsfile = sio.loadmat("".join(s))
+    try:
+        specsfile = sio.loadmat("".join(s))
+    except IOError:
+        return 0, {'error': 'Error opening ' + filename + ', Chimera .mat specs file of same name must be located in same folder.'}
     
     # Calculate number of points per channel
     filesize = os.path.getsize(filename)
@@ -131,7 +140,8 @@ def prepareChimeraFile(filename):
     
     bitmask = (2**16) - 1 - (2**(16-ADCBITS) - 1);
     
-    p = {'ADCBITS': ADCBITS, 'ADCvref': ADCvref, 'datafile': datafile,
+    p = {'filetype': 'chimera',
+         'ADCBITS': ADCBITS, 'ADCvref': ADCvref, 'datafile': datafile,
          'datatype': datatype, 'specsfile': specsfile, 
          'bitmask': bitmask, 'filename': filename,
          'sample_rate': specsfile['SETUP_ADCSAMPLERATE'][0][0],
@@ -214,7 +224,8 @@ def prepareHekaFile(filename):
     points_per_channel_total = per_file_params['Points per block'] * num_blocks_in_file
     points_per_channel_per_block = per_file_params['Points per block']
     
-    p = {'per_file_param_list': per_file_param_list, 'per_block_param_list': per_block_param_list,
+    p = {'filetype': 'heka',
+         'per_file_param_list': per_file_param_list, 'per_block_param_list': per_block_param_list,
          'per_channel_param_list': per_channel_param_list, 'channel_list': channel_list,
          'per_file_params': per_file_params, 'per_file_header_length': per_file_header_length,
          'per_channel_per_block_length': per_channel_per_block_length,
