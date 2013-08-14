@@ -126,7 +126,7 @@ class FilterListItem(QtGui.QListWidgetItem):
         QtGui.QListWidgetItem.__init__(self, item_text)
         self.params = params
         if 'color' in params:
-            self.setTextColor(params['color'])
+            self.setForeground(params['color'])
         else:
             print 'FilterListItem should be passed params with a \'color\' key'
         
