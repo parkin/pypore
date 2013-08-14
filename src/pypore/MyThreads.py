@@ -159,6 +159,7 @@ class AnalyzeDataThread(QtCore.QThread):
         event_count = 0
         i = 0
         prevI = 0
+        time2 = self.time1
         isEvent = False
         wasEventPositive = False  # Was the event an up spike?
         placeInData = 0
@@ -314,9 +315,10 @@ class AnalyzeDataThread(QtCore.QThread):
                 data = data[0]
                 n = data.size
                 if placeInData % 50000 == 0:
+                    recent_time = time.time() - time2
                     total_time = time.time() - self.time1
-                    self.dataReady.emit({'status_text': 'Event Count: ' + str(event_count) + ' Percent Done: ' + str(100.*placeInData / points_per_channel_total) + ' Rate: ' + str((placeInData-prevI)/total_time) + ' samples/sec'})
-                    self.time1 = time.time()
+                    self.dataReady.emit({'status_text': 'Event Count: ' + str(event_count) + ' Percent Done: ' + str(100.*placeInData / points_per_channel_total) + ' Rate: ' + str((placeInData-prevI)/recent_time) + ' samples/s' + ' Total Rate:' + str(placeInData/total_time) + ' samples/s'})
+                    time2 = time.time()
                     prevI = placeInData
             if self.cancelled:
                 return
