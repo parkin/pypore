@@ -10,6 +10,7 @@ import sys
 import PySide
 import pyqtgraph as pg
 from pyqtgraph import QtGui, QtCore
+from pyqtgraph.widgets.LayoutWidget import LayoutWidget
 
 import time
 
@@ -347,8 +348,6 @@ class MyApp(QtGui.QMainWindow):
         
         # Qwt plot for each event found
         self.plot_event_zoomed = pg.PlotWidget(title = 'Single Event', name='Single')
-#         self.plot_event_zoomed_event = self.plot_event_zoomed.plot()
-#         self.plot_event_zoomed_levels = self.plot_event_zoomed.plot()
         self.plot_event_zoomed.setMinimumSize(400, 200)
         
         # Tool bar for main plot.  Contains zoom button and different checkboxes
@@ -379,7 +378,7 @@ class MyApp(QtGui.QMainWindow):
         btnNext.clicked.connect(self.nextClicked)
         eventSelectToolbar.addWidget(btnNext)
         
-        eventfinderplots_layout = pg.LayoutWidget()
+        eventfinderplots_layout = LayoutWidget()
         eventfinderplots_layout.addWidget(self.plotToolBar, row=1, col=0, colspan=3)
         eventfinderplots_layout.addWidget(self.plotwid, row=2, col=0, colspan=3)
         eventfinderplots_layout.addWidget(self.plot_concatevents, row=3, col=0, colspan=3)
@@ -579,9 +578,6 @@ class MyApp(QtGui.QMainWindow):
         # get the most recent event in concatplot to append to
         times, data, _, _ = self.getEventAndLevelsData(event)
         dataItems = self.plot_concatevents.listDataItems()
-        plotItem = self.plot_concatevents.getPlotItem()
-        print dataItems
-        print plotItem.listDataItems()
         if len(dataItems) > 0:
             prevX = dataItems[len(dataItems)-1].dataBounds(0)[1] 
         else:
@@ -589,13 +585,13 @@ class MyApp(QtGui.QMainWindow):
         times = times + (prevX - times[0])
         data = data - event['baseline']
         time1 = time.time()
-        path = pg.arrayToQPath(times.flatten(), data.flatten())
-        item = QtGui.QGraphicsPathItem(path)
-        item.setPen(pg.mkPen('w'))
-        self.plot_concatevents.addItem(item)
-#         self.plot_concatevents.plot(x=times,y=data)
-#         self.plot_concatevents.update()
-        self.app.processEvents()
+#         path = pg.arrayToQPath(times.flatten(), data.flatten())
+#         item = QtGui.QGraphicsPathItem(path)
+#         item.setPen(pg.mkPen('w'))
+#         self.plot_concatevents.addItem(item)
+        self.plot_concatevents.plot(x=times,y=data)
+        self.plot_concatevents.update()
+#         self.app.processEvents()
         print 'Plot time:', time.time() - time1
         
     def plotSingleEvent(self, event):
@@ -677,6 +673,15 @@ class MyApp(QtGui.QMainWindow):
         if 'error' in parameters:
             self.status_text.setText(parameters['error'])
             return
+        
+        self.plot_concatevents.clear()
+        self.plot_event_zoomed.clear()
+        items = self.plotwid.listDataItems()
+        # remove events from main plot, keep trace (first entry probably)
+        for i in range(0, len(items)):
+            if i > 0:
+                self.plotwid.removeItem(items[i])
+        
         
         # Clear the current events
         self.events = []
@@ -773,7 +778,7 @@ class MyApp(QtGui.QMainWindow):
             event = results['event']
             if self.plotToolBar.isPlotDuringChecked():
                 self.plotEventOnMainPlot(event)
-#                 self.addEventToConcatEventPlot(event)
+                self.addEventToConcatEventPlot(event)
             self.events.append(event)
             self.eventDisplayedEdit.setMaxLength(int(len(self.events)/10)+1)
             self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(1,len(self.events)))
