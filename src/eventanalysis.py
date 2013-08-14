@@ -684,7 +684,7 @@ class MyApp(QtGui.QMainWindow):
         
         
         # Clear the current events
-        self.events = []
+        del self.events[:]
         
         # Add axes and the filename to the parameters
         parameters['axes'] = self.plot_event_zoomed
