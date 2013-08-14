@@ -345,13 +345,13 @@ class MyApp(QtGui.QMainWindow):
         # Main plot
         self.plotwid = pg.PlotWidget(title = 'Current Trace', name='Plot')
         self.plotwid.setMinimumSize(400, 200)
+        self.plotwid.enableAutoRange('xy',False)
         self.p1 = self.plotwid.plot() # create an empty plot curve to be filled later
         
         # Create Qwt plot for concatenated events
         
         self.plot_concatevents = pg.PlotWidget(title = 'Concatenated Events', name='Concat')
         self.plot_concatevents.setMinimumSize(400, 200)
-        self.plot_concatevents.show()
         
         # Qwt plot for each event found
         self.plot_event_zoomed = pg.PlotWidget(title = 'Single Event', name='Single')
@@ -592,6 +592,8 @@ class MyApp(QtGui.QMainWindow):
         yData = data[plot_range[0]:(plot_range[1]+1)]
         
         self.p1.setData(x=times,y=yData)
+        self.plotwid.autoRange()
+        self.app.processEvents()
         
     def addEventToConcatEventPlot(self, event):
         '''
@@ -606,13 +608,35 @@ class MyApp(QtGui.QMainWindow):
             prevX = 2*times[0]
         times = times + (prevX - times[0])
         data = data - event['baseline']
-        time1 = time.time()
 #         path = pg.arrayToQPath(times.flatten(), data.flatten())
 #         item = QtGui.QGraphicsPathItem(path)
 #         item.setPen(pg.mkPen('w'))
 #         self.plot_concatevents.addItem(item)
         self.plot_concatevents.plot(x=times,y=data)
-        print 'Plot time:', time.time() - time1
+#         self.plot_concatevents.update()
+
+    def addEventsToConcatEventPlot(self, events):
+        if len(events) < 1:
+            return
+        size = 0
+        for i in range(len(events)):
+            size += events[i]['raw_data'].size
+        data = np.empty(size)
+        sample_rate = events[0]['sample_rate']
+        ts = 1/sample_rate
+        times = np.linspace(0., (size-1)*ts, size) + self.prev_concat_time
+        self.prev_concat_time += size*ts
+        index = 0
+        for event in events:
+            d = event['raw_data'].size
+            baseline = event['baseline']
+            data[index:index+d] = (event['raw_data'] - baseline)*1.e9
+            index += d
+            
+        path = pg.arrayToQPath(times, data)
+        item = QtGui.QGraphicsPathItem(path)
+        item.setPen(pg.mkPen('w'))
+        self.plot_concatevents.addItem(item)
         
     def plotSingleEvent(self, event):
         '''
@@ -630,7 +654,11 @@ class MyApp(QtGui.QMainWindow):
 #         self.plot_event_zoomed_levels.setData(x=times2,y=levels2)
         
     def getEventAndLevelsData(self, event):
-        data = event['raw_data']
+        try:
+            data = event['raw_data']
+        except TypeError:
+            print 'TypeError, event:', event
+            return
         levels_index = event['cusum_indexes']
         levels_values = event['cusum_values']
         sample_rate = event['sample_rate']
@@ -670,6 +698,31 @@ class MyApp(QtGui.QMainWindow):
         self.plotwid.plot(x=times,y=data, pen=pg.mkPen('y'))
         self.plotwid.plot(x=times2,y=levels2, pen=pg.mkPen('g'))
 #         self.plotwid.update()
+
+    def plotEventsOnMainPlot(self, events):
+        if len(events) < 1:
+            return
+        size = 0
+        for i in range(len(events)):
+            size += events[i]['raw_data'].size
+        data = np.empty(size)
+        sample_rate = events[0]['sample_rate']
+        raw_points_per_side = events[0]['raw_points_per_side']
+        ts = 1/sample_rate
+        times = np.empty(size)
+        index = 0
+        for event in events:
+            event_start = event['event_start']
+            event_data = event['raw_data']
+            d = event_data.size
+            times[index:index+d] = linspace(ts * (event_start - raw_points_per_side), ts * (event_start - raw_points_per_side + d - 1), d)
+            data[index:index+d] = event['raw_data']
+            index += d
+            
+        path = pg.arrayToQPath(times, data)
+        item = QtGui.QGraphicsPathItem(path)
+        item.setPen(pg.mkPen('y'))
+        self.plotwid.addItem(item)
         
     def on_analyze_stop(self):
         for w in self.threadPool:
@@ -705,6 +758,7 @@ class MyApp(QtGui.QMainWindow):
         
         # Clear the current events
         del self.events[:]
+        self.prev_concat_time = 0.
         
         # Add axes and the filename to the parameters
         parameters['axes'] = self.plot_event_zoomed
@@ -712,11 +766,11 @@ class MyApp(QtGui.QMainWindow):
         
         self.status_text.setText('Event Count: 0 Percent Done: 0')
         
-        # Start analyzing data in new thread.
-        thread = AnalyzeDataThread(parameters)
-        thread.dataReady.connect(self._analyze_data_thread_callback)
-        self.threadPool.append(thread)
-        thread.start()
+        # Start analyzing data in new analyzethread.
+        self.analyzethread = AnalyzeDataThread(parameters)
+        self.analyzethread.dataReady.connect(self._analyze_data_thread_callback)
+        self.threadPool.append(self.analyzethread)
+        self.analyzethread.start()
         
         self.stop_analyze_button.setEnabled(True)
         
@@ -794,17 +848,41 @@ class MyApp(QtGui.QMainWindow):
     def _analyze_data_thread_callback(self, results):
         if 'status_text' in results:
             self.status_text.setText(results['status_text'])
+        if 'Events' in results:
+            singlePlot = False
+            events = results['Events']
+            if len(events) < 1:
+                return
+            elif len(self.events) < 1:
+                # if this is our first time plotting events, include the single event plot!
+                singlePlot = True
+            self.events += events
+            self.eventDisplayedEdit.setMaxLength(int(len(self.events)/10)+1)
+            self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(1,len(self.events)))
+            self.eventCountText.setText('/' + str(len(self.events)))
+            if self.plotToolBar.isPlotDuringChecked():
+                self.plotEventsOnMainPlot(events)
+                self.addEventsToConcatEventPlot(events)
+#                 for event in events:
+#                     self.plotEventOnMainPlot(event)
+#                     self.addEventToConcatEventPlot(event)
+            if singlePlot:
+                self.eventDisplayedEdit.setText('1')
+            self.app.processEvents()  
+            time4 = time.time()
+            self.analyzethread.readyForEvents = True
         if 'event' in results:
             event = results['event']
-            if self.plotToolBar.isPlotDuringChecked():
-                self.plotEventOnMainPlot(event)
-                self.addEventToConcatEventPlot(event)
             self.events.append(event)
             self.eventDisplayedEdit.setMaxLength(int(len(self.events)/10)+1)
             self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(1,len(self.events)))
             self.eventCountText.setText('/' + str(len(self.events)))
+            if self.plotToolBar.isPlotDuringChecked():
+                self.plotEventOnMainPlot(event)
+                self.addEventToConcatEventPlot(event)
             if len(self.events) < 2:
                 self.eventDisplayedEdit.setText('1')
+            self.app.processEvents()
         if 'done' in results:
             if results['done']:
                 self.stop_analyze_button.setEnabled(False)

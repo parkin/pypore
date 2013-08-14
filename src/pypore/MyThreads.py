@@ -64,6 +64,8 @@ class AnalyzeDataThread(QtCore.QThread):
     
     cancelled = False
     
+    readyForEvents = True
+    
     def __init__(self, parameters):
 #     def __init__(self, axes, filename='', threshold_type='adaptive', filter_parameter=0.93,
 #                  threshold_direction='negative', min_event_length=10., max_event_length=1000.):
@@ -78,8 +80,13 @@ class AnalyzeDataThread(QtCore.QThread):
         self.prevI = 0
         self.recent_time = 1
         self.total_time = 1
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.periodicCall)
+        self.timer.setSingleShot(True)
         
-#         self.periodicCall()
+        self.nextEventToSend = 0
+        
+        self.periodicCall()
         
     
     def __del__(self):
@@ -90,20 +97,21 @@ class AnalyzeDataThread(QtCore.QThread):
         self.wait()
         
     def periodicCall(self):
-        print 'periodic call'
         self.updateGui()
         if self.cancelled:
             return
-        print 'starting timer'
-        self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.periodicCall)
-        time4 = time.time()
-        self.timer.start(1000)
-        print 'time:', 1000.*(time.time()-time4)
+        self.timer.start(500)
         
     def updateGui(self):
 #         self.dataReady.emit({'event': event})
-        self.dataReady.emit({'status_text': 'Event Count: ' + str(self.event_count) + ' Percent Done: ' + str(100.*self.placeInData / self.points_per_channel_total) + ' Rate: ' + str((self.placeInData-self.prevI)/self.recent_time) + ' samples/s' + ' Total Rate:' + str(self.placeInData/self.total_time) + ' samples/s'})
+        send = {'status_text': 'Event Count: ' + str(self.event_count) + ' Percent Done: ' + str(100.*self.placeInData / self.points_per_channel_total) + ' Rate: ' + str((self.placeInData-self.prevI)/self.recent_time) + ' samples/s' + ' Total Rate:' + str(self.placeInData/self.total_time) + ' samples/s'}
+        if self.readyForEvents:
+            events = self.save_file['Events']
+            if self.event_count > self.nextEventToSend:
+                send['Events'] = events[self.nextEventToSend:self.event_count]
+                self.nextEventToSend = self.event_count
+                self.readyForEvents = False
+        self.dataReady.emit(send)
         
     def lazyLoading(self):
         '''
@@ -312,11 +320,11 @@ class AnalyzeDataThread(QtCore.QThread):
                     event['cusum_indexes'] = level_indexes
                     event['cusum_values'] = level_values
                     event['area'] = event_area
-                    self.dataReady.emit({'plot_options': self.plot_options, 'event': event})
+#                     self.dataReady.emit({'plot_options': self.plot_options, 'event': event})
                     self.save_file['Events'].append(event)
                     self.event_count = self.event_count + 1
                 if len(dataCache) > 0:
-                    print 'cache len:', len(dataCache)
+#                     print 'cache len:', len(dataCache)
                     if i >= n:
                         i = i % n
                         self.placeInData = self.placeInData + n
@@ -346,7 +354,7 @@ class AnalyzeDataThread(QtCore.QThread):
                 if self.placeInData % 50000 == 0:
                     self.recent_time = time.time() - time2
                     self.total_time = time.time() - self.time1
-                    self.dataReady.emit({'status_text': 'Event Count: ' + str(self.event_count) + ' Percent Done: ' + str(100.*self.placeInData / self.points_per_channel_total) + ' Rate: ' + str((self.placeInData-self.prevI)/self.recent_time) + ' samples/s' + ' Total Rate:' + str(self.placeInData/self.total_time) + ' samples/s'})
+#                     self.dataReady.emit({'status_text': 'Event Count: ' + str(self.event_count) + ' Percent Done: ' + str(100.*self.placeInData / self.points_per_channel_total) + ' Rate: ' + str((self.placeInData-self.prevI)/self.recent_time) + ' samples/s' + ' Total Rate:' + str(self.placeInData/self.total_time) + ' samples/s'})
                     time2 = time.time()
                     self.prevI = self.placeInData
             if self.cancelled:
@@ -370,7 +378,7 @@ class AnalyzeDataThread(QtCore.QThread):
             self.save_file['parameters'] = self.parameters
             sio.savemat(self.save_file['filename'], self.save_file)
             
-        self.dataReady.emit({'status_text': 'Done. Found ' + str(self.event_count) + ' events.  Saved database to ' + str(self.save_file['filename']), 'done': True})
+#         self.dataReady.emit({'status_text': 'Done. Found ' + str(self.event_count) + ' events.  Saved database to ' + str(self.save_file['filename']), 'done': True})
         self.cancelled = True
         
         return
@@ -390,7 +398,7 @@ class AnalyzeDataThread(QtCore.QThread):
                     return cache[i]
                 else:
                     i = i%cache.size
-        print 'getDataAt no data found, i:', i, 'data.size:', data.size, 'num in cache:', len(dataCache)
+#         print 'getDataAt no data found, i:', i, 'data.size:', data.size, 'num in cache:', len(dataCache)
         return None
     
     def getDataRange(self, data, dataCache, rawPointsCache, i, n):
