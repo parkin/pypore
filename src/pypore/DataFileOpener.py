@@ -182,7 +182,7 @@ def prepareHekaFile(filename):
     f = open(filename)
     # Check that the first line is as expected
     line = f.readline()
-    if not line == 'Nanopore Experiment Data File V2.0\r\n':
+    if not 'Nanopore Experiment Data File V2.0' in line:
         f.close()
         return 0, {'error': 'Heka data file format not recognized.'}
     # Just skip over the file header text, should be always the same.
