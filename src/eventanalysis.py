@@ -20,7 +20,7 @@ import numpy as np
 
 # My stuff
 from pypore import AnalyzeDataThread, PlotThread
-from views import FileListItem, FilterListItem, PlotToolBar, DataFileListItem
+from views import FileListItem, FilterListItem, PlotToolBar, DataFileListItem, MyPlotItem
 
 from pypore.DataFileOpener import prepareDataFile
 
@@ -354,7 +354,8 @@ class MyApp(QtGui.QMainWindow):
 #         wig.setMinimumSize(400, 600)
 
         # Main plot        
-        self.plotwid = wig.addPlot(title = 'Current Trace', name='Plot')
+        self.plotwid = MyPlotItem(title = 'Current Trace', name='Plot')
+        wig.addItem(self.plotwid)
         self.plotwid.enableAutoRange('xy',False)
         self.p1 = self.plotwid.plot() # create an empty plot curve to be filled later
         
@@ -742,7 +743,7 @@ class MyApp(QtGui.QMainWindow):
             
         item = PathItem(times, data)
         item.setPen(pg.mkPen('y'))
-        self.plotwid.addItem(item)
+        self.plotwid.addEventItem(item)
         
     def on_analyze_stop(self):
         self.cleanThreads()
@@ -766,12 +767,7 @@ class MyApp(QtGui.QMainWindow):
         
         self.plot_concatevents.clear()
         self.plot_event_zoomed.clear()
-        items = self.plotwid.listDataItems()
-        # remove events from main plot, keep trace (first entry probably)
-        for i in range(0, len(items)):
-            if i > 0:
-                self.plotwid.removeItem(items[i])
-        
+        self.plotwid.clearEventItems()
         
         # Clear the current events
         del self.events[:]
@@ -907,6 +903,7 @@ class MyApp(QtGui.QMainWindow):
             if isinstance(w, AnalyzeDataThread):
                 w.cancelled = True
                 w.wait()
+                self.threadPool.remove(w)
         
         
 # def plotSpectrum(data, rate):

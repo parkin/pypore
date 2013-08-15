@@ -4,7 +4,7 @@ Created on Aug 6, 2013
 @author: parkin
 '''
 import PySide
-from pyqtgraph import QtGui
+from pyqtgraph import QtGui, PlotItem
 
 # zoom picture? copied from BodeDemo
 zoom_xpm = ['32 32 8 1',
@@ -48,6 +48,30 @@ zoom_xpm = ['32 32 8 1',
             '...#dddddddddddddddddddddd##eda#',
             '...#aaaaaaaaaaaaaaaaaaaaaa#.####',
             '...########################..##.']
+
+# class MyPlotWidget(PlotWidget):
+#     
+#     def __init__(self, parent = None, title = None, name = None):
+#         PlotWidget.__init__(self, parent, title=title, name=name)
+#         self.itemList = []
+#         
+class MyPlotItem(PlotItem):
+    def __init__(self, parent = None, title = None, name = None):
+        super(MyPlotItem, self).__init__(parent=parent, title=title, name=name)
+        self.myItemList = []
+        self.myEventItemList = []
+         
+    def addItem(self, item, params=None):
+        super(MyPlotItem, self).addItem(item, params)
+        self.myItemList.append(item)
+        
+    def addEventItem(self, item, params=None):
+        super(MyPlotItem, self).addItem(item, params)
+        self.myEventItemList.append(item)
+        
+    def clearEventItems(self):
+        for item in self.myEventItemList:
+            self.removeItem(item)
 
 class PlotToolBar(QtGui.QToolBar):
     '''
