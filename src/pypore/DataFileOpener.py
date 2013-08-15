@@ -343,7 +343,7 @@ def _readHekaNextBlock(f, per_file_params, per_block_param_list, per_channel_par
     
     # Read per channel header
     per_channel_block_params = []
-    for channel in channel_list: # underscore used for discarded parameters
+    for _ in channel_list: # underscore used for discarded parameters
         channel_params = {}
         # i[0] = name, i[1] = datatype
         for i in per_channel_param_list:
