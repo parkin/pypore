@@ -183,7 +183,8 @@ def prepareHekaFile(filename):
     # Check that the first line is as expected
     line = f.readline()
     if not line == 'Nanopore Experiment Data File V2.0\r\n':
-        return 'Heka data file format not recognized.'
+        f.close()
+        return 0, {'error': 'Heka data file format not recognized.'}
     # Just skip over the file header text, should be always the same.
     while True:
         line = f.readline()
@@ -219,8 +220,8 @@ def prepareHekaFile(filename):
     num_blocks_in_file = int((filesize - per_file_header_length)/total_bytes_per_block)
     remainder = (filesize - per_file_header_length)%total_bytes_per_block
     if not remainder == 0:
-        print 'Error, data file ends with incomplete block'
-        return
+        f.close()
+        return 0, {'error': 'Error, data file ends with incomplete block'}
     points_per_channel_total = per_file_params['Points per block'] * num_blocks_in_file
     points_per_channel_per_block = per_file_params['Points per block']
     
