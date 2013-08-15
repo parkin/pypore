@@ -42,6 +42,8 @@ class MyApp(QtGui.QMainWindow):
         
         pg.setConfigOption('leftButtonPan', False)
         
+        self.openDir = '../data'
+        
         self.threadPool = []
         
         self.setWindowTitle('Translocation Event Analysis')
@@ -57,7 +59,7 @@ class MyApp(QtGui.QMainWindow):
         Opens file dialog box, adds names of files to open to list
         '''
 
-        fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open data file', '../data', "All types(*.hkd *.log);;Heka files *.hkd(*.hkd);;Chimera files *.log(*.log)")[0]
+        fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open data file', self.openDir, "All types(*.hkd *.log);;Heka files *.hkd(*.hkd);;Chimera files *.log(*.log)")[0]
         if len(fnames) > 0:
             self.listWidget.clear()
         else:
@@ -71,6 +73,7 @@ class MyApp(QtGui.QMainWindow):
             else:
                 f.close()
                 item = DataFileListItem(w, params)
+                self.openDir = item.getDirectory()
                 self.listWidget.addItem(item)
             
         if areFilesOpened:
@@ -81,7 +84,7 @@ class MyApp(QtGui.QMainWindow):
         '''
         Opens file dialog box, add names of event database files to open list
         '''
-        fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open event database', '../data', '*.mat')[0]
+        fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open event database', self.openDir, '*.mat')[0]
         if len(fnames) > 0:
             self.listEventWidget.clear()
         else:
@@ -90,6 +93,7 @@ class MyApp(QtGui.QMainWindow):
         for w in fnames:
             areFilesOpened = True
             item = FileListItem(w)
+            self.openDir = item.getDirectory() # save the direcory info for later
             self.listEventWidget.addItem(item)
             
         if areFilesOpened:

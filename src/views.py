@@ -67,6 +67,11 @@ class FileListItem(QtGui.QListWidgetItem):
         QtGui.QListWidgetItem.__init__(self, name_without_path)
         self.filenames = filename
         self.simplename = name_without_path
+        if len(words) > 0:
+            direc = ''
+            for word in words:
+                direc += word + '/' 
+            self.directory = direc
         
     def getFileName(self):
         '''
@@ -80,6 +85,9 @@ class FileListItem(QtGui.QListWidgetItem):
         Return the filenames without the file path included.
         '''
         return self.simplename
+    
+    def getDirectory(self):
+        return self.directory
     
 class DataFileListItem(FileListItem):
     '''
