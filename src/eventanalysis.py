@@ -11,6 +11,7 @@ import PySide # here to force pyqtgraph to use pyside
 import pyqtgraph as pg
 from pyqtgraph import QtGui, QtCore
 from pyqtgraph.widgets.LayoutWidget import LayoutWidget
+from pyqtgraph.graphicsItems import PlotCurveItem
 
 from scipy import arange, linspace
 import scipy.io as sio
@@ -567,11 +568,11 @@ class MyApp(QtGui.QMainWindow):
         newcolor = QtGui.QColor(color.red(),color.green(),color.blue(),128)
                  
         y_dt,x_dt = np.histogram(dwellTimes, bins=40)        
-        curve_dt = pg.PlotCurveItem(x_dt, y_dt, stepMode=True, fillLevel=0, brush=newcolor)
+        curve_dt = PlotCurveItem(x_dt, y_dt, stepMode=True, fillLevel=0, brush=newcolor)
         self.plot_eventdur.addItem(curve_dt)
         
         y_cb,x_cb = np.histogram(currentBlockade, bins=40)        
-        curve_cb = pg.PlotCurveItem(x_cb, y_cb, stepMode=True, fillLevel=0, brush=newcolor)
+        curve_cb = PlotCurveItem(x_cb, y_cb, stepMode=True, fillLevel=0, brush=newcolor)
         self.plot_eventdepth.addItem(curve_cb)
         
         return
