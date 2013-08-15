@@ -86,23 +86,12 @@ class FileListItem(QtGui.QListWidgetItem):
     Subclass of QListWidgetItem to handle filenames with long file paths.
     '''
     
-    def __init__(self, filename, params):
+    def __init__(self, filename):
         words = filename.split('/')
         name_without_path = words[len(words)-1]
         QtGui.QListWidgetItem.__init__(self, name_without_path)
         self.filenames = filename
         self.simplename = name_without_path
-        
-        self.params = params
-        
-    def getParams(self):
-        return self.params
-    
-    def getParam(self, param):
-        if param in self.params:
-            return self.params[param]
-        else:
-            return None
         
     def getFileName(self):
         '''
@@ -116,6 +105,24 @@ class FileListItem(QtGui.QListWidgetItem):
         Return the filenames without the file path included.
         '''
         return self.simplename
+    
+class DataFileListItem(FileListItem):
+    '''
+    Is a FileListItem with a parameter.
+    '''
+    
+    def __init__(self, filename, params):
+        FileListItem.__init__(self, filename)
+        self.params = params
+        
+    def getParams(self):
+        return self.params
+    
+    def getParam(self, param):
+        if param in self.params:
+            return self.params[param]
+        else:
+            return None
 
 class FilterListItem(QtGui.QListWidgetItem):
     '''
