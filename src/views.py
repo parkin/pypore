@@ -6,55 +6,6 @@ Created on Aug 6, 2013
 import PySide
 from pyqtgraph import QtGui, PlotItem
 
-# zoom picture? copied from BodeDemo
-zoom_xpm = ['32 32 8 1',
-            '# c #000000',
-            'b c #c0c0c0',
-            'a c #ffffff',
-            'e c #585858',
-            'd c #a0a0a4',
-            'c c #0000ff',
-            'f c #00ffff',
-            '. c None',
-            '..######################........',
-            '.#a#baaaaaaaaaaaaaaaaaa#........',
-            '#aa#baaaaaaaaaaaaaccaca#........',
-            '####baaaaaaaaaaaaaaaaca####.....',
-            '#bbbbaaaaaaaaaaaacccaaa#da#.....',
-            '#aaaaaaaaaaaaaaaacccaca#da#.....',
-            '#aaaaaaaaaaaaaaaaaccaca#da#.....',
-            '#aaaaaaaaaabe###ebaaaaa#da#.....',
-            '#aaaaaaaaa#########aaaa#da#.....',
-            '#aaaaaaaa###dbbbb###aaa#da#.....',
-            '#aaaaaaa###aaaaffb###aa#da#.....',
-            '#aaaaaab##aaccaaafb##ba#da#.....',
-            '#aaaaaae#daaccaccaad#ea#da#.....',
-            '#aaaaaa##aaaaaaccaab##a#da#.....',
-            '#aaaaaa##aacccaaaaab##a#da#.....',
-            '#aaaaaa##aaccccaccab##a#da#.....',
-            '#aaaaaae#daccccaccad#ea#da#.....',
-            '#aaaaaab##aacccaaaa##da#da#.....',
-            '#aaccacd###aaaaaaa###da#da#.....',
-            '#aaaaacad###daaad#####a#da#.....',
-            '#acccaaaad##########da##da#.....',
-            '#acccacaaadde###edd#eda#da#.....',
-            '#aaccacaaaabdddddbdd#eda#a#.....',
-            '#aaaaaaaaaaaaaaaaaadd#eda##.....',
-            '#aaaaaaaaaaaaaaaaaaadd#eda#.....',
-            '#aaaaaaaccacaaaaaaaaadd#eda#....',
-            '#aaaaaaaaaacaaaaaaaaaad##eda#...',
-            '#aaaaaacccaaaaaaaaaaaaa#d#eda#..',
-            '########################dd#eda#.',
-            '...#dddddddddddddddddddddd##eda#',
-            '...#aaaaaaaaaaaaaaaaaaaaaa#.####',
-            '...########################..##.']
-
-# class MyPlotWidget(PlotWidget):
-#     
-#     def __init__(self, parent = None, title = None, name = None):
-#         PlotWidget.__init__(self, parent, title=title, name=name)
-#         self.itemList = []
-#         
 class MyPlotItem(PlotItem):
     def __init__(self, parent = None, title = None, name = None):
         super(MyPlotItem, self).__init__(parent=parent, title=title, name=name)
