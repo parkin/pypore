@@ -44,6 +44,7 @@ class MyApp(QtGui.QMainWindow):
         self.create_status_bar()
         
     
+    
     def open_files(self):
         '''
         Opens file dialog box, adds names of files to open to list
@@ -732,10 +733,7 @@ class MyApp(QtGui.QMainWindow):
         self.plotwid.addItem(item)
         
     def on_analyze_stop(self):
-        for w in self.threadPool:
-            if isinstance(w, AnalyzeDataThread):
-                w.cancelled = True
-                w.wait()
+        self.cleanThreads()
         self.stop_analyze_button.setEnabled(False)
         self.status_text.setText('Analyze aborted.')
             
@@ -892,6 +890,12 @@ class MyApp(QtGui.QMainWindow):
         if 'done' in results:
             if results['done']:
                 self.stop_analyze_button.setEnabled(False)
+    def cleanThreads(self):
+        for w in self.threadPool:
+            if isinstance(w, AnalyzeDataThread):
+                w.cancelled = True
+                w.wait()
+        
         
 # def plotSpectrum(data, rate):
 #     n = len(data)
@@ -921,6 +925,7 @@ def main():
     ex = MyApp(app)
     ex.show()
     app.exec_()
+    ex.cleanThreads()
     sys.exit()
 
 
