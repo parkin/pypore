@@ -9,10 +9,8 @@ import sys
 
 import PySide # here to force pyqtgraph to use pyside
 import pyqtgraph as pg
-from pyqtgraph import QtGui, QtCore, PlotData
+from pyqtgraph import QtGui, QtCore
 from pyqtgraph.widgets.LayoutWidget import LayoutWidget
-
-import time
 
 from scipy import arange, linspace
 import scipy.io as sio
@@ -21,7 +19,7 @@ import numpy as np
 
 # My stuff
 from pypore import AnalyzeDataThread, PlotThread
-from views import FileListItem, FilterListItem, PlotToolBar
+from views import FileListItem, FilterListItem, PlotToolBar, DataFileListItem
 
 from pypore.DataFileOpener import prepareDataFile
 
@@ -63,7 +61,7 @@ class MyApp(QtGui.QMainWindow):
                 self.status_text.setText(params['error'])
             else:
                 f.close()
-                item = FileListItem(w, params)
+                item = DataFileListItem(w, params)
                 self.listWidget.addItem(item)
             
         if areFilesOpened:
@@ -350,20 +348,21 @@ class MyApp(QtGui.QMainWindow):
         return tab_widget
         
     def _create_eventfinder_plots_widget(self):
-        # Main plot
-        self.plotwid = pg.PlotWidget(title = 'Current Trace', name='Plot')
-        self.plotwid.setMinimumSize(400, 200)
+        wig = pg.GraphicsLayoutWidget()
+#         wig.setMinimumSize(400, 600)
+
+        # Main plot        
+        self.plotwid = wig.addPlot(title = 'Current Trace', name='Plot')
         self.plotwid.enableAutoRange('xy',False)
         self.p1 = self.plotwid.plot() # create an empty plot curve to be filled later
         
+        wig.nextRow()
         # Create Qwt plot for concatenated events
+        self.plot_concatevents = wig.addPlot(title = 'Concatenated Events', name='Concat')
         
-        self.plot_concatevents = pg.PlotWidget(title = 'Concatenated Events', name='Concat')
-        self.plot_concatevents.setMinimumSize(400, 200)
-        
+        wig.nextRow()
         # Qwt plot for each event found
-        self.plot_event_zoomed = pg.PlotWidget(title = 'Single Event', name='Single')
-        self.plot_event_zoomed.setMinimumSize(400, 200)
+        self.plot_event_zoomed = wig.addPlot(title = 'Single Event', name='Single')
         
         # Tool bar for main plot.  Contains zoom button and different checkboxes
         self.plotToolBar = PlotToolBar(self)
@@ -395,9 +394,7 @@ class MyApp(QtGui.QMainWindow):
         
         eventfinderplots_layout = LayoutWidget()
         eventfinderplots_layout.addWidget(self.plotToolBar, row=1, col=0, colspan=3)
-        eventfinderplots_layout.addWidget(self.plotwid, row=2, col=0, colspan=3)
-        eventfinderplots_layout.addWidget(self.plot_concatevents, row=3, col=0, colspan=3)
-        eventfinderplots_layout.addWidget(self.plot_event_zoomed, row=4, col=0, colspan=3)
+        eventfinderplots_layout.addWidget(wig, row=2, col=0, colspan=3)
         eventfinderplots_layout.addWidget(eventSelectToolbar, row=5, col=0, colspan=3)
         
         return eventfinderplots_layout
