@@ -66,6 +66,7 @@ class MyApp(QtGui.QMainWindow):
             
         if areFilesOpened:
             self.analyze_button.setEnabled(False)
+            self.main_tabwig.setCurrentIndex(0)
             
     def open_event_database(self):
         '''
@@ -84,6 +85,7 @@ class MyApp(QtGui.QMainWindow):
             
         if areFilesOpened:
             self.btnAddFilter.setEnabled(False)
+            self.main_tabwig.setCurrentIndex(1)
             
     def _on_event_file_selection_changed(self):
         self.btnAddFilter.setEnabled(True)
@@ -337,16 +339,6 @@ class MyApp(QtGui.QMainWindow):
             self.frm.setStyleSheet("QWidget { background-color: %s }"
                 % col.name())
         
-    def _create_left_side(self):
-        event_finding_options = self._create_event_finding_options()
-        event_analysis_options = self._create_event_analysis_options()
-        
-        tab_widget = QtGui.QTabWidget()
-        tab_widget.addTab(event_finding_options, "Event Finding")
-        tab_widget.addTab(event_analysis_options, "Event Analysis")
-        
-        return tab_widget
-        
     def _create_eventfinder_plots_widget(self):
         wig = pg.GraphicsLayoutWidget()
 #         wig.setMinimumSize(400, 600)
@@ -414,44 +406,59 @@ class MyApp(QtGui.QMainWindow):
         return vwig
         
     
-    def _create_right_side(self):
-        '''
-        Returns a widget holding all of the plots, stuff on right side
-        of gui.
-        '''
-        tabWidget = QtGui.QTabWidget()
+    def _create_event_analysis_tab(self):
+        frame = QtGui.QSplitter()
+        
+        options = self._create_event_analysis_options()
+        plots = self._create_eventanalysis_plot_widget()
         
         # Put everything in filter_parameter scroll area
-        scrollArea = QtGui.QScrollArea()
-        scrollAreaAnalysis = QtGui.QScrollArea()
-        scrollArea.setWidgetResizable(True)
-        scrollAreaAnalysis.setWidgetResizable(True)
+        scrollOptions = QtGui.QScrollArea()
+        scrollPlots = QtGui.QScrollArea()
+        scrollOptions.setWidgetResizable(True)
+        scrollPlots.setWidgetResizable(True)
         
-        event_finding_widget = self._create_eventfinder_plots_widget()
+        scrollOptions.setWidget(options)
+        scrollPlots.setWidget(plots)
         
-        event_analysis_widget = self._create_eventanalysis_plot_widget()
+        frame.addWidget(scrollOptions)
+        frame.addWidget(scrollPlots)
         
-        scrollArea.setWidget(event_finding_widget)
-        scrollAreaAnalysis.setWidget(event_analysis_widget)
+        return frame
+    
+    def _create_event_finding_tab(self):
+        frame = QtGui.QSplitter()
         
-        tabWidget.addTab(scrollArea, 'Event Finding')
-        tabWidget.addTab(scrollAreaAnalysis, 'Event Analysis')
+        options = self._create_event_finding_options()
+        plots = self._create_eventfinder_plots_widget()
         
-        return tabWidget
+        # Put everything in filter_parameter scroll area
+        scrollOptions = QtGui.QScrollArea()
+        scrollPlots = QtGui.QScrollArea()
+        scrollOptions.setWidgetResizable(True)
+        scrollPlots.setWidgetResizable(True)
+        
+        scrollOptions.setWidget(options)
+        scrollPlots.setWidget(plots)
+        
+        frame.addWidget(scrollOptions)
+        frame.addWidget(scrollPlots)
+        
+        return frame
         
     def create_main_frame(self):
         '''
         Initializes the main gui frame.
         '''
-        left_side = self._create_left_side()
-        right_side = self._create_right_side()
+        event_finding = self._create_event_finding_tab()
+        event_analysis = self._create_event_analysis_tab()
         
         # Layout holding everything        
-        main_frame = QtGui.QSplitter() # Splitter allows for drag to resize between children
-        main_frame.addWidget(left_side)
-        main_frame.addWidget(right_side)
+        self.main_tabwig = QtGui.QTabWidget() # Splitter allows for drag to resize between children
+        self.main_tabwig.addTab(event_finding, 'Event Finding')
+        self.main_tabwig.addTab(event_analysis, 'Event Analysis')
         
-        self.setCentralWidget(main_frame)
+        self.setCentralWidget(self.main_tabwig)
         
     def _eventDisplayEditOnChange(self, text):
         if len(text) < 1:
