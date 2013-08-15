@@ -24,6 +24,15 @@ from views import FileListItem, FilterListItem, PlotToolBar, DataFileListItem
 
 from pypore.DataFileOpener import prepareDataFile
 
+class PathItem(QtGui.QGraphicsPathItem):
+        def __init__(self, x, y):
+            self._range = [[x.min(),x.max()], [y.min(), y.max()]]
+            self.path = pg.arrayToQPath(x, y)
+            QtGui.QGraphicsPathItem.__init__(self, self.path)
+            
+        def dataBounds(self, ax, frac=1.0, orthoRange=False):
+            return self._range[ax]
+
 class MyApp(QtGui.QMainWindow):
     
     def __init__(self, app, parent=None):
@@ -643,11 +652,10 @@ class MyApp(QtGui.QMainWindow):
         for event in events:
             d = event['raw_data'].size
             baseline = event['baseline']
-            data[index:index+d] = (event['raw_data'] - baseline)*1.e9
+            data[index:index+d] = (event['raw_data'] - baseline)
             index += d
             
-        path = pg.arrayToQPath(times, data)
-        item = QtGui.QGraphicsPathItem(path)
+        item = PathItem(times, data)
         item.setPen(pg.mkPen('w'))
         self.plot_concatevents.addItem(item)
         
@@ -732,8 +740,7 @@ class MyApp(QtGui.QMainWindow):
             data[index:index+d] = event['raw_data']
             index += d
             
-        path = pg.arrayToQPath(times, data)
-        item = QtGui.QGraphicsPathItem(path)
+        item = PathItem(times, data)
         item.setPen(pg.mkPen('y'))
         self.plotwid.addItem(item)
         
