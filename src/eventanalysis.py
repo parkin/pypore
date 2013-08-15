@@ -9,9 +9,8 @@ import sys
 
 import PySide # here to force pyqtgraph to use pyside
 import pyqtgraph as pg
-from pyqtgraph import QtGui, QtCore
+from pyqtgraph import QtGui, QtCore, PlotCurveItem
 from pyqtgraph.widgets.LayoutWidget import LayoutWidget
-from pyqtgraph.graphicsItems import PlotCurveItem
 
 from scipy import arange, linspace
 import scipy.io as sio
