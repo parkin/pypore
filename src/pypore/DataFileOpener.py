@@ -136,7 +136,7 @@ def prepareChimeraFile(filename):
     ADCBITS = specsfile['SETUP_ADCBITS'][0][0]
     ADCvref = specsfile['SETUP_ADCVREF'][0][0]
     
-    datafile = open(filename)
+    datafile = open(filename, 'rb')
     
     bitmask = (2**16) - 1 - (2**(16-ADCBITS) - 1);
     
@@ -179,7 +179,7 @@ encodings = [np.dtype('>u1'), np.dtype('>u2'), np.dtype('>u4'),
              np.dtype('>S512')]
 
 def prepareHekaFile(filename):
-    f = open(filename)
+    f = open(filename, 'rb')
     # Check that the first line is as expected
     line = f.readline()
     if not 'Nanopore Experiment Data File V2.0' in line:
@@ -343,7 +343,7 @@ def _readHekaNextBlock(f, per_file_params, per_block_param_list, per_channel_par
     
     # Read per channel header
     per_channel_block_params = []
-    for _ in channel_list: # underscore used for discarded parameters
+    for channel in channel_list: # underscore used for discarded parameters
         channel_params = {}
         # i[0] = name, i[1] = datatype
         for i in per_channel_param_list:
@@ -354,9 +354,9 @@ def _readHekaNextBlock(f, per_file_params, per_block_param_list, per_channel_par
     data = []
     dt = np.dtype('>i2') # int16
     for i in range(0,len(channel_list)):
-        values = np.fromfile(f, dt, points_per_channel_per_block) * per_channel_block_params[i]['Scale']
+        values = np.fromfile(f, dt, count=points_per_channel_per_block) * per_channel_block_params[i]['Scale']
         data.append(values)
-    
+        
     block = {'data': data,'per_block_params': per_block_params, 'per_channel_params': per_channel_block_params}
     
     return block
@@ -396,9 +396,10 @@ def _readHekaHeaderParamList(f, datatype, encodings):
     '''
     param_list = []
     f.read(3)  # read null characters?
-    num_params = np.fromfile(f, np.uint8, 1)[0]
+    dt = np.dtype('>u1')
+    num_params = np.fromfile(f, dt, 1)[0]
     for _ in range(0, num_params):
-        type_code = np.fromfile(f, np.uint8,1)[0]
+        type_code = np.fromfile(f, dt,1)[0]
         name = np.fromfile(f, datatype, 1)[0].strip()
         param_list.append([name, encodings[type_code]])
     return param_list
