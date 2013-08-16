@@ -25,13 +25,15 @@ from pypore.DataFileOpener import prepareDataFile
 
 class PathItem(QtGui.QGraphicsPathItem):
         def __init__(self, x, y):
-            self._range = [[x.min(),x.max()], [y.min(), y.max()]]
+            xr = x.min(), x.max()
+            yr = y.min(), y.max()
+            self._bounds = QtCore.QRectF(xr[0],yr[0],xr[1]-xr[0],yr[1]-yr[0])
             self.path = pg.arrayToQPath(x, y)
             QtGui.QGraphicsPathItem.__init__(self, self.path)
             
-        def dataBounds(self, ax, frac=1.0, orthoRange=False):
-            return self._range[ax]
-
+        def boundingRect(self):
+            return self._bounds
+            
 class MyApp(QtGui.QMainWindow):
     
     def __init__(self, app, parent=None):
@@ -621,26 +623,6 @@ class MyApp(QtGui.QMainWindow):
         self.plotwid.autoRange()
         self.app.processEvents()
         
-    def addEventToConcatEventPlot(self, event):
-        '''
-        Adds an event to the concatenated events plot.
-        '''
-        # get the most recent event in concatplot to append to
-        times, data, _, _ = self.getEventAndLevelsData(event)
-        dataItems = self.plot_concatevents.listDataItems()
-        if len(dataItems) > 0:
-            prevX = dataItems[len(dataItems)-1].dataBounds(0)[1] 
-        else:
-            prevX = 2*times[0]
-        times = times + (prevX - times[0])
-        data = data - event['baseline']
-#         path = pg.arrayToQPath(times.flatten(), data.flatten())
-#         item = QtGui.QGraphicsPathItem(path)
-#         item.setPen(pg.mkPen('w'))
-#         self.plot_concatevents.addItem(item)
-        self.plot_concatevents.plot(x=times,y=data)
-#         self.plot_concatevents.update()
-
     def addEventsToConcatEventPlot(self, events):
         if len(events) < 1:
             return
@@ -710,20 +692,6 @@ class MyApp(QtGui.QMainWindow):
         levels2.append(baseline)
         return times, data, times2, levels2
         
-        
-    def plotEventOnMainPlot(self, event):
-        '''
-        Adds an event to the main current trace plot.  
-        Pass in filter_parameter dictionary with 'event_data', 'sample_rate', 'event_start'
-        '''
-        if not 'raw_data' in event or not 'sample_rate' in event or not 'event_start' in event or not 'raw_points_per_side' or not 'cusum_indexes' in event or not 'cusum_values' in event:
-            print 'incorrectly called plotEventOnMainPlot.  Need \'raw_data\', \'sample_rate\', \'cusum_indexes\', \'cusum_values\', and \'event_start\'' 
-            return
-        times, data, times2, levels2 = self.getEventAndLevelsData(event)
-        self.plotwid.plot(x=times,y=data, pen=pg.mkPen('y'))
-        self.plotwid.plot(x=times2,y=levels2, pen=pg.mkPen('g'))
-#         self.plotwid.update()
-
     def plotEventsOnMainPlot(self, events):
         if len(events) < 1:
             return
