@@ -22,7 +22,7 @@ def openData(filename, decimate=False):
     if '.hkd' in filename:
         return openHekaFile(filename, decimate)
         
-    return 'File not specified with correct extension. Possibilities are: \'.log\', \'.hkd\''
+    return {'error': 'File not specified with correct extension. Possibilities are: \'.log\', \'.hkd\''}
     
 def prepareDataFile(filename):
     '''
