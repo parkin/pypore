@@ -871,10 +871,9 @@ class MyApp(QtGui.QMainWindow):
                 self.stop_analyze_button.setEnabled(False)
     def cleanThreads(self):
         for w in self.threadPool:
-            if isinstance(w, AnalyzeDataThread):
-                w.cancelled = True
-                w.wait()
-                self.threadPool.remove(w)
+            w.cancelled = True
+            w.wait()
+            self.threadPool.remove(w)
         
         
 # def plotSpectrum(data, rate):
