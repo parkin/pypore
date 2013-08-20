@@ -847,25 +847,10 @@ class MyApp(QtGui.QMainWindow):
             if self.plotToolBar.isPlotDuringChecked():
                 self.plotEventsOnMainPlot(events)
                 self.addEventsToConcatEventPlot(events)
-#                 for event in events:
-#                     self.plotEventOnMainPlot(event)
-#                     self.addEventToConcatEventPlot(event)
             if singlePlot:
                 self.eventDisplayedEdit.setText('1')
             self.app.processEvents()  
             self.analyzethread.readyForEvents = True
-        if 'event' in results:
-            event = results['event']
-            self.events.append(event)
-            self.eventDisplayedEdit.setMaxLength(int(len(self.events)/10)+1)
-            self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(1,len(self.events)))
-            self.eventCountText.setText('/' + str(len(self.events)))
-            if self.plotToolBar.isPlotDuringChecked():
-                self.plotEventOnMainPlot(event)
-                self.addEventToConcatEventPlot(event)
-            if len(self.events) < 2:
-                self.eventDisplayedEdit.setText('1')
-            self.app.processEvents()
         if 'done' in results:
             if results['done']:
                 self.stop_analyze_button.setEnabled(False)
@@ -876,27 +861,6 @@ class MyApp(QtGui.QMainWindow):
             self.threadPool.remove(w)
         
         
-# def plotSpectrum(data, rate):
-#     n = len(data)
-#     k = np.arange(n)
-#     T = n / rate
-#     frq = k / T  # Two sides frequency range
-#     frq = frq[range(n / 2)]  # one side frequency range
-#     
-#     Y = fft(data) / n  # fft and normalization
-#     Y = Y[range(n / 2)]
-#     
-#     decimated = frq
-#     if len(frq) > 1000000:
-#         decimated = signal.decimate(Y, int(len(data) / 1000000))
-#     t = arange(frq[0], frq[len(frq) - 1], (frq[len(frq) - 1] - frq[0]) / len(decimated))
-#     
-#     plt.plot(t, decimated, 'r')
-#     plt.xlim([frq[0], frq[n / 2 - 1]])
-#     plt.xlabel('Freq (Hz)')
-#     plt.ylabel('|Y(freq)|')
-
-
 def main():
     
 #     app = QtGui.QApplication(sys.argv)
