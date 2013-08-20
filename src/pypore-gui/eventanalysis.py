@@ -616,9 +616,10 @@ class MyApp(QtGui.QMainWindow):
     
         Ts = 1 / sample_rate
         
-        times = arange(Ts * plot_range[0], Ts * (plot_range[1]), Ts)
+        times = linspace(Ts * plot_range[0], Ts*plot_range[1], n)
         yData = data[plot_range[0]:(plot_range[1]+1)]
         
+        self.plotwid.clearEventItems()
         self.p1.setData(x=times,y=yData)
         self.plotwid.autoRange()
         self.app.processEvents()

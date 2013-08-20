@@ -78,6 +78,9 @@ def openChimeraFile(filename, decimate=False):
     # remove 'log' append 'mat'
     datafile, p = prepareChimeraFile(filename)
     
+    if 'error' in p:
+        return p
+    
     ADCBITS = p['ADCBITS']
     ADCvref = p['ADCvref']
     datatype = p['datatype']
@@ -112,6 +115,7 @@ def openChimeraFile(filename, decimate=False):
         logdata = -ADCvref + (2*ADCvref) * readvalues / (2**16);
 
     specsfile['data'] = [logdata]
+    datafile.close()
     return specsfile
 
 def prepareChimeraFile(filename):
@@ -355,6 +359,8 @@ def _readHekaNextBlock(f, per_file_params, per_block_param_list, per_channel_par
     dt = np.dtype('>i2') # int16
     for i in range(0,len(channel_list)):
         values = np.fromfile(f, dt, count=points_per_channel_per_block) * per_channel_block_params[i]['Scale']
+        # get rid of nan's
+#         values[np.isnan(values)] = 0
         data.append(values)
         
     block = {'data': data,'per_block_params': per_block_params, 'per_channel_params': per_channel_block_params}
