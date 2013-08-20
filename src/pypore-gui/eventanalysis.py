@@ -44,7 +44,7 @@ class MyApp(QtGui.QMainWindow):
         
         pg.setConfigOption('leftButtonPan', False)
         
-        self.openDir = '../data'
+        self.openDir = '../../data'
         
         self.threadPool = []
         
