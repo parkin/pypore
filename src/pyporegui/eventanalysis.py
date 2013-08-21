@@ -337,7 +337,7 @@ class MyApp(QtGui.QMainWindow):
         for item in items:
             filenames.append(item.getFileName())
         
-        item = FilterListItem(filenames, params)
+        item = FilterListItem(filenames, **params)
         self.listFilterWidget.addItem(item)
         
         self.plotEventDatabaseAnalyses(filenames, params)
