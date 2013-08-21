@@ -4,8 +4,10 @@ Created on Aug 20, 2013
 @author: parkin
 '''
 import unittest
+from src.helper import UsesQApplication
 import os
-from PySide.QtGui import QColor
+from PySide.QtGui import QColor, QApplication
+# from PySide.QtTest import QTest
 from src.pyporegui.views import FilterListItem, FileListItem, DataFileListItem
 
 class TestFileListItem(unittest.TestCase):
@@ -53,15 +55,17 @@ class TestDataFileListItem(TestFileListItem):
         self.assertEqual(self.item.getParam('hi'), 9)
         self.assertEqual(self.item.getParam('bye'), 19)
         self.assertIsNone(self.item.getParam('sdafkfasfweoaifeawfksfd'))
+        
+_instance = None
     
-class TestFilterListItem(unittest.TestCase):
-
+class TestFilterListItem(UsesQApplication):
+    
     def setUp(self):
-        pass
+        super(TestFilterListItem, self).setUp()
 
     def tearDown(self):
-        pass
-
+        super(TestFilterListItem, self).tearDown()
+    
     def testFilterListItemSimpleName(self):
         filenames = [os.path.abspath('hi.txt')]
         item = FilterListItem(filenames)
@@ -118,12 +122,13 @@ class TestFilterListItem(unittest.TestCase):
         text = item.text()
         self.assertEqual(text, 'item')
     
-    def testFilterListItemForeground(self):
+    def testFilterListItemHasIcon(self):
         filenames = [os.path.abspath('hi.txt')]
         color = QColor.fromRgbF(.5,.6,.4,.34)
         item = FilterListItem(filenames, color=color)
-        foregroundcolor = item.foreground().color()
-        self.assertEqual(color, foregroundcolor)
+        icon = item.icon()
+        self.assertIsNotNone(icon)
+        self.assertFalse(icon.isNull())
 
 if __name__ == "__main__":
     # import sys;sys.argv = ['', 'Test.testName']

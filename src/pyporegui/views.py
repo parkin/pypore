@@ -133,7 +133,11 @@ class FilterListItem(QtGui.QListWidgetItem):
         if not 'color' in params:
             # give the item a default color
             self.params['color'] = QtGui.QColor.fromRgbF(0., 0., 1.)
-        self.setForeground(params['color'])
+        # set the icon color
+#         self.setForeground(params['color'])
+        pixmap = QtGui.QPixmap(20,20)
+        pixmap.fill(self.params['color'])
+        self.setIcon(QtGui.QIcon(pixmap))
         
     def getParams(self):
         return self.params
