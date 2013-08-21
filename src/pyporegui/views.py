@@ -3,9 +3,9 @@ Created on Aug 6, 2013
 
 @author: parkin
 '''
-import PySide
-from pyqtgraph import QtGui, PlotItem
+from PySide import QtGui
 import os.path
+from pyqtgraph.graphicsItems.PlotItem.PlotItem import PlotItem
 
 class MyPlotItem(PlotItem):
     def __init__(self, parent = None, title = None, name = None):
@@ -114,7 +114,7 @@ class FilterListItem(QtGui.QListWidgetItem):
     
     self.params contain the filter parameters specified by the user.
     '''
-    def __init__(self, filenames, params):
+    def __init__(self, filenames, **params):
         '''
         Pass in a list of filenames
         '''
@@ -128,10 +128,9 @@ class FilterListItem(QtGui.QListWidgetItem):
             self.simplenames.append(simplename)
         QtGui.QListWidgetItem.__init__(self, item_text)
         self.params = params
-        if 'color' in params:
-            self.setForeground(params['color'])
-        else:
+        if not 'color' in params:
             self.params['color'] = QtGui.QColor.fromRgbF(0., 0., 1.)
+        self.setForeground(params['color'])
         
     def getParams(self):
         return self.params
