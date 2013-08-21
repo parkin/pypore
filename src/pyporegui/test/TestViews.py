@@ -11,16 +11,10 @@ from PySide.QtGui import QColor
 from src.pyporegui.views import FilterListItem, FileListItem, DataFileListItem,\
     PlotToolBar
 
-class TestPlotToolBar(unittest.TestCase):
-    
-    def setUp(self):
-        pass
-    
-    def tearDown(self):
-        pass
+class TestPlotToolBar(UsesQApplication):
     
     def TestPlotToolBar(self):
-        toolbar = PlotToolBar
+        toolbar = PlotToolBar()
         self.assertTrue(toolbar.isDecimateChecked())
         self.assertTrue(toolbar.isPlotDuringChecked())
 
