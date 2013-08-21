@@ -4,6 +4,7 @@ Created on Aug 19, 2013
 @author: parkin
 '''
 import unittest
+import os.path
 from pypore.DataFileOpener import openData, prepareDataFile, prepareChimeraFile,\
     openChimeraFile
 
@@ -44,7 +45,9 @@ class TestDataFileOpener(unittest.TestCase):
             self.assertEqual(y, 0, 'prepareChimera did not return 0 when error raised')
             
     def testOpenDataWithChimeraFiles(self):
-        filename = 'testDataFiles/smallChimera.log'
+        # Make sure path to chimera file is correct.
+        directory = os.path.dirname(os.path.abspath(__file__))
+        filename = os.path.join(os.path.join(directory,'testDataFiles'),'smallChimera.log')
         specs = openData(filename, False)
         self._testSmallChimeraFileHelp(specs)
         
@@ -58,7 +61,9 @@ class TestDataFileOpener(unittest.TestCase):
         self.assertAlmostEqual(data[9], 1.11694336, 7)
 
     def testOpenChimeraData(self):
-        filename = 'testDataFiles/smallChimera.log'
+        # Make sure path to chimera file is correct.
+        directory = os.path.dirname(os.path.abspath(__file__))
+        filename = os.path.join(os.path.join(directory,'testDataFiles'),'smallChimera.log')
         specs = openChimeraFile(filename, False)
         self._testSmallChimeraFileHelp(specs)
         
