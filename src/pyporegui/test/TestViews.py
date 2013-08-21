@@ -6,34 +6,54 @@ Created on Aug 20, 2013
 import unittest
 import os
 from PySide.QtGui import QColor
-from src.pyporegui.views import FilterListItem, FileListItem
+from src.pyporegui.views import FilterListItem, FileListItem, DataFileListItem
 
 class TestFileListItem(unittest.TestCase):
     
     def setUp(self):
-        pass
+        self.filename = os.path.abspath('hi.txt')
+        self._setItem()
+        
+    def _setItem(self):
+        self.item = FileListItem(self.filename)
     
     def tearDown(self):
         pass
     
+    
     def testFileListItemSimpleName(self):
-        filename = os.path.abspath('hi.txt')
-        item = FileListItem(filename)
-        simplename = item.getSimpleName()
+        simplename = self.item.getSimpleName()
         self.assertEqual(simplename, 'hi.txt')
         
     def testFileListItemDirectory(self):
-        filename = os.path.abspath('hi.txt')
-        item = FileListItem(filename)
-        directory = item.getDirectory()
-        self.assertEqual(directory, os.path.dirname(filename))
+        directory = self.item.getDirectory()
+        self.assertEqual(directory, os.path.dirname(self.filename))
         
     def testFileListItemFilename(self):
-        filename = os.path.abspath('hi.txt')
-        item = FileListItem(filename)
-        check = item.getFileName()
-        self.assertEqual(check, filename)
-
+        check = self.item.getFileName()
+        self.assertEqual(check, self.filename)
+        
+class TestDataFileListItem(TestFileListItem):
+    '''
+    Subclassing TestFileListItem will also run those tests too.
+    '''
+     
+    def setUp(self):
+        self.params = {'hi': 9, 'bye': 19}
+        TestFileListItem.setUp(self)
+        
+    def _setItem(self):
+        self.item = DataFileListItem(self.filename, self.params)
+        
+    def testDataFileListItemParams(self):
+        params = self.item.getParams()
+        self.assertEqual(params, self.params)
+        
+    def testDataFileListItemGetParam(self):
+        self.assertEqual(self.item.getParam('hi'), 9)
+        self.assertEqual(self.item.getParam('bye'), 19)
+        self.assertIsNone(self.item.getParam('sdafkfasfweoaifeawfksfd'))
+    
 class TestFilterListItem(unittest.TestCase):
 
     def setUp(self):
