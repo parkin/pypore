@@ -5,6 +5,7 @@ Created on Aug 6, 2013
 '''
 import PySide
 from pyqtgraph import QtGui, PlotItem
+import os.path
 
 class MyPlotItem(PlotItem):
     def __init__(self, parent = None, title = None, name = None):
@@ -121,8 +122,8 @@ class FilterListItem(QtGui.QListWidgetItem):
         self.simplenames = []
         item_text = ''
         for filename in filenames:
-            words = filename.split('/')
-            simplename = words[len(words)-1]
+            words = os.path.split(filename)
+            simplename = words[1]
             item_text = item_text + str(simplename) + ', '
             self.simplenames.append(simplename)
         QtGui.QListWidgetItem.__init__(self, item_text)
@@ -131,7 +132,6 @@ class FilterListItem(QtGui.QListWidgetItem):
             self.setForeground(params['color'])
         else:
             self.params['color'] = QtGui.QColor.fromRgbF(0., 0., 1.)
-            print 'FilterListItem should be passed params with a \'color\' key'
         
     def getParams(self):
         return self.params
