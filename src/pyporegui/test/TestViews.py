@@ -6,7 +6,8 @@ Created on Aug 20, 2013
 import unittest
 from src.helper import UsesQApplication
 import os
-from PySide.QtGui import QColor, QApplication
+from PySide.QtGui import QColor
+from PySide import QtGui
 # from PySide.QtTest import QTest
 from src.pyporegui.views import FilterListItem, FileListItem, DataFileListItem
 
@@ -22,10 +23,10 @@ class TestFileListItem(unittest.TestCase):
     def tearDown(self):
         pass
     
-    
     def testFileListItemSimpleName(self):
         simplename = self.item.getSimpleName()
         self.assertEqual(simplename, 'hi.txt')
+        pix = QtGui.QPixmap(20,20)
         
     def testFileListItemDirectory(self):
         directory = self.item.getDirectory()
