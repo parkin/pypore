@@ -63,16 +63,11 @@ class FileListItem(QtGui.QListWidgetItem):
     '''
     
     def __init__(self, filename):
-        words = filename.split('/')
-        name_without_path = words[len(words)-1]
-        QtGui.QListWidgetItem.__init__(self, name_without_path)
+        words = os.path.split(filename)
+        self.simplename = words[1]
+        QtGui.QListWidgetItem.__init__(self, self.simplename)
         self.filenames = filename
-        self.simplename = name_without_path
-        if len(words) > 0:
-            direc = ''
-            for word in words:
-                direc += word + '/' 
-            self.directory = direc
+        self.directory = words[0]
         
     def getFileName(self):
         '''

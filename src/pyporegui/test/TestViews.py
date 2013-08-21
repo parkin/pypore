@@ -6,13 +6,38 @@ Created on Aug 20, 2013
 import unittest
 import os
 from PySide.QtGui import QColor
-from src.pyporegui.views import FilterListItem
+from src.pyporegui.views import FilterListItem, FileListItem
 
-class TestViews(unittest.TestCase):
+class TestFileListItem(unittest.TestCase):
+    
+    def setUp(self):
+        pass
+    
+    def tearDown(self):
+        pass
+    
+    def testFileListItemSimpleName(self):
+        filename = os.path.abspath('hi.txt')
+        item = FileListItem(filename)
+        simplename = item.getSimpleName()
+        self.assertEqual(simplename, 'hi.txt')
+        
+    def testFileListItemDirectory(self):
+        filename = os.path.abspath('hi.txt')
+        item = FileListItem(filename)
+        directory = item.getDirectory()
+        self.assertEqual(directory, os.path.dirname(filename))
+        
+    def testFileListItemFilename(self):
+        filename = os.path.abspath('hi.txt')
+        item = FileListItem(filename)
+        check = item.getFileName()
+        self.assertEqual(check, filename)
+
+class TestFilterListItem(unittest.TestCase):
 
     def setUp(self):
         pass
-
 
     def tearDown(self):
         pass
