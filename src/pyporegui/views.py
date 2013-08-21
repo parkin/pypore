@@ -30,7 +30,7 @@ class PlotToolBar(QtGui.QToolBar):
     A toolbar for plots, with a zoom button, check boxes for options.
     '''
     def __init__(self, parent = None):
-        QtGui.QToolBar.__init__(self, parent)
+        super(PlotToolBar, self).__init__(parent)
         
         self.decimateCheckBox = QtGui.QCheckBox()
         self.decimateCheckBox.setChecked(True)
@@ -65,7 +65,7 @@ class FileListItem(QtGui.QListWidgetItem):
     def __init__(self, filename):
         words = os.path.split(filename)
         self.simplename = words[1]
-        QtGui.QListWidgetItem.__init__(self, self.simplename)
+        super(FileListItem, self).__init__(self.simplename)
         self.filenames = filename
         self.directory = words[0]
         
@@ -128,7 +128,7 @@ class FilterListItem(QtGui.QListWidgetItem):
             # don't append ', ' to last item
             if index < len(filenames):
                 item_text += ', '
-        QtGui.QListWidgetItem.__init__(self, item_text)
+        super(FilterListItem, self).__init__(item_text)
         self.params = params
         if not 'color' in params:
             # give the item a default color
