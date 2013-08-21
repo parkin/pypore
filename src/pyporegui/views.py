@@ -146,7 +146,7 @@ class FilterListItem(QtGui.QListWidgetItem):
         return self.filenames
     
     def getFileNameAt(self, index):
-        if index < len(self.filenames) and index >= 0:
+        if 0 <= index < len(self.filenames):
             return self.filenames[index]
         else:
             return None
@@ -155,7 +155,7 @@ class FilterListItem(QtGui.QListWidgetItem):
         return self.simplenames
     
     def getSimpleNameAt(self, index):
-        if index < len(self.filenames) and index >= 0:
+        if 0 <= index < len(self.filenames):
             return self.simplenames[index]
         else:
             return None

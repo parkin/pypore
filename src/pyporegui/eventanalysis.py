@@ -497,7 +497,7 @@ class MyApp(QtGui.QMainWindow):
         '''
         try:
             eventCount = int(self.eventDisplayedEdit.text())
-            if eventCount + count > 0 and eventCount + count <= len(self.events):
+            if 0 < eventCount + count <= len(self.events):
                 self.eventDisplayedEdit.setText(str(eventCount + count))
         except ValueError:
             # if we can't parse the event display text but there are events,
