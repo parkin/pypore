@@ -571,8 +571,8 @@ class MyApp(QtGui.QMainWindow):
             database = sio.loadmat(str(filename))
             events = database['Events']
             sample_rate = database['sample_rate'][0][0]
-            for i in range(0, len(events)):
-                event = events[i][0][0] # extra zeroes come from way scipy.io saves .mat
+            for event in events:
+                event = event[0][0] # extra zeroes come from way scipy.io saves .mat
                 baseline = event['baseline'][0][0][0]
                 levels = event['cusum_values'][0][0]
                 for level in levels:
@@ -629,8 +629,8 @@ class MyApp(QtGui.QMainWindow):
         if len(events) < 1:
             return
         size = 0
-        for i in range(len(events)):
-            size += events[i]['raw_data'].size
+        for event in events:
+            size += event['raw_data'].size
         data = np.empty(size)
         sample_rate = events[0]['sample_rate']
         ts = 1/sample_rate
@@ -657,10 +657,6 @@ class MyApp(QtGui.QMainWindow):
         self.plot_event_zoomed.clear()
         self.plot_event_zoomed.plot(x=times,y=data)
         self.plot_event_zoomed.plot(x=times2,y=levels2, pen=pg.mkPen('g'))
-#         self.plot_event_zoomed.update()
-#         self.app.processEvents()
-#         self.plot_event_zoomed_event.setData(x=times,y=data)
-#         self.plot_event_zoomed_levels.setData(x=times2,y=levels2)
         
     def getEventAndLevelsData(self, event):
         try:
@@ -681,11 +677,11 @@ class MyApp(QtGui.QMainWindow):
         times = linspace(Ts * (event_start - raw_points_per_side), Ts * (event_start - raw_points_per_side + len(data) - 1), len(data))
         times2 = [(event_start - raw_points_per_side) * Ts, (event_start-1)*Ts, event_start*Ts]
         levels2 = [baseline, baseline, levels_values[0]]
-        for i in range(1, len(levels_values)):
+        for i, level_values in enumerate(levels_values):
             times2.append(levels_index[i - 1] * Ts)
             levels2.append(levels_values[i - 1])
             times2.append((levels_index[i - 1]+1) * Ts)
-            levels2.append(levels_values[i])
+            levels2.append(level_values)
         times2.append(event_end * Ts)
         levels2.append(levels_values[len(levels_values) - 1])
         times2.append((event_end + 1)* Ts)
@@ -698,8 +694,8 @@ class MyApp(QtGui.QMainWindow):
         if len(events) < 1:
             return
         size = 0
-        for i in range(len(events)):
-            size += events[i]['raw_data'].size
+        for event in events:
+            size += event['raw_data'].size
         data = np.empty(size)
         sample_rate = events[0]['sample_rate']
         raw_points_per_side = events[0]['raw_points_per_side']

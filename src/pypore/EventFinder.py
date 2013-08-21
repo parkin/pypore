@@ -244,8 +244,8 @@ def _lazyLoadFindEvents(**parameters):
                     if q < n_levels - 1:
                         end_index = level_indexes[q] + 1
                     level_values[q] = np.mean(_getDataRange(data, dataCache, rawPointsCache, start_index, end_index))
-                for j in range(0, len(level_indexes)):
-                    level_indexes[j] = level_indexes[j] + placeInData
+                for j, level_index in enumerate(level_indexes):
+                    level_indexes[j] = level_index + placeInData
                 # end CUSUM
                 plot_options['plot_range'] = [event_start - raw_points_per_side, event_end + raw_points_per_side]
                 plot_options['show_event'] = True

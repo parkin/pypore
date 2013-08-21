@@ -302,8 +302,8 @@ class AnalyzeDataThread(QtCore.QThread):
                         if q < n_levels - 1:
                             end_index = level_indexes[q] + 1
                         level_values[q] = np.mean(self.getDataRange(data, dataCache, rawPointsCache, start_index, end_index))
-                    for j in range(0, len(level_indexes)):
-                        level_indexes[j] = level_indexes[j] + self.placeInData
+                    for j, level_index in enumerate(level_indexes):
+                        level_indexes[j] = level_index + self.placeInData
                     # end CUSUM
                     self.plot_options['plot_range'] = [event_start - raw_points_per_side, event_end + raw_points_per_side]
                     self.plot_options['show_event'] = True
