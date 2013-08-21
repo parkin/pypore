@@ -120,15 +120,23 @@ class FilterListItem(QtGui.QListWidgetItem):
         '''
         self.filenames = filenames
         self.simplenames = []
-        item_text = ''
+        item_text = 'item'
+        if len(filenames) > 0:
+            item_text = ''
+        index = 0
         for filename in filenames:
             words = os.path.split(filename)
             simplename = words[1]
-            item_text = item_text + str(simplename) + ', '
+            item_text = item_text + simplename
             self.simplenames.append(simplename)
+            index += 1
+            # don't append ', ' to last item
+            if index < len(filenames):
+                item_text += ', '
         QtGui.QListWidgetItem.__init__(self, item_text)
         self.params = params
         if not 'color' in params:
+            # give the item a default color
             self.params['color'] = QtGui.QColor.fromRgbF(0., 0., 1.)
         self.setForeground(params['color'])
         
@@ -139,7 +147,7 @@ class FilterListItem(QtGui.QListWidgetItem):
         return self.filenames
     
     def getFileNameAt(self, index):
-        if index < len(self.filenames):
+        if index < len(self.filenames) and index >= 0:
             return self.filenames[index]
         else:
             return None
@@ -148,7 +156,7 @@ class FilterListItem(QtGui.QListWidgetItem):
         return self.simplenames
     
     def getSimpleNameAt(self, index):
-        if index < len(self.filenames):
+        if index < len(self.filenames) and index >= 0:
             return self.simplenames[index]
         else:
             return None
