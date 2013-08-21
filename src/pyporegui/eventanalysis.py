@@ -859,6 +859,7 @@ class MyApp(QtGui.QMainWindow):
     def cleanThreads(self):
         for w in self.threadPool:
             w.cancelled = True
+            w.stop()
             w.wait()
             self.threadPool.remove(w)
         
