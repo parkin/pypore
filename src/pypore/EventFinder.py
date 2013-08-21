@@ -4,10 +4,10 @@ Created on Aug 19, 2013
 @author: parkin
 '''
 
-from DataFileOpener import prepareDataFile, getNextBlocks
 import time, datetime
 import numpy as np
 import scipy.io as sio
+from pypore.DataFileOpener import prepareDataFile, getNextBlocks
 
 # Threshold types
 THRESHOLD_NOISE_BASED = 0

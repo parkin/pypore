@@ -6,13 +6,12 @@ Created on Jul 23, 2013
 @author: parkin
 '''
 
-import PySide
-from pyqtgraph import QtCore
-from DataFileOpener import openData, prepareDataFile, getNextBlocks
+from PySide import QtCore
 import scipy.io as sio
 import numpy as np
 import datetime
 import time
+from pypore.DataFileOpener import openData, prepareDataFile, getNextBlocks
 
 class PlotThread(QtCore.QThread):
     dataReady = QtCore.Signal(object)

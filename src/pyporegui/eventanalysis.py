@@ -7,12 +7,13 @@ This program is for finding events in files and displaying the results.
 '''
 import sys
 
-import PySide # here to force pyqtgraph to use pyside
+from PySide import QtCore, QtGui # Must import PySide stuff before pyqtgraph so pyqtgraph knows
+                                # to use PySide instead of PyQt
 import pyqtgraph as pg
-from pyqtgraph import QtGui, QtCore, PlotCurveItem
 from pyqtgraph.widgets.LayoutWidget import LayoutWidget
+from pyqtgraph.graphicsItems.PlotCurveItem import PlotCurveItem
 
-from scipy import arange, linspace
+from scipy import linspace
 import scipy.io as sio
 
 import numpy as np
