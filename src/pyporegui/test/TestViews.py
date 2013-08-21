@@ -8,7 +8,21 @@ from src.helper import UsesQApplication
 import os
 from PySide.QtGui import QColor
 # from PySide.QtTest import QTest
-from src.pyporegui.views import FilterListItem, FileListItem, DataFileListItem
+from src.pyporegui.views import FilterListItem, FileListItem, DataFileListItem,\
+    PlotToolBar
+
+class TestPlotToolBar(unittest.TestCase):
+    
+    def setUp(self):
+        pass
+    
+    def tearDown(self):
+        pass
+    
+    def TestPlotToolBar(self):
+        toolbar = PlotToolBar
+        self.assertTrue(toolbar.isDecimateChecked())
+        self.assertTrue(toolbar.isPlotDuringChecked())
 
 class TestFileListItem(unittest.TestCase):
     

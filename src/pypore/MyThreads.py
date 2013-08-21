@@ -174,7 +174,7 @@ class AnalyzeDataThread(QtCore.QThread):
             
             i = 100
             # initialize mean/variance with first i datapoints
-            for k in range(0, i):
+            for k in xrange(0, i):
                 local_mean = filter_parameter * local_mean + (1 - filter_parameter) * data[k]
                 local_variance = filter_parameter * local_variance + (1 - filter_parameter) * (data[k] - local_mean) ** 2
     
@@ -294,7 +294,7 @@ class AnalyzeDataThread(QtCore.QThread):
                 if done and event_end - event_start > min_event_steps:
                     # CUSUM stuff
                     level_values = np.zeros(n_levels)  # Holds the current values of the level_values
-                    for q in range(0, n_levels):
+                    for q in xrange(0, n_levels):
                         start_index = event_start
                         if q > 0:
                             start_index = level_indexes[q - 1]
@@ -363,7 +363,7 @@ class AnalyzeDataThread(QtCore.QThread):
         if self.event_count > 0:
             self.save_file_name = list(self.parameters['filename'])
             # Remove the .mat off the end
-            for i in range(0, 4):
+            for i in xrange(0, 4):
                 self.save_file_name.pop()
                 
             # Get a string with the current year/month/day/hour/minute to label the file
@@ -475,7 +475,7 @@ class AnalyzeDataThread(QtCore.QThread):
             
             i = 100
             # initialize mean/variance with first i datapoints
-            for k in range(0, i):
+            for k in xrange(0, i):
                 local_mean = filter_parameter * local_mean + (1 - filter_parameter) * data[k]
                 local_variance = filter_parameter * local_variance + (1 - filter_parameter) * (data[k] - local_mean) ** 2
     
@@ -581,7 +581,7 @@ class AnalyzeDataThread(QtCore.QThread):
                 if done and event_end - event_start > min_event_steps:
                     # CUSUM stuff
                     level_values = np.zeros(n_levels)  # Holds the current values of the level_values
-                    for q in range(0, n_levels):
+                    for q in xrange(0, n_levels):
                         start_index = event_start
                         if q > 0:
                             start_index = level_indexes[q - 1]
@@ -619,7 +619,7 @@ class AnalyzeDataThread(QtCore.QThread):
         if event_count > 0:
             save_file_name = list(self.parameters['filename'])
             # Remove the .mat off the end
-            for i in range(0, 4):
+            for i in xrange(0, 4):
                 save_file_name.pop()
                 
             # Get a string with the current year/month/day/hour/minute to label the file

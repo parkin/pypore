@@ -278,9 +278,9 @@ def openHekaFile(filename, decimate=False):
         else:
             data.append(np.zeros(points_per_channel_total))  # initialize array
         
-    for i in range(0,num_blocks_in_file):
+    for i in xrange(0,num_blocks_in_file):
         block = _readHekaNextBlock(f, per_file_params, per_block_param_list, per_channel_param_list, channel_list, points_per_channel_per_block)
-        for j in range(0,len(block['data'])):
+        for j in xrange(0,len(block['data'])):
             if decimate: # if decimating data, only keep max and min of each block
                 data[j][2*i] = np.max(block['data'][0])
                 data[j][2*i+1] = np.min(block['data'][0])
@@ -306,7 +306,7 @@ def getNextHekaBlocks(datafile, params, n):
     blocks = []
     totalsize = 0
     done = False
-    for i in range(0,n):
+    for i in xrange(0,n):
         block = _readHekaNextBlock(datafile, per_file_params, 
                                    per_block_param_list, per_channel_param_list, 
                                    channel_list, points_per_channel_per_block)
@@ -321,11 +321,11 @@ def getNextHekaBlocks(datafile, params, n):
     # stitch the data together
     data = []
     index = []
-    for i in range(0, len(channel_list)):
+    for _ in xrange(0, len(channel_list)):
         data.append(np.zeros(totalsize))
         index.append(0)
     for block in blocks:
-        for i in range(0, len(channel_list)):
+        for i in xrange(0, len(channel_list)):
             data[i][index[i]:index[i]+block['data'][i].size] = block['data'][i]
             index[i] = index[i] + block['data'][i].size
             
@@ -357,7 +357,7 @@ def _readHekaNextBlock(f, per_file_params, per_block_param_list, per_channel_par
     # Read data
     data = []
     dt = np.dtype('>i2') # int16
-    for i in range(0,len(channel_list)):
+    for i in xrange(0,len(channel_list)):
         values = np.fromfile(f, dt, count=points_per_channel_per_block) * per_channel_block_params[i]['Scale']
         # get rid of nan's
 #         values[np.isnan(values)] = 0
@@ -404,7 +404,7 @@ def _readHekaHeaderParamList(f, datatype, encodings):
     f.read(3)  # read null characters?
     dt = np.dtype('>u1')
     num_params = np.fromfile(f, dt, 1)[0]
-    for _ in range(0, num_params):
+    for _ in xrange(0, num_params):
         type_code = np.fromfile(f, dt,1)[0]
         name = np.fromfile(f, datatype, 1)[0].strip()
         param_list.append([name, encodings[type_code]])
