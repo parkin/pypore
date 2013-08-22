@@ -4,7 +4,7 @@ Created on Aug 20, 2013
 @author: parkin
 '''
 import unittest
-from src.helper import UsesQApplication
+from helper import UsesQApplication
 import os
 from PySide.QtGui import QColor, QCheckBox
 # from PySide.QtTest import QTest
