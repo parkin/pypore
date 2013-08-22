@@ -116,11 +116,7 @@ class AnalyzeDataThread(QtCore.QThread):
         '''
         Lazily loads large data files.
         '''
-        # I did some quick calculation of the rate (with plotting and everything), and
-        # nonLazy - ~96k samples/sec
-        # lazy 10 blocks (50,000 samples) - ~100k samples/sec
-        # lazy 3 blocks ( 15,000 samples) - ~105k samples/sec
-        # lazy 1 block (5,000 samples) - ~108k samples/sec
+        # Now that range->xrange, should retest how rate varies with get_blocks
         get_blocks = 1
         
         raw_points_per_side = 50
