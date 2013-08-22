@@ -94,15 +94,22 @@ class TestMyPlotItem(unittest.TestCase):
         plot2 = PlotCurveItem(y,x)
         plotitem.addEventItem(plot2)
         
+        plot5 = PlotCurveItem(y,x)
+        plotitem.addItem(plot5)
+        
         x=y=np.zeros(2)
         plot3 = PathItem(x,y)
         plotitem.addEventItem(plot3)
         
         plot4 = plotitem.plot(clear=True)
         
+        # Test that all of the plots have been cleared,
+        # and that plot4 was added succesfully
         self.assertEqual(len(plotitem.listDataItems()), 1)
         self.assertEqual(len(plotitem._myEventItemList), 0)
         self.assertEqual(len(plotitem._myItemList), 1)
+        self.assertEqual(plotitem.listDataItems()[0], plot4)
+        self.assertEqual(plotitem._myItemList[0], plot4)
         
         
 class TestPlotToolBar(unittest.TestCase):
