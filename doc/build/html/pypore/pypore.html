@@ -1,0 +1,392 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pypore Package &mdash; translocationcode-python 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="translocationcode-python 0.0.1 documentation" href="../index.html" />
+    <link rel="up" title="Code Documentation" href="../api.html" />
+    <link rel="next" title="test Package" href="pypore.test.html" />
+    <link rel="prev" title="Code Documentation" href="../api.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pypore.test.html" title="test Package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../api.html" title="Code Documentation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">translocationcode-python 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../api.html" accesskey="U">Code Documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="pypore-package">
+<h1>pypore Package<a class="headerlink" href="#pypore-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2><tt class="xref py py-mod docutils literal"><span class="pre">pypore</span></tt> Package<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-pypore.__init__"></span><p>Created by Will 8/6/13</p>
+<p>pypore is a nanopore translocation analysis package.</p>
+</div>
+<div class="section" id="module-pypore.DataFileOpener">
+<span id="datafileopener-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">DataFileOpener</span></tt> Module<a class="headerlink" href="#module-pypore.DataFileOpener" title="Permalink to this headline">¶</a></h2>
+<p>Created on May 23, 2013</p>
+<p>&#64;author: parkin</p>
+<dl class="function">
+<dt id="pypore.DataFileOpener.getNextBlocks">
+<tt class="descclassname">pypore.DataFileOpener.</tt><tt class="descname">getNextBlocks</tt><big>(</big><em>datafile</em>, <em>params</em>, <em>n=1</em><big>)</big><a class="reference internal" href="../_modules/pypore/DataFileOpener.html#getNextBlocks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.DataFileOpener.getNextBlocks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the next n blocks (~5000 datapoints) of data from filename</p>
+<p>Pass in an open datafile,
+params - 
+n - number of blocks to read and return.</p>
+<dl class="docutils">
+<dt>Assumes &#8216;.log&#8217; extension is Chimera data.  Chimera data requires a &#8216;.mat&#8217;</dt>
+<dd>file with the same name to be in the same folder. - not yet implemented</dd>
+</dl>
+<p>Assumes &#8216;.hkd&#8217; extension is Heka data.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pypore.DataFileOpener.getNextChimeraBlocks">
+<tt class="descclassname">pypore.DataFileOpener.</tt><tt class="descname">getNextChimeraBlocks</tt><big>(</big><em>datafile</em>, <em>params</em>, <em>n</em><big>)</big><a class="reference internal" href="../_modules/pypore/DataFileOpener.html#getNextChimeraBlocks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.DataFileOpener.getNextChimeraBlocks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pypore.DataFileOpener.getNextHekaBlocks">
+<tt class="descclassname">pypore.DataFileOpener.</tt><tt class="descname">getNextHekaBlocks</tt><big>(</big><em>datafile</em>, <em>params</em>, <em>n</em><big>)</big><a class="reference internal" href="../_modules/pypore/DataFileOpener.html#getNextHekaBlocks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.DataFileOpener.getNextHekaBlocks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pypore.DataFileOpener.openChimeraFile">
+<tt class="descclassname">pypore.DataFileOpener.</tt><tt class="descname">openChimeraFile</tt><big>(</big><em>filename</em>, <em>decimate=False</em><big>)</big><a class="reference internal" href="../_modules/pypore/DataFileOpener.html#openChimeraFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.DataFileOpener.openChimeraFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads files created by the Chimera acquisition software.  It requires a
+filename.log file with the data, and a filename.mat file containing the
+parameters of the run.</p>
+<p>Returns a dictionary with the keys/values in the filename.mat file
+as well as &#8216;data&#8217;, a numpy array of the current values</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pypore.DataFileOpener.openData">
+<tt class="descclassname">pypore.DataFileOpener.</tt><tt class="descname">openData</tt><big>(</big><em>filename</em>, <em>decimate=False</em><big>)</big><a class="reference internal" href="../_modules/pypore/DataFileOpener.html#openData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.DataFileOpener.openData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens a datafile and returns a dictionary with the data in &#8216;data&#8217;.
+If unable to return, will return an error message.</p>
+<dl class="docutils">
+<dt>Assumes &#8216;.log&#8217; extension is Chimera data.  Chimera data requires a &#8216;.mat&#8217;</dt>
+<dd>file with the same name to be in the same folder.</dd>
+</dl>
+<p>Assumes &#8216;.hkd&#8217; extension is Heka data.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pypore.DataFileOpener.openHekaFile">
+<tt class="descclassname">pypore.DataFileOpener.</tt><tt class="descname">openHekaFile</tt><big>(</big><em>filename</em>, <em>decimate=False</em><big>)</big><a class="reference internal" href="../_modules/pypore/DataFileOpener.html#openHekaFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.DataFileOpener.openHekaFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets data from a file generated by Ken&#8217;s LabView code v2.0 for HEKA acquisition.
+Visit <a class="reference external" href="https://drndiclab-bkup.physics.upenn.edu/wiki/index.php/HKD_File_I/O_SubVIs">https://drndiclab-bkup.physics.upenn.edu/wiki/index.php/HKD_File_I/O_SubVIs</a></p>
+<blockquote>
+<div>for a description of the heka file format.</div></blockquote>
+<dl class="docutils">
+<dt>Returns a dictionary with entries:</dt>
+<dd>-&#8216;data&#8217;, a numpy array of the current values
+-&#8216;SETUP_ADCSAMPLERATE&#8217;</dd>
+</dl>
+<p>Currently only works with one channel measurements</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pypore.DataFileOpener.prepareChimeraFile">
+<tt class="descclassname">pypore.DataFileOpener.</tt><tt class="descname">prepareChimeraFile</tt><big>(</big><em>filename</em><big>)</big><a class="reference internal" href="../_modules/pypore/DataFileOpener.html#prepareChimeraFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.DataFileOpener.prepareChimeraFile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pypore.DataFileOpener.prepareDataFile">
+<tt class="descclassname">pypore.DataFileOpener.</tt><tt class="descname">prepareDataFile</tt><big>(</big><em>filename</em><big>)</big><a class="reference internal" href="../_modules/pypore/DataFileOpener.html#prepareDataFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.DataFileOpener.prepareDataFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens a data file, reads relevant parameters, and</p>
+<dl class="docutils">
+<dt>Assumes &#8216;.log&#8217; extension is Chimera data.  Chimera data requires a &#8216;.mat&#8217;</dt>
+<dd>file with the same name to be in the same folder. - not yet implemented</dd>
+</dl>
+<p>Assumes &#8216;.hkd&#8217; extension is Heka data.</p>
+<p>Returns
+datafile, params</p>
+<p>If there was an error opening the files, params will have &#8216;error&#8217; key
+with string description</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pypore.DataFileOpener.prepareHekaFile">
+<tt class="descclassname">pypore.DataFileOpener.</tt><tt class="descname">prepareHekaFile</tt><big>(</big><em>filename</em><big>)</big><a class="reference internal" href="../_modules/pypore/DataFileOpener.html#prepareHekaFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.DataFileOpener.prepareHekaFile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-pypore.EventFinder">
+<span id="eventfinder-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">EventFinder</span></tt> Module<a class="headerlink" href="#module-pypore.EventFinder" title="Permalink to this headline">¶</a></h2>
+<p>Created on Aug 19, 2013</p>
+<p>&#64;author: parkin</p>
+<dl class="function">
+<dt id="pypore.EventFinder.findEvents">
+<tt class="descclassname">pypore.EventFinder.</tt><tt class="descname">findEvents</tt><big>(</big><em>**parameters</em><big>)</big><a class="reference internal" href="../_modules/pypore/EventFinder.html#findEvents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.EventFinder.findEvents" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-pypore.MyThreads">
+<span id="mythreads-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">MyThreads</span></tt> Module<a class="headerlink" href="#module-pypore.MyThreads" title="Permalink to this headline">¶</a></h2>
+<p>Created on Jul 23, 2013</p>
+<p>&#64;author: parkin</p>
+<dl class="class">
+<dt id="pypore.MyThreads.AnalyzeDataThread">
+<em class="property">class </em><tt class="descclassname">pypore.MyThreads.</tt><tt class="descname">AnalyzeDataThread</tt><big>(</big><em>parameters</em><big>)</big><a class="reference internal" href="../_modules/pypore/MyThreads.html#AnalyzeDataThread"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.MyThreads.AnalyzeDataThread" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtCore.QThread</span></tt></p>
+<p>Class for searching for events in filter_parameter separate thread.</p>
+<dl class="attribute">
+<dt id="pypore.MyThreads.AnalyzeDataThread.BASELINE_ADAPTIVE">
+<tt class="descname">BASELINE_ADAPTIVE</tt><em class="property"> = 3</em><a class="headerlink" href="#pypore.MyThreads.AnalyzeDataThread.BASELINE_ADAPTIVE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pypore.MyThreads.AnalyzeDataThread.BASELINE_FIXED">
+<tt class="descname">BASELINE_FIXED</tt><em class="property"> = 4</em><a class="headerlink" href="#pypore.MyThreads.AnalyzeDataThread.BASELINE_FIXED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pypore.MyThreads.AnalyzeDataThread.THRESHOLD_ABSOLUTE_CHANGE">
+<tt class="descname">THRESHOLD_ABSOLUTE_CHANGE</tt><em class="property"> = 1</em><a class="headerlink" href="#pypore.MyThreads.AnalyzeDataThread.THRESHOLD_ABSOLUTE_CHANGE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pypore.MyThreads.AnalyzeDataThread.THRESHOLD_NOISE_BASED">
+<tt class="descname">THRESHOLD_NOISE_BASED</tt><em class="property"> = 0</em><a class="headerlink" href="#pypore.MyThreads.AnalyzeDataThread.THRESHOLD_NOISE_BASED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pypore.MyThreads.AnalyzeDataThread.THRESHOLD_PERCENTAGE_CHANGE">
+<tt class="descname">THRESHOLD_PERCENTAGE_CHANGE</tt><em class="property"> = 2</em><a class="headerlink" href="#pypore.MyThreads.AnalyzeDataThread.THRESHOLD_PERCENTAGE_CHANGE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pypore.MyThreads.AnalyzeDataThread.cancelled">
+<tt class="descname">cancelled</tt><em class="property"> = False</em><a class="headerlink" href="#pypore.MyThreads.AnalyzeDataThread.cancelled" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pypore.MyThreads.AnalyzeDataThread.dataReady">
+<tt class="descname">dataReady</tt><em class="property"> = &lt;PySide.QtCore.Signal object at 0x40acb58&gt;</em><a class="headerlink" href="#pypore.MyThreads.AnalyzeDataThread.dataReady" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pypore.MyThreads.AnalyzeDataThread.getDataAt">
+<tt class="descname">getDataAt</tt><big>(</big><em>data</em>, <em>dataCache</em>, <em>rawPointsCache</em>, <em>i</em><big>)</big><a class="reference internal" href="../_modules/pypore/MyThreads.html#AnalyzeDataThread.getDataAt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.MyThreads.AnalyzeDataThread.getDataAt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns data from either data, or dataCache</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypore.MyThreads.AnalyzeDataThread.getDataRange">
+<tt class="descname">getDataRange</tt><big>(</big><em>data</em>, <em>dataCache</em>, <em>rawPointsCache</em>, <em>i</em>, <em>n</em><big>)</big><a class="reference internal" href="../_modules/pypore/MyThreads.html#AnalyzeDataThread.getDataRange"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.MyThreads.AnalyzeDataThread.getDataRange" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns data [0,n)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypore.MyThreads.AnalyzeDataThread.lazyLoading">
+<tt class="descname">lazyLoading</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/MyThreads.html#AnalyzeDataThread.lazyLoading"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.MyThreads.AnalyzeDataThread.lazyLoading" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lazily loads large data files.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypore.MyThreads.AnalyzeDataThread.nonLazyLoading">
+<tt class="descname">nonLazyLoading</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/MyThreads.html#AnalyzeDataThread.nonLazyLoading"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.MyThreads.AnalyzeDataThread.nonLazyLoading" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds all the events in &#8216;data&#8217;.</p>
+<dl class="docutils">
+<dt>Parameters: </dt>
+<dd><p class="first">datadict - must have data in &#8216;data&#8217;, sample rate in &#8216;SETUP_ADCSAMPLERATE&#8217;
+threshold_type - &#8216;adaptive&#8217; for adaptive-based threshold_start</p>
+<blockquote>
+<div><ul class="simple">
+<li>&#8216;current&#8217; for current based TODO</li>
+</ul>
+</div></blockquote>
+<p class="last">filter_parameter - filter parameter for &#8216;noise&#8217;. Should be close to 1, less than 1. nA for &#8216;current&#8217;
+threshold_direction - &#8216;positive&#8217; or &#8216;negative&#8217; or &#8216;both&#8217;
+min_event_length - in microseconds
+max_event_length - in microseconds</p>
+</dd>
+<dt>Returns:</dt>
+<dd>Struct containing all events found events</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypore.MyThreads.AnalyzeDataThread.periodicCall">
+<tt class="descname">periodicCall</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/MyThreads.html#AnalyzeDataThread.periodicCall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.MyThreads.AnalyzeDataThread.periodicCall" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pypore.MyThreads.AnalyzeDataThread.readyForEvents">
+<tt class="descname">readyForEvents</tt><em class="property"> = True</em><a class="headerlink" href="#pypore.MyThreads.AnalyzeDataThread.readyForEvents" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pypore.MyThreads.AnalyzeDataThread.run">
+<tt class="descname">run</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/MyThreads.html#AnalyzeDataThread.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.MyThreads.AnalyzeDataThread.run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pypore.MyThreads.AnalyzeDataThread.staticMetaObject">
+<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x4511f38&gt;</em><a class="headerlink" href="#pypore.MyThreads.AnalyzeDataThread.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pypore.MyThreads.AnalyzeDataThread.updateGui">
+<tt class="descname">updateGui</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/MyThreads.html#AnalyzeDataThread.updateGui"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.MyThreads.AnalyzeDataThread.updateGui" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pypore.MyThreads.PlotThread">
+<em class="property">class </em><tt class="descclassname">pypore.MyThreads.</tt><tt class="descname">PlotThread</tt><big>(</big><em>axes</em>, <em>datadict=''</em>, <em>plot_range='all'</em>, <em>filename=''</em>, <em>threshold_type='adaptive'</em>, <em>a=0.93</em>, <em>threshold_direction='negative'</em>, <em>min_event_length=10.0</em>, <em>max_event_length=1000.0</em>, <em>decimate=False</em><big>)</big><a class="reference internal" href="../_modules/pypore/MyThreads.html#PlotThread"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.MyThreads.PlotThread" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtCore.QThread</span></tt></p>
+<dl class="attribute">
+<dt id="pypore.MyThreads.PlotThread.cancelled">
+<tt class="descname">cancelled</tt><em class="property"> = False</em><a class="headerlink" href="#pypore.MyThreads.PlotThread.cancelled" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pypore.MyThreads.PlotThread.dataReady">
+<tt class="descname">dataReady</tt><em class="property"> = &lt;PySide.QtCore.Signal object at 0x40ac928&gt;</em><a class="headerlink" href="#pypore.MyThreads.PlotThread.dataReady" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pypore.MyThreads.PlotThread.run">
+<tt class="descname">run</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/MyThreads.html#PlotThread.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.MyThreads.PlotThread.run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pypore.MyThreads.PlotThread.staticMetaObject">
+<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x4511ef0&gt;</em><a class="headerlink" href="#pypore.MyThreads.PlotThread.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pypore.test.html">test Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pypore.test.html#module-pypore.test.TestDataFileOpener"><tt class="docutils literal"><span class="pre">TestDataFileOpener</span></tt> Module</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">pypore Package</a><ul>
+<li><a class="reference internal" href="#id1"><tt class="docutils literal"><span class="pre">pypore</span></tt> Package</a></li>
+<li><a class="reference internal" href="#module-pypore.DataFileOpener"><tt class="docutils literal"><span class="pre">DataFileOpener</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-pypore.EventFinder"><tt class="docutils literal"><span class="pre">EventFinder</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-pypore.MyThreads"><tt class="docutils literal"><span class="pre">MyThreads</span></tt> Module</a></li>
+<li><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../api.html"
+                        title="previous chapter">Code Documentation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="pypore.test.html"
+                        title="next chapter">test Package</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/pypore/pypore.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pypore.test.html" title="test Package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../api.html" title="Code Documentation"
+             >previous</a> |</li>
+        <li><a href="../index.html">translocationcode-python 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../api.html" >Code Documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Will Parkin.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,969 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyporegui.eventanalysis &mdash; translocationcode-python 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="translocationcode-python 0.0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">translocationcode-python 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyporegui.eventanalysis</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/env python</span>
+<span class="c"># -*- coding: utf8 -*-</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="sd">This program is for finding events in files and displaying the results.</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span> <span class="c"># Must import PySide stuff before pyqtgraph so pyqtgraph knows</span>
+                                <span class="c"># to use PySide instead of PyQt</span>
+<span class="kn">import</span> <span class="nn">pyqtgraph</span> <span class="kn">as</span> <span class="nn">pg</span>
+<span class="kn">from</span> <span class="nn">pyqtgraph.widgets.LayoutWidget</span> <span class="kn">import</span> <span class="n">LayoutWidget</span>
+<span class="kn">from</span> <span class="nn">pyqtgraph.graphicsItems.PlotCurveItem</span> <span class="kn">import</span> <span class="n">PlotCurveItem</span>
+
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">linspace</span>
+<span class="kn">import</span> <span class="nn">scipy.io</span> <span class="kn">as</span> <span class="nn">sio</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="c"># My stuff</span>
+<span class="kn">from</span> <span class="nn">pypore.MyThreads</span> <span class="kn">import</span> <span class="n">AnalyzeDataThread</span><span class="p">,</span> <span class="n">PlotThread</span>
+<span class="kn">from</span> <span class="nn">views</span> <span class="kn">import</span> <span class="n">FileListItem</span><span class="p">,</span> <span class="n">FilterListItem</span><span class="p">,</span> <span class="n">PlotToolBar</span><span class="p">,</span> <span class="n">DataFileListItem</span><span class="p">,</span> <span class="n">MyPlotItem</span>
+
+<span class="kn">from</span> <span class="nn">pypore.DataFileOpener</span> <span class="kn">import</span> <span class="n">prepareDataFile</span>
+
+<div class="viewcode-block" id="PathItem"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.PathItem">[docs]</a><span class="k">class</span> <span class="nc">PathItem</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QGraphicsPathItem</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+            <span class="n">xr</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+            <span class="n">yr</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">y</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bounds</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRectF</span><span class="p">(</span><span class="n">xr</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">yr</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">xr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">xr</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">yr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">yr</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">arrayToQPath</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+            <span class="n">QtGui</span><span class="o">.</span><span class="n">QGraphicsPathItem</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+            
+<div class="viewcode-block" id="PathItem.boundingRect"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.PathItem.boundingRect">[docs]</a>        <span class="k">def</span> <span class="nf">boundingRect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bounds</span>
+            </div></div>
+<div class="viewcode-block" id="MyApp"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp">[docs]</a><span class="k">class</span> <span class="nc">MyApp</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMainWindow</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MyApp</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">events</span> <span class="o">=</span> <span class="p">[]</span> <span class="c"># holds the events from the most recent analysis run</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span>
+        
+        <span class="n">pg</span><span class="o">.</span><span class="n">setConfigOption</span><span class="p">(</span><span class="s">&#39;leftButtonPan&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">openDir</span> <span class="o">=</span> <span class="s">&#39;../../data&#39;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">threadPool</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s">&#39;Translocation Event Analysis&#39;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_menu</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_main_frame</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_status_bar</span><span class="p">()</span>
+        
+    
+    
+<div class="viewcode-block" id="MyApp.open_files"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.open_files">[docs]</a>    <span class="k">def</span> <span class="nf">open_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Opens file dialog box, adds names of files to open to list</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">fnames</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">getOpenFileNames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;Open data file&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">openDir</span><span class="p">,</span> <span class="s">&quot;All types(*.hkd *.log);;Heka files *.hkd(*.hkd);;Chimera files *.log(*.log)&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fnames</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">listWidget</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">areFilesOpened</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">fnames</span><span class="p">:</span>
+            <span class="n">areFilesOpened</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">f</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">prepareDataFile</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">status_text</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">DataFileListItem</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">openDir</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">getDirectory</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">listWidget</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            
+        <span class="k">if</span> <span class="n">areFilesOpened</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">analyze_button</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">main_tabwig</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            </div>
+<div class="viewcode-block" id="MyApp.open_event_database"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.open_event_database">[docs]</a>    <span class="k">def</span> <span class="nf">open_event_database</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Opens file dialog box, add names of event database files to open list</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">fnames</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">getOpenFileNames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;Open event database&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">openDir</span><span class="p">,</span> <span class="s">&#39;*.mat&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fnames</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">listEventWidget</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">areFilesOpened</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">fnames</span><span class="p">:</span>
+            <span class="n">areFilesOpened</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">FileListItem</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">openDir</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">getDirectory</span><span class="p">()</span> <span class="c"># save the direcory info for later</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">listEventWidget</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            
+        <span class="k">if</span> <span class="n">areFilesOpened</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">btnAddFilter</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">main_tabwig</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            </div>
+    <span class="k">def</span> <span class="nf">_on_event_file_selection_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">btnAddFilter</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+            
+    <span class="k">def</span> <span class="nf">_on_file_item_selection_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analyze_button</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">_on_file_item_doubleclick</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Called when filter_parameter file list item is double clicked.</span>
+<span class="sd">        Starts the plotting thread, which opens the file, parses data, then passes to plotData</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c"># adding by emitting signal in different thread</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">status_text</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;Plotting...&#39;</span><span class="p">)</span>
+        <span class="n">decimates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plotToolBar</span><span class="o">.</span><span class="n">isDecimateChecked</span><span class="p">()</span>
+        <span class="n">thread</span> <span class="o">=</span> <span class="n">PlotThread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p1</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">getFileName</span><span class="p">()),</span> <span class="n">decimate</span> <span class="o">=</span> <span class="n">decimates</span><span class="p">)</span>
+        <span class="n">thread</span><span class="o">.</span><span class="n">dataReady</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_file_item_doubleclick_callback</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threadPool</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thread</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threadPool</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">threadPool</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        
+    <span class="k">def</span> <span class="nf">_on_file_item_doubleclick_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s">&#39;plot_options&#39;</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plotData</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s">&#39;plot_options&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="s">&#39;status_text&#39;</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">status_text</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s">&#39;status_text&#39;</span><span class="p">])</span>
+            
+    <span class="k">def</span> <span class="nf">_create_event_finding_options</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">scrollArea</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QScrollArea</span><span class="p">()</span>
+        <span class="n">scrollArea</span><span class="o">.</span><span class="n">setWidgetResizable</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        
+        <span class="c"># Create filter_parameter list for files want to analyze</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">listWidget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QListWidget</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">listWidget</span><span class="o">.</span><span class="n">itemSelectionChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_file_item_selection_changed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">listWidget</span><span class="o">.</span><span class="n">itemDoubleClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_file_item_doubleclick</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">listWidget</span><span class="o">.</span><span class="n">setMaximumHeight</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+        
+        <span class="c"># Other GUI controls</span>
+        <span class="c"># </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analyze_button</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s">&quot;&amp;Find Events&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">analyze_button</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s">&#39;clicked()&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_analyze</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analyze_button</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_analyze_button</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s">&quot;&amp;Stop&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stop_analyze_button</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s">&#39;clicked()&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_analyze_stop</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_analyze_button</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+        
+        <span class="c"># Analysis options</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_event_length_edit</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_event_length_edit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;10.0&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_event_length_edit</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QDoubleValidator</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1e12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_event_length_edit</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_event_length_edit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;1000.0&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_event_length_edit</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QDoubleValidator</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1e12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+        <span class="n">fixed_analysis_options</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFormLayout</span><span class="p">()</span>
+        <span class="n">fixed_analysis_options</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s">&#39;Data Files:&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">listWidget</span><span class="p">)</span>
+        <span class="n">fixed_analysis_options</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s">&#39;Min Event Length [us]:&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_event_length_edit</span><span class="p">)</span>
+        <span class="n">fixed_analysis_options</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s">&#39;Max Event Length [us]:&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_event_length_edit</span><span class="p">)</span>
+        
+        <span class="c"># Baseline options</span>
+        <span class="n">baseline_options</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStackedLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">baseline_type_combo</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QComboBox</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">baseline_type_combo</span><span class="o">.</span><span class="n">addItems</span><span class="p">((</span><span class="s">&#39;Adaptive&#39;</span><span class="p">,</span> <span class="s">&#39;Fixed&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">baseline_type_combo</span><span class="o">.</span><span class="n">activated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">baseline_options</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">)</span>
+        
+        <span class="n">adaptive_options_layout</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFormLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filter_parameter_edit</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filter_parameter_edit</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QDoubleValidator</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filter_parameter_edit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;0.93&#39;</span><span class="p">)</span> 
+        <span class="n">adaptive_options_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s">&#39;Filter Parameter </span><span class="se">\&#39;</span><span class="s">a</span><span class="se">\&#39;</span><span class="s">:&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_parameter_edit</span><span class="p">)</span>
+        <span class="c"># need to cast to widget to add to QStackedLayout</span>
+        <span class="n">adaptive_options_widget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QWidget</span><span class="p">()</span>
+        <span class="n">adaptive_options_widget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">adaptive_options_layout</span><span class="p">)</span>
+        
+        <span class="n">chooseBaselineBtn</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s">&#39;Baseline:&#39;</span><span class="p">)</span>
+        <span class="n">chooseBaselineBtn</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="s">&#39;Click to choose the baseline from the plot.&#39;</span><span class="p">)</span>
+        
+        <span class="n">fixed_options_layout</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFormLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">baseline_current_edit</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">baseline_current_edit</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QDoubleValidator</span><span class="p">(</span><span class="o">-</span><span class="mi">9999</span><span class="p">,</span> <span class="mi">9999</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">baseline_current_edit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;0.0&#39;</span><span class="p">)</span>
+        <span class="n">fixed_options_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="n">chooseBaselineBtn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">baseline_current_edit</span><span class="p">)</span>
+        <span class="n">fixed_options_widget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QWidget</span><span class="p">()</span>
+        <span class="n">fixed_options_widget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">fixed_options_layout</span><span class="p">)</span>
+        
+        <span class="n">baseline_options</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">adaptive_options_widget</span><span class="p">)</span>
+        <span class="n">baseline_options</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">fixed_options_widget</span><span class="p">)</span>
+        
+        <span class="n">baseline_form</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFormLayout</span><span class="p">()</span>
+        <span class="n">baseline_form</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s">&#39;Baseline Type:&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">baseline_type_combo</span><span class="p">)</span>
+        
+        <span class="c"># Threshold options</span>
+        <span class="n">threshold_options</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStackedLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold_type_combo</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QComboBox</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold_type_combo</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s">&#39;Noise Based&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold_type_combo</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s">&#39;Absolute Change&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold_type_combo</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s">&#39;Percent Change&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold_type_combo</span><span class="o">.</span><span class="n">activated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">threshold_options</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">)</span>
+        
+        <span class="n">threshold_form</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFormLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold_direction_combo</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QComboBox</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold_direction_combo</span><span class="o">.</span><span class="n">addItems</span><span class="p">((</span><span class="s">&#39;Both&#39;</span><span class="p">,</span> <span class="s">&#39;Positive&#39;</span><span class="p">,</span> <span class="s">&#39;Negative&#39;</span><span class="p">))</span>
+        <span class="n">threshold_form</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s">&#39;Threshold Direction:&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold_direction_combo</span><span class="p">)</span>
+        <span class="n">threshold_form</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s">&#39;Threshold Type:&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold_type_combo</span><span class="p">)</span>
+        
+        <span class="n">noise_based_options_layout</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFormLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold_stdev_start</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold_stdev_start</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QDoubleValidator</span><span class="p">(</span><span class="o">-</span><span class="mi">9999</span><span class="p">,</span> <span class="mi">9999</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold_stdev_start</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;5.0&#39;</span><span class="p">)</span>
+        <span class="n">noise_based_options_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s">&#39;Start StdDev:&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold_stdev_start</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold_stdev_end</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold_stdev_end</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QDoubleValidator</span><span class="p">(</span><span class="o">-</span><span class="mi">9999</span><span class="p">,</span> <span class="mi">9999</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold_stdev_end</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;1.0&#39;</span><span class="p">)</span>
+        <span class="n">noise_based_options_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s">&#39;End StdDev:&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold_stdev_end</span><span class="p">)</span>
+        
+        <span class="n">absolute_drop_options_layout</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFormLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">absolute_change_start_edit</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">absolute_change_start_edit</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QDoubleValidator</span><span class="p">(</span><span class="o">-</span><span class="mi">9999</span><span class="p">,</span> <span class="mi">9999</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">absolute_change_start_edit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;0.1&#39;</span><span class="p">)</span>
+        <span class="n">absolute_drop_options_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s">&#39;Absolute Change Start [uA]:&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">absolute_change_start_edit</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">absolute_change_end_edit</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">absolute_change_end_edit</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QDoubleValidator</span><span class="p">(</span><span class="o">-</span><span class="mi">9999</span><span class="p">,</span> <span class="mi">9999</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">absolute_change_end_edit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;0.0&#39;</span><span class="p">)</span>
+        <span class="n">absolute_drop_options_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s">&#39;Absolute Change End [uA]:&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">absolute_change_end_edit</span><span class="p">)</span>
+        
+        <span class="n">percentage_change_options_layout</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFormLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">percentage_change_start_edit</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">percentage_change_start_edit</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QDoubleValidator</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9999</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">percentage_change_start_edit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;10.0&#39;</span><span class="p">)</span>
+        <span class="n">percentage_change_options_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s">&#39;Percent Change Start:&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">percentage_change_start_edit</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">percentage_change_end_edit</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">percentage_change_end_edit</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QDoubleValidator</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9999</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">percentage_change_end_edit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;0.0&#39;</span><span class="p">)</span>
+        <span class="n">percentage_change_options_layout</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s">&#39;Percent Change End:&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">percentage_change_end_edit</span><span class="p">)</span>
+        
+        <span class="n">noise_based_options</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QWidget</span><span class="p">()</span>
+        <span class="n">noise_based_options</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">noise_based_options_layout</span><span class="p">)</span>
+        
+        <span class="n">absolute_drop_options</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QWidget</span><span class="p">()</span>
+        <span class="n">absolute_drop_options</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">absolute_drop_options_layout</span><span class="p">)</span>
+        
+        <span class="n">percentage_change_options_widget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QWidget</span><span class="p">()</span>
+        <span class="n">percentage_change_options_widget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">percentage_change_options_layout</span><span class="p">)</span>
+        
+        <span class="n">threshold_options</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">noise_based_options</span><span class="p">)</span>
+        <span class="n">threshold_options</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">absolute_drop_options</span><span class="p">)</span>
+        <span class="n">threshold_options</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">percentage_change_options_widget</span><span class="p">)</span>
+        
+        <span class="n">hbox</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">()</span>
+        
+        <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="p">[</span>  <span class="bp">self</span><span class="o">.</span><span class="n">analyze_button</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_analyze_button</span><span class="p">]:</span>
+            <span class="n">hbox</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+            <span class="n">hbox</span><span class="o">.</span><span class="n">setAlignment</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignVCenter</span><span class="p">)</span>
+        
+        
+        <span class="c"># Left vertical layout with settings</span>
+        <span class="n">vbox_left</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">()</span>
+        <span class="n">vbox_left</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">fixed_analysis_options</span><span class="p">)</span>
+        <span class="n">vbox_left</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">baseline_form</span><span class="p">)</span>
+        <span class="n">vbox_left</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">baseline_options</span><span class="p">)</span>
+        <span class="n">vbox_left</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">threshold_form</span><span class="p">)</span>
+        <span class="n">vbox_left</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">threshold_options</span><span class="p">)</span>
+        <span class="n">vbox_left</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">hbox</span><span class="p">)</span>
+        
+        <span class="n">vbox_left_widget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QWidget</span><span class="p">()</span>
+        <span class="n">vbox_left_widget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">vbox_left</span><span class="p">)</span>
+        
+        <span class="n">scrollArea</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="n">vbox_left_widget</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">scrollArea</span>
+    
+    <span class="k">def</span> <span class="nf">_create_event_analysis_options</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">scrollArea</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QScrollArea</span><span class="p">()</span>
+        <span class="n">scrollArea</span><span class="o">.</span><span class="n">setWidgetResizable</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        
+        <span class="c"># Create filter_parameter list for files want to analyze</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">listEventWidget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QListWidget</span><span class="p">()</span>
+<span class="c">#         self.listEventWidget.itemSelectionChanged.connect(self._on_file_item_selection_changed)</span>
+<span class="c">#         self.listEventWidget.itemDoubleClicked.connect(self._on_file_item_doubleclick)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">listEventWidget</span><span class="o">.</span><span class="n">setMaximumHeight</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">listEventWidget</span><span class="o">.</span><span class="n">itemSelectionChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_event_file_selection_changed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">listEventWidget</span><span class="o">.</span><span class="n">setSelectionMode</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">ExtendedSelection</span><span class="p">)</span>
+        
+        <span class="n">files_options</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFormLayout</span><span class="p">()</span>
+        <span class="n">files_options</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s">&#39;Event Databases:&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">listEventWidget</span><span class="p">)</span>
+        
+        <span class="c">## Color Picker</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s">&#39;blue&#39;</span><span class="p">)</span>
+        <span class="n">pickColorBtn</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">()</span>
+        <span class="n">pickColorBtn</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;Choose a Color&#39;</span><span class="p">)</span>
+        <span class="n">pickColorBtn</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">colorPickerBtnClicked</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">frm</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFrame</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frm</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="s">&quot;QWidget { background-color: </span><span class="si">%s</span><span class="s"> }&quot;</span> 
+            <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_color</span><span class="o">.</span><span class="n">name</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frm</span><span class="o">.</span><span class="n">setMinimumSize</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frm</span><span class="o">.</span><span class="n">setMaximumSize</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
+        
+        <span class="n">files_options</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="n">pickColorBtn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frm</span><span class="p">)</span>
+        
+        <span class="c">## List of filters created</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">btnAddFilter</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s">&#39;Add selections as filter&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">btnAddFilter</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">addFilterClicked</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">btnAddFilter</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+        <span class="n">formFilter</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFormLayout</span><span class="p">()</span>
+        <span class="n">formFilter</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s">&#39;Filters:&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">btnAddFilter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">listFilterWidget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QListWidget</span><span class="p">()</span>
+        <span class="n">vbox</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">()</span>
+        <span class="n">vbox</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">formFilter</span><span class="p">)</span>
+        <span class="n">vbox</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">listFilterWidget</span><span class="p">)</span>
+        <span class="n">btnRemoveFilter</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s">&#39;Remove selected filter&#39;</span><span class="p">)</span>
+        <span class="n">vbox</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">btnRemoveFilter</span><span class="p">)</span>
+        
+        <span class="n">vbox_left</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">()</span>
+        <span class="n">vbox_left</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">files_options</span><span class="p">)</span>
+        <span class="n">vbox_left</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">vbox</span><span class="p">)</span>
+        
+        <span class="n">vbox_left_widget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QWidget</span><span class="p">()</span>
+        <span class="n">vbox_left_widget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">vbox_left</span><span class="p">)</span>
+        
+        <span class="n">scrollArea</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="n">vbox_left_widget</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">scrollArea</span>
+    
+<div class="viewcode-block" id="MyApp.addFilterClicked"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.addFilterClicked">[docs]</a>    <span class="k">def</span> <span class="nf">addFilterClicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">listEventWidget</span><span class="o">.</span><span class="n">selectedItems</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">items</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span>
+        
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getCurrentEventAnalysisParams</span><span class="p">()</span>
+        
+        <span class="n">filenames</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+            <span class="n">filenames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">getFileName</span><span class="p">())</span>
+        
+        <span class="n">item</span> <span class="o">=</span> <span class="n">FilterListItem</span><span class="p">(</span><span class="n">filenames</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">listFilterWidget</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotEventDatabaseAnalyses</span><span class="p">(</span><span class="n">filenames</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        </div>
+    <span class="k">def</span> <span class="nf">_getCurrentEventAnalysisParams</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">params</span><span class="p">[</span><span class="s">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_color</span>
+        <span class="k">return</span> <span class="n">params</span>
+    
+<div class="viewcode-block" id="MyApp.colorPickerBtnClicked"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.colorPickerBtnClicked">[docs]</a>    <span class="k">def</span> <span class="nf">colorPickerBtnClicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColorDialog</span><span class="o">.</span><span class="n">getColor</span><span class="p">(</span><span class="n">initial</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event_color</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">event_color</span> <span class="o">=</span> <span class="n">col</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">frm</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="s">&quot;QWidget { background-color: </span><span class="si">%s</span><span class="s"> }&quot;</span>
+                <span class="o">%</span> <span class="n">col</span><span class="o">.</span><span class="n">name</span><span class="p">())</span>
+        </div>
+    <span class="k">def</span> <span class="nf">_create_eventfinder_plots_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">wig</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">GraphicsLayoutWidget</span><span class="p">()</span>
+<span class="c">#         wig.setMinimumSize(400, 600)</span>
+
+        <span class="c"># Main plot        </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotwid</span> <span class="o">=</span> <span class="n">MyPlotItem</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="s">&#39;Current Trace&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;Plot&#39;</span><span class="p">)</span>
+        <span class="n">wig</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plotwid</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotwid</span><span class="o">.</span><span class="n">enableAutoRange</span><span class="p">(</span><span class="s">&#39;xy&#39;</span><span class="p">,</span><span class="bp">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plotwid</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span> <span class="c"># create an empty plot curve to be filled later</span>
+        
+        <span class="n">wig</span><span class="o">.</span><span class="n">nextRow</span><span class="p">()</span>
+        <span class="c"># Create Qwt plot for concatenated events</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_concatevents</span> <span class="o">=</span> <span class="n">wig</span><span class="o">.</span><span class="n">addPlot</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="s">&#39;Concatenated Events&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;Concat&#39;</span><span class="p">)</span>
+        
+        <span class="n">wig</span><span class="o">.</span><span class="n">nextRow</span><span class="p">()</span>
+        <span class="c"># Qwt plot for each event found</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_event_zoomed</span> <span class="o">=</span> <span class="n">wig</span><span class="o">.</span><span class="n">addPlot</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="s">&#39;Single Event&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;Single&#39;</span><span class="p">)</span>
+        
+        <span class="c"># Tool bar for main plot.  Contains zoom button and different checkboxes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotToolBar</span> <span class="o">=</span> <span class="n">PlotToolBar</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addToolBar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plotToolBar</span><span class="p">)</span>
+        
+        <span class="n">eventSelectToolbar</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QToolBar</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addToolBar</span><span class="p">(</span><span class="n">eventSelectToolbar</span><span class="p">)</span>
+        
+        <span class="n">btnPrevious</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="n">eventSelectToolbar</span><span class="p">)</span>
+        <span class="n">btnPrevious</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&quot;Previous&quot;</span><span class="p">)</span>
+        <span class="n">btnPrevious</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">previousClicked</span><span class="p">)</span>
+        <span class="n">eventSelectToolbar</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">btnPrevious</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventDisplayedEdit</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventDisplayedEdit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;0&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventDisplayedEdit</span><span class="o">.</span><span class="n">setMaxLength</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">)</span><span class="o">/</span><span class="mi">10</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventDisplayedEdit</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIntValidator</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventDisplayedEdit</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_eventDisplayEditOnChange</span><span class="p">)</span>
+        <span class="n">eventSelectToolbar</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eventDisplayedEdit</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventCountText</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QLabel</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventCountText</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;/&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">)))</span>
+        <span class="n">eventSelectToolbar</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eventCountText</span><span class="p">)</span>
+        
+        <span class="n">btnNext</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="n">eventSelectToolbar</span><span class="p">)</span>
+        <span class="n">btnNext</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&quot;Next&quot;</span><span class="p">)</span>
+        <span class="n">btnNext</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nextClicked</span><span class="p">)</span>
+        <span class="n">eventSelectToolbar</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">btnNext</span><span class="p">)</span>
+        
+        <span class="n">eventfinderplots_layout</span> <span class="o">=</span> <span class="n">LayoutWidget</span><span class="p">()</span>
+        <span class="n">eventfinderplots_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plotToolBar</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">colspan</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">eventfinderplots_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">wig</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">colspan</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">eventfinderplots_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">eventSelectToolbar</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">colspan</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">eventfinderplots_layout</span>
+    
+    <span class="k">def</span> <span class="nf">_create_eventanalysis_plot_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># Tab widget for event stuff</span>
+        
+        <span class="n">vwig</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">GraphicsLayoutWidget</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_eventdepth</span> <span class="o">=</span> <span class="n">vwig</span><span class="o">.</span><span class="n">addPlot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">&#39;Event Depth&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_eventdur_eventdepth</span> <span class="o">=</span> <span class="n">vwig</span><span class="o">.</span><span class="n">addPlot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">&#39;Duration vs. Depth&#39;</span><span class="p">)</span>
+        
+        <span class="n">vwig</span><span class="o">.</span><span class="n">nextRow</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_scatterselect</span> <span class="o">=</span> <span class="n">vwig</span><span class="o">.</span><span class="n">addPlot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">&#39;Single Event&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_eventdur</span> <span class="o">=</span> <span class="n">vwig</span><span class="o">.</span><span class="n">addPlot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">&#39;Event Duration&#39;</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">vwig</span>
+        
+    
+    <span class="k">def</span> <span class="nf">_create_event_analysis_tab</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QSplitter</span><span class="p">()</span>
+        
+        <span class="n">options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_event_analysis_options</span><span class="p">()</span>
+        <span class="n">plots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_eventanalysis_plot_widget</span><span class="p">()</span>
+        
+        <span class="c"># Put everything in filter_parameter scroll area</span>
+        <span class="n">scrollOptions</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QScrollArea</span><span class="p">()</span>
+        <span class="n">scrollPlots</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QScrollArea</span><span class="p">()</span>
+        <span class="n">scrollOptions</span><span class="o">.</span><span class="n">setWidgetResizable</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">scrollPlots</span><span class="o">.</span><span class="n">setWidgetResizable</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        
+        <span class="n">scrollOptions</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+        <span class="n">scrollPlots</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="n">plots</span><span class="p">)</span>
+        
+        <span class="n">frame</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">scrollOptions</span><span class="p">)</span>
+        <span class="n">frame</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">scrollPlots</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">frame</span>
+    
+    <span class="k">def</span> <span class="nf">_create_event_finding_tab</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QSplitter</span><span class="p">()</span>
+        
+        <span class="n">options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_event_finding_options</span><span class="p">()</span>
+        <span class="n">plots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_eventfinder_plots_widget</span><span class="p">()</span>
+        
+        <span class="c"># Put everything in filter_parameter scroll area</span>
+        <span class="n">scrollOptions</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QScrollArea</span><span class="p">()</span>
+        <span class="n">scrollPlots</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QScrollArea</span><span class="p">()</span>
+        <span class="n">scrollOptions</span><span class="o">.</span><span class="n">setWidgetResizable</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">scrollPlots</span><span class="o">.</span><span class="n">setWidgetResizable</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        
+        <span class="n">scrollOptions</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+        <span class="n">scrollPlots</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="n">plots</span><span class="p">)</span>
+        
+        <span class="n">frame</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">scrollOptions</span><span class="p">)</span>
+        <span class="n">frame</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">scrollPlots</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">frame</span>
+        
+<div class="viewcode-block" id="MyApp.create_main_frame"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.create_main_frame">[docs]</a>    <span class="k">def</span> <span class="nf">create_main_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Initializes the main gui frame.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">event_finding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_event_finding_tab</span><span class="p">()</span>
+        <span class="n">event_analysis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_event_analysis_tab</span><span class="p">()</span>
+        
+        <span class="c"># Layout holding everything        </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_tabwig</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTabWidget</span><span class="p">()</span> <span class="c"># Splitter allows for drag to resize between children</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_tabwig</span><span class="o">.</span><span class="n">addTab</span><span class="p">(</span><span class="n">event_finding</span><span class="p">,</span> <span class="s">&#39;Event Finding&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_tabwig</span><span class="o">.</span><span class="n">addTab</span><span class="p">(</span><span class="n">event_analysis</span><span class="p">,</span> <span class="s">&#39;Event Analysis&#39;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">setCentralWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">main_tabwig</span><span class="p">)</span>
+        </div>
+    <span class="k">def</span> <span class="nf">_eventDisplayEditOnChange</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">eventCount</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eventDisplayedEdit</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotSingleEvent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">[</span><span class="n">eventCount</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">return</span>
+        
+<div class="viewcode-block" id="MyApp.previousClicked"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.previousClicked">[docs]</a>    <span class="k">def</span> <span class="nf">previousClicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">moveEventDisplayBy</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="MyApp.nextClicked"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.nextClicked">[docs]</a>    <span class="k">def</span> <span class="nf">nextClicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">moveEventDisplayBy</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                </div>
+<div class="viewcode-block" id="MyApp.moveEventDisplayBy"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.moveEventDisplayBy">[docs]</a>    <span class="k">def</span> <span class="nf">moveEventDisplayBy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Changes the event displayed on the event display plot to</span>
+<span class="sd">        current value + count</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">eventCount</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eventDisplayedEdit</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">eventCount</span> <span class="o">+</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">eventDisplayedEdit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">eventCount</span> <span class="o">+</span> <span class="n">count</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="c"># if we can&#39;t parse the event display text but there are events,</span>
+            <span class="c"># just set to zero</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">eventDisplayedEdit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;1&#39;</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="MyApp.create_status_bar"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.create_status_bar">[docs]</a>    <span class="k">def</span> <span class="nf">create_status_bar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Creates filter_parameter status bar with filter_parameter text widget.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">status_text</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statusBar</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status_text</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="MyApp.create_menu"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.create_menu">[docs]</a>    <span class="k">def</span> <span class="nf">create_menu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Creates File menu with Open</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_menu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span><span class="p">()</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s">&quot;&amp;File&quot;</span><span class="p">)</span>
+        
+        <span class="n">load_data_file_action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_action</span><span class="p">(</span><span class="s">&quot;&amp;Open Data File&quot;</span><span class="p">,</span>
+            <span class="n">shortcut</span><span class="o">=</span><span class="s">&quot;Ctrl+O&quot;</span><span class="p">,</span> <span class="n">slot</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">open_files</span><span class="p">,</span>
+            <span class="n">tip</span><span class="o">=</span><span class="s">&quot;Open data Files&quot;</span><span class="p">)</span>
+        <span class="n">load_events_database_action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_action</span><span class="p">(</span><span class="s">&quot;&amp;Open Events Database&quot;</span><span class="p">,</span>
+            <span class="n">shortcut</span><span class="o">=</span><span class="s">&quot;Ctrl+E&quot;</span><span class="p">,</span> <span class="n">slot</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">open_event_database</span><span class="p">,</span> 
+            <span class="n">tip</span><span class="o">=</span><span class="s">&quot;Open Events Database&quot;</span><span class="p">)</span>
+        <span class="n">quit_action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_action</span><span class="p">(</span><span class="s">&quot;&amp;Quit&quot;</span><span class="p">,</span> <span class="n">slot</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">,</span>
+            <span class="n">shortcut</span><span class="o">=</span><span class="s">&quot;Ctrl+Q&quot;</span><span class="p">,</span> <span class="n">tip</span><span class="o">=</span><span class="s">&quot;Close the application&quot;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_actions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_menu</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">load_data_file_action</span><span class="p">,</span> <span class="n">load_events_database_action</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">quit_action</span><span class="p">))</span>
+        
+<span class="c">#         self.help_menu = self.menuBar().addMenu(&quot;&amp;Help&quot;)</span>
+<span class="c">#         about_action = self.create_action(&quot;&amp;About&quot;, </span>
+<span class="c">#             shortcut=&#39;F1&#39;, slot=self.on_about, </span>
+<span class="c">#             tip=&#39;About the demo&#39;)</span>
+<span class="c">#         </span>
+<span class="c">#         self.add_actions(self.help_menu, (about_action,))</span>
+</div>
+<div class="viewcode-block" id="MyApp.add_actions"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.add_actions">[docs]</a>    <span class="k">def</span> <span class="nf">add_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">actions</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">actions</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">action</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">target</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">target</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+                </div>
+<div class="viewcode-block" id="MyApp.create_action"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.create_action">[docs]</a>    <span class="k">def</span> <span class="nf">create_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">slot</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">shortcut</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                        <span class="n">icon</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">tip</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">checkable</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                        <span class="n">signal</span><span class="o">=</span><span class="s">&quot;triggered()&quot;</span><span class="p">):</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">icon</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">action</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s">&quot;:/</span><span class="si">%s</span><span class="s">.png&quot;</span> <span class="o">%</span> <span class="n">icon</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">shortcut</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">action</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="n">shortcut</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tip</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">action</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="n">tip</span><span class="p">)</span>
+            <span class="n">action</span><span class="o">.</span><span class="n">setStatusTip</span><span class="p">(</span><span class="n">tip</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">slot</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="n">signal</span><span class="p">),</span> <span class="n">slot</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">checkable</span><span class="p">:</span>
+            <span class="n">action</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">action</span>
+    </div>
+<div class="viewcode-block" id="MyApp.plotEventDatabaseAnalyses"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.plotEventDatabaseAnalyses">[docs]</a>    <span class="k">def</span> <span class="nf">plotEventDatabaseAnalyses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filenames</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Plots event statistics.  </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">currentBlockade</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">dwellTimes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
+            <span class="n">database</span> <span class="o">=</span> <span class="n">sio</span><span class="o">.</span><span class="n">loadmat</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+            <span class="n">events</span> <span class="o">=</span> <span class="n">database</span><span class="p">[</span><span class="s">&#39;Events&#39;</span><span class="p">]</span>
+            <span class="n">sample_rate</span> <span class="o">=</span> <span class="n">database</span><span class="p">[</span><span class="s">&#39;sample_rate&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
+                <span class="n">event</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="c"># extra zeroes come from way scipy.io saves .mat</span>
+                <span class="n">baseline</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;baseline&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">levels</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;cusum_values&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="n">levels</span><span class="p">:</span>
+                    <span class="n">currentBlockade</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">level</span> <span class="o">-</span> <span class="n">baseline</span><span class="p">)</span>
+                <span class="n">dwellTime</span> <span class="o">=</span> <span class="p">(</span><span class="n">event</span><span class="p">[</span><span class="s">&#39;event_end&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">event</span><span class="p">[</span><span class="s">&#39;event_start&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">sample_rate</span>
+                <span class="n">dwellTimes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dwellTime</span><span class="p">)</span>
+                
+        <span class="n">color</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s">&#39;color&#39;</span><span class="p">]</span>
+        <span class="n">newcolor</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">color</span><span class="o">.</span><span class="n">red</span><span class="p">(),</span><span class="n">color</span><span class="o">.</span><span class="n">green</span><span class="p">(),</span><span class="n">color</span><span class="o">.</span><span class="n">blue</span><span class="p">(),</span><span class="mi">128</span><span class="p">)</span>
+                 
+        <span class="n">y_dt</span><span class="p">,</span><span class="n">x_dt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">dwellTimes</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>        
+        <span class="n">curve_dt</span> <span class="o">=</span> <span class="n">PlotCurveItem</span><span class="p">(</span><span class="n">x_dt</span><span class="p">,</span> <span class="n">y_dt</span><span class="p">,</span> <span class="n">stepMode</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">fillLevel</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">brush</span><span class="o">=</span><span class="n">newcolor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_eventdur</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">curve_dt</span><span class="p">)</span>
+        
+        <span class="n">y_cb</span><span class="p">,</span><span class="n">x_cb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">currentBlockade</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>        
+        <span class="n">curve_cb</span> <span class="o">=</span> <span class="n">PlotCurveItem</span><span class="p">(</span><span class="n">x_cb</span><span class="p">,</span> <span class="n">y_cb</span><span class="p">,</span> <span class="n">stepMode</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">fillLevel</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">brush</span><span class="o">=</span><span class="n">newcolor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_eventdepth</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">curve_cb</span><span class="p">)</span>
+        
+        <span class="k">return</span>
+    </div>
+<div class="viewcode-block" id="MyApp.plotData"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.plotData">[docs]</a>    <span class="k">def</span> <span class="nf">plotData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot_options</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Plots waveform in datadict</span>
+<span class="sd">        Pass in plot_options, filter_parameter dictionary with &#39;plot_range&#39;, &#39;axes&#39;, and &#39;datadict&#39;</span>
+<span class="sd">        pass in Data dictionary, with data at &#39;data&#39; and sample rate at &#39;SETUP_ADCSAMPLERATE&#39;</span>
+<span class="sd">        Can pass in range as [start,stop], or &#39;all&#39; for 0:n</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">axes</span> <span class="o">=</span> <span class="n">plot_options</span><span class="p">[</span><span class="s">&#39;axes&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">axes</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">axes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot</span>
+        <span class="c"># Read the first file, store data in dictionary</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">plot_options</span><span class="p">[</span><span class="s">&#39;datadict&#39;</span><span class="p">][</span><span class="s">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">sample_rate</span> <span class="o">=</span> <span class="n">plot_options</span><span class="p">[</span><span class="s">&#39;datadict&#39;</span><span class="p">][</span><span class="s">&#39;SETUP_ADCSAMPLERATE&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">plot_range</span> <span class="o">=</span> <span class="n">plot_options</span><span class="p">[</span><span class="s">&#39;plot_range&#39;</span><span class="p">]</span>
+    
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="c">#         # If problem with input, just plot all the data</span>
+        <span class="k">if</span> <span class="n">plot_range</span> <span class="o">==</span> <span class="s">&#39;all&#39;</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">plot_range</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">plot_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">plot_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">plot_range</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c"># no problems!</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="n">plot_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">plot_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+    
+        <span class="n">Ts</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">sample_rate</span>
+        
+        <span class="n">times</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="n">Ts</span> <span class="o">*</span> <span class="n">plot_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Ts</span><span class="o">*</span><span class="n">plot_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">n</span><span class="p">)</span>
+        <span class="n">yData</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">plot_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]:(</span><span class="n">plot_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotwid</span><span class="o">.</span><span class="n">clearEventItems</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p1</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">times</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">yData</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotwid</span><span class="o">.</span><span class="n">autoRange</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">processEvents</span><span class="p">()</span>
+        </div>
+<div class="viewcode-block" id="MyApp.addEventsToConcatEventPlot"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.addEventsToConcatEventPlot">[docs]</a>    <span class="k">def</span> <span class="nf">addEventsToConcatEventPlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">events</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
+            <span class="n">size</span> <span class="o">+=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;raw_data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+        <span class="n">sample_rate</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;sample_rate&#39;</span><span class="p">]</span>
+        <span class="n">ts</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">sample_rate</span>
+        <span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="p">(</span><span class="n">size</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">ts</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">prev_concat_time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prev_concat_time</span> <span class="o">+=</span> <span class="n">size</span><span class="o">*</span><span class="n">ts</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;raw_data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
+            <span class="n">baseline</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;baseline&#39;</span><span class="p">]</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="p">:</span><span class="n">index</span><span class="o">+</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">event</span><span class="p">[</span><span class="s">&#39;raw_data&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">baseline</span><span class="p">)</span>
+            <span class="n">index</span> <span class="o">+=</span> <span class="n">d</span>
+            
+        <span class="n">item</span> <span class="o">=</span> <span class="n">PathItem</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pg</span><span class="o">.</span><span class="n">mkPen</span><span class="p">(</span><span class="s">&#39;w&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_concatevents</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="MyApp.plotSingleEvent"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.plotSingleEvent">[docs]</a>    <span class="k">def</span> <span class="nf">plotSingleEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Plots the event on the plot with </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        
+        <span class="n">times</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">times2</span><span class="p">,</span> <span class="n">levels2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getEventAndLevelsData</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_event_zoomed</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_event_zoomed</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">times</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_event_zoomed</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">times2</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">levels2</span><span class="p">,</span> <span class="n">pen</span><span class="o">=</span><span class="n">pg</span><span class="o">.</span><span class="n">mkPen</span><span class="p">(</span><span class="s">&#39;g&#39;</span><span class="p">))</span>
+        </div>
+<div class="viewcode-block" id="MyApp.getEventAndLevelsData"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.getEventAndLevelsData">[docs]</a>    <span class="k">def</span> <span class="nf">getEventAndLevelsData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;raw_data&#39;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;TypeError, event:&#39;</span><span class="p">,</span> <span class="n">event</span>
+            <span class="k">return</span>
+        <span class="n">levels_index</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;cusum_indexes&#39;</span><span class="p">]</span>
+        <span class="n">levels_values</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;cusum_values&#39;</span><span class="p">]</span>
+        <span class="n">sample_rate</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;sample_rate&#39;</span><span class="p">]</span>
+        <span class="n">event_start</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;event_start&#39;</span><span class="p">]</span>
+        <span class="n">event_end</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;event_end&#39;</span><span class="p">]</span>
+        <span class="n">baseline</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;baseline&#39;</span><span class="p">]</span>
+        <span class="n">raw_points_per_side</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;raw_points_per_side&#39;</span><span class="p">]</span>
+        
+        <span class="n">Ts</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">sample_rate</span>
+        
+        <span class="n">times</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="n">Ts</span> <span class="o">*</span> <span class="p">(</span><span class="n">event_start</span> <span class="o">-</span> <span class="n">raw_points_per_side</span><span class="p">),</span> <span class="n">Ts</span> <span class="o">*</span> <span class="p">(</span><span class="n">event_start</span> <span class="o">-</span> <span class="n">raw_points_per_side</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="n">times2</span> <span class="o">=</span> <span class="p">[(</span><span class="n">event_start</span> <span class="o">-</span> <span class="n">raw_points_per_side</span><span class="p">)</span> <span class="o">*</span> <span class="n">Ts</span><span class="p">,</span> <span class="p">(</span><span class="n">event_start</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">Ts</span><span class="p">,</span> <span class="n">event_start</span><span class="o">*</span><span class="n">Ts</span><span class="p">]</span>
+        <span class="n">levels2</span> <span class="o">=</span> <span class="p">[</span><span class="n">baseline</span><span class="p">,</span> <span class="n">baseline</span><span class="p">,</span> <span class="n">levels_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">level_values</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">levels_values</span><span class="p">):</span>
+            <span class="n">times2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">levels_index</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">Ts</span><span class="p">)</span>
+            <span class="n">levels2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">levels_values</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="n">times2</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">levels_index</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">Ts</span><span class="p">)</span>
+            <span class="n">levels2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">level_values</span><span class="p">)</span>
+        <span class="n">times2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">event_end</span> <span class="o">*</span> <span class="n">Ts</span><span class="p">)</span>
+        <span class="n">levels2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">levels_values</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">levels_values</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">times2</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">event_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">*</span> <span class="n">Ts</span><span class="p">)</span>
+        <span class="n">levels2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">baseline</span><span class="p">)</span>
+        <span class="n">times2</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">event_end</span> <span class="o">+</span> <span class="n">raw_points_per_side</span><span class="p">)</span><span class="o">*</span> <span class="n">Ts</span><span class="p">)</span>
+        <span class="n">levels2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">baseline</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">times</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">times2</span><span class="p">,</span> <span class="n">levels2</span>
+        </div>
+<div class="viewcode-block" id="MyApp.plotEventsOnMainPlot"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.plotEventsOnMainPlot">[docs]</a>    <span class="k">def</span> <span class="nf">plotEventsOnMainPlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">events</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
+            <span class="n">size</span> <span class="o">+=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;raw_data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+        <span class="n">sample_rate</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;sample_rate&#39;</span><span class="p">]</span>
+        <span class="n">raw_points_per_side</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;raw_points_per_side&#39;</span><span class="p">]</span>
+        <span class="n">ts</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">sample_rate</span>
+        <span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
+            <span class="n">event_start</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;event_start&#39;</span><span class="p">]</span>
+            <span class="n">event_data</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;raw_data&#39;</span><span class="p">]</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">event_data</span><span class="o">.</span><span class="n">size</span>
+            <span class="n">times</span><span class="p">[</span><span class="n">index</span><span class="p">:</span><span class="n">index</span><span class="o">+</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="n">ts</span> <span class="o">*</span> <span class="p">(</span><span class="n">event_start</span> <span class="o">-</span> <span class="n">raw_points_per_side</span><span class="p">),</span> <span class="n">ts</span> <span class="o">*</span> <span class="p">(</span><span class="n">event_start</span> <span class="o">-</span> <span class="n">raw_points_per_side</span> <span class="o">+</span> <span class="n">d</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">d</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="p">:</span><span class="n">index</span><span class="o">+</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;raw_data&#39;</span><span class="p">]</span>
+            <span class="n">index</span> <span class="o">+=</span> <span class="n">d</span>
+            
+        <span class="n">item</span> <span class="o">=</span> <span class="n">PathItem</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pg</span><span class="o">.</span><span class="n">mkPen</span><span class="p">(</span><span class="s">&#39;y&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotwid</span><span class="o">.</span><span class="n">addEventItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="MyApp.on_analyze_stop"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.on_analyze_stop">[docs]</a>    <span class="k">def</span> <span class="nf">on_analyze_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cleanThreads</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_analyze_button</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">status_text</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;Analyze aborted.&#39;</span><span class="p">)</span>
+            </div>
+<div class="viewcode-block" id="MyApp.on_analyze"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.on_analyze">[docs]</a>    <span class="k">def</span> <span class="nf">on_analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Searches for events in the file that is currently highlighted in the files list.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">selectedItems</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">listWidget</span><span class="o">.</span><span class="n">selectedItems</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">selectedItems</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">currItem</span> <span class="o">=</span> <span class="n">selectedItems</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span>
+        
+        <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current_analysis_parameters</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">status_text</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">])</span>
+            <span class="k">return</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_concatevents</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_event_zoomed</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotwid</span><span class="o">.</span><span class="n">clearEventItems</span><span class="p">()</span>
+        
+        <span class="c"># Clear the current events</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">[:]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prev_concat_time</span> <span class="o">=</span> <span class="mf">0.</span>
+        
+        <span class="c"># Add axes and the filename to the parameters</span>
+        <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;axes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_event_zoomed</span>
+        <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">currItem</span><span class="o">.</span><span class="n">getFileName</span><span class="p">())</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">status_text</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;Event Count: 0 Percent Done: 0&#39;</span><span class="p">)</span>
+        
+        <span class="c"># Start analyzing data in new analyzethread.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analyzethread</span> <span class="o">=</span> <span class="n">AnalyzeDataThread</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analyzethread</span><span class="o">.</span><span class="n">dataReady</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_analyze_data_thread_callback</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threadPool</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">analyzethread</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analyzethread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_analyze_button</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        
+        <span class="c"># Clear the concatenated_events plot and the single event plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_concatevents</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_event_zoomed</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        </div>
+<div class="viewcode-block" id="MyApp.get_current_analysis_parameters"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.get_current_analysis_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">get_current_analysis_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns filter_parameter dictionary holding the current analysis parameters set by the user.  Returns an entry &#39;error&#39; if there were</span>
+<span class="sd">        invalid inputs.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c"># Get Min_event length in microseconds</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;min_event_length&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_event_length_edit</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Could not read float from Min Event Length text box.  Please fix.&#39;</span>
+            <span class="k">return</span> <span class="n">parameters</span>
+        <span class="c"># Get Max Event Length in microseconds</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;max_event_length&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_event_length_edit</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Could not read float from Max Event Length text box.  Please fix.&#39;</span>
+            <span class="k">return</span> <span class="n">parameters</span>
+        <span class="k">if</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;min_event_length&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;max_event_length&#39;</span><span class="p">]:</span>
+            <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;max_event_length&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Min Event Length is greater than Max Event Length.  Please fix.&#39;</span>
+            <span class="k">return</span> <span class="n">parameters</span>
+        
+        <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;baseline_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">baseline_type_combo</span><span class="o">.</span><span class="n">currentText</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;baseline_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Adaptive&#39;</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;filter_parameter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_parameter_edit</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Could not read float from Filter Parameter text box.  Please fix.&#39;</span>
+                <span class="k">return</span>
+        <span class="k">elif</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;baseline_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Fixed&#39;</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;baseline_current&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">baseline_current_edit</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Could not read float from Baseline Current text box.  Please fix.&#39;</span>
+               
+        <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;threshold_direction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">threshold_direction_combo</span><span class="o">.</span><span class="n">currentText</span><span class="p">())</span> 
+        <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;threshold_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">threshold_type_combo</span><span class="o">.</span><span class="n">currentText</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;threshold_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Noise Based&#39;</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;start_stddev&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">threshold_stdev_start</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Could not read float from Start StdDev text box.  Please fix.&#39;</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;end_stddev&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">threshold_stdev_end</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Could not read float from End StdDev text box.  Please fix.&#39;</span>
+        <span class="k">elif</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;threshold_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Absolute Change&#39;</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;absolute_change_start&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">absolute_change_start_edit</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Could not read float from Absolute Change Start.  Please fix.&#39;</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;absolute_change_end&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">absolute_change_end_edit</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Could not read float from Absolute Change End.  Please fix.&#39;</span>
+        <span class="k">elif</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;threshold_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Percent Change&#39;</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;percent_change_start&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">percentage_change_start_edit</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Could not read float from Percent Change Start text box.  Please fix.&#39;</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;percent_change_end&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">percentage_change_end_edit</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Could not read float from Percent Change End text box.  Please fix.&#39;</span>
+        
+        <span class="k">return</span> <span class="n">parameters</span>
+        </div>
+    <span class="k">def</span> <span class="nf">_analyze_data_thread_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s">&#39;status_text&#39;</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">status_text</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s">&#39;status_text&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="s">&#39;Events&#39;</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="n">singlePlot</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="n">events</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s">&#39;Events&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">events</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c"># if this is our first time plotting events, include the single event plot!</span>
+                <span class="n">singlePlot</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">events</span> <span class="o">+=</span> <span class="n">events</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eventDisplayedEdit</span><span class="o">.</span><span class="n">setMaxLength</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">)</span><span class="o">/</span><span class="mi">10</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eventDisplayedEdit</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIntValidator</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">)))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eventCountText</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;/&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">)))</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">plotToolBar</span><span class="o">.</span><span class="n">isPlotDuringChecked</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plotEventsOnMainPlot</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">addEventsToConcatEventPlot</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">singlePlot</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">eventDisplayedEdit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;1&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">processEvents</span><span class="p">()</span>  
+            <span class="bp">self</span><span class="o">.</span><span class="n">analyzethread</span><span class="o">.</span><span class="n">readyForEvents</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">if</span> <span class="s">&#39;done&#39;</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">results</span><span class="p">[</span><span class="s">&#39;done&#39;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">stop_analyze_button</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+<div class="viewcode-block" id="MyApp.cleanThreads"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.cleanThreads">[docs]</a>    <span class="k">def</span> <span class="nf">cleanThreads</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">threadPool</span><span class="p">:</span>
+            <span class="n">w</span><span class="o">.</span><span class="n">cancelled</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">w</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">threadPool</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+        
+        </div></div>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    
+<span class="c">#     app = QtGui.QApplication(sys.argv)</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">mkQApp</span><span class="p">()</span>
+    <span class="n">ex</span> <span class="o">=</span> <span class="n">MyApp</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+    <span class="n">ex</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
+    <span class="n">ex</span><span class="o">.</span><span class="n">cleanThreads</span><span class="p">()</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+</div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">translocationcode-python 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Will Parkin.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
