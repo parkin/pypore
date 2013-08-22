@@ -43,6 +43,14 @@ class PlotToolBar(QtGui.QToolBar):
         self.plotDuringCheckBox.setToolTip('Select to have events plotted during event finding.')
         self.addWidget(self.plotDuringCheckBox)
         
+        self.widgetList = []
+        self.callbackList = []
+        self.widgetList.append(self.decimateCheckBox)
+        self.widgetList.append(self.plotDuringCheckBox)
+        
+        for _ in self.widgetList:
+            self.callbackList.append(None)
+        
     def isDecimateChecked(self):
         '''
         Returns true if the toolbar's decimate checkbox is checked, false

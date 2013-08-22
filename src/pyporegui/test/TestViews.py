@@ -13,10 +13,22 @@ from src.pyporegui.views import FilterListItem, FileListItem, DataFileListItem,\
 
 class TestPlotToolBar(UsesQApplication):
     
-    def TestPlotToolBar(self):
+    def setUp(self):
+        super(TestPlotToolBar, self).setUp()
+
+    def tearDown(self):
+        super(TestPlotToolBar, self).tearDown()
+    
+    def TestPlotToolBarInitialState(self):
         toolbar = PlotToolBar()
         self.assertTrue(toolbar.isDecimateChecked())
         self.assertTrue(toolbar.isPlotDuringChecked())
+        
+    def TestPlotToolBarWidgetList(self):
+        toolbar = PlotToolBar()
+        wiglist = toolbar.getWidgetList()
+        self.assertTrue(False)
+        self.assertEqual(len(wiglist), 2)
 
 class TestFileListItem(unittest.TestCase):
     
