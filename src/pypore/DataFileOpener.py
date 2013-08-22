@@ -92,11 +92,12 @@ def openChimeraFile(filename, decimate=False):
         # Calculate number of points in the dataset
         filesize = os.path.getsize(filename)
         num_points = filesize/datatype.itemsize
+        # use 5000 for plot decimation
         block_size = 5000
         decimated_size = int(2*num_points/block_size)
         if num_points%block_size > 0: # will there be a block at the end with < block_size datapoints?
             decimated_size = decimated_size + 2
-        logdata = np.zeros(decimated_size)
+        logdata = np.empty(decimated_size)
         i = 0
         while True:
             rawvalues = np.fromfile(datafile,datatype,block_size)
@@ -274,9 +275,9 @@ def openHekaFile(filename, decimate=False):
     sample_rate = 1.0/per_file_params['Sampling interval']
     for _ in channel_list:
         if decimate: # If decimating, just keep max and min value from each block
-            data.append(np.zeros(num_blocks_in_file*2))
+            data.append(np.empty(num_blocks_in_file*2))
         else:
-            data.append(np.zeros(points_per_channel_total))  # initialize array
+            data.append(np.empty(points_per_channel_total))  # initialize array
         
     for i in xrange(0,num_blocks_in_file):
         block = _readHekaNextBlock(f, per_file_params, per_block_param_list, per_channel_param_list, channel_list, points_per_channel_per_block)
@@ -322,7 +323,7 @@ def getNextHekaBlocks(datafile, params, n):
     data = []
     index = []
     for _ in xrange(0, len(channel_list)):
-        data.append(np.zeros(totalsize))
+        data.append(np.empty(totalsize))
         index.append(0)
     for block in blocks:
         for i in xrange(0, len(channel_list)):
@@ -343,7 +344,7 @@ def _readHekaNextBlock(f, per_file_params, per_block_param_list, per_channel_par
     # Read block header
     per_block_params = _readHekaHeaderParams(f, per_block_param_list)
     if per_block_params == None:
-        return {'data': [np.zeros(0)], 'per_block_params': None, 'per_channel_params': None}
+        return {'data': [np.empty(0)], 'per_block_params': None, 'per_channel_params': None}
     
     # Read per channel header
     per_channel_block_params = []
