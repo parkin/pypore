@@ -9,8 +9,102 @@ import os
 from PySide.QtGui import QColor, QCheckBox
 # from PySide.QtTest import QTest
 from src.pyporegui.views import FilterListItem, FileListItem, DataFileListItem,\
-    PlotToolBar
-
+    PlotToolBar, MyPlotItem
+from pyqtgraph.graphicsItems.PlotCurveItem import PlotCurveItem
+from src.pyporegui.eventanalysis import PathItem
+import numpy as np
+    
+    
+class TestMyPlotItem(unittest.TestCase):
+    
+    def testMyPlotItemAddItem(self):
+        plotitem = MyPlotItem()
+        x = [1]
+        y = [1]
+        plot = PlotCurveItem(x,y)
+        plotitem.addItem(plot)
+        
+        self.assertEqual(len(plotitem._myItemList), 1)
+        
+        x=y=np.zeros(2)
+        plot2 = PathItem(x,y)
+        plotitem.addItem(plot2)
+        self.assertEqual(len(plotitem._myItemList), 2)
+        
+    def testAddEventItem(self):
+        plotitem = MyPlotItem()
+        x = [1]
+        y = [1]
+        plot = PlotCurveItem(x,y)
+        plotitem.addEventItem(plot)
+        
+        self.assertEqual(len(plotitem._myEventItemList), 1)
+        
+        x=y=np.zeros(2)
+        plot2 = PathItem(x,y)
+        plotitem.addEventItem(plot2)
+        self.assertEqual(len(plotitem._myEventItemList), 2)
+        
+    def testClearEventItems(self):
+        plotitem = MyPlotItem()
+        x = [1]
+        y = [1]
+        plot = PlotCurveItem(x,y)
+        plotitem.addItem(plot)
+        
+        plot2 = PlotCurveItem(y,x)
+        plotitem.addEventItem(plot2)
+        
+        self.assertEqual(len(plotitem._myEventItemList), 1)
+        self.assertEqual(len(plotitem.listDataItems()), 2)
+        
+        plotitem.clearEventItems()
+        self.assertEqual(len(plotitem._myEventItemList), 0)
+        
+        self.assertEqual(len(plotitem.listDataItems()), 1)
+        
+    def testClear(self):
+        plotitem = MyPlotItem()
+        x = [1]
+        y = [1]
+        plot = PlotCurveItem(x,y)
+        plotitem.addItem(plot)
+        
+        plot2 = PlotCurveItem(y,x)
+        plotitem.addEventItem(plot2)
+        
+        x=y=np.zeros(2)
+        plot3 = PathItem(x,y)
+        plotitem.addEventItem(plot3)
+        
+        plotitem.clear()
+        self.assertEqual(len(plotitem.listDataItems()), 0)
+        self.assertEqual(len(plotitem._myEventItemList), 0)
+        self.assertEqual(len(plotitem._myItemList), 0)
+        
+    def testPlotClear(self):
+        # test to make sure that when the clear flag is passed
+        # to plots, that clear works as expected
+        plotitem = MyPlotItem()
+        x = [1]
+        y = [1]
+        plot = PlotCurveItem(x,y)
+        plotitem.addItem(plot)
+        
+        plot2 = PlotCurveItem(y,x)
+        plotitem.addEventItem(plot2)
+        
+        x=y=np.zeros(2)
+        plot3 = PathItem(x,y)
+        plotitem.addEventItem(plot3)
+        
+        plot4 = plotitem.plot(clear=True)
+        
+        self.assertEqual(len(plotitem.listDataItems()), 1)
+        self.assertEqual(len(plotitem._myEventItemList), 0)
+        self.assertEqual(len(plotitem._myItemList), 1)
+        
+        
 class TestPlotToolBar(unittest.TestCase):
     
     def testPlotToolBarInitialState(self):
@@ -25,9 +119,15 @@ class TestPlotToolBar(unittest.TestCase):
         wiglist = toolbar.getWidgetList()
         self.assertEqual(len(wiglist), 2)
         
-        checkbox = QCheckBox()
+        # test for immutability
+        wiglist.append(QCheckBox())
+        self.assertEqual(len(toolbar.getWidgetList()), 2)
         
-
+        # test adding widget
+        checkbox = QCheckBox()
+        toolbar.addWidget(checkbox)
+        self.assertEqual(len(toolbar.getWidgetList()), 3)
+        
 class TestFileListItem(unittest.TestCase):
     
     def setUp(self):

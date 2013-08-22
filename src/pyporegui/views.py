@@ -10,27 +10,35 @@ from pyqtgraph.graphicsItems.PlotItem.PlotItem import PlotItem
 class MyPlotItem(PlotItem):
     def __init__(self, parent = None, title = None, name = None):
         super(MyPlotItem, self).__init__(parent=parent, title=title, name=name)
-        self.myItemList = []
-        self.myEventItemList = []
+        self._myItemList = []
+        self._myEventItemList = []
          
-    def addItem(self, item, params=None):
-        super(MyPlotItem, self).addItem(item, params)
-        self.myItemList.append(item)
+    def addItem(self, item, *args, **kwargs):
+        super(MyPlotItem, self).addItem(item, *args, **kwargs)
+        self._myItemList.append(item)
         
-    def addEventItem(self, item, params=None):
-        super(MyPlotItem, self).addItem(item, params)
-        self.myEventItemList.append(item)
+    def addEventItem(self, item, *args, **kwargs):
+        super(MyPlotItem, self).addItem(item, *args, **kwargs)
+        self._myEventItemList.append(item)
         
     def clearEventItems(self):
-        for item in self.myEventItemList:
+        for item in self._myEventItemList:
             self.removeItem(item)
-
+        del self._myEventItemList[:]
+        
+    def clear(self):
+        super(MyPlotItem, self).clear()
+        del self._myEventItemList[:]
+        del self._myItemList[:]
+        
 class PlotToolBar(QtGui.QToolBar):
     '''
     A toolbar for plots, with a zoom button, check boxes for options.
     '''
     def __init__(self, parent = None):
         super(PlotToolBar, self).__init__(parent)
+        
+        self.widgetList = []
         
         self.decimateCheckBox = QtGui.QCheckBox()
         self.decimateCheckBox.setChecked(True)
@@ -42,14 +50,6 @@ class PlotToolBar(QtGui.QToolBar):
         self.plotDuringCheckBox.setText('Plot Events')
         self.plotDuringCheckBox.setToolTip('Select to have events plotted during event finding.')
         self.addWidget(self.plotDuringCheckBox)
-        
-        self.widgetList = []
-        self.callbackList = []
-        self.widgetList.append(self.decimateCheckBox)
-        self.widgetList.append(self.plotDuringCheckBox)
-        
-        for _ in self.widgetList:
-            self.callbackList.append(None)
         
     def isDecimateChecked(self):
         '''
@@ -68,6 +68,10 @@ class PlotToolBar(QtGui.QToolBar):
     
     def getWidgetList(self):
         return list(self.widgetList)
+    
+    def addWidget(self, widget, *args, **kwargs):
+        self.widgetList.append(widget)
+        return super(PlotToolBar, self).addWidget(widget, *args, **kwargs)
     
     
 
