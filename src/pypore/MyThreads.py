@@ -192,7 +192,7 @@ class AnalyzeDataThread(QtCore.QThread):
         time2 = self.time1
         isEvent = False
         wasEventPositive = False  # Was the event an up spike?
-        self.placeInData = 0
+        placeInData = 0
         # search for events.  Keep track of filter_parameter filtered local (adapting!) mean and variance,
         # and use them to decide filter_parameter threshold_start for events.  See
         # http://pubs.rsc.org/en/content/articlehtml/2012/nr/c2nr30951c for more details.
@@ -303,7 +303,7 @@ class AnalyzeDataThread(QtCore.QThread):
                             end_index = level_indexes[q] + 1
                         level_values[q] = np.mean(self.getDataRange(data, dataCache, rawPointsCache, start_index, end_index))
                     for j, level_index in enumerate(level_indexes):
-                        level_indexes[j] = level_index + self.placeInData
+                        level_indexes[j] = level_index + placeInData
                     # end CUSUM
                     self.plot_options['plot_range'] = [event_start - raw_points_per_side, event_end + raw_points_per_side]
                     self.plot_options['show_event'] = True
@@ -312,8 +312,8 @@ class AnalyzeDataThread(QtCore.QThread):
                     event['raw_data'] = self.getDataRange(data, dataCache, rawPointsCache, event_start-raw_points_per_side, event_end+raw_points_per_side)
                     event['baseline'] = local_mean
                     event['current_blockage'] = np.mean(event['event_data']) - local_mean
-                    event['event_start'] = event_start + self.placeInData
-                    event['event_end'] = event_end + self.placeInData
+                    event['event_start'] = event_start + placeInData
+                    event['event_end'] = event_end + placeInData
                     event['raw_points_per_side'] = raw_points_per_side
                     event['sample_rate'] = sample_rate
                     event['cusum_indexes'] = level_indexes
@@ -326,11 +326,11 @@ class AnalyzeDataThread(QtCore.QThread):
 #                     print 'cache len:', len(dataCache)
                     if i >= n:
                         i = i % n
-                        self.placeInData = self.placeInData + n
+                        placeInData = placeInData + n
                         for cache in dataCache:
                             if i >= cache.size:
                                 i = i % cache.size
-                                self.placeInData = self.placeInData + cache.size
+                                placeInData = self.placeInData + cache.size
                                 rawPointsCache = cache[cache.size-raw_points_per_side:]
                             else:
                                 data = cache
@@ -344,18 +344,19 @@ class AnalyzeDataThread(QtCore.QThread):
                 threshold_start = start_stddev * local_variance ** .5 
             i = i + 1
             if i >= n:
-                self.placeInData = self.placeInData + n
+                placeInData = placeInData + n
                 i = i % n
                 rawPointsCache = data[data.size - raw_points_per_side:]
                 data, doneWithData = getNextBlocks(f, params, get_blocks)
                 data = data[0]
                 n = data.size
-                if self.placeInData % 50000 == 0:
+                if placeInData % 50000 == 0:
                     self.recent_time = time.time() - time2
                     self.total_time = time.time() - self.time1
 #                     self.dataReady.emit({'status_text': 'Event Count: ' + str(self.event_count) + ' Percent Done: ' + str(100.*self.placeInData / self.points_per_channel_total) + ' Rate: ' + str((self.placeInData-self.prevI)/self.recent_time) + ' samples/s' + ' Total Rate:' + str(self.placeInData/self.total_time) + ' samples/s'})
                     time2 = time.time()
                     self.prevI = self.placeInData
+                    self.placeInData = placeInData
             if self.cancelled:
                 return
             
