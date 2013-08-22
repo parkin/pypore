@@ -65,6 +65,12 @@ class PlotToolBar(QtGui.QToolBar):
         '''
         return self.plotDuringCheckBox.isChecked()
 
+    
+    def getWidgetList(self):
+        return list(self.widgetList)
+    
+    
+
 class FileListItem(QtGui.QListWidgetItem):
     '''
     Subclass of QListWidgetItem to handle filenames with long file paths.
@@ -103,7 +109,7 @@ class DataFileListItem(FileListItem):
         self.params = params
         
     def getParams(self):
-        return self.params
+        return dict(self.params)
     
     def getParam(self, param):
         if param in self.params:
@@ -148,10 +154,10 @@ class FilterListItem(QtGui.QListWidgetItem):
         self.setIcon(QtGui.QIcon(pixmap))
         
     def getParams(self):
-        return self.params
+        return dict(self.params)
     
     def getFileNames(self):
-        return self.filenames
+        return list(self.filenames)
     
     def getFileNameAt(self, index):
         if 0 <= index < len(self.filenames):
@@ -160,7 +166,7 @@ class FilterListItem(QtGui.QListWidgetItem):
             return None
     
     def getSimpleNames(self):
-        return self.simplenames
+        return list(self.simplenames)
     
     def getSimpleNameAt(self, index):
         if 0 <= index < len(self.filenames):

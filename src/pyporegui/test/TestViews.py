@@ -6,29 +6,27 @@ Created on Aug 20, 2013
 import unittest
 from src.helper import UsesQApplication
 import os
-from PySide.QtGui import QColor
+from PySide.QtGui import QColor, QCheckBox
 # from PySide.QtTest import QTest
 from src.pyporegui.views import FilterListItem, FileListItem, DataFileListItem,\
     PlotToolBar
 
-class TestPlotToolBar(UsesQApplication):
+class TestPlotToolBar(unittest.TestCase):
     
-    def setUp(self):
-        super(TestPlotToolBar, self).setUp()
-
-    def tearDown(self):
-        super(TestPlotToolBar, self).tearDown()
-    
-    def TestPlotToolBarInitialState(self):
+    def testPlotToolBarInitialState(self):
         toolbar = PlotToolBar()
         self.assertTrue(toolbar.isDecimateChecked())
         self.assertTrue(toolbar.isPlotDuringChecked())
+        wiglist = toolbar.getWidgetList()
+        self.assertEqual(len(wiglist), 2)
         
-    def TestPlotToolBarWidgetList(self):
+    def testPlotToolBarWidgetList(self):
         toolbar = PlotToolBar()
         wiglist = toolbar.getWidgetList()
-        self.assertTrue(False)
         self.assertEqual(len(wiglist), 2)
+        
+        checkbox = QCheckBox()
+        
 
 class TestFileListItem(unittest.TestCase):
     
@@ -70,6 +68,10 @@ class TestDataFileListItem(TestFileListItem):
         params = self.item.getParams()
         self.assertEqual(params, self.params)
         
+        # Test immutable
+        params['qwertyuiop'] = 1
+        self.assertNotIn('qwertyuiop', self.item.getParams())
+        
     def testDataFileListItemGetParam(self):
         self.assertEqual(self.item.getParam('hi'), 9)
         self.assertEqual(self.item.getParam('bye'), 19)
@@ -95,6 +97,10 @@ class TestFilterListItem(UsesQApplication):
         self.assertIsNone(item.getSimpleNameAt(100))
         self.assertIsNone(item.getSimpleNameAt(-12))
         
+        # Test immutability
+        simplenames.append('blahblahblahblahblah')
+        self.assertEqual(len(item.getSimpleNames()), len(filenames))
+        
     def testFilterListItemFileNames(self):
         filenames = [os.path.abspath(__file__), os.path.abspath('x.hi')]
         item = FilterListItem(filenames)
@@ -102,6 +108,10 @@ class TestFilterListItem(UsesQApplication):
         self.assertEqual(names, filenames)
         self.assertEqual(item.getFileNameAt(1), filenames[1])
         self.assertIsNone(item.getFileNameAt(-1))
+        
+        # Test immutability
+        names.append('blahblahblahblah')
+        self.assertEqual(len(item.getFileNames()), len(filenames))
         
     def testFilterListItemDefaultColor(self):
         filenames = [os.path.abspath('hi.txt')]
@@ -129,6 +139,10 @@ class TestFilterListItem(UsesQApplication):
         self.assertIn('color', params)
         self.assertIn('x', params)
         self.assertIn('hi', params['y'])
+        
+        # test immutability
+        params['qwertyuiop'] = 1
+        self.assertNotIn('qwertyuiop', item.getParams())
         
     def testFilterListItemText(self):
         filenames = [os.path.abspath('hi.txt'), os.path.abspath('bye.py'), os.path.abspath('q')]
