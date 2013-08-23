@@ -8,3 +8,4 @@ src/demos/*
 META-INF/
 build.properties
 src/profile_dump
+doc/build/doctrees/*

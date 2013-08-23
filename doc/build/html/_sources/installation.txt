@@ -62,7 +62,7 @@ Install PyQtGraph
 +++++++++++++++
 Use pip as before, in a command prompt type:
 
-c:\Python27\Scripts\pip pyqtgraph
+``c:\Python27\Scripts\pip pyqtgraph``
 
 You now have all of the dependencies and are ready to `Get the Code`_.
 
