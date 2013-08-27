@@ -5,8 +5,9 @@ Created on Aug 27, 2013
 '''
 import unittest
 from helper import UsesQApplication
-from src.pyporegui.eventanalysis import PathItem
+from src.pyporegui.eventanalysis import PathItem, MyMainWindow
 import numpy as np
+import os
 
 class TestPathItem(unittest.TestCase):
     
@@ -22,12 +23,12 @@ class TestPathItem(unittest.TestCase):
         item = PathItem(x,y)
         rect = item.boundingRect()
         rectleft = rect.left()
-        self.assertAlmostEqual(rectleft, xmin, 5)
+        self.assertAlmostEqual(rectleft, xmin, 7)
         recttop = rect.top()
-        self.assertAlmostEqual(recttop, ymin, 5)
+        self.assertAlmostEqual(recttop, ymin, 7)
         wid = rect.width()
         hei = rect.height()
-        self.assertAlmostEqual(wid, xmax-xmin, 5)
+        self.assertAlmostEqual(wid, xmax-xmin, 7)
         self.assertAlmostEqual(hei, ymax-ymin)
         
     def testBoundingRectSmallVales(self):
@@ -55,13 +56,13 @@ class TestEventAnalysis(UsesQApplication):
 
     def setUp(self):
         super(TestEventAnalysis, self).setUp()
+        self.window = MyMainWindow(self.qapplication, )
         
     def tearDown(self):
         super(TestEventAnalysis, self).tearDown()
-
+        
     def testName(self):
         pass
-
 
 if __name__ == "__main__":
     # import sys;sys.argv = ['', 'Test.testName']
