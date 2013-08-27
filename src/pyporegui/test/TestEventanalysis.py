@@ -44,7 +44,6 @@ class TestPathItem(unittest.TestCase):
         rect = item.boundingRect()
         rectleft = rect.left()
         self.assertAlmostEqual(rectleft, xmin, 12)
-        print rectleft,xmin
         recttop = rect.top()
         self.assertAlmostEqual(recttop, ymin, 12)
         wid = rect.width()
