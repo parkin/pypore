@@ -35,10 +35,10 @@ class PathItem(QtGui.QGraphicsPathItem):
         def boundingRect(self):
             return self._bounds
             
-class MyApp(QtGui.QMainWindow):
+class MyMainWindow(QtGui.QMainWindow):
     
     def __init__(self, app, parent=None):
-        super(MyApp, self).__init__()
+        super(MyMainWindow, self).__init__()
         
         self.events = [] # holds the events from the most recent analysis run
         self.app = app
@@ -863,7 +863,7 @@ def main():
     
 #     app = QtGui.QApplication(sys.argv)
     app = pg.mkQApp()
-    ex = MyApp(app)
+    ex = MyMainWindow(app)
     ex.show()
     app.exec_()
     ex.cleanThreads()
