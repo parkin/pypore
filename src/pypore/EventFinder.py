@@ -67,8 +67,6 @@ def _lazyLoadFindEvents(**parameters):
     save_file['Events'] = []
     
     # IMPLEMENT ME pleasE
-    plot_options = {}
-    plot_options['axes'] = parameters['axes']
     f, params = prepareDataFile(parameters['filename'])
     
     sample_rate = params['sample_rate']
@@ -139,9 +137,9 @@ def _lazyLoadFindEvents(**parameters):
     # and use them to decide filter_parameter threshold_start for events.  See
     # http://pubs.rsc.org/en/content/articlehtml/2012/nr/c2nr30951c for more details.
     while i < n and not doneWithData:
-        time.sleep(0)# way to yield to other threads. Allows the gui
-                                # to remain responsive. Note this obviously 
-                                # lowers the samples/s rate.
+#         time.sleep(0)# way to yield to other threads. Allows the gui
+#                                 # to remain responsive. Note this obviously 
+#                                 # lowers the samples/s rate.
         # could this be an event?
         event_start = 0
         event_end = 0
@@ -170,20 +168,21 @@ def _lazyLoadFindEvents(**parameters):
             mean_estimate = data[i]
             level_indexes = [event_start]  # The indexes in data[] where each
                                             # level starts.
-            sn = sp = Sn = Sp = Gn = Gp = var_estimate = 0
+            sn = sp = Sn = Sp = Gn = Gp = 0
+            var_estimate = local_variance
             n_levels = 1  # We're already starting with one level
             delta = 0.1
             h = delta / (local_variance) ** .5
             min_index_p = min_index_n = i
-            min_Sp = min_Sn = 99999
+            min_Sp = min_Sn = 99999999
             ko = i
             event_area = data[event_i] - local_mean  # integrate the area
             
             # loop until event ends
             while not done and event_i - event_start < max_event_steps:
-                time.sleep(0) # way to yield to other threads. Allows the gui
-                                # to remain responsive. Note this obviously 
-                                # lowers the samples/s rate.
+#                 time.sleep(0) # way to yield to other threads. Allows the gui
+#                                 # to remain responsive. Note this obviously 
+#                                 # lowers the samples/s rate.
                 event_i = event_i + 1
                 #  If we need to load another block, but are still looking at an event,
                 # just cache the current data
@@ -203,8 +202,13 @@ def _lazyLoadFindEvents(**parameters):
                 # New variance recursion relation 
                 var_estimate = ((event_i - ko) * var_estimate + (_getDataAt(data, dataCache, rawPointsCache, event_i) - mean_estimate) * (_getDataAt(data, dataCache, rawPointsCache, event_i) - new_mean)) / (1 + event_i - ko)
                 mean_estimate = new_mean
-                sp = (delta / var_estimate) * (_getDataAt(data, dataCache, rawPointsCache, event_i) - mean_estimate - delta / 2)
-                sn = -(delta / var_estimate) * (_getDataAt(data, dataCache, rawPointsCache, event_i) - mean_estimate + delta / 2)
+                if var_estimate > 0:
+                    sp = (delta / var_estimate) * (_getDataAt(data, dataCache, rawPointsCache, event_i) - mean_estimate - delta / 2)
+                    sn = -(delta / var_estimate) * (_getDataAt(data, dataCache, rawPointsCache, event_i) - mean_estimate + delta / 2)
+                elif delta ==0:
+                    sp = sn = 0
+                else:
+                    sp = sn = float('inf')
                 Sp = Sp + sp
                 Sn = Sn + sn
                 Gp = max(0, Gp + sp)
@@ -215,6 +219,7 @@ def _lazyLoadFindEvents(**parameters):
                 if Sn < min_Sn:
                     min_Sn = Sn
                     min_index_n = event_i
+                print h, Gp, Gn
                 # Did we detect a change?
                 if Gp > h or Gn > h:
                     minindex = min_index_n
@@ -247,8 +252,6 @@ def _lazyLoadFindEvents(**parameters):
                 for j, level_index in enumerate(level_indexes):
                     level_indexes[j] = level_index + placeInData
                 # end CUSUM
-                plot_options['plot_range'] = [event_start - raw_points_per_side, event_end + raw_points_per_side]
-                plot_options['show_event'] = True
                 event = {}
                 event['event_data'] = _getDataRange(data, dataCache, rawPointsCache, event_start, event_end)
                 event['raw_data'] = _getDataRange(data, dataCache, rawPointsCache, event_start-raw_points_per_side, event_end+raw_points_per_side)
@@ -261,7 +264,6 @@ def _lazyLoadFindEvents(**parameters):
                 event['cusum_indexes'] = level_indexes
                 event['cusum_values'] = level_values
                 event['area'] = event_area
-#                     dataReady.emit({'plot_options': plot_options, 'event': event})
                 save_file['Events'].append(event)
                 event_count = event_count + 1
                 if len(dataCache) > 0:
@@ -280,49 +282,49 @@ def _lazyLoadFindEvents(**parameters):
                                 break
                     dataCache = []
                                 
-            local_mean = filter_parameter * local_mean + (1 - filter_parameter) * data[i]
-            local_variance = filter_parameter * local_variance + (1 - filter_parameter) * (data[i] - local_mean) ** 2
-            if threshold_type == THRESHOLD_NOISE_BASED:
-                threshold_start = start_stddev * local_variance ** .5 
-            i = i + 1
-            if i >= n:
-                placeInData = placeInData + n
-                i = i % n
-                rawPointsCache = data[data.size - raw_points_per_side:]
-                data, doneWithData = getNextBlocks(f, params, get_blocks)
-                data = data[0]
-                n = data.size
-                if placeInData % 50000 == 0:
-                    recent_time = time.time() - time2
-                    total_time = time.time() - time1
+        local_mean = filter_parameter * local_mean + (1 - filter_parameter) * data[i]
+        local_variance = filter_parameter * local_variance + (1 - filter_parameter) * (data[i] - local_mean) ** 2
+        if threshold_type == THRESHOLD_NOISE_BASED:
+            threshold_start = start_stddev * local_variance ** .5 
+        i = i + 1
+        if i >= n:
+            placeInData = placeInData + n
+            i = i % n
+            rawPointsCache = data[data.size - raw_points_per_side:]
+            data, doneWithData = getNextBlocks(f, params, get_blocks)
+            data = data[0]
+            n = data.size
+            if placeInData % 50000 == 0:
+                recent_time = time.time() - time2
+                total_time = time.time() - time1
 #                     dataReady.emit({'status_text': 'Event Count: ' + str(event_count) + ' Percent Done: ' + str(100.*placeInData / points_per_channel_total) + ' Rate: ' + str((placeInData-prevI)/recent_time) + ' samples/s' + ' Total Rate:' + str(placeInData/total_time) + ' samples/s'})
-                    time2 = time.time()
-                    prevI = placeInData
-            if cancelled:
-                return
+                time2 = time.time()
+                prevI = placeInData
+        if cancelled:
+            return
             
             
-        if event_count > 0:
-            save_file_name = list(parameters['filename'])
-            # Remove the .mat off the end
-            for i in range(0, 4):
-                save_file_name.pop()
-                
-            # Get a string with the current year/month/day/hour/minute to label the file
-            day_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-            save_file_name.append('_Events_' + day_time + '.mat')
-            save_file['filename'] = "".join(save_file_name)
-            save_file['sample_rate'] = sample_rate
-            save_file['event_count'] = event_count
-            # save the user's analysis parameters
-            parameters.pop('axes', None)  # remove the axes before saving.
-            save_file['parameters'] = parameters
-            sio.savemat(save_file['filename'], save_file)
+    if event_count > 0:
+        save_file_name = list(parameters['filename'])
+        # Remove the .mat off the end
+        for i in range(0, 4):
+            save_file_name.pop()
             
-#         dataReady.emit({'status_text': 'Done. Found ' + str(event_count) + ' events.  Saved database to ' + str(save_file['filename']), 'done': True})
-        cancelled = True
+        # Get a string with the current year/month/day/hour/minute to label the file
+        day_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        save_file_name.append('_Events_' + day_time + '.mat')
+        save_file['filename'] = "".join(save_file_name)
+        save_file['sample_rate'] = sample_rate
+        save_file['event_count'] = event_count
+        # save the user's analysis parameters
+        parameters.pop('axes', None)  # remove the axes before saving.
+        save_file['parameters'] = parameters
+        sio.savemat(save_file['filename'], save_file)
         
-        return
+#         dataReady.emit({'status_text': 'Done. Found ' + str(event_count) + ' events.  Saved database to ' + str(save_file['filename']), 'done': True})
+    cancelled = True
+    
+    return save_file
 
 def findEvents(**parameters):
-    return _lazyLoadFindEvents(parameters)
+    return _lazyLoadFindEvents(**parameters)
