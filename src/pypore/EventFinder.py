@@ -207,7 +207,7 @@ def _lazyLoadFindEvents(**parameters):
                     else:
                         n = dataCache[cache_index].size
                 datapoint = dataCache[int(1.*event_i/n)+1][event_i%n]
-                if (not wasEventPositive and datapoint > local_mean - threshold_end) or (wasEventPositive and datapoint < local_mean + threshold_end):
+                if (not wasEventPositive and datapoint >= local_mean - threshold_end) or (wasEventPositive and datapoint <= local_mean + threshold_end):
                     event_end = event_i
                     done = True
                     break
@@ -250,7 +250,7 @@ def _lazyLoadFindEvents(**parameters):
                     min_Sp = min_Sn = 9999999
                     # Go back to 1 after the level change found
                     ko = event_i = minindex + 1
-                    
+                  
             i = event_end
             level_indexes.append(event_end)
             # is the event long enough?
