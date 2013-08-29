@@ -141,7 +141,7 @@ def _lazyLoadFindEvents(**parameters):
 #         time.sleep(0)# way to yield to other threads. Allows the gui
 #                                 # to remain responsive. Note this obviously 
 #                                 # lowers the samples/s rate.
-        datapoint = data[i]
+        datapoint = dataCache[1][i]
         if threshold_type == THRESHOLD_NOISE_BASED:
             threshold_start = start_stddev * local_variance ** .5 
         
@@ -186,15 +186,29 @@ def _lazyLoadFindEvents(**parameters):
 #                                 # to remain responsive. Note this obviously 
 #                                 # lowers the samples/s rate.
                 event_i = event_i + 1
-                #  If we need to load another block, but are still looking at an event,
-                # just cache the current data
-                if event_i % n == 0:
-                    datas = getNextBlocks(f, params, get_blocks)
-                    dataCache.append(datas[0])
-                    del datas
+                if event_i % n == 0: # We may need new data
+                    size = 0
+                    cache_index = 1 # which index in the cache is event_i
+                                    # trying to grab data from?
+                    for qq in xrange(len(dataCache)-1):
+                        size += dataCache[qq+1].size
+                        if event_i >= size:
+                            cache_index += 1
+                    # we need new data if we've run out
+                    if event_i >= size:
+                        datas, _ = getNextBlocks(f, params, get_blocks)
+                        datas = datas[0]
+                        n = datas.size
+                        if n < 1:
+                            i = n
+                            print "Done"
+                            break
+                        dataCache.append(datas)
+                    else:
+                        n = dataCache[cache_index].size
                 datapoint = dataCache[int(1.*event_i/n)+1][event_i%n]
                 if (not wasEventPositive and datapoint > local_mean - threshold_end) or (wasEventPositive and datapoint < local_mean + threshold_end):
-                    event_end = event_i - 1
+                    event_end = event_i
                     done = True
                     break
                 event_area = event_area + datapoint - local_mean
@@ -230,7 +244,7 @@ def _lazyLoadFindEvents(**parameters):
                         level_indexes[n_levels - 1] = min_index_p
                     n_levels = n_levels + 1
                     # reset stuff
-                    mean_estimate = data[minindex]
+                    mean_estimate = dataCache[int(1.*minindex/n)+1][minindex%n]
                     sn = sp = Sn = Sp = Gn = Gp = 0
                     min_index_p = min_index_n = event_i
                     min_Sp = min_Sn = 9999999
@@ -238,7 +252,7 @@ def _lazyLoadFindEvents(**parameters):
                     ko = event_i = minindex + 1
                     
             i = event_end
-            level_indexes.append(event_end+1)
+            level_indexes.append(event_end)
             # is the event long enough?
             if done and event_end - event_start > min_event_steps:
                 # CUSUM stuff
@@ -269,15 +283,19 @@ def _lazyLoadFindEvents(**parameters):
         local_mean = filter_parameter * local_mean + (1 - filter_parameter) * datapoint
         local_variance = filter_parameter * local_variance + (1 - filter_parameter) * (datapoint - local_mean) ** 2
         i += 1
-        if i >= n:
-            i = i % n
-            datanext, _ = getNextBlocks(f, params, get_blocks)
-            datanext = datanext[0]
-            n = datanext.size
-            dataCache.append(datanext)
-            placeInData = placeInData + n*(len(dataCache)-2)
-            #remove the old cached data, leave the 
-            del dataCache[0:len(dataCache)-2]
+        # remove any arrays in the cache that we dont need anymore
+        while i >= n and n > 0:
+            del dataCache[0]
+            i -= n
+            placeInData += n
+            # If we're just left with dataCache[0], which is reserved
+            # for old data, then we need new data.
+            if len(dataCache) < 2:
+                datanext, _ = getNextBlocks(f, params, get_blocks)
+                datanext = datanext[0]
+                dataCache.append(datanext)
+            if len(dataCache) > 1:
+                n = dataCache[1].size
 #             if placeInData % 50000 == 0:
 #                 recent_time = time.time() - time2
 #                 total_time = time.time() - time1
@@ -294,14 +312,17 @@ def _lazyLoadFindEvents(**parameters):
             
         # Get a string with the current year/month/day/hour/minute to label the file
         day_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        save_file_name.append('_Events_' + day_time + '.mat')
-        save_file['filename'] = "".join(save_file_name)
+        save_file_name.append('_Events_' + day_time + '.npy')
+        save_file_name = "".join(save_file_name)
+        save_file['filename'] = parameters['filename']
+        save_file['database_filename'] = save_file_name
         save_file['sample_rate'] = sample_rate
         save_file['event_count'] = event_count
         # save the user's analysis parameters
         parameters.pop('axes', None)  # remove the axes before saving.
         save_file['parameters'] = parameters
-        sio.savemat(save_file['filename'], save_file)
+#         sio.savemat(save_file_name, save_file, oned_as='row')
+        np.save(save_file_name, save_file)
         
 #         dataReady.emit({'status_text': 'Done. Found ' + str(event_count) + ' events.  Saved database to ' + str(save_file['filename']), 'done': True})
     
@@ -318,5 +339,4 @@ def findEvents(**parameters):
     # do a union of defaultParams and parameters, keeping the
     # parameters entries on conflict.
     params = dict(chain(defaultParams.iteritems(), parameters.iteritems()))
-    print params['filename']
     return _lazyLoadFindEvents(**params)
