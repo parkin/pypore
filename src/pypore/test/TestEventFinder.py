@@ -8,7 +8,6 @@ from pypore.EventFinder import findEvents
 from pypore.EventFinder import _getDataRange
 import numpy as np
 import os
-from scipy.io.matlab.mio import loadmat
 
 class TestEventFinder(unittest.TestCase):
     
@@ -143,6 +142,40 @@ class TestEventFinder(unittest.TestCase):
         level = levels[1]
         self.assertAlmostEqual(level, 0.78064, 4)
         self.assertEqual(indexes[2], 3500)
+        
+        #delete the newly created event file
+        os.remove(eventDatabase['database_filename'])
+        
+    def testChimera_nonoise_2events_1levels(self):
+        filename = os.path.dirname(os.path.realpath(__file__))
+        filename = os.path.join(filename, 'testDataFiles','chimera_nonoise_2events_1levels.log')
+        eventDatabase = findEvents(filename = filename,
+                                   **self.defaultParams)
+        
+        events = eventDatabase['Events']
+        self.assertEqual(len(events), 2)
+
+        # First event stuff
+        event = events[0]
+        levels = event['cusum_values']
+        indexes = event['cusum_indexes']
+        self.assertEqual(len(levels), 1)
+        self.assertEqual(len(indexes), 2)
+        level = levels[0]
+        self.assertAlmostEqual(level, 0.9332, 4)
+        self.assertEqual(indexes[0], 2000)
+        self.assertEqual(indexes[1], 3000)
+        
+        # Second event stuff
+        event = events[1]
+        levels = event['cusum_values']
+        indexes = event['cusum_indexes']
+        self.assertEqual(len(levels), 1)
+        self.assertEqual(len(indexes), 2)
+        level = levels[0]
+        self.assertAlmostEqual(level, 0.9332, 4)
+        self.assertEqual(indexes[0], 4500)
+        self.assertEqual(indexes[1], 5500)
         
         #delete the newly created event file
         os.remove(eventDatabase['database_filename'])
