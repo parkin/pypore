@@ -8,6 +8,7 @@ import time, datetime
 import numpy as np
 import scipy.io as sio
 from pypore.DataFileOpener import prepareDataFile, getNextBlocks
+from itertools import chain
 
 # Threshold types
 THRESHOLD_NOISE_BASED = 0
@@ -327,4 +328,14 @@ def _lazyLoadFindEvents(**parameters):
     return save_file
 
 def findEvents(**parameters):
-    return _lazyLoadFindEvents(**parameters)
+    defaultParams = { 'min_event_length': 10.,
+                                   'max_event_length': 10000.,
+                                   'threshold_direction': 'Negative',
+                                   'filter_parameter': 0.93,
+                                   'threshold_type': 'Noise Based',
+                                   'start_stddev': 5.,
+                                   'end_stddev': 1.}
+    # do a union of defaultParams and parameters, keeping the
+    # parameters entries on conflict.
+    params = dict(chain(defaultParams.iteritems(), parameters.iteritems()))
+    return _lazyLoadFindEvents(**params)
