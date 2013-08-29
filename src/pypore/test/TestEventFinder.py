@@ -49,7 +49,7 @@ class TestEventFinder(unittest.TestCase):
         
         level = levels[1]
         self.assertAlmostEqual(level, 0.78064, 4)
-
+        
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

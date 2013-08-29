@@ -171,8 +171,7 @@ def _lazyLoadFindEvents(**parameters):
             sn = sp = Sn = Sp = Gn = Gp = 0
             var_estimate = local_variance
             n_levels = 1  # We're already starting with one level
-            delta = 0.1
-            h = delta / (local_variance) ** .5
+            delta = np.absolute(mean_estimate-local_mean)/10.
             min_index_p = min_index_n = i
             min_Sp = min_Sn = 99999999
             ko = i
@@ -213,26 +212,27 @@ def _lazyLoadFindEvents(**parameters):
                 Sn = Sn + sn
                 Gp = max(0, Gp + sp)
                 Gn = max(0, Gn + sn)
-                if Sp < min_Sp:
+                if Sp <= min_Sp:
                     min_Sp = Sp
                     min_index_p = event_i
-                if Sn < min_Sn:
+                if Sn <= min_Sn:
                     min_Sn = Sn
                     min_index_n = event_i
-                print h, Gp, Gn
+                h = delta / (var_estimate) ** .5
                 # Did we detect a change?
                 if Gp > h or Gn > h:
                     minindex = min_index_n
+                    print h, Gp, Gn, event_i, minindex
                     level_indexes.append(min_index_n)
                     if Gp > h:
                         minindex = min_index_p
                         level_indexes[n_levels - 1] = min_index_p
                     n_levels = n_levels + 1
                     # reset stuff
-                    mean_estimate = data[i]
-                    sn = sp = Sn = Sp = Gn = Gp = var_estimate = 0
+                    mean_estimate = data[minindex]
+                    sn = sp = Sn = Sp = Gn = Gp = 0
                     min_index_p = min_index_n = event_i
-                    min_Sp = min_Sn = 99999
+                    min_Sp = min_Sn = 999999999
                     # Go back to 1 after the level change found
                     ko = event_i = minindex + 1
                     
@@ -245,9 +245,9 @@ def _lazyLoadFindEvents(**parameters):
                     start_index = event_start
                     if q > 0:
                         start_index = level_indexes[q - 1]
-                    end_index = event_end + 1
+                    end_index = event_end
                     if q < n_levels - 1:
-                        end_index = level_indexes[q] + 1
+                        end_index = level_indexes[q]
                     level_values[q] = np.mean(_getDataRange(data, dataCache, rawPointsCache, start_index, end_index))
                 for j, level_index in enumerate(level_indexes):
                     level_indexes[j] = level_index + placeInData
