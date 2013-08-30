@@ -349,8 +349,9 @@ def _lazyLoadFindEvents(signal = None, save_file = None, **parameters):
                 total_time = time.time() - time1
                 if signal is not None:
                     signal.emit({'status_text': 'Event Count: ' + str(event_count) + ' Percent Done: ' + str(100.*placeInData / points_per_channel_total) + ' Rate: ' + str((placeInData-prevI)/recent_time) + ' samples/s' + ' Total Rate:' + str(placeInData/total_time) + ' samples/s'})
-                sys.stdout.write("\rEvent Count: %d  rate: %f" % (event_count, placeInData / total_time))
-                sys.stdout.flush()
+                else:
+                    sys.stdout.write("\rEvent Count: %d  rate: %f" % (event_count, placeInData / total_time))
+                    sys.stdout.flush()
                 time2 = time.time()
                 prevI = placeInData
             
