@@ -675,13 +675,14 @@ class MyMainWindow(QtGui.QMainWindow):
         Ts = 1 / sample_rate
         
         times = linspace(Ts * (event_start - raw_points_per_side), Ts * (event_start - raw_points_per_side + len(data) - 1), len(data))
-        times2 = [(event_start - raw_points_per_side) * Ts, (event_start-1)*Ts, event_start*Ts]
-        levels2 = [baseline, baseline, levels_values[0]]
-        for i, level_values in enumerate(levels_values):
-            times2.append(levels_index[i - 1] * Ts)
-            levels2.append(levels_values[i - 1])
-            times2.append((levels_index[i - 1]+1) * Ts)
-            levels2.append(level_values)
+        times2 = [(event_start - raw_points_per_side) * Ts, (event_start-1)*Ts]
+        levels2 = [baseline, baseline]
+        for i, level_value in enumerate(levels_values):
+            times2.append(levels_index[i] * Ts)
+            levels2.append(level_value)
+            if i < len(levels_values) -1 :
+                times2.append((levels_index[i+1]-1) * Ts)
+                levels2.append(level_value)
         times2.append(event_end * Ts)
         levels2.append(levels_values[len(levels_values) - 1])
         times2.append((event_end + 1)* Ts)
