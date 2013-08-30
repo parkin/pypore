@@ -10,3 +10,4 @@ build.properties
 src/profile_dump
 doc/build/doctrees/*
 src/pypore/test/testDataFiles/*Events*
+*.lprof
