@@ -373,7 +373,7 @@ def _readHekaNextBlock(f, per_file_params, per_block_param_list, per_channel_par
     
     return block
     
-def _getParamListByteLength(param_list):
+cdef long _getParamListByteLength(param_list):
     '''
     Returns the length in bytes of the sum of all the parameters in the list.
     Here, list[i][0] = param, list[i][1] = np.dtype
