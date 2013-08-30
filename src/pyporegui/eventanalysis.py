@@ -25,11 +25,11 @@ from views import FileListItem, FilterListItem, PlotToolBar, DataFileListItem, M
 from pypore.DataFileOpener import prepareDataFile
 
 class PathItem(QtGui.QGraphicsPathItem):
-        def __init__(self, x, y):
+        def __init__(self, x, y, conn = 'all'):
             xr = x.min(), x.max()
             yr = y.min(), y.max()
             self._bounds = QtCore.QRectF(xr[0],yr[0],xr[1]-xr[0],yr[1]-yr[0])
-            self.path = pg.arrayToQPath(x, y)
+            self.path = pg.arrayToQPath(x, y, conn)
             QtGui.QGraphicsPathItem.__init__(self, self.path)
             
         def boundingRect(self):
@@ -701,16 +701,18 @@ class MyMainWindow(QtGui.QMainWindow):
         raw_points_per_side = events[0]['raw_points_per_side']
         ts = 1/sample_rate
         times = np.empty(size)
+        conn = np.ones(size)
         index = 0
         for event in events:
             event_start = event['event_start']
             event_data = event['raw_data']
             d = event_data.size
             times[index:index+d] = linspace(ts * (event_start - raw_points_per_side), ts * (event_start - raw_points_per_side + d - 1), d)
-            data[index:index+d] = event['raw_data']
+            data[index:index+d] = event_data
+            conn[index-1] = False # disconnect separate events
             index += d
             
-        item = PathItem(times, data)
+        item = PathItem(times, data, conn)
         item.setPen(pg.mkPen('y'))
         self.plotwid.addEventItem(item)
         
