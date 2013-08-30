@@ -46,7 +46,7 @@ def prepareDataFile(filename):
         
     return 0,{'error': 'File not specified with correct extension. Possibilities are: \'.log\', \'.hkd\''}
 
-def getNextBlocks(datafile, params, n=1):
+def getNextBlocks(datafile, params, int n=1):
     '''
     Gets the next n blocks (~5000 datapoints) of data from filename
     
@@ -81,13 +81,17 @@ def openChimeraFile(filename, decimate=False):
     if 'error' in p:
         return p
     
-    ADCBITS = p['ADCBITS']
-    ADCvref = p['ADCvref']
+    cdef long ADCBITS = p['ADCBITS']
+    cdef double ADCvref = p['ADCvref']
     datatype = p['datatype']
     specsfile = p['specsfile']
     
 
-    bitmask = (2**16) - 1 - (2**(16-ADCBITS) - 1);
+    cdef long bitmask = (2**16) - 1 - (2**(16-ADCBITS) - 1)
+    cdef long num_points = 0
+    cdef int block_size = 0
+    cdef long decimated_size = 0
+    cdef long i = 0
     if decimate:
         # Calculate number of points in the dataset
         filesize = os.path.getsize(filename)
@@ -106,7 +110,7 @@ def openChimeraFile(filename, decimate=False):
             readvalues = -ADCvref + (2*ADCvref)*(rawvalues & bitmask)/(2**16)
             logdata[i] = np.max(readvalues)
             logdata[i+1] = np.min(readvalues)
-            i = i + 2
+            i += 2
             
         # Change the sample rate
         specsfile['SETUP_ADCSAMPLERATE'][0][0] = specsfile['SETUP_ADCSAMPLERATE'][0][0]*2/block_size
@@ -135,34 +139,34 @@ def prepareChimeraFile(filename):
     # Calculate number of points per channel
     filesize = os.path.getsize(filename)
     datatype = np.dtype('<u2')
-    points_per_channel_per_block = 5000
-    points_per_channel_total = filesize/datatype.itemsize
+    cdef int points_per_channel_per_block = 5000
+    cdef long points_per_channel_total = filesize/datatype.itemsize
 
-    ADCBITS = specsfile['SETUP_ADCBITS'][0][0]
-    ADCvref = specsfile['SETUP_ADCVREF'][0][0]
+    cdef long ADCBITS = specsfile['SETUP_ADCBITS'][0][0]
+    cdef double ADCvref = specsfile['SETUP_ADCVREF'][0][0]
     
     datafile = open(filename, 'rb')
     
-    bitmask = (2**16) - 1 - (2**(16-ADCBITS) - 1);
+    cdef long bitmaskk = (2**16) - 1 - (2**(16-ADCBITS) - 1)
     
     p = {'filetype': 'chimera',
          'ADCBITS': ADCBITS, 'ADCvref': ADCvref, 'datafile': datafile,
          'datatype': datatype, 'specsfile': specsfile, 
-         'bitmask': bitmask, 'filename': filename,
+         'bitmask': bitmaskk, 'filename': filename,
          'sample_rate': specsfile['SETUP_ADCSAMPLERATE'][0][0],
          'points_per_channel_per_block': points_per_channel_per_block,
          'points_per_channel_total': points_per_channel_total}
     
     return datafile, p
 
-def getNextChimeraBlocks(datafile, params, n):
+def getNextChimeraBlocks(datafile, params, int n):
     '''
     '''
     block_size = params['points_per_channel_per_block']
     
     datatype = params['datatype']
-    bitmask = params['bitmask']
-    ADCvref = params['ADCvref']
+    cdef long bitmask = params['bitmask']
+    cdef double ADCvref = params['ADCvref']
     
     rawvalues = np.fromfile(datafile,datatype, n*block_size)
     readvalues = rawvalues & bitmask
@@ -208,27 +212,27 @@ def prepareHekaFile(filename):
     per_file_params = _readHekaHeaderParams(f, per_file_param_list)
     
     ## Calculate sizes of blocks, channels, etc
-    per_file_header_length = f.tell()
+    cdef long per_file_header_length = f.tell()
     
     # Calculate the block lengths
-    per_channel_per_block_length = _getParamListByteLength(per_channel_param_list)
-    per_block_length = _getParamListByteLength(per_block_param_list)
+    cdef long per_channel_per_block_length = _getParamListByteLength(per_channel_param_list)
+    cdef long per_block_length = _getParamListByteLength(per_block_param_list)
     
-    channel_list_number = len(channel_list)
+    cdef int channel_list_number = len(channel_list)
     
-    header_bytes_per_block = per_channel_per_block_length*channel_list_number
-    data_bytes_per_block = per_file_params['Points per block'] * 2 * channel_list_number
-    total_bytes_per_block = header_bytes_per_block + data_bytes_per_block + per_block_length
+    cdef long header_bytes_per_block = per_channel_per_block_length*channel_list_number
+    cdef long data_bytes_per_block = per_file_params['Points per block'] * 2 * channel_list_number
+    cdef long total_bytes_per_block = header_bytes_per_block + data_bytes_per_block + per_block_length
     
     # Calculate number of points per channel
-    filesize = os.path.getsize(filename)
-    num_blocks_in_file = int((filesize - per_file_header_length)/total_bytes_per_block)
-    remainder = (filesize - per_file_header_length)%total_bytes_per_block
+    cdef long filesize = os.path.getsize(filename)
+    cdef long num_blocks_in_file = int((filesize - per_file_header_length)/total_bytes_per_block)
+    cdef long remainder = (filesize - per_file_header_length)%total_bytes_per_block
     if not remainder == 0:
         f.close()
         return 0, {'error': 'Error, data file ends with incomplete block'}
-    points_per_channel_total = per_file_params['Points per block'] * num_blocks_in_file
-    points_per_channel_per_block = per_file_params['Points per block']
+    cdef long points_per_channel_total = per_file_params['Points per block'] * num_blocks_in_file
+    cdef long points_per_channel_per_block = per_file_params['Points per block']
     
     p = {'filetype': 'heka',
          'per_file_param_list': per_file_param_list, 'per_block_param_list': per_block_param_list,
@@ -265,14 +269,14 @@ def openHekaFile(filename, decimate=False):
     
     per_file_params = p['per_file_params']
     channel_list = p['channel_list']
-    num_blocks_in_file = p['num_blocks_in_file']
-    points_per_channel_total = p['points_per_channel_total']
+    cdef long num_blocks_in_file = p['num_blocks_in_file']
+    cdef long points_per_channel_total = p['points_per_channel_total']
     per_block_param_list = p['per_block_param_list']
     per_channel_param_list = p['per_channel_param_list']
-    points_per_channel_per_block = p['points_per_channel_per_block']
+    cdef long points_per_channel_per_block = p['points_per_channel_per_block']
     
     data = []
-    sample_rate = 1.0/per_file_params['Sampling interval']
+    cdef double sample_rate = 1.0/per_file_params['Sampling interval']
     for _ in channel_list:
         if decimate: # If decimating, just keep max and min value from each block
             data.append(np.empty(num_blocks_in_file*2))
@@ -297,15 +301,16 @@ def openHekaFile(filename, decimate=False):
     
     return specsfile
 
-def getNextHekaBlocks(datafile, params, n):
+def getNextHekaBlocks(datafile, params, int n):
     per_file_params = params['per_file_params']
     per_block_param_list = params['per_block_param_list']
     per_channel_param_list = params['per_channel_param_list']
     channel_list = params['channel_list']
-    points_per_channel_per_block = params['points_per_channel_per_block']
+    cdef long points_per_channel_per_block = params['points_per_channel_per_block']
     
     blocks = []
-    totalsize = 0
+    cdef long totalsize = 0
+    cdef long size = 0
     done = False
     for i in xrange(0,n):
         block = _readHekaNextBlock(datafile, per_file_params, 
@@ -335,7 +340,7 @@ def getNextHekaBlocks(datafile, params, n):
     
     return data, done
 
-def _readHekaNextBlock(f, per_file_params, per_block_param_list, per_channel_param_list, channel_list, points_per_channel_per_block):
+def _readHekaNextBlock(f, per_file_params, per_block_param_list, per_channel_param_list, channel_list, long points_per_channel_per_block):
     '''
     Reads the next block of heka data.
     Returns a dictionary with 'data', 'per_block_params', and 'per_channel_params'.
@@ -373,10 +378,10 @@ def _getParamListByteLength(param_list):
     Returns the length in bytes of the sum of all the parameters in the list.
     Here, list[i][0] = param, list[i][1] = np.dtype
     '''
-    size = 0
+    cdef long sizee = 0
     for i in param_list:
-        size = size + i[1].itemsize
-    return size
+        sizee = sizee + i[1].itemsize
+    return sizee
     
 def _readHekaHeaderParams(f, param_list):
     
@@ -404,7 +409,7 @@ def _readHekaHeaderParamList(f, datatype, encodings):
     param_list = []
     f.read(3)  # read null characters?
     dt = np.dtype('>u1')
-    num_params = np.fromfile(f, dt, 1)[0]
+    cdef int num_params = np.fromfile(f, dt, 1)[0]
     for _ in xrange(0, num_params):
         type_code = np.fromfile(f, dt,1)[0]
         name = np.fromfile(f, datatype, 1)[0].strip()

@@ -11,20 +11,22 @@ from itertools import chain
 import sys
 
 # Threshold types
-THRESHOLD_NOISE_BASED = 0
-THRESHOLD_ABSOLUTE_CHANGE = 1
-THRESHOLD_PERCENTAGE_CHANGE = 2
+cdef int THRESHOLD_NOISE_BASED = 0
+cdef int THRESHOLD_ABSOLUTE_CHANGE = 1
+cdef int THRESHOLD_PERCENTAGE_CHANGE = 2
 
 # Baseline types
-BASELINE_ADAPTIVE = 3
-BASELINE_FIXED = 4
+cdef int BASELINE_ADAPTIVE = 3
+cdef int BASELINE_FIXED = 4
 
-def _getDataRange(dataCache, i, n):
+def _getDataRange(dataCache, long i, long n):
     '''
     returns [i,n)
     '''
     res = np.zeros(n - i)
-    resspot = 0
+    cdef long resspot = 0
+    cdef long l = 0
+    cdef long nn = 0
     # do we need to include points from the old data
     # (eg. for raw event points)
     if i < 0:
@@ -36,7 +38,7 @@ def _getDataRange(dataCache, i, n):
         res[0:-i] = dataCache[0][l + i:l]
         resspot -= i
         i = 0
-    spot = 0
+    cdef long spot = 0
     for q in xrange(len(dataCache) - 1):
         cache = dataCache[q + 1]
         nn = cache.size
@@ -55,11 +57,11 @@ def _getDataRange(dataCache, i, n):
         
         
 def _lazyLoadFindEvents(**parameters):
-    event_count = 0
+    cdef int event_count = 0
     
-    get_blocks = 1
+    cdef int get_blocks = 1
     
-    raw_points_per_side = 50
+    cdef int raw_points_per_side = 50
     
     save_file = {}
     save_file['Events'] = []
@@ -67,11 +69,11 @@ def _lazyLoadFindEvents(**parameters):
     # IMPLEMENT ME pleasE
     f, params = prepareDataFile(parameters['filename'])
     
-    sample_rate = params['sample_rate']
-    timestep = 1. / sample_rate
+    cdef double sample_rate = params['sample_rate']
+    cdef double timestep = 1. / sample_rate
     # Min and Max number of points in an event
-    min_event_steps = int(parameters['min_event_length'] * 1e-6 / timestep)
-    max_event_steps = int(parameters['max_event_length'] * 1e-6 / timestep)
+    cdef int min_event_steps = int(parameters['min_event_length'] * 1e-6 / timestep)
+    cdef int max_event_steps = int(parameters['max_event_length'] * 1e-6 / timestep)
     
     # Threshold direction.  -1 for negative, 0 for both, +1 for positive
     directionPositive = False
@@ -88,18 +90,24 @@ def _lazyLoadFindEvents(**parameters):
     data, _ = getNextBlocks(f, params, get_blocks)
     data = data[0]  # only get channel 1
     
-    n = data.size
+    cdef long n = data.size
     
     if n < 100:
         print 'Not enough datapoints in file.'
         return 'Not enough datapoints in file.'
     
-    datapoint = data[0]
+    cdef double datapoint = data[0]
     
-    local_mean = datapoint
-    local_variance = 0.
+    cdef double local_mean = datapoint
+    cdef double local_variance = 0.
     
-    filter_parameter = parameters['filter_parameter']  # filter parameter 'a'
+    cdef double filter_parameter = parameters['filter_parameter']  # filter parameter 'a'
+    
+    cdef double threshold_start = 0.0
+    cdef double threshold_end = 0.0
+    cdef int threshold_type = THRESHOLD_ABSOLUTE_CHANGE
+    cdef double start_stddev = 0.0
+    cdef double end_stddev = 0.0
     if parameters['threshold_type'] == 'Absolute Change':
         threshold_start = parameters['absolute_change_start']
         threshold_end = parameters['absolute_change_end']
@@ -123,15 +131,37 @@ def _lazyLoadFindEvents(**parameters):
     
     dataCache = [np.zeros(n) + datapoint, data]
     
-    i = 0
-    prevI = 0
-    time1 = time.time()
-    time2 = time1
-    event_start = 0
-    event_end = 0
+    cdef long i = 0
+    cdef long prevI = 0
+    cdef double time1 = time.time()
+    cdef double time2 = time1
+    cdef long event_start = 0
+    cdef long event_end = 0
     isEvent = False
     wasEventPositive = False  # Was the event an up spike?
-    placeInData = 0
+    cdef long placeInData = 0
+    
+    cdef double mean_estimate = 0.0
+    cdef double sn = 0
+    cdef double sp = 0
+    cdef double Sn = 0
+    cdef double Sp = 0
+    cdef double Gn = 0
+    cdef double Gp = 0
+    cdef double new_mean = 0
+    cdef double var_estimate = 0
+    cdef int n_levels = 0
+    cdef double delta = 0
+    cdef long min_index_p = 0
+    cdef long min_index_n = 0
+    cdef double min_Sp = 9999999
+    cdef double min_Sn = 9999999
+    cdef long ko = i
+    cdef double event_area = datapoint - local_mean  # integrate the area
+    cdef int cache_index = 0
+    cdef int size = 0
+    cdef double h = 0
+    
     # search for events.  Keep track of filter_parameter filtered local (adapting!) mean and variance,
     # and use them to decide filter_parameter threshold_start for events.  See
     # http://pubs.rsc.org/en/content/articlehtml/2012/nr/c2nr30951c for more details.
