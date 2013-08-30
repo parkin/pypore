@@ -6,7 +6,6 @@ Created on Aug 19, 2013
 
 import time, datetime
 import numpy as np
-import scipy.io as sio
 from pypore.DataFileOpener import prepareDataFile, getNextBlocks
 from itertools import chain
 import sys
@@ -55,7 +54,6 @@ def _getDataRange(dataCache, i, n):
     return res
         
         
-
 def _lazyLoadFindEvents(**parameters):
     event_count = 0
     
