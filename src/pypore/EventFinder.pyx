@@ -56,15 +56,17 @@ def _getDataRange(dataCache, long i, long n):
     return res
         
         
-def _lazyLoadFindEvents(**parameters):
+def _lazyLoadFindEvents(signal = None, save_file = None, **parameters):
     cdef int event_count = 0
     
     cdef int get_blocks = 1
     
     cdef int raw_points_per_side = 50
     
-    save_file = {}
-    save_file['Events'] = []
+    if save_file is None:
+        save_file = {}
+    if not 'Events' in save_file:
+        save_file['Events'] = []
     
     # IMPLEMENT ME pleasE
     f, params = prepareDataFile(parameters['filename'])
@@ -74,6 +76,7 @@ def _lazyLoadFindEvents(**parameters):
     # Min and Max number of points in an event
     cdef int min_event_steps = int(parameters['min_event_length'] * 1e-6 / timestep)
     cdef int max_event_steps = int(parameters['max_event_length'] * 1e-6 / timestep)
+    cdef long points_per_channel_total = params['points_per_channel_total']
     
     # Threshold direction.  -1 for negative, 0 for both, +1 for positive
     directionPositive = False
@@ -330,7 +333,8 @@ def _lazyLoadFindEvents(**parameters):
             if placeInData % 1000000 == 0:
                 recent_time = time.time() - time2
                 total_time = time.time() - time1
-#                     dataReady.emit({'status_text': 'Event Count: ' + str(event_count) + ' Percent Done: ' + str(100.*placeInData / points_per_channel_total) + ' Rate: ' + str((placeInData-prevI)/recent_time) + ' samples/s' + ' Total Rate:' + str(placeInData/total_time) + ' samples/s'})
+                if signal is not None:
+                    signal.emit({'status_text': 'Event Count: ' + str(event_count) + ' Percent Done: ' + str(100.*placeInData / points_per_channel_total) + ' Rate: ' + str((placeInData-prevI)/recent_time) + ' samples/s' + ' Total Rate:' + str(placeInData/total_time) + ' samples/s'})
                 sys.stdout.write("\rEvent Count: %d  rate: %f" % (event_count, placeInData / total_time))
                 sys.stdout.flush()
                 time2 = time.time()
@@ -361,7 +365,7 @@ def _lazyLoadFindEvents(**parameters):
     
     return save_file
     
-def findEvents(**parameters):
+def findEvents(signal = None, save_file = None, **parameters):
     defaultParams = { 'min_event_length': 10.,
                                    'max_event_length': 10000.,
                                    'threshold_direction': 'Negative',
@@ -372,4 +376,4 @@ def findEvents(**parameters):
     # do a union of defaultParams and parameters, keeping the
     # parameters entries on conflict.
     params = dict(chain(defaultParams.iteritems(), parameters.iteritems()))
-    return _lazyLoadFindEvents(**params)
+    return _lazyLoadFindEvents(signal, save_file, **params)
