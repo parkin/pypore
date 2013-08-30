@@ -4,6 +4,11 @@ This project is for translocation event finding/analysis.  The aim is to use onl
 # Running
 To run, in shell do './eventanalysis', or 'python eventanalysis'
 
+# Notes for will
+Install Cython.  cd to setup.py dir.
+
+`python setup.py build_ext --inplace`
+
 # TODO
 * Use one file format for data files.  Make a tool for converting other files, like Heka or Chimera or others.
 * Allow user to only analyze a section of the graph by highlighting the graph.

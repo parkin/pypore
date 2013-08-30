@@ -11,3 +11,7 @@ src/profile_dump
 doc/build/doctrees/*
 src/pypore/test/testDataFiles/*Events*
 *.lprof
+*.so
+*.c
+src/pypore/__pycache__/*
+src/pypore/build/*
