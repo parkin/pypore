@@ -28,7 +28,7 @@ class TestEventFinder(unittest.TestCase):
         first = np.zeros(n)
         first[n-1] += 1.
         first[0] += 1.
-        dataCache = [first, np.zeros(n)+100., np.zeros(n)+100.+60.]
+        dataCache = [first, np.zeros(n)+100., np.zeros(n)+100.+60., np.zeros(n)+200.]
         
         res = _getDataRange(dataCache, 0, n)
         self.assertEqual(res.size, n)
@@ -80,6 +80,14 @@ class TestEventFinder(unittest.TestCase):
         x[10:] += 100.
         x[110:] += 60. 
         res = _getDataRange(dataCache, -10, 110)
+        
+        # Test neg overlap with 3 pos caches
+        x = np.zeros(220)
+        x[9] += 1.
+        x[10:] += 100.
+        x[110:] += 60.
+        x[210:] += 40.
+        res = _getDataRange(dataCache, -10, 210)
         
     def testSavingFiles(self):
         filename = os.path.dirname(os.path.realpath(__file__))

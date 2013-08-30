@@ -9,6 +9,7 @@ import numpy as np
 import scipy.io as sio
 from pypore.DataFileOpener import prepareDataFile, getNextBlocks
 from itertools import chain
+import sys
 
 # Threshold types
 THRESHOLD_NOISE_BASED = 0
@@ -23,8 +24,7 @@ def _getDataRange(dataCache, i, n):
     '''
     returns [i,n)
     '''
-    res = np.zeros(n-i)
-    
+    res = np.zeros(n - i)
     resspot = 0
     # do we need to include points from the old data
     # (eg. for raw event points)
@@ -32,24 +32,24 @@ def _getDataRange(dataCache, i, n):
         l = len(dataCache[0])
         # Is the range totally within the old data
         if n <= 0:
-            res = dataCache[0][l+i:l+n]
+            res = dataCache[0][l + i:l + n]
             return res
-        res[0:-i] = dataCache[0][l+i:l]
+        res[0:-i] = dataCache[0][l + i:l]
         resspot -= i
-        i=0
+        i = 0
     spot = 0
-    for q in xrange(len(dataCache)-1):
-        cache = dataCache[q+1]
+    for q in xrange(len(dataCache) - 1):
+        cache = dataCache[q + 1]
         nn = cache.size
         # if all the rest of the data is in this cache
         # add it to the end of the result and return
-        if i >= spot and n <= spot+nn:
-            res[resspot:] = cache[i-spot:n-spot]
+        if i >= spot and n <= spot + nn:
+            res[resspot:] = cache[i - spot:n - spot]
             break
         # else we must need to visit more caches
-        elif i < spot+nn:
-            res[resspot:resspot+nn-i] = cache[i-spot:]
-            resspot += nn-i
+        elif i < spot + nn:
+            res[resspot:resspot + nn - (i - spot)] = cache[i - spot:]
+            resspot += nn - (i-spot)
             i = spot + nn
         spot += nn
     return res
@@ -123,7 +123,7 @@ def _lazyLoadFindEvents(**parameters):
         threshold_end = datapoint
         threshold_type = THRESHOLD_NOISE_BASED
     
-    dataCache = [np.zeros(n)+datapoint, data]
+    dataCache = [np.zeros(n) + datapoint, data]
     
     i = 0
     prevI = 0
@@ -174,7 +174,7 @@ def _lazyLoadFindEvents(**parameters):
             sn = sp = Sn = Sp = Gn = Gp = 0
             var_estimate = local_variance
             n_levels = 1  # We're already starting with one level
-            delta = np.absolute(mean_estimate-local_mean)/10.
+            delta = np.absolute(mean_estimate - local_mean) / 10.
             min_index_p = min_index_n = i
             min_Sp = min_Sn = 999999
             ko = i
@@ -186,12 +186,12 @@ def _lazyLoadFindEvents(**parameters):
 #                                 # to remain responsive. Note this obviously 
 #                                 # lowers the samples/s rate.
                 event_i = event_i + 1
-                if event_i % n == 0: # We may need new data
+                if event_i % n == 0:  # We may need new data
                     size = 0
-                    cache_index = 1 # which index in the cache is event_i
+                    cache_index = 1  # which index in the cache is event_i
                                     # trying to grab data from?
-                    for qq in xrange(len(dataCache)-1):
-                        size += dataCache[qq+1].size
+                    for qq in xrange(len(dataCache) - 1):
+                        size += dataCache[qq + 1].size
                         if event_i >= size:
                             cache_index += 1
                     # we need new data if we've run out
@@ -206,7 +206,7 @@ def _lazyLoadFindEvents(**parameters):
                         dataCache.append(datas)
                     else:
                         n = dataCache[cache_index].size
-                datapoint = dataCache[int(1.*event_i/n)+1][event_i%n]
+                datapoint = dataCache[int(1.*event_i / n) + 1][event_i % n]
                 if (not wasEventPositive and datapoint >= local_mean - threshold_end) or (wasEventPositive and datapoint <= local_mean + threshold_end):
                     event_end = event_i
                     done = True
@@ -220,7 +220,7 @@ def _lazyLoadFindEvents(**parameters):
                 if var_estimate > 0:
                     sp = (delta / var_estimate) * (datapoint - mean_estimate - delta / 2)
                     sn = -(delta / var_estimate) * (datapoint - mean_estimate + delta / 2)
-                elif delta ==0:
+                elif delta == 0:
                     sp = sn = 0
                 else:
                     sp = sn = float('inf')
@@ -244,12 +244,12 @@ def _lazyLoadFindEvents(**parameters):
                         level_indexes[n_levels - 1] = min_index_p
                     n_levels = n_levels + 1
                     # reset stuff
-                    mean_estimate = dataCache[int(1.*minindex/n)+1][minindex%n]
+                    mean_estimate = dataCache[int(1.*minindex / n) + 1][minindex % n]
                     sn = sp = Sn = Sp = Gn = Gp = 0
-                    min_index_p = min_index_n = event_i
                     min_Sp = min_Sn = 9999999
                     # Go back to 1 after the level change found
-                    ko = event_i = minindex + 1
+                    ko = event_i = minindex
+                    min_index_p = min_index_n = event_i
                   
             i = event_end
             level_indexes.append(event_end)
@@ -259,14 +259,17 @@ def _lazyLoadFindEvents(**parameters):
                 level_values = np.zeros(n_levels)  # Holds the current values of the level_values
                 for q in xrange(0, n_levels):
                     start_index = level_indexes[q]
-                    end_index = level_indexes[q+1]
+                    end_index = level_indexes[q + 1]
+                    if start_index > end_index:
+                        print '\n'
+                        print level_indexes
                     level_values[q] = np.mean(_getDataRange(dataCache, start_index, end_index))
                 for j, level_index in enumerate(level_indexes):
                     level_indexes[j] = level_index + placeInData
                 # end CUSUM
                 event = {}
                 event['event_data'] = _getDataRange(dataCache, event_start, event_end)
-                event['raw_data'] = _getDataRange(dataCache, event_start-raw_points_per_side, event_end+raw_points_per_side)
+                event['raw_data'] = _getDataRange(dataCache, event_start - raw_points_per_side, event_end + raw_points_per_side)
                 event['baseline'] = local_mean
                 event['current_blockage'] = np.mean(event['event_data']) - local_mean
                 event['event_start'] = event_start + placeInData
@@ -296,12 +299,14 @@ def _lazyLoadFindEvents(**parameters):
                 dataCache.append(datanext)
             if len(dataCache) > 1:
                 n = dataCache[1].size
-#             if placeInData % 50000 == 0:
-#                 recent_time = time.time() - time2
-#                 total_time = time.time() - time1
-# #                     dataReady.emit({'status_text': 'Event Count: ' + str(event_count) + ' Percent Done: ' + str(100.*placeInData / points_per_channel_total) + ' Rate: ' + str((placeInData-prevI)/recent_time) + ' samples/s' + ' Total Rate:' + str(placeInData/total_time) + ' samples/s'})
-#                 time2 = time.time()
-#                 prevI = placeInData
+            if placeInData % 50000 == 0:
+                recent_time = time.time() - time2
+                total_time = time.time() - time1
+#                     dataReady.emit({'status_text': 'Event Count: ' + str(event_count) + ' Percent Done: ' + str(100.*placeInData / points_per_channel_total) + ' Rate: ' + str((placeInData-prevI)/recent_time) + ' samples/s' + ' Total Rate:' + str(placeInData/total_time) + ' samples/s'})
+                sys.stdout.write("\rEvent Count: %d  rate: %f" % (event_count, placeInData / total_time))
+                sys.stdout.flush()
+                time2 = time.time()
+                prevI = placeInData
             
             
     if event_count > 0:
