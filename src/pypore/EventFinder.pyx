@@ -6,6 +6,7 @@ Created on Aug 19, 2013
 
 import time, datetime
 import numpy as np
+cimport numpy as np
 from pypore.DataFileOpener import prepareDataFile, getNextBlocks
 from itertools import chain
 import sys
@@ -19,14 +20,17 @@ cdef int THRESHOLD_PERCENTAGE_CHANGE = 2
 cdef int BASELINE_ADAPTIVE = 3
 cdef int BASELINE_FIXED = 4
 
+DTYPE = np.double
+ctypedef np.double_t DTYPE_t
+
 def _getDataRange(dataCache, long i, long n):
     '''
     returns [i,n)
     '''
-    res = np.zeros(n - i)
-    cdef long resspot = 0
-    cdef long l = 0
-    cdef long nn = 0
+    if (i > n):
+        print i,n
+    cdef np.ndarray[DTYPE_t] res = np.zeros(n - i, dtype = DTYPE)
+    cdef long resspot =0, l, nn
     # do we need to include points from the old data
     # (eg. for raw event points)
     if i < 0:
@@ -39,6 +43,7 @@ def _getDataRange(dataCache, long i, long n):
         resspot -= i
         i = 0
     cdef long spot = 0
+    cdef np.ndarray[DTYPE_t] cache
     for q in xrange(len(dataCache) - 1):
         cache = dataCache[q + 1]
         nn = cache.size
@@ -90,8 +95,9 @@ def _lazyLoadFindEvents(signal = None, save_file = None, **parameters):
         directionPositive = True
         
     # allocate memory for data
-    data, _ = getNextBlocks(f, params, get_blocks)
-    data = data[0]  # only get channel 1
+    datax, _ = getNextBlocks(f, params, get_blocks)
+    cdef np.ndarray[DTYPE_t] data = datax[0]  # only get channel 1
+    del datax
     
     cdef long n = data.size
     
@@ -132,7 +138,7 @@ def _lazyLoadFindEvents(signal = None, save_file = None, **parameters):
         threshold_end = datapoint
         threshold_type = THRESHOLD_NOISE_BASED
     
-    dataCache = [np.zeros(n) + datapoint, data]
+    dataCache = [np.zeros(n, dtype = DTYPE) + datapoint, data]
     
     cdef long i = 0
     cdef long prevI = 0
@@ -164,6 +170,8 @@ def _lazyLoadFindEvents(signal = None, save_file = None, **parameters):
     cdef int cache_index = 0
     cdef int size = 0
     cdef double h = 0
+    
+    cdef np.ndarray[DTYPE_t] level_values
     
     # search for events.  Keep track of filter_parameter filtered local (adapting!) mean and variance,
     # and use them to decide filter_parameter threshold_start for events.  See
@@ -287,16 +295,22 @@ def _lazyLoadFindEvents(signal = None, save_file = None, **parameters):
             # is the event long enough?
             if done and event_end - event_start > min_event_steps:
                 # CUSUM stuff
-                level_values = np.zeros(n_levels)  # Holds the current values of the level_values
-                for q in xrange(0, n_levels):
-                    start_index = level_indexes[q]
-                    end_index = level_indexes[q + 1]
-                    if start_index > end_index:
-                        print '\n'
-                        print level_indexes
-                    level_values[q] = np.mean(_getDataRange(dataCache, start_index, end_index))
-                for j, level_index in enumerate(level_indexes):
-                    level_indexes[j] = level_index + placeInData
+                # is there enough for multiple levels?
+                if event_end - event_start > 10:
+                    level_values = np.zeros(n_levels, DTYPE)  # Holds the current values of the level_values
+                    for q in xrange(0, n_levels):
+                        start_index = level_indexes[q]
+                        end_index = level_indexes[q + 1]
+                        if start_index > end_index:
+                            print '\n'
+                            print level_indexes
+                        level_values[q] = np.mean(_getDataRange(dataCache, start_index, end_index))
+                    for j, level_index in enumerate(level_indexes):
+                        level_indexes[j] = level_index + placeInData
+                # otherwise just say 1 level
+                else:
+                    level_values = np.zeros(1, DTYPE) + np.mean(_getDataRange(dataCache, event_start, event_end))
+                    level_indexes = [event_start, event_end]
                 # end CUSUM
                 event = {}
                 event['event_data'] = _getDataRange(dataCache, event_start, event_end)
@@ -326,8 +340,8 @@ def _lazyLoadFindEvents(signal = None, save_file = None, **parameters):
             # for old data, then we need new data.
             if len(dataCache) < 2:
                 datanext, _ = getNextBlocks(f, params, get_blocks)
-                datanext = datanext[0]
-                dataCache.append(datanext)
+                data = datanext[0]
+                dataCache.append(data)
             if len(dataCache) > 1:
                 n = dataCache[1].size
             if placeInData % 1000000 == 0:

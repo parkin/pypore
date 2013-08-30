@@ -5,7 +5,20 @@ Created on May 23, 2013
 '''
 import scipy.io as sio
 import numpy as np
+cimport numpy as np
 import os
+
+DTYPE = np.double
+ctypedef np.double_t DTYPE_t
+
+# Data types list, in order specified by the HEKA file header v2.0.
+# Using big-endian.
+# Code 0=uint8,1=uint16,2=uint32,3=int8,4=int16,5=int32,
+#    6=single,7=double,8=string64,9=string512
+encodings = [np.dtype('>u1'), np.dtype('>u2'), np.dtype('>u4'), 
+             np.dtype('>i1'), np.dtype('>i2'), np.dtype('>i4'), 
+             np.dtype('>f4'), np.dtype('>f8'), np.dtype('>S64'), 
+             np.dtype('>S512'), np.dtype('<u2')]
 
 def openData(filename, decimate=False):
     '''
@@ -84,6 +97,7 @@ def openChimeraFile(filename, decimate=False):
     cdef long ADCBITS = p['ADCBITS']
     cdef double ADCvref = p['ADCvref']
     datatype = p['datatype']
+#     ctypedef datatype datatype_t
     specsfile = p['specsfile']
     
 
@@ -92,6 +106,8 @@ def openChimeraFile(filename, decimate=False):
     cdef int block_size = 0
     cdef long decimated_size = 0
     cdef long i = 0
+    cdef np.ndarray[DTYPE_t] logdata, readvalues
+    cdef np.ndarray rawvalues
     if decimate:
         # Calculate number of points in the dataset
         filesize = os.path.getsize(filename)
@@ -116,8 +132,8 @@ def openChimeraFile(filename, decimate=False):
         specsfile['SETUP_ADCSAMPLERATE'][0][0] = specsfile['SETUP_ADCSAMPLERATE'][0][0]*2/block_size
     else:
         rawvalues = np.fromfile(datafile,datatype)
-        readvalues = rawvalues & bitmask
-        logdata = -ADCvref + (2*ADCvref) * readvalues / (2**16);
+        rawvalues = rawvalues & bitmask
+        logdata = -ADCvref + (2*ADCvref) * rawvalues / (2**16);
 
     specsfile['data'] = [logdata]
     datafile.close()
@@ -162,15 +178,15 @@ def prepareChimeraFile(filename):
 def getNextChimeraBlocks(datafile, params, int n):
     '''
     '''
-    block_size = params['points_per_channel_per_block']
+    cdef int block_size = params['points_per_channel_per_block']
     
     datatype = params['datatype']
     cdef long bitmask = params['bitmask']
     cdef double ADCvref = params['ADCvref']
     
-    rawvalues = np.fromfile(datafile,datatype, n*block_size)
-    readvalues = rawvalues & bitmask
-    logdata = -ADCvref + (2*ADCvref) * readvalues / (2**16);
+    cdef np.ndarray rawvalues = np.fromfile(datafile,datatype, n*block_size)
+    rawvalues = rawvalues & bitmask
+    cdef np.ndarray[DTYPE_t] logdata = -ADCvref + (2*ADCvref) * rawvalues / (2**16)
     
     done = False # eof?
     if logdata.size < 1:
@@ -178,15 +194,6 @@ def getNextChimeraBlocks(datafile, params, int n):
     
     return [logdata], done
         
-# Data types list, in order specified by the HEKA file header v2.0.
-# Using big-endian.
-# Code 0=uint8,1=uint16,2=uint32,3=int8,4=int16,5=int32,
-#    6=single,7=double,8=string64,9=string512
-encodings = [np.dtype('>u1'), np.dtype('>u2'), np.dtype('>u4'), 
-             np.dtype('>i1'), np.dtype('>i2'), np.dtype('>i4'), 
-             np.dtype('>f4'), np.dtype('>f8'), np.dtype('>S64'), 
-             np.dtype('>S512')]
-
 def prepareHekaFile(filename):
     f = open(filename, 'rb')
     # Check that the first line is as expected
