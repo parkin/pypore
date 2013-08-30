@@ -154,8 +154,8 @@ def _lazyLoadFindEvents(**parameters):
     cdef double delta = 0
     cdef long min_index_p = 0
     cdef long min_index_n = 0
-    cdef double min_Sp = 9999999
-    cdef double min_Sn = 9999999
+    cdef double min_Sp = float("inf")
+    cdef double min_Sn = float("inf")
     cdef long ko = i
     cdef double event_area = datapoint - local_mean  # integrate the area
     cdef int cache_index = 0
@@ -274,7 +274,7 @@ def _lazyLoadFindEvents(**parameters):
                     # reset stuff
                     mean_estimate = dataCache[int(1.*minindex / n) + 1][minindex % n]
                     sn = sp = Sn = Sp = Gn = Gp = 0
-                    min_Sp = min_Sn = 9999999
+                    min_Sp = min_Sn = float("inf")
                     # Go back to 1 after the level change found
                     ko = event_i = minindex
                     min_index_p = min_index_n = event_i
@@ -327,7 +327,7 @@ def _lazyLoadFindEvents(**parameters):
                 dataCache.append(datanext)
             if len(dataCache) > 1:
                 n = dataCache[1].size
-            if placeInData % 50000 == 0:
+            if placeInData % 1000000 == 0:
                 recent_time = time.time() - time2
                 total_time = time.time() - time1
 #                     dataReady.emit({'status_text': 'Event Count: ' + str(event_count) + ' Percent Done: ' + str(100.*placeInData / points_per_channel_total) + ' Rate: ' + str((placeInData-prevI)/recent_time) + ' samples/s' + ' Total Rate:' + str(placeInData/total_time) + ' samples/s'})
