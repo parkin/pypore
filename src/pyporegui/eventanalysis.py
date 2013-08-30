@@ -19,7 +19,7 @@ import scipy.io as sio
 import numpy as np
 
 # My stuff
-from pypore.MyThreads import AnalyzeDataThread, PlotThread
+from MyThreads import AnalyzeDataThread, PlotThread
 from views import FileListItem, FilterListItem, PlotToolBar, DataFileListItem, MyPlotItem
 
 from pypore.DataFileOpener import prepareDataFile
