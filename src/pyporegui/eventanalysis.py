@@ -14,7 +14,6 @@ from pyqtgraph.widgets.LayoutWidget import LayoutWidget
 from pyqtgraph.graphicsItems.PlotCurveItem import PlotCurveItem
 
 from scipy import linspace
-import scipy.io as sio
 
 import numpy as np
 
@@ -87,7 +86,7 @@ class MyMainWindow(QtGui.QMainWindow):
         '''
         Opens file dialog box, add names of event database files to open list
         '''
-        fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open event database', self.openDir, '*.mat')[0]
+        fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open event database', self.openDir, '*.npy')[0]
         if len(fnames) > 0:
             self.listEventWidget.clear()
         else:
@@ -568,16 +567,15 @@ class MyMainWindow(QtGui.QMainWindow):
         currentBlockade = []
         dwellTimes = []
         for filename in filenames:
-            database = sio.loadmat(str(filename))
+            database = np.load(str(filename)).item()
             events = database['Events']
-            sample_rate = database['sample_rate'][0][0]
+            sample_rate = database['sample_rate']
             for event in events:
-                event = event[0][0] # extra zeroes come from way scipy.io saves .mat
-                baseline = event['baseline'][0][0][0]
-                levels = event['cusum_values'][0][0]
+                baseline = event['baseline']
+                levels = event['cusum_values']
                 for level in levels:
                     currentBlockade.append(level - baseline)
-                dwellTime = (event['event_end'][0][0][0]-event['event_start'][0][0][0])/sample_rate
+                dwellTime = (event['event_end']-event['event_start'])/sample_rate
                 dwellTimes.append(dwellTime)
                 
         color = params['color']
