@@ -88,9 +88,10 @@ class AnalyzeDataThread(QtCore.QThread):
         self.wait()
         
     def periodicCall(self):
-        self.updateGui()
         if self.cancelled:
+            self.save_file['cancelled'] = True
             return
+        self.updateGui()
         self.timer.start(500)
         
     def updateGui(self):

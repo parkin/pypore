@@ -155,7 +155,7 @@ def prepareChimeraFile(filename):
     # Calculate number of points per channel
     filesize = os.path.getsize(filename)
     datatype = np.dtype('<u2')
-    cdef int points_per_channel_per_block = 5000
+    cdef int points_per_channel_per_block = 10000
     cdef long points_per_channel_total = filesize/datatype.itemsize
 
     cdef long ADCBITS = specsfile['SETUP_ADCBITS'][0][0]

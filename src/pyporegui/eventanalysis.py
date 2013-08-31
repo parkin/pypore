@@ -659,11 +659,7 @@ class MyMainWindow(QtGui.QMainWindow):
         self.plot_event_zoomed.plot(x=times2,y=levels2, pen=pg.mkPen('g'))
         
     def getEventAndLevelsData(self, event):
-        try:
-            data = event['raw_data']
-        except TypeError:
-            print 'TypeError, event:', event
-            return
+        data = event['raw_data']
         levels_index = event['cusum_indexes']
         levels_values = event['cusum_values']
         sample_rate = event['sample_rate']
@@ -674,7 +670,9 @@ class MyMainWindow(QtGui.QMainWindow):
         
         Ts = 1 / sample_rate
         
-        times = linspace(Ts * (event_start - raw_points_per_side), Ts * (event_start - raw_points_per_side + len(data) - 1), len(data))
+        n = data.size
+        
+        times = linspace(Ts * (event_start - raw_points_per_side), Ts * (event_start - raw_points_per_side + n - 1), n)
         times2 = [(event_start - raw_points_per_side) * Ts, (event_start-1)*Ts]
         levels2 = [baseline, baseline]
         for i, level_value in enumerate(levels_values):
@@ -858,7 +856,7 @@ class MyMainWindow(QtGui.QMainWindow):
     def cleanThreads(self):
         for w in self.threadPool:
             w.cancelled = True
-            w.wait()
+#             w.wait()
             self.threadPool.remove(w)
         
         

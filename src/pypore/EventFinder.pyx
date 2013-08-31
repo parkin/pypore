@@ -27,8 +27,6 @@ def _getDataRange(dataCache, long i, long n):
     '''
     returns [i,n)
     '''
-    if (i > n):
-        print i,n
     cdef np.ndarray[DTYPE_t] res = np.zeros(n - i, dtype = DTYPE)
     cdef long resspot =0, l, nn
     # do we need to include points from the old data
@@ -79,8 +77,9 @@ def _lazyLoadFindEvents(signal = None, save_file = None, **parameters):
     cdef double sample_rate = params['sample_rate']
     cdef double timestep = 1. / sample_rate
     # Min and Max number of points in an event
-    cdef int min_event_steps = int(parameters['min_event_length'] * 1e-6 / timestep)
-    cdef int max_event_steps = int(parameters['max_event_length'] * 1e-6 / timestep)
+    cdef int min_event_steps = np.ceil(parameters['min_event_length'] * 1e-6 / timestep)
+    cdef int max_event_steps = np.ceil(parameters['max_event_length'] * 1e-6 / timestep)
+    print 'min:', min_event_steps, 'max:', max_event_steps
     cdef long points_per_channel_total = params['points_per_channel_total']
     
     # Threshold direction.  -1 for negative, 0 for both, +1 for positive
@@ -170,6 +169,8 @@ def _lazyLoadFindEvents(signal = None, save_file = None, **parameters):
     cdef int cache_index = 0
     cdef int size = 0
     cdef double h = 0
+    cdef long cache_refreshes = 0 #number of times we get new data at the
+                                    # end of the loop
     
     cdef np.ndarray[DTYPE_t] level_values
     
@@ -177,9 +178,10 @@ def _lazyLoadFindEvents(signal = None, save_file = None, **parameters):
     # and use them to decide filter_parameter threshold_start for events.  See
     # http://pubs.rsc.org/en/content/articlehtml/2012/nr/c2nr30951c for more details.
     while i < n:
-#         time.sleep(0)# way to yield to other threads. Allows the gui
-#                                 # to remain responsive. Note this obviously 
-#                                 # lowers the samples/s rate.
+        if signal is not None and i%1000 == 0:
+            time.sleep(0)# way to yield to other threads. Allows the gui
+                                # to remain responsive. Note this obviously 
+                                # lowers the samples/s rate.
         datapoint = dataCache[1][i]
         if threshold_type == THRESHOLD_NOISE_BASED:
             threshold_start = start_stddev * local_variance ** .5 
@@ -221,9 +223,10 @@ def _lazyLoadFindEvents(signal = None, save_file = None, **parameters):
             
             # loop until event ends
             while not done and event_i - event_start < max_event_steps:
-#                 time.sleep(0) # way to yield to other threads. Allows the gui
-#                                 # to remain responsive. Note this obviously 
-#                                 # lowers the samples/s rate.
+                if signal is not None and event_i %1000 == 0:
+                    time.sleep(0) # way to yield to other threads. Allows the gui
+                                    # to remain responsive. Note this obviously 
+                                    # lowers the samples/s rate.
                 event_i = event_i + 1
                 if event_i % n == 0:  # We may need new data
                     size = 0
@@ -277,11 +280,10 @@ def _lazyLoadFindEvents(signal = None, save_file = None, **parameters):
                 # Did we detect a change?
                 if Gp > h or Gn > h:
                     minindex = min_index_n
-                    level_indexes.append(min_index_n)
                     if Gp > h:
                         minindex = min_index_p
-                        level_indexes[n_levels - 1] = min_index_p
-                    n_levels = n_levels + 1
+                    level_indexes.append(minindex)
+                    n_levels += 1
                     # reset stuff
                     mean_estimate = dataCache[int(1.*minindex / n) + 1][minindex % n]
                     sn = sp = Sn = Sp = Gn = Gp = 0
@@ -301,16 +303,18 @@ def _lazyLoadFindEvents(signal = None, save_file = None, **parameters):
                     for q in xrange(0, n_levels):
                         start_index = level_indexes[q]
                         end_index = level_indexes[q + 1]
-                        if start_index > end_index:
-                            print '\n'
-                            print level_indexes
                         level_values[q] = np.mean(_getDataRange(dataCache, start_index, end_index))
-                    for j, level_index in enumerate(level_indexes):
-                        level_indexes[j] = level_index + placeInData
-                # otherwise just say 1 level
+                # otherwise just say 1 level and use the maximum change as the value
                 else:
-                    level_values = np.zeros(1, DTYPE) + np.mean(_getDataRange(dataCache, event_start, event_end))
+                    level_values = np.zeros(1, DTYPE)
+                    if wasEventPositive:
+                        level_values += np.max(_getDataRange(dataCache, event_start, event_end))
+                    else:
+                        level_values += np.min(_getDataRange(dataCache, event_start, event_end))
                     level_indexes = [event_start, event_end]
+                    
+                for j, level_index in enumerate(level_indexes):
+                        level_indexes[j] = level_index + placeInData
                 # end CUSUM
                 event = {}
                 event['event_data'] = _getDataRange(dataCache, event_start, event_end)
@@ -339,12 +343,13 @@ def _lazyLoadFindEvents(signal = None, save_file = None, **parameters):
             # If we're just left with dataCache[0], which is reserved
             # for old data, then we need new data.
             if len(dataCache) < 2:
+                cache_refreshes += 1
                 datanext, _ = getNextBlocks(f, params, get_blocks)
                 data = datanext[0]
                 dataCache.append(data)
             if len(dataCache) > 1:
                 n = dataCache[1].size
-            if placeInData % 1000000 == 0:
+            if cache_refreshes % 100 == 0:
                 recent_time = time.time() - time2
                 total_time = time.time() - time1
                 if signal is not None:
@@ -354,7 +359,10 @@ def _lazyLoadFindEvents(signal = None, save_file = None, **parameters):
                     sys.stdout.flush()
                 time2 = time.time()
                 prevI = placeInData
-            
+        if i == 0:
+            if 'cancelled' in save_file:
+                print 'cancelled'
+                return {'error': 'Cancelled'}
             
     if event_count > 0:
         save_file_name = list(parameters['filename'])
