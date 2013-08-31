@@ -10,6 +10,7 @@ cimport numpy as np
 from pypore.DataFileOpener import prepareDataFile, getNextBlocks
 from itertools import chain
 import sys
+from libc.math cimport sqrt, pow
 
 # Threshold types
 cdef int THRESHOLD_NOISE_BASED = 0
@@ -132,7 +133,7 @@ def _lazyLoadFindEvents(signal = None, save_file = None, **parameters):
         local_variance = np.var(data[0:initialization_index])
 
         # distance from mean to define an event.  noise based unless otherwise chosen.
-        threshold_start = start_stddev * local_variance ** .5
+        threshold_start = start_stddev * sqrt(local_variance)
         threshold_end = datapoint
         threshold_type = THRESHOLD_NOISE_BASED
     
@@ -183,7 +184,7 @@ def _lazyLoadFindEvents(signal = None, save_file = None, **parameters):
                                 # lowers the samples/s rate.
         datapoint = dataCache[1][i]
         if threshold_type == THRESHOLD_NOISE_BASED:
-            threshold_start = start_stddev * local_variance ** .5 
+            threshold_start = start_stddev * sqrt(local_variance) 
         
         # could this be an event?
         if threshold_type == THRESHOLD_PERCENTAGE_CHANGE:
@@ -200,7 +201,7 @@ def _lazyLoadFindEvents(signal = None, save_file = None, **parameters):
             isEvent = False
             # Set ending threshold_end
             if threshold_type == THRESHOLD_NOISE_BASED:
-                threshold_end = end_stddev * local_variance ** .5 
+                threshold_end = end_stddev * sqrt(local_variance) 
             elif threshold_type == THRESHOLD_PERCENTAGE_CHANGE:
                 threshold_end = local_mean * parameters['percent_change_end'] / 100.
             event_start = i
@@ -275,7 +276,7 @@ def _lazyLoadFindEvents(signal = None, save_file = None, **parameters):
                 if Sn <= min_Sn:
                     min_Sn = Sn
                     min_index_n = event_i
-                h = delta / (var_estimate) ** .5
+                h = delta / sqrt(var_estimate)
                 # Did we detect a change?
                 if Gp > h or Gn > h:
                     minindex = min_index_n
@@ -332,7 +333,7 @@ def _lazyLoadFindEvents(signal = None, save_file = None, **parameters):
         
         
         local_mean = filter_parameter * local_mean + (1 - filter_parameter) * datapoint
-        local_variance = filter_parameter * local_variance + (1 - filter_parameter) * (datapoint - local_mean) ** 2
+        local_variance = filter_parameter * local_variance + (1 - filter_parameter) * pow(datapoint - local_mean, 2)
         i += 1
         # remove any arrays in the cache that we dont need anymore
         while i >= n and n > 0:
