@@ -79,7 +79,6 @@ def _lazyLoadFindEvents(signal = None, save_file = None, **parameters):
     # Min and Max number of points in an event
     cdef int min_event_steps = np.ceil(parameters['min_event_length'] * 1e-6 / timestep)
     cdef int max_event_steps = np.ceil(parameters['max_event_length'] * 1e-6 / timestep)
-    print 'min:', min_event_steps, 'max:', max_event_steps
     cdef long points_per_channel_total = params['points_per_channel_total']
     
     # Threshold direction.  -1 for negative, 0 for both, +1 for positive
