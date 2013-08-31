@@ -10,7 +10,7 @@ cimport numpy as np
 from pypore.DataFileOpener import prepareDataFile, getNextBlocks
 from itertools import chain
 import sys
-from libc.math cimport sqrt, pow
+from libc.math cimport sqrt, pow, fmax, fmin
 
 # Threshold types
 cdef int THRESHOLD_NOISE_BASED = 0
@@ -268,8 +268,8 @@ def _lazyLoadFindEvents(signal = None, save_file = None, **parameters):
                     sp = sn = float('inf')
                 Sp = Sp + sp
                 Sn = Sn + sn
-                Gp = max(0, Gp + sp)
-                Gn = max(0, Gn + sn)
+                Gp = fmax(0.0, Gp + sp)
+                Gn = fmax(0.0, Gn + sn)
                 if Sp <= min_Sp:
                     min_Sp = Sp
                     min_index_p = event_i
