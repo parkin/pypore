@@ -8,6 +8,8 @@ To run, in shell do './eventanalysis', or 'python eventanalysis'
 Install Cython.  cd to setup.py dir.
 
 `python setup.py build_ext --inplace`
+or
+`OPT="-O3 -ffast-math" python setup.py build_ext -i`
 
 # TODO
 * Use one file format for data files.  Make a tool for converting other files, like Heka or Chimera or others.
