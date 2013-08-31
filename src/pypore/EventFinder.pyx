@@ -23,7 +23,7 @@ cdef int BASELINE_FIXED = 4
 DTYPE = np.double
 ctypedef np.double_t DTYPE_t
 
-def _getDataRange(dataCache, long i, long n):
+cdef _getDataRange(dataCache, long i, long n):
     '''
     returns [i,n)
     '''
