@@ -3,6 +3,8 @@ Created on May 23, 2013
 
 @author: parkin
 '''
+# cython: profile=True
+
 import scipy.io as sio
 import numpy as np
 cimport numpy as np

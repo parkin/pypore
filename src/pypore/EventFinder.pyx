@@ -3,6 +3,7 @@ Created on Aug 19, 2013
 
 @author: parkin
 '''
+# cython: profile=True
 
 import time, datetime
 import numpy as np
@@ -10,7 +11,7 @@ cimport numpy as np
 from pypore.DataFileOpener import prepareDataFile, getNextBlocks
 from itertools import chain
 import sys
-from libc.math cimport sqrt, pow, fmax, fmin
+from libc.math cimport sqrt, pow, fmax, fmin, abs
 
 # Threshold types
 cdef int THRESHOLD_NOISE_BASED = 0
@@ -24,7 +25,7 @@ cdef int BASELINE_FIXED = 4
 DTYPE = np.double
 ctypedef np.double_t DTYPE_t
 
-cdef np.ndarray[DTYPE_t] _getDataRange(dataCache, long i, long n):
+cdef inline np.ndarray[DTYPE_t] _getDataRange(dataCache, long i, long n):
     '''
     returns [i,n)
     '''
@@ -59,8 +60,7 @@ cdef np.ndarray[DTYPE_t] _getDataRange(dataCache, long i, long n):
         spot += nn
     return res
         
-        
-def _lazyLoadFindEvents(signal = None, save_file = None, **parameters):
+cdef _lazyLoadFindEvents(parameters, signal = None, save_file = None):
     cdef int event_count = 0
     
     cdef int get_blocks = 1
@@ -139,40 +139,43 @@ def _lazyLoadFindEvents(signal = None, save_file = None, **parameters):
     
     dataCache = [np.zeros(n, dtype = DTYPE) + datapoint, data]
     
-    cdef long i = 0
-    cdef long prevI = 0
-    cdef double time1 = time.time()
-    cdef double time2 = time1
-    cdef long event_start = 0
-    cdef long event_end = 0
     isEvent = False
     wasEventPositive = False  # Was the event an up spike?
-    cdef long placeInData = 0
     
-    cdef double mean_estimate = 0.0
-    cdef double sn = 0
-    cdef double sp = 0
-    cdef double Sn = 0
-    cdef double Sp = 0
-    cdef double Gn = 0
-    cdef double Gp = 0
-    cdef double new_mean = 0
-    cdef double var_estimate = 0
-    cdef int n_levels = 0
-    cdef double delta = 0
-    cdef long min_index_p = 0
-    cdef long min_index_n = 0
-    cdef double min_Sp = float("inf")
-    cdef double min_Sn = float("inf")
-    cdef long ko = i
-    cdef double event_area = datapoint - local_mean  # integrate the area
-    cdef int cache_index = 0
-    cdef int size = 0
-    cdef double h = 0
-    cdef long cache_refreshes = 0 #number of times we get new data at the
-                                    # end of the loop
+    cdef:
     
-    cdef np.ndarray[DTYPE_t] level_values
+        long i = 0
+        long prevI = 0
+        double time1 = time.time()
+        double time2 = time1
+        long event_start = 0
+        long event_end = 0
+        long placeInData = 0
+        
+        double mean_estimate = 0.0
+        double sn = 0
+        double sp = 0
+        double Sn = 0
+        double Sp = 0
+        double Gn = 0
+        double Gp = 0
+        double new_mean = 0
+        double var_estimate = 0
+        int n_levels = 0
+        double delta = 0
+        long min_index_p = 0
+        long min_index_n = 0
+        double min_Sp = float("inf")
+        double min_Sn = float("inf")
+        long ko = i
+        double event_area = datapoint - local_mean  # integrate the area
+        int cache_index = 0
+        int size = 0
+        double h = 0
+        long cache_refreshes = 0 #number of times we get new data at the
+                                        # end of the loop
+        
+        np.ndarray[DTYPE_t] level_values
     
     # search for events.  Keep track of filter_parameter filtered local (adapting!) mean and variance,
     # and use them to decide filter_parameter threshold_start for events.  See
@@ -215,7 +218,7 @@ def _lazyLoadFindEvents(signal = None, save_file = None, **parameters):
             sn = sp = Sn = Sp = Gn = Gp = 0
             var_estimate = local_variance
             n_levels = 1  # We're already starting with one level
-            delta = np.absolute(mean_estimate - local_mean) / 10.
+            delta = abs(mean_estimate - local_mean) / 10.
             min_index_p = min_index_n = i
             min_Sp = min_Sn = 999999
             ko = i
@@ -399,4 +402,4 @@ def findEvents(signal = None, save_file = None, **parameters):
     # do a union of defaultParams and parameters, keeping the
     # parameters entries on conflict.
     params = dict(chain(defaultParams.iteritems(), parameters.iteritems()))
-    return _lazyLoadFindEvents(signal, save_file, **params)
+    return _lazyLoadFindEvents(params, signal, save_file)
