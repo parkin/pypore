@@ -15,3 +15,4 @@ src/pypore/test/testDataFiles/*Events*
 *.c
 src/pypore/__pycache__/*
 src/pypore/build/*
+src/pypore/*.html

@@ -3,7 +3,6 @@ Created on Aug 19, 2013
 
 @author: parkin
 '''
-# cython: profile=True
 
 import time, datetime
 import numpy as np
@@ -29,7 +28,9 @@ cdef inline np.ndarray[DTYPE_t] _getDataRange(dataCache, long i, long n):
     '''
     returns [i,n)
     '''
-    cdef np.ndarray[DTYPE_t] res = np.zeros(n - i, dtype = DTYPE)
+    cdef np.ndarray[DTYPE_t,
+                    negative_indices=False,
+                    mode='c'] res = np.zeros(n - i, dtype = DTYPE)
     cdef long resspot =0, l, nn
     # do we need to include points from the old data
     # (eg. for raw event points)
@@ -60,7 +61,7 @@ cdef inline np.ndarray[DTYPE_t] _getDataRange(dataCache, long i, long n):
         spot += nn
     return res
         
-cdef _lazyLoadFindEvents(parameters, signal = None, save_file = None):
+cdef lazyLoadFindEvents(parameters, signal = None, save_file = None):
     cdef int event_count = 0
     
     cdef int get_blocks = 1
@@ -402,4 +403,4 @@ def findEvents(signal = None, save_file = None, **parameters):
     # do a union of defaultParams and parameters, keeping the
     # parameters entries on conflict.
     params = dict(chain(defaultParams.iteritems(), parameters.iteritems()))
-    return _lazyLoadFindEvents(params, signal, save_file)
+    return lazyLoadFindEvents(params, signal, save_file)
