@@ -219,7 +219,7 @@ cdef lazyLoadFindEvents(parameters, signal = None, save_file = None):
             sn = sp = Sn = Sp = Gn = Gp = 0
             var_estimate = local_variance
             n_levels = 1  # We're already starting with one level
-            delta = abs(mean_estimate - local_mean) / 10.
+            delta = abs(mean_estimate - local_mean) / 5.
             min_index_p = min_index_n = i
             min_Sp = min_Sn = 999999
             ko = i
