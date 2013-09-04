@@ -173,6 +173,10 @@ cdef lazyLoadFindEvents(parameters, signal = None, save_file = None):
         int cache_index = 0
         int size = 0
         double h = 0
+        double percent_done = 0
+        double rate = 0
+        double total_rate = 0
+        int time_left = 0
         long cache_refreshes = 0 #number of times we get new data at the
                                         # end of the loop
         
@@ -356,13 +360,18 @@ cdef lazyLoadFindEvents(parameters, signal = None, save_file = None):
             if cache_refreshes % 100 == 0:
                 recent_time = time.time() - time2
                 total_time = time.time() - time1
+                percent_done = 100.*(placeInData+i) / points_per_channel_total
+                rate = (placeInData-prevI)/recent_time
+                total_rate = (placeInData + i - prevI)/recent_time
+                time_left = int((points_per_channel_total-(placeInData+i))/rate)
+                status_text = "Event Count: %d Percent Done: %.2f Rate: %.2e pt/s Total Rate: %.2e pt/s Time Left: %s" % (event_count, percent_done, rate, total_rate, datetime.timedelta(seconds=time_left))
                 if signal is not None:
-                    signal.emit({'status_text': 'Event Count: ' + str(event_count) + ' Percent Done: ' + str(100.*placeInData / points_per_channel_total) + ' Rate: ' + str((placeInData-prevI)/recent_time) + ' samples/s' + ' Total Rate:' + str(placeInData/total_time) + ' samples/s'})
+                    signal.emit({'status_text': status_text})
                 else:
-                    sys.stdout.write("\rEvent Count: %d  rate: %f" % (event_count, placeInData / total_time))
+                    sys.stdout.write("\r" + status_text)
                     sys.stdout.flush()
                 time2 = time.time()
-                prevI = placeInData
+                prevI = placeInData + i
         if i == 0:
             if 'cancelled' in save_file:
                 print 'cancelled'
