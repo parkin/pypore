@@ -5,8 +5,7 @@ Created on Aug 19, 2013
 '''
 import unittest
 import os.path
-from pypore.DataFileOpener import openData, prepareDataFile, prepareChimeraFile,\
-    openChimeraFile
+from pypore.DataFileOpener import openData, prepareDataFile
 
 class TestDataFileOpener(unittest.TestCase):
 
@@ -39,7 +38,7 @@ class TestDataFileOpener(unittest.TestCase):
             self.assertIn('error', x, 'Error not returned when opening chimera file without .mat spec file.')
             self.assertTrue('.mat' in x['error'], 'Incorrect error returned for chimera file without .mat spec file')
             
-            y,x = prepareChimeraFile(filename) 
+            y,x = prepareDataFile(filename) 
             self.assertIn('error', x, 'Error not returned when opening chimera file without .mat spec file.')
             self.assertTrue('.mat' in x['error'], 'Incorrect error returned for chimera file without .mat spec file')
             self.assertEqual(y, 0, 'prepareChimera did not return 0 when error raised')
@@ -64,7 +63,7 @@ class TestDataFileOpener(unittest.TestCase):
         # Make sure path to chimera file is correct.
         directory = os.path.dirname(os.path.abspath(__file__))
         filename = os.path.join(os.path.join(directory,'testDataFiles'),'smallChimera.log')
-        specs = openChimeraFile(filename, False)
+        specs = openData(filename, False)
         self._testSmallChimeraFileHelp(specs)
         
 

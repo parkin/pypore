@@ -24,7 +24,7 @@ cdef int BASELINE_FIXED = 4
 DTYPE = np.double
 ctypedef np.double_t DTYPE_t
 
-cdef inline np.ndarray[DTYPE_t] _getDataRange(dataCache, long i, long n):
+cpdef inline np.ndarray[DTYPE_t] _getDataRange(dataCache, long i, long n):
     '''
     returns [i,n)
     '''
