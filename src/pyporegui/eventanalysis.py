@@ -6,6 +6,7 @@
 This program is for finding events in files and displaying the results.
 '''
 import sys
+import cythonsetup
 
 from PySide import QtCore, QtGui # Must import PySide stuff before pyqtgraph so pyqtgraph knows
                                 # to use PySide instead of PyQt
