@@ -1,4 +1,5 @@
 import os
+import sys
 import numpy
 import pyximport
 
@@ -23,11 +24,9 @@ elif os.name == 'posix':
     else:
         os.environ['CFLAGS'] = ' -I' + numpy.get_include()
 
+
     pyximport.install()
 
-
-if os.environ.has_key('PYTHONPATH'):
-    os.environ['PYTHONPATH'] = os.environ['PYTHONPATH'] + 
-else:
-    os.environ['CFLAGS'] = ' -I' + numpy.get_include()
+dirname = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+sys.path.append(dirname)
 
