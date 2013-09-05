@@ -96,7 +96,7 @@ class AnalyzeDataThread(QtCore.QThread):
         
     def updateGui(self):
 #         self.dataReady.emit({'event': event})
-        send = {'status_text': 'Event Count: ' + str(self.event_count) + ' Percent Done: ' + str(100.*self.placeInData / self.points_per_channel_total) + ' Rate: ' + str((self.placeInData-self.prevI)/self.recent_time) + ' samples/s' + ' Total Rate:' + str(self.placeInData/self.total_time) + ' samples/s'}
+        send = {}
         events = self.save_file['Events']
         count = len(events)
         if self.readyForEvents:

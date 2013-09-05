@@ -829,6 +829,7 @@ class MyMainWindow(QtGui.QMainWindow):
         
     def _analyze_data_thread_callback(self, results):
         if 'status_text' in results:
+            text = results['status_text']
             self.status_text.setText(results['status_text'])
         if 'Events' in results:
             singlePlot = False

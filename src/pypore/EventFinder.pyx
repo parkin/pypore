@@ -366,6 +366,8 @@ cdef lazyLoadFindEvents(parameters, signal = None, save_file = None):
                 time_left = int((points_per_channel_total-(placeInData+i))/rate)
                 status_text = "Event Count: %d Percent Done: %.2f Rate: %.2e pt/s Total Rate: %.2e pt/s Time Left: %s" % (event_count, percent_done, rate, total_rate, datetime.timedelta(seconds=time_left))
                 if signal is not None:
+                    if event_count < 1:
+                        print 'st:',status_text
                     signal.emit({'status_text': status_text})
                 else:
                     sys.stdout.write("\r" + status_text)
