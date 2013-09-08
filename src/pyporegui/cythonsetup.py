@@ -3,6 +3,9 @@ import sys
 import numpy
 import pyximport
 
+mingw_setup_args = {}
+
+# If Windows, we want to compile with the windows c compiler, MinGW
 if os.name == 'nt':
     if os.environ.has_key('CPATH'):
         os.environ['CPATH'] = os.environ['CPATH'] + numpy.get_include()
@@ -16,18 +19,20 @@ if os.name == 'nt':
         os.environ['PATH'] = 'C:\\MinGW\\bin'
 
     mingw_setup_args = {'options': {'build_ext': {'compiler': 'mingw32'}}}
-    pyximport.install(setup_args=mingw_setup_args,
-                      build_dir='.pyxbld')
 
+# If Unix
 elif os.name == 'posix':
     if os.environ.has_key('CFLAGS'):
         os.environ['CFLAGS'] = os.environ['CFLAGS'] + ' -I' + numpy.get_include()
     else:
         os.environ['CFLAGS'] = ' -I' + numpy.get_include()
 
+dirname = os.path.dirname(os.path.realpath(__file__))
+    
+pyximport.install(setup_args=mingw_setup_args,
+                      build_dir= os.path.join(dirname, '.pyxbld'))
 
-    pyximport.install()
+packagepath = os.path.dirname(dirname)
 
-dirname = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.append(dirname)
+sys.path.append(packagepath)
 
