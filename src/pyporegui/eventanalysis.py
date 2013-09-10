@@ -96,7 +96,7 @@ class MyMainWindow(QtGui.QMainWindow):
         for w in fnames:
             areFilesOpened = True
             item = FileListItem(w)
-            self.openDir = item.getDirectory() # save the direcory info for later
+            self.openDir = item.getDirectory() # save the directory info for later
             self.listEventWidget.addItem(item)
             
         if areFilesOpened:
@@ -127,6 +127,8 @@ class MyMainWindow(QtGui.QMainWindow):
             self.plotData(results['plot_options'])
         if 'status_text' in results:
             self.status_text.setText(results['status_text'])
+        if 'thread' in results:
+            self.threadPool.remove(results['thread'])
             
     def _create_event_finding_options(self):
         scrollArea = QtGui.QScrollArea()
@@ -829,7 +831,6 @@ class MyMainWindow(QtGui.QMainWindow):
         
     def _analyze_data_thread_callback(self, results):
         if 'status_text' in results:
-            text = results['status_text']
             self.status_text.setText(results['status_text'])
         if 'Events' in results:
             singlePlot = False
@@ -839,15 +840,15 @@ class MyMainWindow(QtGui.QMainWindow):
             elif len(self.events) < 1:
                 # if this is our first time plotting events, include the single event plot!
                 singlePlot = True
-            self.events += events
-            self.eventDisplayedEdit.setMaxLength(int(len(self.events)/10)+1)
-            self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(1,len(self.events)))
-            self.eventCountText.setText('/' + str(len(self.events)))
+#             self.events += events
+#             self.eventDisplayedEdit.setMaxLength(int(len(self.events)/10)+1)
+#             self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(1,len(self.events)))
+#             self.eventCountText.setText('/' + str(len(self.events)))
             if self.plotToolBar.isPlotDuringChecked():
                 self.plotEventsOnMainPlot(events)
                 self.addEventsToConcatEventPlot(events)
-            if singlePlot:
-                self.eventDisplayedEdit.setText('1')
+#             if singlePlot:
+#                 self.eventDisplayedEdit.setText('1')
             self.app.processEvents()  
             self.analyzethread.readyForEvents = True
         if 'done' in results:
@@ -855,7 +856,7 @@ class MyMainWindow(QtGui.QMainWindow):
                 self.stop_analyze_button.setEnabled(False)
     def cleanThreads(self):
         for w in self.threadPool:
-            w.cancelled = True
+            w.cancel()
 #             w.wait()
             self.threadPool.remove(w)
         

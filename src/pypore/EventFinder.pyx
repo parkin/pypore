@@ -73,6 +73,11 @@ cdef lazyLoadFindEvents(parameters, signal = None, save_file = None):
         save_file = {}
     if not 'Events' in save_file:
         save_file['Events'] = []
+        
+    # Did we get passed a pipe?
+    pipe = None
+    if 'pipe' in parameters:
+        pipe = parameters['pipe']
     
     # IMPLEMENT ME pleasE
     f, params = prepareDataFile(parameters['filename'])
@@ -104,6 +109,8 @@ cdef lazyLoadFindEvents(parameters, signal = None, save_file = None):
     
     if n < 100:
         print 'Not enough datapoints in file.'
+        if pipe is not None:
+            pipe.close()
         return 'Not enough datapoints in file.'
     
     cdef double datapoint = data[0]
@@ -182,15 +189,13 @@ cdef lazyLoadFindEvents(parameters, signal = None, save_file = None):
                                         # end of the loop
         
         np.ndarray[DTYPE_t] level_values
+        
+        int last_event_sent = 0
     
     # search for events.  Keep track of filter_parameter filtered local (adapting!) mean and variance,
     # and use them to decide filter_parameter threshold_start for events.  See
     # http://pubs.rsc.org/en/content/articlehtml/2012/nr/c2nr30951c for more details.
     while i < n:
-        if signal is not None and i%1000 == 0:
-            time.sleep(0)# way to yield to other threads. Allows the gui
-                                # to remain responsive. Note this obviously 
-                                # lowers the samples/s rate.
         datapoint = dataCache[1][i]
         if threshold_type == THRESHOLD_NOISE_BASED:
             threshold_start = start_stddev * sqrt(local_variance) 
@@ -232,10 +237,6 @@ cdef lazyLoadFindEvents(parameters, signal = None, save_file = None):
             
             # loop until event ends
             while not done and event_i - event_start < max_event_steps:
-                if signal is not None and event_i %1000 == 0:
-                    time.sleep(0) # way to yield to other threads. Allows the gui
-                                    # to remain responsive. Note this obviously 
-                                    # lowers the samples/s rate.
                 event_i = event_i + 1
                 if event_i % n == 0:  # We may need new data
                     size = 0
@@ -338,7 +339,7 @@ cdef lazyLoadFindEvents(parameters, signal = None, save_file = None):
                 event['cusum_values'] = level_values
                 event['area'] = event_area
                 save_file['Events'].append(event)
-                event_count = event_count + 1
+                event_count += 1
         
         
         local_mean = filter_parameter * local_mean + (1 - filter_parameter) * datapoint
@@ -366,10 +367,10 @@ cdef lazyLoadFindEvents(parameters, signal = None, save_file = None):
                 total_rate = (placeInData + i)/total_time
                 time_left = int((points_per_channel_total-(placeInData+i))/rate)
                 status_text = "Event Count: %d Percent Done: %.2f Rate: %.2e pt/s Total Rate: %.2e pt/s Time Left: %s" % (event_count, percent_done, rate, total_rate, datetime.timedelta(seconds=time_left))
-                if signal is not None:
-                    if event_count < 1:
-                        print 'st:',status_text
-                    signal.emit({'status_text': status_text})
+                if pipe is not None:
+                    if event_count > last_event_sent:
+                        pipe.send({'status_text': status_text, 'Events': save_file['Events'][last_event_sent:]})
+                        last_event_sent = event_count
                 else:
                     sys.stdout.write("\r" + status_text)
                     sys.stdout.flush()
@@ -378,6 +379,8 @@ cdef lazyLoadFindEvents(parameters, signal = None, save_file = None):
         if i == 0:
             if 'cancelled' in save_file:
                 print 'cancelled'
+                if pipe is not None:
+                    pipe.close()
                 return {'error': 'Cancelled'}
             
     if event_count > 0:
@@ -402,6 +405,8 @@ cdef lazyLoadFindEvents(parameters, signal = None, save_file = None):
         
 #         dataReady.emit({'status_text': 'Done. Found ' + str(event_count) + ' events.  Saved database to ' + str(save_file['filename']), 'done': True})
     
+    if pipe is not None:
+        pipe.close()
     return save_file
     
 def findEvents(signal = None, save_file = None, **parameters):
