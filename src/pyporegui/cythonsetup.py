@@ -20,6 +20,7 @@ if os.name == 'nt':
                       build_dir='.pyxbld')
 
 elif os.name == 'posix':
+    print 'oooops'
     if os.environ.has_key('CFLAGS'):
         os.environ['CFLAGS'] = os.environ['CFLAGS'] + ' -I' + numpy.get_include()
     else:

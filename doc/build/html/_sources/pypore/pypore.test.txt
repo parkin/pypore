@@ -9,3 +9,11 @@ test Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`TestEventFinder` Module
+-----------------------------
+
+.. automodule:: pypore.test.TestEventFinder
+    :members:
+    :undoc-members:
+    :show-inheritance:
+

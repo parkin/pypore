@@ -25,14 +25,6 @@ pypore Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`MyThreads` Module
------------------------
-
-.. automodule:: pypore.MyThreads
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Subpackages
 -----------
 

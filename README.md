@@ -11,6 +11,10 @@ Install Cython.  cd to setup.py dir.
 or
 `OPT="-O3 -ffast-math" python setup.py build_ext -i`
 
+To generate auto api doc:
+
+`sphinx-apidoc -o doc/source/pypore src/pypore/ -f`
+
 # TODO
 * Use one file format for data files.  Make a tool for converting other files, like Heka or Chimera or others.
 * Allow user to only analyze a section of the graph by highlighting the graph.

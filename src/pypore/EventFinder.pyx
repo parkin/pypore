@@ -3,6 +3,7 @@ Created on Aug 19, 2013
 
 @author: parkin
 '''
+#cython embedsignature=True
 
 import time, datetime
 import numpy as np

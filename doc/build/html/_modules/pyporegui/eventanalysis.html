@@ -75,6 +75,7 @@
 <span class="sd">This program is for finding events in files and displaying the results.</span>
 <span class="sd">&#39;&#39;&#39;</span>
 <span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">cythonsetup</span>
 
 <span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span> <span class="c"># Must import PySide stuff before pyqtgraph so pyqtgraph knows</span>
                                 <span class="c"># to use PySide instead of PyQt</span>
@@ -83,31 +84,30 @@
 <span class="kn">from</span> <span class="nn">pyqtgraph.graphicsItems.PlotCurveItem</span> <span class="kn">import</span> <span class="n">PlotCurveItem</span>
 
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">linspace</span>
-<span class="kn">import</span> <span class="nn">scipy.io</span> <span class="kn">as</span> <span class="nn">sio</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
 <span class="c"># My stuff</span>
-<span class="kn">from</span> <span class="nn">pypore.MyThreads</span> <span class="kn">import</span> <span class="n">AnalyzeDataThread</span><span class="p">,</span> <span class="n">PlotThread</span>
+<span class="kn">from</span> <span class="nn">MyThreads</span> <span class="kn">import</span> <span class="n">AnalyzeDataThread</span><span class="p">,</span> <span class="n">PlotThread</span>
 <span class="kn">from</span> <span class="nn">views</span> <span class="kn">import</span> <span class="n">FileListItem</span><span class="p">,</span> <span class="n">FilterListItem</span><span class="p">,</span> <span class="n">PlotToolBar</span><span class="p">,</span> <span class="n">DataFileListItem</span><span class="p">,</span> <span class="n">MyPlotItem</span>
 
 <span class="kn">from</span> <span class="nn">pypore.DataFileOpener</span> <span class="kn">import</span> <span class="n">prepareDataFile</span>
 
 <div class="viewcode-block" id="PathItem"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.PathItem">[docs]</a><span class="k">class</span> <span class="nc">PathItem</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QGraphicsPathItem</span><span class="p">):</span>
-        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">conn</span> <span class="o">=</span> <span class="s">&#39;all&#39;</span><span class="p">):</span>
             <span class="n">xr</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
             <span class="n">yr</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">y</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_bounds</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRectF</span><span class="p">(</span><span class="n">xr</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">yr</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">xr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">xr</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">yr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">yr</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">arrayToQPath</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">arrayToQPath</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
             <span class="n">QtGui</span><span class="o">.</span><span class="n">QGraphicsPathItem</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
             
 <div class="viewcode-block" id="PathItem.boundingRect"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.PathItem.boundingRect">[docs]</a>        <span class="k">def</span> <span class="nf">boundingRect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bounds</span>
             </div></div>
-<div class="viewcode-block" id="MyApp"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp">[docs]</a><span class="k">class</span> <span class="nc">MyApp</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMainWindow</span><span class="p">):</span>
+<div class="viewcode-block" id="MyMainWindow"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyMainWindow">[docs]</a><span class="k">class</span> <span class="nc">MyMainWindow</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMainWindow</span><span class="p">):</span>
     
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">MyApp</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MyMainWindow</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">events</span> <span class="o">=</span> <span class="p">[]</span> <span class="c"># holds the events from the most recent analysis run</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span>
@@ -126,7 +126,7 @@
         
     
     
-<div class="viewcode-block" id="MyApp.open_files"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.open_files">[docs]</a>    <span class="k">def</span> <span class="nf">open_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MyMainWindow.open_files"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyMainWindow.open_files">[docs]</a>    <span class="k">def</span> <span class="nf">open_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Opens file dialog box, adds names of files to open to list</span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -152,11 +152,11 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">analyze_button</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">main_tabwig</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
             </div>
-<div class="viewcode-block" id="MyApp.open_event_database"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.open_event_database">[docs]</a>    <span class="k">def</span> <span class="nf">open_event_database</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MyMainWindow.open_event_database"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyMainWindow.open_event_database">[docs]</a>    <span class="k">def</span> <span class="nf">open_event_database</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Opens file dialog box, add names of event database files to open list</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">fnames</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">getOpenFileNames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;Open event database&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">openDir</span><span class="p">,</span> <span class="s">&#39;*.mat&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">fnames</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">getOpenFileNames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;Open event database&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">openDir</span><span class="p">,</span> <span class="s">&#39;*.npy&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fnames</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">listEventWidget</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
@@ -394,7 +394,7 @@
         
         <span class="k">return</span> <span class="n">scrollArea</span>
     
-<div class="viewcode-block" id="MyApp.addFilterClicked"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.addFilterClicked">[docs]</a>    <span class="k">def</span> <span class="nf">addFilterClicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MyMainWindow.addFilterClicked"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyMainWindow.addFilterClicked">[docs]</a>    <span class="k">def</span> <span class="nf">addFilterClicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">listEventWidget</span><span class="o">.</span><span class="n">selectedItems</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">items</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span>
@@ -416,7 +416,7 @@
         <span class="n">params</span><span class="p">[</span><span class="s">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_color</span>
         <span class="k">return</span> <span class="n">params</span>
     
-<div class="viewcode-block" id="MyApp.colorPickerBtnClicked"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.colorPickerBtnClicked">[docs]</a>    <span class="k">def</span> <span class="nf">colorPickerBtnClicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MyMainWindow.colorPickerBtnClicked"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyMainWindow.colorPickerBtnClicked">[docs]</a>    <span class="k">def</span> <span class="nf">colorPickerBtnClicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">col</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColorDialog</span><span class="o">.</span><span class="n">getColor</span><span class="p">(</span><span class="n">initial</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event_color</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
@@ -532,7 +532,7 @@
         
         <span class="k">return</span> <span class="n">frame</span>
         
-<div class="viewcode-block" id="MyApp.create_main_frame"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.create_main_frame">[docs]</a>    <span class="k">def</span> <span class="nf">create_main_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MyMainWindow.create_main_frame"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyMainWindow.create_main_frame">[docs]</a>    <span class="k">def</span> <span class="nf">create_main_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Initializes the main gui frame.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -553,13 +553,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">plotSingleEvent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">[</span><span class="n">eventCount</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
         <span class="k">return</span>
         
-<div class="viewcode-block" id="MyApp.previousClicked"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.previousClicked">[docs]</a>    <span class="k">def</span> <span class="nf">previousClicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MyMainWindow.previousClicked"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyMainWindow.previousClicked">[docs]</a>    <span class="k">def</span> <span class="nf">previousClicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">moveEventDisplayBy</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         </div>
-<div class="viewcode-block" id="MyApp.nextClicked"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.nextClicked">[docs]</a>    <span class="k">def</span> <span class="nf">nextClicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MyMainWindow.nextClicked"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyMainWindow.nextClicked">[docs]</a>    <span class="k">def</span> <span class="nf">nextClicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">moveEventDisplayBy</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
                 </div>
-<div class="viewcode-block" id="MyApp.moveEventDisplayBy"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.moveEventDisplayBy">[docs]</a>    <span class="k">def</span> <span class="nf">moveEventDisplayBy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
+<div class="viewcode-block" id="MyMainWindow.moveEventDisplayBy"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyMainWindow.moveEventDisplayBy">[docs]</a>    <span class="k">def</span> <span class="nf">moveEventDisplayBy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Changes the event displayed on the event display plot to</span>
 <span class="sd">        current value + count</span>
@@ -574,14 +574,14 @@
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">eventDisplayedEdit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;1&#39;</span><span class="p">)</span>
         </div>
-<div class="viewcode-block" id="MyApp.create_status_bar"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.create_status_bar">[docs]</a>    <span class="k">def</span> <span class="nf">create_status_bar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MyMainWindow.create_status_bar"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyMainWindow.create_status_bar">[docs]</a>    <span class="k">def</span> <span class="nf">create_status_bar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Creates filter_parameter status bar with filter_parameter text widget.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">status_text</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">statusBar</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status_text</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="MyApp.create_menu"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.create_menu">[docs]</a>    <span class="k">def</span> <span class="nf">create_menu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MyMainWindow.create_menu"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyMainWindow.create_menu">[docs]</a>    <span class="k">def</span> <span class="nf">create_menu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Creates File menu with Open</span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -606,14 +606,14 @@
 <span class="c">#         </span>
 <span class="c">#         self.add_actions(self.help_menu, (about_action,))</span>
 </div>
-<div class="viewcode-block" id="MyApp.add_actions"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.add_actions">[docs]</a>    <span class="k">def</span> <span class="nf">add_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">actions</span><span class="p">):</span>
+<div class="viewcode-block" id="MyMainWindow.add_actions"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyMainWindow.add_actions">[docs]</a>    <span class="k">def</span> <span class="nf">add_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">actions</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">actions</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">action</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="n">target</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">target</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
                 </div>
-<div class="viewcode-block" id="MyApp.create_action"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.create_action">[docs]</a>    <span class="k">def</span> <span class="nf">create_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">slot</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">shortcut</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+<div class="viewcode-block" id="MyMainWindow.create_action"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyMainWindow.create_action">[docs]</a>    <span class="k">def</span> <span class="nf">create_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">slot</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">shortcut</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                         <span class="n">icon</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">tip</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">checkable</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
                         <span class="n">signal</span><span class="o">=</span><span class="s">&quot;triggered()&quot;</span><span class="p">):</span>
         <span class="n">action</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
@@ -630,23 +630,22 @@
             <span class="n">action</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">action</span>
     </div>
-<div class="viewcode-block" id="MyApp.plotEventDatabaseAnalyses"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.plotEventDatabaseAnalyses">[docs]</a>    <span class="k">def</span> <span class="nf">plotEventDatabaseAnalyses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filenames</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<div class="viewcode-block" id="MyMainWindow.plotEventDatabaseAnalyses"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyMainWindow.plotEventDatabaseAnalyses">[docs]</a>    <span class="k">def</span> <span class="nf">plotEventDatabaseAnalyses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filenames</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Plots event statistics.  </span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">currentBlockade</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">dwellTimes</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
-            <span class="n">database</span> <span class="o">=</span> <span class="n">sio</span><span class="o">.</span><span class="n">loadmat</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+            <span class="n">database</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
             <span class="n">events</span> <span class="o">=</span> <span class="n">database</span><span class="p">[</span><span class="s">&#39;Events&#39;</span><span class="p">]</span>
-            <span class="n">sample_rate</span> <span class="o">=</span> <span class="n">database</span><span class="p">[</span><span class="s">&#39;sample_rate&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">sample_rate</span> <span class="o">=</span> <span class="n">database</span><span class="p">[</span><span class="s">&#39;sample_rate&#39;</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
-                <span class="n">event</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="c"># extra zeroes come from way scipy.io saves .mat</span>
-                <span class="n">baseline</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;baseline&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">levels</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;cusum_values&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">baseline</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;baseline&#39;</span><span class="p">]</span>
+                <span class="n">levels</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;cusum_values&#39;</span><span class="p">]</span>
                 <span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="n">levels</span><span class="p">:</span>
                     <span class="n">currentBlockade</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">level</span> <span class="o">-</span> <span class="n">baseline</span><span class="p">)</span>
-                <span class="n">dwellTime</span> <span class="o">=</span> <span class="p">(</span><span class="n">event</span><span class="p">[</span><span class="s">&#39;event_end&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">event</span><span class="p">[</span><span class="s">&#39;event_start&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">sample_rate</span>
+                <span class="n">dwellTime</span> <span class="o">=</span> <span class="p">(</span><span class="n">event</span><span class="p">[</span><span class="s">&#39;event_end&#39;</span><span class="p">]</span><span class="o">-</span><span class="n">event</span><span class="p">[</span><span class="s">&#39;event_start&#39;</span><span class="p">])</span><span class="o">/</span><span class="n">sample_rate</span>
                 <span class="n">dwellTimes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dwellTime</span><span class="p">)</span>
                 
         <span class="n">color</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s">&#39;color&#39;</span><span class="p">]</span>
@@ -662,7 +661,7 @@
         
         <span class="k">return</span>
     </div>
-<div class="viewcode-block" id="MyApp.plotData"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.plotData">[docs]</a>    <span class="k">def</span> <span class="nf">plotData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot_options</span><span class="p">):</span>
+<div class="viewcode-block" id="MyMainWindow.plotData"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyMainWindow.plotData">[docs]</a>    <span class="k">def</span> <span class="nf">plotData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot_options</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Plots waveform in datadict</span>
 <span class="sd">        Pass in plot_options, filter_parameter dictionary with &#39;plot_range&#39;, &#39;axes&#39;, and &#39;datadict&#39;</span>
@@ -694,7 +693,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">plotwid</span><span class="o">.</span><span class="n">autoRange</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">processEvents</span><span class="p">()</span>
         </div>
-<div class="viewcode-block" id="MyApp.addEventsToConcatEventPlot"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.addEventsToConcatEventPlot">[docs]</a>    <span class="k">def</span> <span class="nf">addEventsToConcatEventPlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events</span><span class="p">):</span>
+<div class="viewcode-block" id="MyMainWindow.addEventsToConcatEventPlot"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyMainWindow.addEventsToConcatEventPlot">[docs]</a>    <span class="k">def</span> <span class="nf">addEventsToConcatEventPlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">events</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span>
@@ -716,7 +715,7 @@
         <span class="n">item</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pg</span><span class="o">.</span><span class="n">mkPen</span><span class="p">(</span><span class="s">&#39;w&#39;</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plot_concatevents</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
         </div>
-<div class="viewcode-block" id="MyApp.plotSingleEvent"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.plotSingleEvent">[docs]</a>    <span class="k">def</span> <span class="nf">plotSingleEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<div class="viewcode-block" id="MyMainWindow.plotSingleEvent"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyMainWindow.plotSingleEvent">[docs]</a>    <span class="k">def</span> <span class="nf">plotSingleEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Plots the event on the plot with </span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -727,12 +726,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">plot_event_zoomed</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">times</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plot_event_zoomed</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">times2</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">levels2</span><span class="p">,</span> <span class="n">pen</span><span class="o">=</span><span class="n">pg</span><span class="o">.</span><span class="n">mkPen</span><span class="p">(</span><span class="s">&#39;g&#39;</span><span class="p">))</span>
         </div>
-<div class="viewcode-block" id="MyApp.getEventAndLevelsData"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.getEventAndLevelsData">[docs]</a>    <span class="k">def</span> <span class="nf">getEventAndLevelsData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;raw_data&#39;</span><span class="p">]</span>
-        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-            <span class="k">print</span> <span class="s">&#39;TypeError, event:&#39;</span><span class="p">,</span> <span class="n">event</span>
-            <span class="k">return</span>
+<div class="viewcode-block" id="MyMainWindow.getEventAndLevelsData"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyMainWindow.getEventAndLevelsData">[docs]</a>    <span class="k">def</span> <span class="nf">getEventAndLevelsData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;raw_data&#39;</span><span class="p">]</span>
         <span class="n">levels_index</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;cusum_indexes&#39;</span><span class="p">]</span>
         <span class="n">levels_values</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;cusum_values&#39;</span><span class="p">]</span>
         <span class="n">sample_rate</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;sample_rate&#39;</span><span class="p">]</span>
@@ -743,14 +738,17 @@
         
         <span class="n">Ts</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">sample_rate</span>
         
-        <span class="n">times</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="n">Ts</span> <span class="o">*</span> <span class="p">(</span><span class="n">event_start</span> <span class="o">-</span> <span class="n">raw_points_per_side</span><span class="p">),</span> <span class="n">Ts</span> <span class="o">*</span> <span class="p">(</span><span class="n">event_start</span> <span class="o">-</span> <span class="n">raw_points_per_side</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
-        <span class="n">times2</span> <span class="o">=</span> <span class="p">[(</span><span class="n">event_start</span> <span class="o">-</span> <span class="n">raw_points_per_side</span><span class="p">)</span> <span class="o">*</span> <span class="n">Ts</span><span class="p">,</span> <span class="p">(</span><span class="n">event_start</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">Ts</span><span class="p">,</span> <span class="n">event_start</span><span class="o">*</span><span class="n">Ts</span><span class="p">]</span>
-        <span class="n">levels2</span> <span class="o">=</span> <span class="p">[</span><span class="n">baseline</span><span class="p">,</span> <span class="n">baseline</span><span class="p">,</span> <span class="n">levels_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">level_values</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">levels_values</span><span class="p">):</span>
-            <span class="n">times2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">levels_index</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">Ts</span><span class="p">)</span>
-            <span class="n">levels2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">levels_values</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
-            <span class="n">times2</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">levels_index</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">Ts</span><span class="p">)</span>
-            <span class="n">levels2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">level_values</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span>
+        
+        <span class="n">times</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="n">Ts</span> <span class="o">*</span> <span class="p">(</span><span class="n">event_start</span> <span class="o">-</span> <span class="n">raw_points_per_side</span><span class="p">),</span> <span class="n">Ts</span> <span class="o">*</span> <span class="p">(</span><span class="n">event_start</span> <span class="o">-</span> <span class="n">raw_points_per_side</span> <span class="o">+</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">n</span><span class="p">)</span>
+        <span class="n">times2</span> <span class="o">=</span> <span class="p">[(</span><span class="n">event_start</span> <span class="o">-</span> <span class="n">raw_points_per_side</span><span class="p">)</span> <span class="o">*</span> <span class="n">Ts</span><span class="p">,</span> <span class="p">(</span><span class="n">event_start</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">Ts</span><span class="p">]</span>
+        <span class="n">levels2</span> <span class="o">=</span> <span class="p">[</span><span class="n">baseline</span><span class="p">,</span> <span class="n">baseline</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">level_value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">levels_values</span><span class="p">):</span>
+            <span class="n">times2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">levels_index</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">Ts</span><span class="p">)</span>
+            <span class="n">levels2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">level_value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">levels_values</span><span class="p">)</span> <span class="o">-</span><span class="mi">1</span> <span class="p">:</span>
+                <span class="n">times2</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">levels_index</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">Ts</span><span class="p">)</span>
+                <span class="n">levels2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">level_value</span><span class="p">)</span>
         <span class="n">times2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">event_end</span> <span class="o">*</span> <span class="n">Ts</span><span class="p">)</span>
         <span class="n">levels2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">levels_values</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">levels_values</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
         <span class="n">times2</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">event_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">*</span> <span class="n">Ts</span><span class="p">)</span>
@@ -759,7 +757,7 @@
         <span class="n">levels2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">baseline</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">times</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">times2</span><span class="p">,</span> <span class="n">levels2</span>
         </div>
-<div class="viewcode-block" id="MyApp.plotEventsOnMainPlot"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.plotEventsOnMainPlot">[docs]</a>    <span class="k">def</span> <span class="nf">plotEventsOnMainPlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events</span><span class="p">):</span>
+<div class="viewcode-block" id="MyMainWindow.plotEventsOnMainPlot"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyMainWindow.plotEventsOnMainPlot">[docs]</a>    <span class="k">def</span> <span class="nf">plotEventsOnMainPlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">events</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span>
@@ -770,25 +768,27 @@
         <span class="n">raw_points_per_side</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;raw_points_per_side&#39;</span><span class="p">]</span>
         <span class="n">ts</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">sample_rate</span>
         <span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
         <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
             <span class="n">event_start</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;event_start&#39;</span><span class="p">]</span>
             <span class="n">event_data</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;raw_data&#39;</span><span class="p">]</span>
             <span class="n">d</span> <span class="o">=</span> <span class="n">event_data</span><span class="o">.</span><span class="n">size</span>
             <span class="n">times</span><span class="p">[</span><span class="n">index</span><span class="p">:</span><span class="n">index</span><span class="o">+</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="n">ts</span> <span class="o">*</span> <span class="p">(</span><span class="n">event_start</span> <span class="o">-</span> <span class="n">raw_points_per_side</span><span class="p">),</span> <span class="n">ts</span> <span class="o">*</span> <span class="p">(</span><span class="n">event_start</span> <span class="o">-</span> <span class="n">raw_points_per_side</span> <span class="o">+</span> <span class="n">d</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">d</span><span class="p">)</span>
-            <span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="p">:</span><span class="n">index</span><span class="o">+</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;raw_data&#39;</span><span class="p">]</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="p">:</span><span class="n">index</span><span class="o">+</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="n">event_data</span>
+            <span class="n">conn</span><span class="p">[</span><span class="n">index</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span> <span class="c"># disconnect separate events</span>
             <span class="n">index</span> <span class="o">+=</span> <span class="n">d</span>
             
-        <span class="n">item</span> <span class="o">=</span> <span class="n">PathItem</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">PathItem</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
         <span class="n">item</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pg</span><span class="o">.</span><span class="n">mkPen</span><span class="p">(</span><span class="s">&#39;y&#39;</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plotwid</span><span class="o">.</span><span class="n">addEventItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
         </div>
-<div class="viewcode-block" id="MyApp.on_analyze_stop"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.on_analyze_stop">[docs]</a>    <span class="k">def</span> <span class="nf">on_analyze_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MyMainWindow.on_analyze_stop"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyMainWindow.on_analyze_stop">[docs]</a>    <span class="k">def</span> <span class="nf">on_analyze_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cleanThreads</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stop_analyze_button</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">status_text</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;Analyze aborted.&#39;</span><span class="p">)</span>
             </div>
-<div class="viewcode-block" id="MyApp.on_analyze"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.on_analyze">[docs]</a>    <span class="k">def</span> <span class="nf">on_analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MyMainWindow.on_analyze"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyMainWindow.on_analyze">[docs]</a>    <span class="k">def</span> <span class="nf">on_analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Searches for events in the file that is currently highlighted in the files list.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -829,7 +829,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">plot_concatevents</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plot_event_zoomed</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         </div>
-<div class="viewcode-block" id="MyApp.get_current_analysis_parameters"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.get_current_analysis_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">get_current_analysis_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MyMainWindow.get_current_analysis_parameters"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyMainWindow.get_current_analysis_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">get_current_analysis_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Returns filter_parameter dictionary holding the current analysis parameters set by the user.  Returns an entry &#39;error&#39; if there were</span>
 <span class="sd">        invalid inputs.</span>
@@ -898,6 +898,7 @@
         </div>
     <span class="k">def</span> <span class="nf">_analyze_data_thread_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
         <span class="k">if</span> <span class="s">&#39;status_text&#39;</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s">&#39;status_text&#39;</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">status_text</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s">&#39;status_text&#39;</span><span class="p">])</span>
         <span class="k">if</span> <span class="s">&#39;Events&#39;</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
             <span class="n">singlePlot</span> <span class="o">=</span> <span class="bp">False</span>
@@ -921,10 +922,10 @@
         <span class="k">if</span> <span class="s">&#39;done&#39;</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">results</span><span class="p">[</span><span class="s">&#39;done&#39;</span><span class="p">]:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">stop_analyze_button</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
-<div class="viewcode-block" id="MyApp.cleanThreads"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyApp.cleanThreads">[docs]</a>    <span class="k">def</span> <span class="nf">cleanThreads</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MyMainWindow.cleanThreads"><a class="viewcode-back" href="../../pyporegui/pyporegui.html#pyporegui.eventanalysis.MyMainWindow.cleanThreads">[docs]</a>    <span class="k">def</span> <span class="nf">cleanThreads</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">threadPool</span><span class="p">:</span>
             <span class="n">w</span><span class="o">.</span><span class="n">cancelled</span> <span class="o">=</span> <span class="bp">True</span>
-            <span class="n">w</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+<span class="c">#             w.wait()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">threadPool</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
         
         </div></div>
@@ -932,7 +933,7 @@
     
 <span class="c">#     app = QtGui.QApplication(sys.argv)</span>
     <span class="n">app</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">mkQApp</span><span class="p">()</span>
-    <span class="n">ex</span> <span class="o">=</span> <span class="n">MyApp</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+    <span class="n">ex</span> <span class="o">=</span> <span class="n">MyMainWindow</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
     <span class="n">ex</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
     <span class="n">app</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
     <span class="n">ex</span><span class="o">.</span><span class="n">cleanThreads</span><span class="p">()</span>

@@ -1,6 +1,22 @@
 pyporegui Package
 =================
 
+:mod:`MyThreads` Module
+-----------------------
+
+.. automodule:: pyporegui.MyThreads
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`cythonsetup` Module
+-------------------------
+
+.. automodule:: pyporegui.cythonsetup
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`eventanalysis` Module
 ---------------------------
 
