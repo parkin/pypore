@@ -17,4 +17,4 @@ src/pypore/test/testDataFiles/*Events*
 src/pypore/__pycache__/*
 src/pypore/build/*
 src/pypore/*.html
-src/pyporegui/.pyxbld/*
+src/pypore/.pyxbld/*

@@ -1,3 +1,11 @@
+'''
+This module sets up pyximport so that any .pyx file is automatically
+compiled on import.
+
+This file should be imported before importing any cython modules.
+(Unless building cython modules yourself)
+'''
+
 import os
 import sys
 import numpy
@@ -34,5 +42,7 @@ pyximport.install(setup_args=mingw_setup_args,
 
 packagepath = os.path.dirname(dirname)
 
+# append directory that contains pypore and pyporegui to 
+# PYTHONPATH
 sys.path.append(packagepath)
 
