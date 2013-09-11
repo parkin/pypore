@@ -37,6 +37,12 @@ Next, use easy_install to install pip.  Open the command prompt (Start->Run->typ
 
 ``c:\Python27\Scripts\easy_install pip``
 
+Install Cython
+++++++++++++++++++
+Next, use easy_install to install Cython.  In the command prompt, type:
+
+``c:\Python27\Scripts\easy_install cython``
+
 Install NumPy
 ++++++++++++++++
 

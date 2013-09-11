@@ -56,6 +56,8 @@
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">pyporegui Package</a><ul>
+<li><a class="reference internal" href="#mythreads-module"><tt class="docutils literal"><span class="pre">MyThreads</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-pyporegui.cythonsetup"><tt class="docutils literal"><span class="pre">cythonsetup</span></tt> Module</a></li>
 <li><a class="reference internal" href="#module-pyporegui.eventanalysis"><tt class="docutils literal"><span class="pre">eventanalysis</span></tt> Module</a></li>
 <li><a class="reference internal" href="#module-pyporegui.views"><tt class="docutils literal"><span class="pre">views</span></tt> Module</a></li>
 <li><a class="reference internal" href="#subpackages">Subpackages</a><ul>
@@ -99,111 +101,117 @@
             
   <div class="section" id="pyporegui-package">
 <h1>pyporegui Package<a class="headerlink" href="#pyporegui-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="mythreads-module">
+<h2><tt class="xref py py-mod docutils literal"><span class="pre">MyThreads</span></tt> Module<a class="headerlink" href="#mythreads-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-pyporegui.cythonsetup">
+<span id="cythonsetup-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">cythonsetup</span></tt> Module<a class="headerlink" href="#module-pyporegui.cythonsetup" title="Permalink to this headline">¶</a></h2>
+</div>
 <div class="section" id="module-pyporegui.eventanalysis">
 <span id="eventanalysis-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">eventanalysis</span></tt> Module<a class="headerlink" href="#module-pyporegui.eventanalysis" title="Permalink to this headline">¶</a></h2>
 <p>This program is for finding events in files and displaying the results.</p>
 <dl class="class">
-<dt id="pyporegui.eventanalysis.MyApp">
-<em class="property">class </em><tt class="descclassname">pyporegui.eventanalysis.</tt><tt class="descname">MyApp</tt><big>(</big><em>app</em>, <em>parent=None</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyApp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyApp" title="Permalink to this definition">¶</a></dt>
+<dt id="pyporegui.eventanalysis.MyMainWindow">
+<em class="property">class </em><tt class="descclassname">pyporegui.eventanalysis.</tt><tt class="descname">MyMainWindow</tt><big>(</big><em>app</em>, <em>parent=None</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtGui.QMainWindow</span></tt></p>
 <dl class="method">
-<dt id="pyporegui.eventanalysis.MyApp.addEventsToConcatEventPlot">
-<tt class="descname">addEventsToConcatEventPlot</tt><big>(</big><em>events</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyApp.addEventsToConcatEventPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyApp.addEventsToConcatEventPlot" title="Permalink to this definition">¶</a></dt>
+<dt id="pyporegui.eventanalysis.MyMainWindow.addEventsToConcatEventPlot">
+<tt class="descname">addEventsToConcatEventPlot</tt><big>(</big><em>events</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.addEventsToConcatEventPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.addEventsToConcatEventPlot" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="pyporegui.eventanalysis.MyApp.addFilterClicked">
-<tt class="descname">addFilterClicked</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyApp.addFilterClicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyApp.addFilterClicked" title="Permalink to this definition">¶</a></dt>
+<dt id="pyporegui.eventanalysis.MyMainWindow.addFilterClicked">
+<tt class="descname">addFilterClicked</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.addFilterClicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.addFilterClicked" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="pyporegui.eventanalysis.MyApp.add_actions">
-<tt class="descname">add_actions</tt><big>(</big><em>target</em>, <em>actions</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyApp.add_actions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyApp.add_actions" title="Permalink to this definition">¶</a></dt>
+<dt id="pyporegui.eventanalysis.MyMainWindow.add_actions">
+<tt class="descname">add_actions</tt><big>(</big><em>target</em>, <em>actions</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.add_actions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.add_actions" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="pyporegui.eventanalysis.MyApp.cleanThreads">
-<tt class="descname">cleanThreads</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyApp.cleanThreads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyApp.cleanThreads" title="Permalink to this definition">¶</a></dt>
+<dt id="pyporegui.eventanalysis.MyMainWindow.cleanThreads">
+<tt class="descname">cleanThreads</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.cleanThreads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.cleanThreads" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="pyporegui.eventanalysis.MyApp.colorPickerBtnClicked">
-<tt class="descname">colorPickerBtnClicked</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyApp.colorPickerBtnClicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyApp.colorPickerBtnClicked" title="Permalink to this definition">¶</a></dt>
+<dt id="pyporegui.eventanalysis.MyMainWindow.colorPickerBtnClicked">
+<tt class="descname">colorPickerBtnClicked</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.colorPickerBtnClicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.colorPickerBtnClicked" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="pyporegui.eventanalysis.MyApp.create_action">
-<tt class="descname">create_action</tt><big>(</big><em>text</em>, <em>slot=None</em>, <em>shortcut=None</em>, <em>icon=None</em>, <em>tip=None</em>, <em>checkable=False</em>, <em>signal='triggered()'</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyApp.create_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyApp.create_action" title="Permalink to this definition">¶</a></dt>
+<dt id="pyporegui.eventanalysis.MyMainWindow.create_action">
+<tt class="descname">create_action</tt><big>(</big><em>text</em>, <em>slot=None</em>, <em>shortcut=None</em>, <em>icon=None</em>, <em>tip=None</em>, <em>checkable=False</em>, <em>signal='triggered()'</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.create_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.create_action" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="pyporegui.eventanalysis.MyApp.create_main_frame">
-<tt class="descname">create_main_frame</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyApp.create_main_frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyApp.create_main_frame" title="Permalink to this definition">¶</a></dt>
+<dt id="pyporegui.eventanalysis.MyMainWindow.create_main_frame">
+<tt class="descname">create_main_frame</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.create_main_frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.create_main_frame" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initializes the main gui frame.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="pyporegui.eventanalysis.MyApp.create_menu">
-<tt class="descname">create_menu</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyApp.create_menu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyApp.create_menu" title="Permalink to this definition">¶</a></dt>
+<dt id="pyporegui.eventanalysis.MyMainWindow.create_menu">
+<tt class="descname">create_menu</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.create_menu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.create_menu" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates File menu with Open</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="pyporegui.eventanalysis.MyApp.create_status_bar">
-<tt class="descname">create_status_bar</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyApp.create_status_bar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyApp.create_status_bar" title="Permalink to this definition">¶</a></dt>
+<dt id="pyporegui.eventanalysis.MyMainWindow.create_status_bar">
+<tt class="descname">create_status_bar</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.create_status_bar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.create_status_bar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates filter_parameter status bar with filter_parameter text widget.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="pyporegui.eventanalysis.MyApp.getEventAndLevelsData">
-<tt class="descname">getEventAndLevelsData</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyApp.getEventAndLevelsData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyApp.getEventAndLevelsData" title="Permalink to this definition">¶</a></dt>
+<dt id="pyporegui.eventanalysis.MyMainWindow.getEventAndLevelsData">
+<tt class="descname">getEventAndLevelsData</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.getEventAndLevelsData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.getEventAndLevelsData" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="pyporegui.eventanalysis.MyApp.get_current_analysis_parameters">
-<tt class="descname">get_current_analysis_parameters</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyApp.get_current_analysis_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyApp.get_current_analysis_parameters" title="Permalink to this definition">¶</a></dt>
+<dt id="pyporegui.eventanalysis.MyMainWindow.get_current_analysis_parameters">
+<tt class="descname">get_current_analysis_parameters</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.get_current_analysis_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.get_current_analysis_parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns filter_parameter dictionary holding the current analysis parameters set by the user.  Returns an entry &#8216;error&#8217; if there were
 invalid inputs.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="pyporegui.eventanalysis.MyApp.moveEventDisplayBy">
-<tt class="descname">moveEventDisplayBy</tt><big>(</big><em>count</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyApp.moveEventDisplayBy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyApp.moveEventDisplayBy" title="Permalink to this definition">¶</a></dt>
+<dt id="pyporegui.eventanalysis.MyMainWindow.moveEventDisplayBy">
+<tt class="descname">moveEventDisplayBy</tt><big>(</big><em>count</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.moveEventDisplayBy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.moveEventDisplayBy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Changes the event displayed on the event display plot to
 current value + count</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="pyporegui.eventanalysis.MyApp.nextClicked">
-<tt class="descname">nextClicked</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyApp.nextClicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyApp.nextClicked" title="Permalink to this definition">¶</a></dt>
+<dt id="pyporegui.eventanalysis.MyMainWindow.nextClicked">
+<tt class="descname">nextClicked</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.nextClicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.nextClicked" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="pyporegui.eventanalysis.MyApp.on_analyze">
-<tt class="descname">on_analyze</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyApp.on_analyze"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyApp.on_analyze" title="Permalink to this definition">¶</a></dt>
+<dt id="pyporegui.eventanalysis.MyMainWindow.on_analyze">
+<tt class="descname">on_analyze</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.on_analyze"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.on_analyze" title="Permalink to this definition">¶</a></dt>
 <dd><p>Searches for events in the file that is currently highlighted in the files list.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="pyporegui.eventanalysis.MyApp.on_analyze_stop">
-<tt class="descname">on_analyze_stop</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyApp.on_analyze_stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyApp.on_analyze_stop" title="Permalink to this definition">¶</a></dt>
+<dt id="pyporegui.eventanalysis.MyMainWindow.on_analyze_stop">
+<tt class="descname">on_analyze_stop</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.on_analyze_stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.on_analyze_stop" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="pyporegui.eventanalysis.MyApp.open_event_database">
-<tt class="descname">open_event_database</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyApp.open_event_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyApp.open_event_database" title="Permalink to this definition">¶</a></dt>
+<dt id="pyporegui.eventanalysis.MyMainWindow.open_event_database">
+<tt class="descname">open_event_database</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.open_event_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.open_event_database" title="Permalink to this definition">¶</a></dt>
 <dd><p>Opens file dialog box, add names of event database files to open list</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="pyporegui.eventanalysis.MyApp.open_files">
-<tt class="descname">open_files</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyApp.open_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyApp.open_files" title="Permalink to this definition">¶</a></dt>
+<dt id="pyporegui.eventanalysis.MyMainWindow.open_files">
+<tt class="descname">open_files</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.open_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.open_files" title="Permalink to this definition">¶</a></dt>
 <dd><p>Opens file dialog box, adds names of files to open to list</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="pyporegui.eventanalysis.MyApp.plotData">
-<tt class="descname">plotData</tt><big>(</big><em>plot_options</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyApp.plotData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyApp.plotData" title="Permalink to this definition">¶</a></dt>
+<dt id="pyporegui.eventanalysis.MyMainWindow.plotData">
+<tt class="descname">plotData</tt><big>(</big><em>plot_options</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.plotData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.plotData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots waveform in datadict
 Pass in plot_options, filter_parameter dictionary with &#8216;plot_range&#8217;, &#8216;axes&#8217;, and &#8216;datadict&#8217;
 pass in Data dictionary, with data at &#8216;data&#8217; and sample rate at &#8216;SETUP_ADCSAMPLERATE&#8217;
@@ -211,37 +219,37 @@ Can pass in range as [start,stop], or &#8216;all&#8217; for 0:n</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="pyporegui.eventanalysis.MyApp.plotEventDatabaseAnalyses">
-<tt class="descname">plotEventDatabaseAnalyses</tt><big>(</big><em>filenames</em>, <em>params</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyApp.plotEventDatabaseAnalyses"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyApp.plotEventDatabaseAnalyses" title="Permalink to this definition">¶</a></dt>
+<dt id="pyporegui.eventanalysis.MyMainWindow.plotEventDatabaseAnalyses">
+<tt class="descname">plotEventDatabaseAnalyses</tt><big>(</big><em>filenames</em>, <em>params</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.plotEventDatabaseAnalyses"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.plotEventDatabaseAnalyses" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots event statistics.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="pyporegui.eventanalysis.MyApp.plotEventsOnMainPlot">
-<tt class="descname">plotEventsOnMainPlot</tt><big>(</big><em>events</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyApp.plotEventsOnMainPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyApp.plotEventsOnMainPlot" title="Permalink to this definition">¶</a></dt>
+<dt id="pyporegui.eventanalysis.MyMainWindow.plotEventsOnMainPlot">
+<tt class="descname">plotEventsOnMainPlot</tt><big>(</big><em>events</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.plotEventsOnMainPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.plotEventsOnMainPlot" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="pyporegui.eventanalysis.MyApp.plotSingleEvent">
-<tt class="descname">plotSingleEvent</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyApp.plotSingleEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyApp.plotSingleEvent" title="Permalink to this definition">¶</a></dt>
+<dt id="pyporegui.eventanalysis.MyMainWindow.plotSingleEvent">
+<tt class="descname">plotSingleEvent</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.plotSingleEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.plotSingleEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots the event on the plot with</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="pyporegui.eventanalysis.MyApp.previousClicked">
-<tt class="descname">previousClicked</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyApp.previousClicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyApp.previousClicked" title="Permalink to this definition">¶</a></dt>
+<dt id="pyporegui.eventanalysis.MyMainWindow.previousClicked">
+<tt class="descname">previousClicked</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.previousClicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.previousClicked" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="pyporegui.eventanalysis.MyApp.staticMetaObject">
-<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x55608c0&gt;</em><a class="headerlink" href="#pyporegui.eventanalysis.MyApp.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<dt id="pyporegui.eventanalysis.MyMainWindow.staticMetaObject">
+<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x324c638&gt;</em><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="class">
 <dt id="pyporegui.eventanalysis.PathItem">
-<em class="property">class </em><tt class="descclassname">pyporegui.eventanalysis.</tt><tt class="descname">PathItem</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#PathItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.PathItem" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pyporegui.eventanalysis.</tt><tt class="descname">PathItem</tt><big>(</big><em>x</em>, <em>y</em>, <em>conn='all'</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#PathItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.PathItem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtGui.QGraphicsPathItem</span></tt></p>
 <dl class="method">
 <dt id="pyporegui.eventanalysis.PathItem.boundingRect">
@@ -361,7 +369,7 @@ ex /home/user/.../filenames</p>
 
 <dl class="attribute">
 <dt id="pyporegui.views.MyPlotItem.staticMetaObject">
-<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x5560710&gt;</em><a class="headerlink" href="#pyporegui.views.MyPlotItem.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x324cc68&gt;</em><a class="headerlink" href="#pyporegui.views.MyPlotItem.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -397,7 +405,7 @@ otherwise.</p>
 
 <dl class="attribute">
 <dt id="pyporegui.views.PlotToolBar.staticMetaObject">
-<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x55607a0&gt;</em><a class="headerlink" href="#pyporegui.views.PlotToolBar.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x324c680&gt;</em><a class="headerlink" href="#pyporegui.views.PlotToolBar.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -408,6 +416,7 @@ otherwise.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="pyporegui.test.html">test Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyporegui.test.html#testeventanalysis-module"><tt class="docutils literal"><span class="pre">TestEventanalysis</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyporegui.test.html#testviews-module"><tt class="docutils literal"><span class="pre">TestViews</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyporegui.test.html#subpackages">Subpackages</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="pyporegui.test.helper.html">helper Package</a><ul>

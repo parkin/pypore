@@ -1,6 +1,14 @@
 test Package
 ============
 
+:mod:`TestEventanalysis` Module
+-------------------------------
+
+.. automodule:: pyporegui.test.TestEventanalysis
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`TestViews` Module
 -----------------------
 
