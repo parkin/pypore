@@ -28,15 +28,6 @@ If you right click on My Computer -> Properties -> General:
 * If under 'System:' it says 'x64' then you need the 64 bit version: the x86-64 MSI installer.
 * If not, you need the 32 bit version: x86  MSI installer.
 
-Install pip, Python Package Manager
-+++++++++++++++++++
-
-Click on the latest version of setuptools from `here <https://pypi.python.org/pypi/setuptools>`_.  From the instructions on the page, download 'ez_setup.py'.  Then, double click on the file to open with Python.  The script will run and will download setuptools and easy_install.  You should now be able to use easy_install.
-
-Next, use easy_install to install pip.  Open the command prompt (Start->Run->type 'cmd' hit Enter) and type:
-
-``c:\Python27\Scripts\easy_install pip``
-
 Install Cython
 ++++++++++++++++++
 Next, use easy_install to install Cython.  In the command prompt, type:
@@ -46,9 +37,9 @@ Next, use easy_install to install Cython.  In the command prompt, type:
 Install NumPy
 ++++++++++++++++
 
-Next, use pip to install numpy.  Open the command prompt (Start->Run->type 'cmd' hit Enter) and type:
+Next, use easy_install to install numpy.  Open the command prompt (Start->Run->type 'cmd' hit Enter) and type:
 
-``c:\Python27\Scripts\pip install numpy``
+``c:\Python27\Scripts\easy_install install numpy``
 
 Install SciPy
 +++++++++++++++
@@ -66,9 +57,9 @@ You've just installed PySide!
 
 Install PyQtGraph
 +++++++++++++++
-Use pip as before, in a command prompt type:
+Use easy_install as before, in a command prompt type:
 
-``c:\Python27\Scripts\pip pyqtgraph``
+``c:\Python27\Scripts\easy_install pyqtgraph``
 
 You now have all of the dependencies and are ready to `Get the Code`_.
 
@@ -83,4 +74,4 @@ Type the command
 
 ``git clone https://<user name>@bitbucket.org/wmparkin/translocationcode-python.git``
 
-You now have the code!  To run, navigate to project/src directory, double click eventanalysis.py!
+You now have the code!  To run, navigate to project/src/pyporegui directory, double click eventanalysis.py!
