@@ -56,8 +56,7 @@
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">pyporegui Package</a><ul>
-<li><a class="reference internal" href="#mythreads-module"><tt class="docutils literal"><span class="pre">MyThreads</span></tt> Module</a></li>
-<li><a class="reference internal" href="#module-pyporegui.cythonsetup"><tt class="docutils literal"><span class="pre">cythonsetup</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-pyporegui.MyThreads"><tt class="docutils literal"><span class="pre">MyThreads</span></tt> Module</a></li>
 <li><a class="reference internal" href="#module-pyporegui.eventanalysis"><tt class="docutils literal"><span class="pre">eventanalysis</span></tt> Module</a></li>
 <li><a class="reference internal" href="#module-pyporegui.views"><tt class="docutils literal"><span class="pre">views</span></tt> Module</a></li>
 <li><a class="reference internal" href="#subpackages">Subpackages</a><ul>
@@ -101,11 +100,83 @@
             
   <div class="section" id="pyporegui-package">
 <h1>pyporegui Package<a class="headerlink" href="#pyporegui-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="mythreads-module">
-<h2><tt class="xref py py-mod docutils literal"><span class="pre">MyThreads</span></tt> Module<a class="headerlink" href="#mythreads-module" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-pyporegui.cythonsetup">
-<span id="cythonsetup-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">cythonsetup</span></tt> Module<a class="headerlink" href="#module-pyporegui.cythonsetup" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyporegui.MyThreads">
+<span id="mythreads-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">MyThreads</span></tt> Module<a class="headerlink" href="#module-pyporegui.MyThreads" title="Permalink to this headline">¶</a></h2>
+<p>Created on Jul 23, 2013</p>
+<p>&#64;author: parkin</p>
+<dl class="class">
+<dt id="pyporegui.MyThreads.AnalyzeDataThread">
+<em class="property">class </em><tt class="descclassname">pyporegui.MyThreads.</tt><tt class="descname">AnalyzeDataThread</tt><big>(</big><em>parameters</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/MyThreads.html#AnalyzeDataThread"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.MyThreads.AnalyzeDataThread" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtCore.QThread</span></tt></p>
+<p>Class for searching for events in filter_parameter separate thread.</p>
+<dl class="method">
+<dt id="pyporegui.MyThreads.AnalyzeDataThread.cancel">
+<tt class="descname">cancel</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/MyThreads.html#AnalyzeDataThread.cancel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.MyThreads.AnalyzeDataThread.cancel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pyporegui.MyThreads.AnalyzeDataThread.cancelled">
+<tt class="descname">cancelled</tt><em class="property"> = False</em><a class="headerlink" href="#pyporegui.MyThreads.AnalyzeDataThread.cancelled" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pyporegui.MyThreads.AnalyzeDataThread.dataReady">
+<tt class="descname">dataReady</tt><em class="property"> = &lt;PySide.QtCore.Signal object at 0x5327bc8&gt;</em><a class="headerlink" href="#pyporegui.MyThreads.AnalyzeDataThread.dataReady" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.MyThreads.AnalyzeDataThread.periodicCall">
+<tt class="descname">periodicCall</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/MyThreads.html#AnalyzeDataThread.periodicCall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.MyThreads.AnalyzeDataThread.periodicCall" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pyporegui.MyThreads.AnalyzeDataThread.readyForEvents">
+<tt class="descname">readyForEvents</tt><em class="property"> = True</em><a class="headerlink" href="#pyporegui.MyThreads.AnalyzeDataThread.readyForEvents" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.MyThreads.AnalyzeDataThread.run">
+<tt class="descname">run</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/MyThreads.html#AnalyzeDataThread.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.MyThreads.AnalyzeDataThread.run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pyporegui.MyThreads.AnalyzeDataThread.staticMetaObject">
+<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x53343b0&gt;</em><a class="headerlink" href="#pyporegui.MyThreads.AnalyzeDataThread.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.MyThreads.AnalyzeDataThread.updateGui">
+<tt class="descname">updateGui</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/MyThreads.html#AnalyzeDataThread.updateGui"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.MyThreads.AnalyzeDataThread.updateGui" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pyporegui.MyThreads.PlotThread">
+<em class="property">class </em><tt class="descclassname">pyporegui.MyThreads.</tt><tt class="descname">PlotThread</tt><big>(</big><em>axes</em>, <em>datadict=''</em>, <em>plot_range='all'</em>, <em>filename=''</em>, <em>threshold_type='adaptive'</em>, <em>a=0.93</em>, <em>threshold_direction='negative'</em>, <em>min_event_length=10.0</em>, <em>max_event_length=1000.0</em>, <em>decimate=False</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/MyThreads.html#PlotThread"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.MyThreads.PlotThread" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtCore.QThread</span></tt></p>
+<dl class="attribute">
+<dt id="pyporegui.MyThreads.PlotThread.cancelled">
+<tt class="descname">cancelled</tt><em class="property"> = False</em><a class="headerlink" href="#pyporegui.MyThreads.PlotThread.cancelled" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pyporegui.MyThreads.PlotThread.dataReady">
+<tt class="descname">dataReady</tt><em class="property"> = &lt;PySide.QtCore.Signal object at 0x5327b90&gt;</em><a class="headerlink" href="#pyporegui.MyThreads.PlotThread.dataReady" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.MyThreads.PlotThread.run">
+<tt class="descname">run</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/MyThreads.html#PlotThread.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.MyThreads.PlotThread.run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pyporegui.MyThreads.PlotThread.staticMetaObject">
+<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x5334368&gt;</em><a class="headerlink" href="#pyporegui.MyThreads.PlotThread.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-pyporegui.eventanalysis">
 <span id="eventanalysis-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">eventanalysis</span></tt> Module<a class="headerlink" href="#module-pyporegui.eventanalysis" title="Permalink to this headline">¶</a></h2>
@@ -242,7 +313,7 @@ Can pass in range as [start,stop], or &#8216;all&#8217; for 0:n</p>
 
 <dl class="attribute">
 <dt id="pyporegui.eventanalysis.MyMainWindow.staticMetaObject">
-<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x27e7320&gt;</em><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x6348488&gt;</em><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -369,7 +440,7 @@ ex /home/user/.../filenames</p>
 
 <dl class="attribute">
 <dt id="pyporegui.views.MyPlotItem.staticMetaObject">
-<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x1b4f4d0&gt;</em><a class="headerlink" href="#pyporegui.views.MyPlotItem.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x6348248&gt;</em><a class="headerlink" href="#pyporegui.views.MyPlotItem.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -405,7 +476,7 @@ otherwise.</p>
 
 <dl class="attribute">
 <dt id="pyporegui.views.PlotToolBar.staticMetaObject">
-<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x1b4f200&gt;</em><a class="headerlink" href="#pyporegui.views.PlotToolBar.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x6348368&gt;</em><a class="headerlink" href="#pyporegui.views.PlotToolBar.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

@@ -25,6 +25,14 @@ pypore Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`cythonsetup` Module
+-------------------------
+
+.. automodule:: pypore.cythonsetup
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Subpackages
 -----------
 

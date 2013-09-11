@@ -59,6 +59,7 @@
 <li><a class="reference internal" href="#id1"><tt class="docutils literal"><span class="pre">pypore</span></tt> Package</a></li>
 <li><a class="reference internal" href="#datafileopener-module"><tt class="docutils literal"><span class="pre">DataFileOpener</span></tt> Module</a></li>
 <li><a class="reference internal" href="#eventfinder-module"><tt class="docutils literal"><span class="pre">EventFinder</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-pypore.cythonsetup"><tt class="docutils literal"><span class="pre">cythonsetup</span></tt> Module</a></li>
 <li><a class="reference internal" href="#subpackages">Subpackages</a><ul>
 </ul>
 </li>
@@ -111,13 +112,20 @@
 <div class="section" id="eventfinder-module">
 <h2><tt class="xref py py-mod docutils literal"><span class="pre">EventFinder</span></tt> Module<a class="headerlink" href="#eventfinder-module" title="Permalink to this headline">¶</a></h2>
 </div>
+<div class="section" id="module-pypore.cythonsetup">
+<span id="cythonsetup-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">cythonsetup</span></tt> Module<a class="headerlink" href="#module-pypore.cythonsetup" title="Permalink to this headline">¶</a></h2>
+<p>This module sets up pyximport so that any .pyx file is automatically
+compiled on import.</p>
+<p>This file should be imported before importing any cython modules.
+(Unless building cython modules yourself)</p>
+</div>
 <div class="section" id="subpackages">
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="pypore.test.html">test Package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pypore.test.html#testdatafileopener-module"><tt class="docutils literal"><span class="pre">TestDataFileOpener</span></tt> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pypore.test.html#testeventfinder-module"><tt class="docutils literal"><span class="pre">TestEventFinder</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pypore.test.html#module-pypore.test.TestDataFileOpener"><tt class="docutils literal"><span class="pre">TestDataFileOpener</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pypore.test.html#module-pypore.test.TestEventFinder"><tt class="docutils literal"><span class="pre">TestEventFinder</span></tt> Module</a></li>
 </ul>
 </li>
 </ul>

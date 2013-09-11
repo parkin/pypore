@@ -9,14 +9,6 @@ pyporegui Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`cythonsetup` Module
--------------------------
-
-.. automodule:: pyporegui.cythonsetup
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`eventanalysis` Module
 ---------------------------
 
