@@ -62,7 +62,7 @@ cpdef inline np.ndarray[DTYPE_t] _getDataRange(dataCache, long i, long n):
         spot += nn
     return res
         
-cdef lazyLoadFindEvents(parameters, signal = None, save_file = None):
+cdef _lazyLoadFindEvents(parameters, signal = None, save_file = None):
     cdef int event_count = 0
     
     cdef int get_blocks = 1
@@ -420,4 +420,4 @@ def findEvents(signal = None, save_file = None, **parameters):
     # do a union of defaultParams and parameters, keeping the
     # parameters entries on conflict.
     params = dict(chain(defaultParams.iteritems(), parameters.iteritems()))
-    return lazyLoadFindEvents(params, signal, save_file)
+    return _lazyLoadFindEvents(params, signal, save_file)
