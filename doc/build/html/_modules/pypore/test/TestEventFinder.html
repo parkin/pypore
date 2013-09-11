@@ -1,0 +1,288 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pypore.test.TestEventFinder &mdash; translocationcode-python 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="translocationcode-python 0.0.1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">translocationcode-python 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pypore.test.TestEventFinder</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on Aug 27, 2013</span>
+
+<span class="sd">@author: parkin</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">from</span> <span class="nn">pypore.EventFinder</span> <span class="kn">import</span> <span class="n">findEvents</span>
+<span class="kn">from</span> <span class="nn">pypore.EventFinder</span> <span class="kn">import</span> <span class="n">_getDataRange</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<div class="viewcode-block" id="TestEventFinder"><a class="viewcode-back" href="../../../pypore/pypore.test.html#pypore.test.TestEventFinder.TestEventFinder">[docs]</a><span class="k">class</span> <span class="nc">TestEventFinder</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    
+<div class="viewcode-block" id="TestEventFinder.setUp"><a class="viewcode-back" href="../../../pypore/pypore.test.html#pypore.test.TestEventFinder.TestEventFinder.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">defaultParams</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&#39;min_event_length&#39;</span><span class="p">:</span> <span class="mf">10.</span><span class="p">,</span>
+                                   <span class="s">&#39;max_event_length&#39;</span><span class="p">:</span> <span class="mf">10000.</span><span class="p">,</span>
+                                   <span class="s">&#39;threshold_direction&#39;</span><span class="p">:</span> <span class="s">&#39;Negative&#39;</span><span class="p">,</span>
+                                   <span class="s">&#39;filter_parameter&#39;</span><span class="p">:</span> <span class="mf">0.93</span><span class="p">,</span>
+                                   <span class="s">&#39;threshold_type&#39;</span><span class="p">:</span> <span class="s">&#39;Noise Based&#39;</span><span class="p">,</span>
+                                   <span class="s">&#39;start_stddev&#39;</span><span class="p">:</span> <span class="mf">5.</span><span class="p">,</span>
+                                   <span class="s">&#39;end_stddev&#39;</span><span class="p">:</span> <span class="mf">1.</span><span class="p">}</span>
+</div>
+<div class="viewcode-block" id="TestEventFinder.tearDown"><a class="viewcode-back" href="../../../pypore/pypore.test.html#pypore.test.TestEventFinder.TestEventFinder.tearDown">[docs]</a>    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+    </div>
+<div class="viewcode-block" id="TestEventFinder.test_getDataRangeAtNew"><a class="viewcode-back" href="../../../pypore/pypore.test.html#pypore.test.TestEventFinder.TestEventFinder.test_getDataRangeAtNew">[docs]</a>    <span class="k">def</span> <span class="nf">test_getDataRangeAtNew</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="n">first</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="n">first</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">1.</span>
+        <span class="n">first</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">1.</span>
+        <span class="n">dataCache</span> <span class="o">=</span> <span class="p">[</span><span class="n">first</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">+</span><span class="mf">100.</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">+</span><span class="mf">100.</span><span class="o">+</span><span class="mf">60.</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">+</span><span class="mf">200.</span><span class="p">]</span>
+        
+        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRange</span><span class="p">(</span><span class="n">dataCache</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">+</span><span class="mf">100.</span><span class="p">)</span>
+         
+        <span class="c"># Test negative i to 0</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">x</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">1.</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRange</span><span class="p">(</span><span class="n">dataCache</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+         
+        <span class="c"># Test negative i,n</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">1.</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRange</span><span class="p">(</span><span class="n">dataCache</span><span class="p">,</span> <span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="o">-</span><span class="mi">90</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+         
+        <span class="c"># Test negative i, pos n in first spot</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">x</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">1.</span>
+        <span class="n">x</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">100.</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRange</span><span class="p">(</span><span class="n">dataCache</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+         
+        <span class="c"># Test pos i,n both in first spot</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="mf">100.</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRange</span><span class="p">(</span><span class="n">dataCache</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">70</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+         
+        <span class="c"># Test first and second cache overlap</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="mf">100.</span>
+        <span class="n">x</span><span class="p">[</span><span class="mi">5</span><span class="p">:]</span> <span class="o">+=</span> <span class="mf">60.</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRange</span><span class="p">(</span><span class="n">dataCache</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">105</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+         
+        <span class="c"># Test fist cache bumping up on second</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="mf">100.</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRange</span><span class="p">(</span><span class="n">dataCache</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+         
+        <span class="c"># Test second cache</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="mf">160.</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRange</span><span class="p">(</span><span class="n">dataCache</span><span class="p">,</span> <span class="mi">155</span><span class="p">,</span> <span class="mi">165</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        
+        <span class="c"># Test neg overlap with 2 pos caches</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">120</span><span class="p">)</span>
+        <span class="n">x</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">1.</span>
+        <span class="n">x</span><span class="p">[</span><span class="mi">10</span><span class="p">:]</span> <span class="o">+=</span> <span class="mf">100.</span>
+        <span class="n">x</span><span class="p">[</span><span class="mi">110</span><span class="p">:]</span> <span class="o">+=</span> <span class="mf">60.</span> 
+        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRange</span><span class="p">(</span><span class="n">dataCache</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">110</span><span class="p">)</span>
+        
+        <span class="c"># Test neg overlap with 3 pos caches</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">220</span><span class="p">)</span>
+        <span class="n">x</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">1.</span>
+        <span class="n">x</span><span class="p">[</span><span class="mi">10</span><span class="p">:]</span> <span class="o">+=</span> <span class="mf">100.</span>
+        <span class="n">x</span><span class="p">[</span><span class="mi">110</span><span class="p">:]</span> <span class="o">+=</span> <span class="mf">60.</span>
+        <span class="n">x</span><span class="p">[</span><span class="mi">210</span><span class="p">:]</span> <span class="o">+=</span> <span class="mf">40.</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRange</span><span class="p">(</span><span class="n">dataCache</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">210</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="TestEventFinder.testSavingFiles"><a class="viewcode-back" href="../../../pypore/pypore.test.html#pypore.test.TestEventFinder.TestEventFinder.testSavingFiles">[docs]</a>    <span class="k">def</span> <span class="nf">testSavingFiles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;testDataFiles&#39;</span><span class="p">,</span><span class="s">&#39;chimera_1event.log&#39;</span><span class="p">)</span>
+        <span class="n">eventDatabase</span> <span class="o">=</span> <span class="n">findEvents</span><span class="p">(</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span><span class="p">)</span>
+        
+        <span class="n">dat_filename</span> <span class="o">=</span> <span class="n">eventDatabase</span><span class="p">[</span><span class="s">&#39;database_filename&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">dat_filename</span><span class="p">))</span>
+        
+        <span class="n">database</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">dat_filename</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_equal</span><span class="p">(</span><span class="n">eventDatabase</span><span class="p">,</span> <span class="n">database</span><span class="p">)</span>
+        
+        <span class="c">#delete the newly created event file</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">eventDatabase</span><span class="p">[</span><span class="s">&#39;database_filename&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="TestEventFinder.testChimera_nonoise_1Event"><a class="viewcode-back" href="../../../pypore/pypore.test.html#pypore.test.TestEventFinder.TestEventFinder.testChimera_nonoise_1Event">[docs]</a>    <span class="k">def</span> <span class="nf">testChimera_nonoise_1Event</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;testDataFiles&#39;</span><span class="p">,</span><span class="s">&#39;chimera_nonoise_1event.log&#39;</span><span class="p">)</span>
+        <span class="n">eventDatabase</span> <span class="o">=</span> <span class="n">findEvents</span><span class="p">(</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span><span class="p">,</span>
+                                   <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultParams</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s">&#39;Events&#39;</span><span class="p">,</span> <span class="n">eventDatabase</span><span class="p">)</span>
+        <span class="n">events</span> <span class="o">=</span> <span class="n">eventDatabase</span><span class="p">[</span><span class="s">&#39;Events&#39;</span><span class="p">]</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">events</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">levels</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;cusum_values&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">levels</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">level</span> <span class="o">=</span> <span class="n">levels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="mf">0.9332</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        
+        <span class="n">indexes</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;cusum_indexes&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">indexes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2000</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">indexes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">3000</span><span class="p">)</span>
+        
+        <span class="c">#delete the newly created event file</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">eventDatabase</span><span class="p">[</span><span class="s">&#39;database_filename&#39;</span><span class="p">])</span>
+        </div>
+<div class="viewcode-block" id="TestEventFinder.testChimera_nonoise_1Event_2Levels"><a class="viewcode-back" href="../../../pypore/pypore.test.html#pypore.test.TestEventFinder.TestEventFinder.testChimera_nonoise_1Event_2Levels">[docs]</a>    <span class="k">def</span> <span class="nf">testChimera_nonoise_1Event_2Levels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;testDataFiles&#39;</span><span class="p">,</span><span class="s">&#39;chimera_nonoise_1event_2levels.log&#39;</span><span class="p">)</span>
+        <span class="n">eventDatabase</span> <span class="o">=</span> <span class="n">findEvents</span><span class="p">(</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span><span class="p">,</span>
+                                   <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultParams</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s">&#39;Events&#39;</span><span class="p">,</span> <span class="n">eventDatabase</span><span class="p">)</span>
+        <span class="n">events</span> <span class="o">=</span> <span class="n">eventDatabase</span><span class="p">[</span><span class="s">&#39;Events&#39;</span><span class="p">]</span>
+         
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">events</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">levels</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;cusum_values&#39;</span><span class="p">]</span>
+        <span class="n">indexes</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;cusum_indexes&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">levels</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">),</span> <span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+         
+        <span class="n">level</span> <span class="o">=</span> <span class="n">levels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="mf">0.9332</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">indexes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2000</span><span class="p">)</span>
+         
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">indexes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">2750</span><span class="p">)</span>
+        <span class="n">level</span> <span class="o">=</span> <span class="n">levels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="mf">0.78064</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">indexes</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">3500</span><span class="p">)</span>
+        
+        <span class="c">#delete the newly created event file</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">eventDatabase</span><span class="p">[</span><span class="s">&#39;database_filename&#39;</span><span class="p">])</span>
+        </div>
+<div class="viewcode-block" id="TestEventFinder.testChimera_nonoise_2events_1levels"><a class="viewcode-back" href="../../../pypore/pypore.test.html#pypore.test.TestEventFinder.TestEventFinder.testChimera_nonoise_2events_1levels">[docs]</a>    <span class="k">def</span> <span class="nf">testChimera_nonoise_2events_1levels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;testDataFiles&#39;</span><span class="p">,</span><span class="s">&#39;chimera_nonoise_2events_1levels.log&#39;</span><span class="p">)</span>
+        <span class="n">eventDatabase</span> <span class="o">=</span> <span class="n">findEvents</span><span class="p">(</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span><span class="p">,</span>
+                                   <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultParams</span><span class="p">)</span>
+        
+        <span class="n">events</span> <span class="o">=</span> <span class="n">eventDatabase</span><span class="p">[</span><span class="s">&#39;Events&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">events</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="c"># First event stuff</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">levels</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;cusum_values&#39;</span><span class="p">]</span>
+        <span class="n">indexes</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;cusum_indexes&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">levels</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">level</span> <span class="o">=</span> <span class="n">levels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="mf">0.9332</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">indexes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2000</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">indexes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">3000</span><span class="p">)</span>
+        
+        <span class="c"># Second event stuff</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">levels</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;cusum_values&#39;</span><span class="p">]</span>
+        <span class="n">indexes</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;cusum_indexes&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">levels</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">level</span> <span class="o">=</span> <span class="n">levels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="mf">0.9332</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">indexes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">4500</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">indexes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">5500</span><span class="p">)</span>
+        
+        <span class="c">#delete the newly created event file</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">eventDatabase</span><span class="p">[</span><span class="s">&#39;database_filename&#39;</span><span class="p">])</span>
+        </div></div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c">#import sys;sys.argv = [&#39;&#39;, &#39;Test.testName&#39;]</span>
+    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">translocationcode-python 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Will Parkin.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
