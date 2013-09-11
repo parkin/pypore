@@ -13,6 +13,8 @@ Contents:
 
    introduction
    installation
+   pypore
+   pyporegui
    code documentation <api>
 
 
