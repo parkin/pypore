@@ -9,6 +9,8 @@ import sys
 
 from PySide import QtCore, QtGui # Must import PySide stuff before pyqtgraph so pyqtgraph knows
                                 # to use PySide instead of PyQt
+                                
+# The rest of the imports can be found below in _longImports
 
 class PathItem(QtGui.QGraphicsPathItem):
         def __init__(self, x, y, conn = 'all'):
@@ -846,7 +848,7 @@ class MyMainWindow(QtGui.QMainWindow):
 #             w.wait()
             self.threadPool.remove(w)
         
-def _LongImports(splash, app):
+def _longImports(splash, app):
     '''
     Loads imports and updates the splash screen with information.
     '''
@@ -884,12 +886,10 @@ def _LongImports(splash, app):
 def main():
     
     app = QtGui.QApplication(sys.argv)
-#     app = pg.mkQApp()
     pixmap = QtGui.QPixmap('splash.png')
     splash = QtGui.QSplashScreen(pixmap, QtCore.Qt.WindowStaysOnTopHint)
-    splash.setMask(pixmap.mask())
     splash.show()
-    _LongImports(splash, app)
+    _longImports(splash, app)
     splash.showMessage("Creating main window...", alignment = QtCore.Qt.AlignBottom)
     app.processEvents()
     ex = MyMainWindow(app)
