@@ -828,15 +828,15 @@ class MyMainWindow(QtGui.QMainWindow):
             elif len(self.events) < 1:
                 # if this is our first time plotting events, include the single event plot!
                 singlePlot = True
-#             self.events += events
-#             self.eventDisplayedEdit.setMaxLength(int(len(self.events)/10)+1)
-#             self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(1,len(self.events)))
-#             self.eventCountText.setText('/' + str(len(self.events)))
+            self.events += events
+            self.eventDisplayedEdit.setMaxLength(int(len(self.events)/10)+1)
+            self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(1,len(self.events)))
+            self.eventCountText.setText('/' + str(len(self.events)))
             if self.plotToolBar.isPlotDuringChecked():
                 self.plotEventsOnMainPlot(events)
                 self.addEventsToConcatEventPlot(events)
-#             if singlePlot:
-#                 self.eventDisplayedEdit.setText('1')
+            if singlePlot:
+                self.eventDisplayedEdit.setText('1')
             self.app.processEvents()  
             self.analyzethread.readyForEvents = True
         if 'done' in results:
@@ -853,7 +853,7 @@ def _longImports(splash, app):
     Loads imports and updates the splash screen with information.
     '''
     global AnalyzeDataThread, PlotThread, FileListItem, FilterListItem,\
-            PlotToolBar, DataFileListItem, MyPlotItem, prepareDataFiles, pg,\
+            PlotToolBar, DataFileListItem, MyPlotItem, prepareDataFile, pg,\
             LayoutWidget, PlotCurveItem, linspace, np
             
     splash.showMessage("Importing PyQtGraph...", alignment = QtCore.Qt.AlignBottom)
