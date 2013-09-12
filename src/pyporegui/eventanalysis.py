@@ -6,23 +6,9 @@
 This program is for finding events in files and displaying the results.
 '''
 import sys
-import pypore.cythonsetup
 
 from PySide import QtCore, QtGui # Must import PySide stuff before pyqtgraph so pyqtgraph knows
                                 # to use PySide instead of PyQt
-import pyqtgraph as pg
-from pyqtgraph.widgets.LayoutWidget import LayoutWidget
-from pyqtgraph.graphicsItems.PlotCurveItem import PlotCurveItem
-
-from scipy import linspace
-
-import numpy as np
-
-# My stuff
-from MyThreads import AnalyzeDataThread, PlotThread
-from views import FileListItem, FilterListItem, PlotToolBar, DataFileListItem, MyPlotItem
-
-from pypore.DataFileOpener import prepareDataFile
 
 class PathItem(QtGui.QGraphicsPathItem):
         def __init__(self, x, y, conn = 'all'):
@@ -860,17 +846,57 @@ class MyMainWindow(QtGui.QMainWindow):
 #             w.wait()
             self.threadPool.remove(w)
         
-        
+def _LongImports(splash, app):
+    '''
+    Loads imports and updates the splash screen with information.
+    '''
+    global AnalyzeDataThread, PlotThread, FileListItem, FilterListItem,\
+            PlotToolBar, DataFileListItem, MyPlotItem, prepareDataFiles, pg,\
+            LayoutWidget, PlotCurveItem, linspace, np
+            
+    splash.showMessage("Importing PyQtGraph...", alignment = QtCore.Qt.AlignBottom)
+    app.processEvents()
+    import pyqtgraph as pg
+    from pyqtgraph.widgets.LayoutWidget import LayoutWidget
+    from pyqtgraph.graphicsItems.PlotCurveItem import PlotCurveItem
+    
+    splash.showMessage("Importing SciPy...", alignment = QtCore.Qt.AlignBottom)
+    app.processEvents()
+    from scipy import linspace
+    
+    splash.showMessage("Importing NumPy...", alignment = QtCore.Qt.AlignBottom)
+    app.processEvents()
+    import numpy as np
+            
+    # My stuff
+    splash.showMessage("Setting up Cython imports...", alignment = QtCore.Qt.AlignBottom)
+    app.processEvents()
+    from pypore import cythonsetup
+    
+    splash.showMessage("Compiling Cython imports... DataFileOpener", alignment = QtCore.Qt.AlignBottom)
+    app.processEvents()
+    from pypore.DataFileOpener import prepareDataFile
+    splash.showMessage("Compiling Cython imports... EventFinder", alignment = QtCore.Qt.AlignBottom)
+    app.processEvents()
+    from MyThreads import AnalyzeDataThread, PlotThread
+    from views import FileListItem, FilterListItem, PlotToolBar, DataFileListItem, MyPlotItem
+    
 def main():
     
-#     app = QtGui.QApplication(sys.argv)
-    app = pg.mkQApp()
+    app = QtGui.QApplication(sys.argv)
+#     app = pg.mkQApp()
+    pixmap = QtGui.QPixmap('splash.png')
+    splash = QtGui.QSplashScreen(pixmap, QtCore.Qt.WindowStaysOnTopHint)
+    splash.setMask(pixmap.mask())
+    splash.show()
+    _LongImports(splash, app)
+    splash.showMessage("Creating main window...", alignment = QtCore.Qt.AlignBottom)
+    app.processEvents()
     ex = MyMainWindow(app)
     ex.show()
+    splash.finish(ex)
     app.exec_()
     ex.cleanThreads()
-    sys.exit()
-
 
 if __name__ == '__main__':
     main()
