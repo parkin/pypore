@@ -370,6 +370,7 @@ cdef _lazyLoadFindEvents(parameters, signal = None, save_file = None):
                 if pipe is not None:
                     if event_count > last_event_sent:
                         pipe.send({'status_text': status_text, 'Events': save_file['Events'][last_event_sent:]})
+#                     pipe.send({'status_text': status_text})
                         last_event_sent = event_count
                 else:
                     sys.stdout.write("\r" + status_text)
@@ -403,8 +404,6 @@ cdef _lazyLoadFindEvents(parameters, signal = None, save_file = None):
 #         sio.savemat(save_file_name, save_file, oned_as='row')
         np.save(save_file_name, save_file)
         
-#         dataReady.emit({'status_text': 'Done. Found ' + str(event_count) + ' events.  Saved database to ' + str(save_file['filename']), 'done': True})
-    
     if pipe is not None:
         pipe.close()
     return save_file
