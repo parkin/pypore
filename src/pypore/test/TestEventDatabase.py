@@ -5,7 +5,7 @@ Created on Sep 13, 2013
 '''
 import unittest, os
 import numpy as np
-import pypore.cythonsetup
+# import pypore.cythonsetup
 import pypore.eventDatabase as ed
 
 
@@ -50,7 +50,7 @@ class TestEventDatabase(unittest.TestCase):
         self.assertEqual(fileh.root.events.levelIndices.nrows, 0)
         
         # Check the eventTable columns are correct and in correct order
-        columnNames = ['arrayRow', 'eventStart', 'eventLength', 'rawPointsPerSide', 'baseline', 'currentBlockage', 'Area', 'Filename']
+        columnNames = ['arrayRow', 'eventStart', 'eventLength', 'rawPointsPerSide', 'baseline', 'currentBlockage', 'area']
         self.assertEqual(fileh.root.events.eventTable.colnames, columnNames)
         
         # Check is in write mode
