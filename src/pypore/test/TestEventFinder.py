@@ -102,6 +102,8 @@ class TestEventFinder(unittest.TestCase):
         
         self.assertTrue(h5file.isopen)
         
+        h5file.close()
+        
         #delete the newly created event file
         os.remove(eventDatabase)
 
@@ -113,7 +115,7 @@ class TestEventFinder(unittest.TestCase):
         
         h5file = tb.openFile(eventDatabase, mode='r')
         
-        events = h5file.events
+        events = h5file.root.events
 
         # check event table correct length        
         eventTable = events.eventTable
@@ -142,6 +144,8 @@ class TestEventFinder(unittest.TestCase):
         self.assertEqual(indices[0], 2000)
         self.assertEqual(indices[1], 3000)
         
+        h5file.close()
+        
         #delete the newly created event file
         os.remove(eventDatabase)
         
@@ -153,7 +157,7 @@ class TestEventFinder(unittest.TestCase):
         
         h5file = tb.openFile(eventDatabase, mode='r')
         
-        events = h5file.events
+        events = h5file.root.events
         
         eventTable = events.eventTable
         self.assertTrue(eventTable.nrows, 1)
@@ -181,6 +185,8 @@ class TestEventFinder(unittest.TestCase):
         self.assertEqual(indices[1], 2750)
         self.assertEqual(indices[2], 3500)
         
+        h5file.close()
+        
         #delete the newly created event file
         os.remove(eventDatabase)
         
@@ -192,7 +198,7 @@ class TestEventFinder(unittest.TestCase):
         
         h5file = tb.openFile(eventDatabase, mode='r')
         
-        events = h5file.events
+        events = h5file.root.events
 
         # check event table correct length        
         eventTable = events.eventTable
@@ -234,6 +240,8 @@ class TestEventFinder(unittest.TestCase):
         self.assertEqual(indices.size, 2)
         self.assertEqual(indices[0], 4500)
         self.assertEqual(indices[1], 5500)
+        
+        h5file.close()
         
         #delete the newly created event file
         os.remove(eventDatabase)
