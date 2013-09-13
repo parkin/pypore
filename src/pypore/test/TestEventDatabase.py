@@ -56,6 +56,7 @@ class TestEventDatabase(unittest.TestCase):
         # Check is in write mode
         fileh.root.events.rawData.append(np.zeros(10))
         fileh.flush()
+        fileh.close()
         
         os.remove(filename)
         
