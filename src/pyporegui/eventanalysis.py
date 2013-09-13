@@ -11,6 +11,57 @@ from PySide import QtCore, QtGui # Must import PySide stuff before pyqtgraph so 
                                 # to use PySide instead of PyQt
                                 
 # The rest of the imports can be found below in _longImports
+def _longImports(**kwargs):
+    '''
+    Loads imports and updates the splash screen with information.
+    '''
+    global AnalyzeDataThread, PlotThread, FileListItem, FilterListItem,\
+            PlotToolBar, DataFileListItem, MyPlotItem, prepareDataFile, pg,\
+            LayoutWidget, PlotCurveItem, linspace, np
+        
+    updateSplash = False    
+    if 'splash' in kwargs and 'app' in kwargs:
+        updateSplash = True
+        splash = kwargs['splash']
+        app = kwargs['app']
+       
+    if updateSplash: 
+        splash.showMessage("Importing PyQtGraph...", alignment = QtCore.Qt.AlignBottom)
+        app.processEvents()
+    import pyqtgraph as pg
+    from pyqtgraph.widgets.LayoutWidget import LayoutWidget
+    from pyqtgraph.graphicsItems.PlotCurveItem import PlotCurveItem
+    
+    if updateSplash: 
+        splash.showMessage("Importing SciPy...", alignment = QtCore.Qt.AlignBottom)
+        app.processEvents()
+    from scipy import linspace
+    
+    if updateSplash: 
+        splash.showMessage("Importing NumPy...", alignment = QtCore.Qt.AlignBottom)
+        app.processEvents()
+    import numpy as np
+            
+    # My stuff
+    if updateSplash: 
+        splash.showMessage("Setting up Cython imports...", alignment = QtCore.Qt.AlignBottom)
+        app.processEvents()
+    from pypore import cythonsetup
+    
+    if updateSplash: 
+        splash.showMessage("Compiling Cython imports... DataFileOpener", alignment = QtCore.Qt.AlignBottom)
+        app.processEvents()
+    from pypore.DataFileOpener import prepareDataFile
+    
+    if updateSplash: 
+        splash.showMessage("Compiling Cython imports... EventFinder", alignment = QtCore.Qt.AlignBottom)
+        app.processEvents()
+    from MyThreads import AnalyzeDataThread, PlotThread
+    from views import FileListItem, FilterListItem, PlotToolBar, DataFileListItem, MyPlotItem
+    
+# If we are running from a test, name != main, and we'll need to import the above on our own
+if not __name__ == '__main__':
+    _longImports()
 
 class PathItem(QtGui.QGraphicsPathItem):
         def __init__(self, x, y, conn = 'all'):
@@ -848,48 +899,13 @@ class MyMainWindow(QtGui.QMainWindow):
 #             w.wait()
             self.threadPool.remove(w)
         
-def _longImports(splash, app):
-    '''
-    Loads imports and updates the splash screen with information.
-    '''
-    global AnalyzeDataThread, PlotThread, FileListItem, FilterListItem,\
-            PlotToolBar, DataFileListItem, MyPlotItem, prepareDataFile, pg,\
-            LayoutWidget, PlotCurveItem, linspace, np
-            
-    splash.showMessage("Importing PyQtGraph...", alignment = QtCore.Qt.AlignBottom)
-    app.processEvents()
-    import pyqtgraph as pg
-    from pyqtgraph.widgets.LayoutWidget import LayoutWidget
-    from pyqtgraph.graphicsItems.PlotCurveItem import PlotCurveItem
-    
-    splash.showMessage("Importing SciPy...", alignment = QtCore.Qt.AlignBottom)
-    app.processEvents()
-    from scipy import linspace
-    
-    splash.showMessage("Importing NumPy...", alignment = QtCore.Qt.AlignBottom)
-    app.processEvents()
-    import numpy as np
-            
-    # My stuff
-    splash.showMessage("Setting up Cython imports...", alignment = QtCore.Qt.AlignBottom)
-    app.processEvents()
-    from pypore import cythonsetup
-    
-    splash.showMessage("Compiling Cython imports... DataFileOpener", alignment = QtCore.Qt.AlignBottom)
-    app.processEvents()
-    from pypore.DataFileOpener import prepareDataFile
-    splash.showMessage("Compiling Cython imports... EventFinder", alignment = QtCore.Qt.AlignBottom)
-    app.processEvents()
-    from MyThreads import AnalyzeDataThread, PlotThread
-    from views import FileListItem, FilterListItem, PlotToolBar, DataFileListItem, MyPlotItem
-    
 def main():
     
     app = QtGui.QApplication(sys.argv)
     pixmap = QtGui.QPixmap('splash.png')
     splash = QtGui.QSplashScreen(pixmap, QtCore.Qt.WindowStaysOnTopHint)
     splash.show()
-    _longImports(splash, app)
+    _longImports(splash=splash, app=app)
     splash.showMessage("Creating main window...", alignment = QtCore.Qt.AlignBottom)
     app.processEvents()
     ex = MyMainWindow(app)
