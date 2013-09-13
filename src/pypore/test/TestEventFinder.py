@@ -4,10 +4,12 @@ Created on Aug 27, 2013
 @author: parkin
 '''
 import unittest
+from pypore import cythonsetup
 from pypore.EventFinder import findEvents
 from pypore.EventFinder import _getDataRange
 import numpy as np
 import os
+import tables as tb
 
 class TestEventFinder(unittest.TestCase):
     
@@ -94,65 +96,93 @@ class TestEventFinder(unittest.TestCase):
         filename = os.path.join(filename, 'testDataFiles','chimera_1event.log')
         eventDatabase = findEvents(filename = filename)
         
-        dat_filename = eventDatabase['database_filename']
-        self.assertTrue(os.path.isfile(dat_filename))
+        self.assertTrue(os.path.isfile(eventDatabase))
         
-        database = np.load(dat_filename).item()
+        h5file = tb.openFile(eventDatabase, mode='r')
         
-        np.testing.assert_equal(eventDatabase, database)
+        self.assertTrue(h5file.isopen)
         
         #delete the newly created event file
-        os.remove(eventDatabase['database_filename'])
+        os.remove(eventDatabase)
 
     def testChimera_nonoise_1Event(self):
         filename = os.path.dirname(os.path.realpath(__file__))
         filename = os.path.join(filename, 'testDataFiles','chimera_nonoise_1event.log')
         eventDatabase = findEvents(filename = filename,
                                    **self.defaultParams)
-        self.assertIn('Events', eventDatabase)
-        events = eventDatabase['Events']
         
-        self.assertEqual(len(events), 1)
-        event = events[0]
-        levels = event['cusum_values']
-        self.assertEqual(len(levels), 1)
-        level = levels[0]
-        self.assertAlmostEqual(level, 0.9332, 4)
+        h5file = tb.openFile(eventDatabase, mode='r')
         
-        indexes = event['cusum_indexes']
-        self.assertEqual(len(indexes), 2)
-        self.assertEqual(indexes[0], 2000)
-        self.assertEqual(indexes[1], 3000)
+        events = h5file.events
+
+        # check event table correct length        
+        eventTable = events.eventTable
+        self.assertTrue(eventTable.nrows, 1)
+        
+        # check raw data array correct length
+        rawDataMatrix = events.rawData
+        self.assertEqual(rawDataMatrix.nrows, 1)
+        rawData = rawDataMatrix[0]
+        rawPointsPerSide = eventTable[0]['rawPointsPerSide']
+        eventLength = eventTable[0]['eventLength']
+        self.assertEqual(rawData.size, eventLength + 2*rawPointsPerSide)
+        
+        # Make sure only 1 event with 1 level
+        levelsMatrix = events.levels
+        self.assertEqual(levelsMatrix.nrows, 1)
+        levels = levelsMatrix[0]
+        self.assertEqual(levels.size, 1)
+        self.assertAlmostEqual(levels[0], 0.9332, 4)
+        
+        # Check 1 event with 1 level -> 2 indices
+        indicesMatrix = events.levelIndices
+        self.assertEqual(indicesMatrix.nrows, 1)
+        indices = indicesMatrix[0]
+        self.assertEqual(indices.size, 2)
+        self.assertEqual(indices[0], 2000)
+        self.assertEqual(indices[1], 3000)
         
         #delete the newly created event file
-        os.remove(eventDatabase['database_filename'])
+        os.remove(eventDatabase)
         
     def testChimera_nonoise_1Event_2Levels(self):
         filename = os.path.dirname(os.path.realpath(__file__))
         filename = os.path.join(filename, 'testDataFiles','chimera_nonoise_1event_2levels.log')
         eventDatabase = findEvents(filename = filename,
                                    **self.defaultParams)
-        self.assertIn('Events', eventDatabase)
-        events = eventDatabase['Events']
-         
-        self.assertEqual(len(events), 1)
-        event = events[0]
-        levels = event['cusum_values']
-        indexes = event['cusum_indexes']
-        self.assertEqual(len(levels), 2)
-        self.assertEqual(len(indexes), 2+1)
-         
-        level = levels[0]
-        self.assertAlmostEqual(level, 0.9332, 4)
-        self.assertEqual(indexes[0], 2000)
-         
-        self.assertEqual(indexes[1], 2750)
-        level = levels[1]
-        self.assertAlmostEqual(level, 0.78064, 4)
-        self.assertEqual(indexes[2], 3500)
+        
+        h5file = tb.openFile(eventDatabase, mode='r')
+        
+        events = h5file.events
+        
+        eventTable = events.eventTable
+        self.assertTrue(eventTable.nrows, 1)
+        
+        # check raw data array correct length
+        rawDataMatrix = events.rawData
+        self.assertEqual(rawDataMatrix.nrows, 1)
+        rawData = rawDataMatrix[0]
+        rawPointsPerSide = eventTable[0]['rawPointsPerSide']
+        eventLength = eventTable[0]['eventLength']
+        self.assertEqual(rawData.size, eventLength + 2*rawPointsPerSide)
+        
+        levelsMatrix = events.levels
+        self.assertEqual(levelsMatrix.nrows, 1)
+        levels = levelsMatrix[0]
+        self.assertEqual(levels.size, 2)
+        self.assertAlmostEqual(levels[0], 0.9332, 4)
+        self.assertAlmostEqual(levels[1], 0.78064, 4)
+        
+        indicesMatrix = events.levelIndices
+        self.assertEqual(indicesMatrix.nrows, 1)
+        indices = indicesMatrix[0]
+        self.assertEqual(indices.size, 3)
+        self.assertEqual(indices[0], 2000)
+        self.assertEqual(indices[1], 2750)
+        self.assertEqual(indices[2], 3500)
         
         #delete the newly created event file
-        os.remove(eventDatabase['database_filename'])
+        os.remove(eventDatabase)
         
     def testChimera_nonoise_2events_1levels(self):
         filename = os.path.dirname(os.path.realpath(__file__))
@@ -160,33 +190,53 @@ class TestEventFinder(unittest.TestCase):
         eventDatabase = findEvents(filename = filename,
                                    **self.defaultParams)
         
-        events = eventDatabase['Events']
-        self.assertEqual(len(events), 2)
-
-        # First event stuff
-        event = events[0]
-        levels = event['cusum_values']
-        indexes = event['cusum_indexes']
-        self.assertEqual(len(levels), 1)
-        self.assertEqual(len(indexes), 2)
-        level = levels[0]
-        self.assertAlmostEqual(level, 0.9332, 4)
-        self.assertEqual(indexes[0], 2000)
-        self.assertEqual(indexes[1], 3000)
+        h5file = tb.openFile(eventDatabase, mode='r')
         
-        # Second event stuff
-        event = events[1]
-        levels = event['cusum_values']
-        indexes = event['cusum_indexes']
-        self.assertEqual(len(levels), 1)
-        self.assertEqual(len(indexes), 2)
-        level = levels[0]
-        self.assertAlmostEqual(level, 0.9332, 4)
-        self.assertEqual(indexes[0], 4500)
-        self.assertEqual(indexes[1], 5500)
+        events = h5file.events
+
+        # check event table correct length        
+        eventTable = events.eventTable
+        self.assertTrue(eventTable.nrows, 2)
+        
+        # check raw data array correct length
+        rawDataMatrix = events.rawData
+        self.assertEqual(rawDataMatrix.nrows, 2)
+        rawData = rawDataMatrix[0]
+        rawPointsPerSide = eventTable[0]['rawPointsPerSide']
+        eventLength = eventTable[0]['eventLength']
+        self.assertEqual(rawData.size, eventLength + 2*rawPointsPerSide)
+        # second event
+        rawData = rawDataMatrix[1]
+        rawPointsPerSide = eventTable[1]['rawPointsPerSide']
+        eventLength = eventTable[1]['eventLength']
+        self.assertEqual(rawData.size, eventLength + 2*rawPointsPerSide)
+        
+        # Make sure only 2 events with 1 level each
+        levelsMatrix = events.levels
+        self.assertEqual(levelsMatrix.nrows, 2)
+        levels = levelsMatrix[0]
+        self.assertEqual(levels.size, 1)
+        self.assertAlmostEqual(levels[0], 0.9332, 4)
+        # event 2
+        levels = levelsMatrix[1]
+        self.assertEqual(levels.size, 1)
+        self.assertAlmostEqual(levels[0], 0.9332, 4)
+        
+        # Check 1 event with 1 level -> 2 indices
+        indicesMatrix = events.levelIndices
+        self.assertEqual(indicesMatrix.nrows, 2)
+        indices = indicesMatrix[0]
+        self.assertEqual(indices.size, 2)
+        self.assertEqual(indices[0], 2000)
+        self.assertEqual(indices[1], 3000)
+        # event
+        indices = indicesMatrix[1]
+        self.assertEqual(indices.size, 2)
+        self.assertEqual(indices[0], 4500)
+        self.assertEqual(indices[1], 5500)
         
         #delete the newly created event file
-        os.remove(eventDatabase['database_filename'])
+        os.remove(eventDatabase)
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
