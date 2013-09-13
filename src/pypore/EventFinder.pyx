@@ -5,13 +5,17 @@ Created on Aug 19, 2013
 '''
 #cython embedsignature=True
 
+import os
 import time, datetime
 import numpy as np
+from src.pypore.eventDatabase import initializeEventsDatabase
 cimport numpy as np
 from pypore.DataFileOpener import prepareDataFile, getNextBlocks
+from pypore.eventDatabase import initializeEventsDatabase
 from itertools import chain
 import sys
 from libc.math cimport sqrt, pow, fmax, fmin, abs
+import tables as tb
 
 # Threshold types
 cdef int THRESHOLD_NOISE_BASED = 0
@@ -62,18 +66,13 @@ cpdef inline np.ndarray[DTYPE_t] _getDataRange(dataCache, long i, long n):
         spot += nn
     return res
         
-cdef _lazyLoadFindEvents(parameters, signal = None, save_file = None):
+cdef _lazyLoadFindEvents(parameters, pipe = None):
     cdef int event_count = 0
     
     cdef int get_blocks = 1
     
     cdef int raw_points_per_side = 50
     
-    if save_file is None:
-        save_file = {}
-    if not 'Events' in save_file:
-        save_file['Events'] = []
-        
     # Did we get passed a pipe?
     pipe = None
     if 'pipe' in parameters:
@@ -112,6 +111,25 @@ cdef _lazyLoadFindEvents(parameters, signal = None, save_file = None):
         if pipe is not None:
             pipe.close()
         return 'Not enough datapoints in file.'
+    
+    # Get the name of the database file we want to save
+    # if we have input.hkd, then save database to
+    # input_Events_YYmmdd_HHMMSS.h5
+    save_file_name = list(parameters['filename'])
+    # Remove the .mat off the end
+    for _ in xrange(0, 4):
+        save_file_name.pop()
+    # Get a string with the current year/month/day/hour/minute to label the file
+    day_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    save_file_name.append('_Events_' + day_time + '.h5')
+    save_file_name = "".join(save_file_name)
+    
+    # Open the event datbase
+    h5file = initializeEventsDatabase(save_file_name)
+    rawData = h5file.root.events.rawData
+    eventEntry = h5file.root.events.eventTable.row
+    levelsMatrix = h5file.root.events.levels
+    indicesMatrix = h5file.root.events.levelIndices
     
     cdef double datapoint = data[0]
     
@@ -178,6 +196,7 @@ cdef _lazyLoadFindEvents(parameters, signal = None, save_file = None):
         double min_Sn = float("inf")
         long ko = i
         double event_area = datapoint - local_mean  # integrate the area
+        double currentBlockage = 0
         int cache_index = 0
         int size = 0
         double h = 0
@@ -187,6 +206,7 @@ cdef _lazyLoadFindEvents(parameters, signal = None, save_file = None):
         int time_left = 0
         long cache_refreshes = 0 #number of times we get new data at the
                                         # end of the loop
+        double temp = 0
         
         np.ndarray[DTYPE_t] level_values
         
@@ -309,36 +329,44 @@ cdef _lazyLoadFindEvents(parameters, signal = None, save_file = None):
                 # CUSUM stuff
                 # is there enough for multiple levels?
                 if event_end - event_start > 10:
+                    currentBlockage = 0
                     level_values = np.zeros(n_levels, DTYPE)  # Holds the current values of the level_values
                     for q in xrange(0, n_levels):
                         start_index = level_indexes[q]
                         end_index = level_indexes[q + 1]
-                        level_values[q] = np.mean(_getDataRange(dataCache, start_index, end_index))
+                        temp = np.mean(_getDataRange(dataCache, start_index, end_index))
+                        level_values[q] = temp
+                        currentBlockage += (start_index-end_index)*temp
+                    currentBlockage = currentBlockage/(event_end-event_start) - local_mean # average current - baseline
                 # otherwise just say 1 level and use the maximum change as the value
                 else:
                     level_values = np.zeros(1, DTYPE)
                     if wasEventPositive:
-                        level_values += np.max(_getDataRange(dataCache, event_start, event_end))
+                        currentBlockage = np.max(_getDataRange(dataCache, event_start, event_end))
+                        level_values += currentBlockage
+                        currentBlockage -= local_mean
                     else:
-                        level_values += np.min(_getDataRange(dataCache, event_start, event_end))
+                        currentBlockage = np.min(_getDataRange(dataCache, event_start, event_end))
+                        level_values += currentBlockage
+                        currentBlockage -= local_mean
                     level_indexes = [event_start, event_end]
                     
                 for j, level_index in enumerate(level_indexes):
                         level_indexes[j] = level_index + placeInData
                 # end CUSUM
-                event = {}
-                event['event_data'] = _getDataRange(dataCache, event_start, event_end)
-                event['raw_data'] = _getDataRange(dataCache, event_start - raw_points_per_side, event_end + raw_points_per_side)
-                event['baseline'] = local_mean
-                event['current_blockage'] = np.mean(event['event_data']) - local_mean
-                event['event_start'] = event_start + placeInData
-                event['event_end'] = event_end + placeInData
-                event['raw_points_per_side'] = raw_points_per_side
-                event['sample_rate'] = sample_rate
-                event['cusum_indexes'] = level_indexes
-                event['cusum_values'] = level_values
-                event['area'] = event_area
-                save_file['Events'].append(event)
+#                 eventEntry['event_data'] = _getDataRange(dataCache, event_start, event_end)
+                rawData.append(_getDataRange(dataCache, event_start - raw_points_per_side, event_end + raw_points_per_side))
+                eventEntry['baseline'] = local_mean
+                eventEntry['currentBlockage'] = currentBlockage
+                eventEntry['eventStart'] = event_start + placeInData
+                eventEntry['eventLength'] = event_end - event_start
+                eventEntry['rawPointsPerSide'] = raw_points_per_side
+#                 event['sample_rate'] = sample_rate
+                eventEntry['area'] = event_area
+                indicesMatrix.append(level_indexes)
+                levelsMatrix.append(level_values)
+                eventEntry.append()
+                h5file.flush()
                 event_count += 1
         
         
@@ -368,47 +396,54 @@ cdef _lazyLoadFindEvents(parameters, signal = None, save_file = None):
                 time_left = int((points_per_channel_total-(placeInData+i))/rate)
                 status_text = "Event Count: %d Percent Done: %.2f Rate: %.2e pt/s Total Rate: %.2e pt/s Time Left: %s" % (event_count, percent_done, rate, total_rate, datetime.timedelta(seconds=time_left))
                 if pipe is not None:
-                    if event_count > last_event_sent:
-                        pipe.send({'status_text': status_text, 'Events': save_file['Events'][last_event_sent:]})
-#                     pipe.send({'status_text': status_text})
-                        last_event_sent = event_count
+#                     if event_count > last_event_sent:
+#                         pipe.send({'status_text': status_text, 'Events': save_file['Events'][last_event_sent:]})
+                    pipe.send({'status_text': status_text})
+#                         last_event_sent = event_count
                 else:
                     sys.stdout.write("\r" + status_text)
                     sys.stdout.flush()
                 time2 = time.time()
                 prevI = placeInData + i
-        if i == 0:
-            if 'cancelled' in save_file:
-                print 'cancelled'
-                if pipe is not None:
-                    pipe.close()
-                return {'error': 'Cancelled'}
             
+#     if event_count > 0:
+#         save_file_name = list(parameters['filename'])
+#         # Remove the .mat off the end
+#         for i in xrange(0, 4):
+#             save_file_name.pop()
+#             
+#         # Get a string with the current year/month/day/hour/minute to label the file
+#         day_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+#         save_file_name.append('_Events_' + day_time + '.npy')
+#         save_file_name = "".join(save_file_name)
+#         save_file['filename'] = parameters['filename']
+#         save_file['database_filename'] = save_file_name
+#         save_file['sample_rate'] = sample_rate
+#         save_file['event_count'] = event_count
+#         # save the user's analysis parameters
+#         parameters.pop('axes', None)  # remove the axes before saving.
+#         save_file['parameters'] = parameters
+# #         sio.savemat(save_file_name, save_file, oned_as='row')
+#         np.save(save_file_name, save_file)
+
     if event_count > 0:
-        save_file_name = list(parameters['filename'])
-        # Remove the .mat off the end
-        for i in xrange(0, 4):
-            save_file_name.pop()
-            
-        # Get a string with the current year/month/day/hour/minute to label the file
-        day_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        save_file_name.append('_Events_' + day_time + '.npy')
-        save_file_name = "".join(save_file_name)
-        save_file['filename'] = parameters['filename']
-        save_file['database_filename'] = save_file_name
-        save_file['sample_rate'] = sample_rate
-        save_file['event_count'] = event_count
-        # save the user's analysis parameters
-        parameters.pop('axes', None)  # remove the axes before saving.
-        save_file['parameters'] = parameters
-#         sio.savemat(save_file_name, save_file, oned_as='row')
-        np.save(save_file_name, save_file)
+        # Save the file
+        # add attributes
+        h5file.root.events.eventTable.flush() # if you don't flush before adding attributes,
+                                                # PyTables might print a warning
+        h5file.root.events.eventTable.attrs.sampleRate = sample_rate
+        h5file.root.events.eventTable.attrs.eventCount = event_count
+        h5file.flush()
+        h5file.close()
+    else:
+        # if no events, just delete the file.
+        h5file.flush()
+        h5file.close()
+        os.remove(save_file_name)
         
-    if pipe is not None:
-        pipe.close()
-    return save_file
+    return save_file_name
     
-def findEvents(signal = None, save_file = None, **parameters):
+def findEvents(pipe = None, **parameters):
     defaultParams = { 'min_event_length': 10.,
                                    'max_event_length': 10000.,
                                    'threshold_direction': 'Negative',
@@ -419,4 +454,4 @@ def findEvents(signal = None, save_file = None, **parameters):
     # do a union of defaultParams and parameters, keeping the
     # parameters entries on conflict.
     params = dict(chain(defaultParams.iteritems(), parameters.iteritems()))
-    return _lazyLoadFindEvents(params, signal, save_file)
+    return _lazyLoadFindEvents(params, pipe)
