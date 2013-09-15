@@ -188,12 +188,8 @@ cdef getNextChimeraBlocks(datafile, params, int n):
     cdef np.ndarray rawvalues = np.fromfile(datafile,datatype, n*block_size)
     rawvalues = rawvalues & bitmask
     cdef np.ndarray[DTYPE_t] logdata = -ADCvref + (2*ADCvref) * rawvalues / (2**16)
-    
-    done = False # eof?
-    if logdata.size < 1:
-        done = True
-    
-    return [logdata], done
+
+    return [logdata]
         
 cdef prepareHekaFile(filename):
     f = open(filename, 'rb')
@@ -324,10 +320,10 @@ cdef getNextHekaBlocks(datafile, params, int n):
         block = _readHekaNextBlock(datafile, per_file_params, 
                                    per_block_param_list, per_channel_param_list, 
                                    channel_list, points_per_channel_per_block)
-        if block['data'][0].size == 0:
-            return block['data'], True
+        if block[0].size == 0:
+            return block
         blocks.append(block)
-        size = block['data'][0].size
+        size = block[0].size
         totalsize = totalsize + size
         if size < points_per_channel_per_block: # did we reach the end?
             break
@@ -340,13 +336,10 @@ cdef getNextHekaBlocks(datafile, params, int n):
         index.append(0)
     for block in blocks:
         for i in xrange(0, len(channel_list)):
-            data[i][index[i]:index[i]+block['data'][i].size] = block['data'][i]
-            index[i] = index[i] + block['data'][i].size
+            data[i][index[i]:index[i]+block[i].size] = block[i]
+            index[i] = index[i] + block[i].size
             
-    if data[0].size < 1:
-        done = True
-    
-    return data, done
+    return data
 
 cdef _readHekaNextBlock(f, per_file_params, per_block_param_list, per_channel_param_list, channel_list, long points_per_channel_per_block):
     '''
@@ -357,7 +350,7 @@ cdef _readHekaNextBlock(f, per_file_params, per_block_param_list, per_channel_pa
     # Read block header
     per_block_params = _readHekaHeaderParams(f, per_block_param_list)
     if per_block_params == None:
-        return {'data': [np.empty(0)], 'per_block_params': None, 'per_channel_params': None}
+        return [np.empty(0)]
     
     # Read per channel header
     per_channel_block_params = []
@@ -378,9 +371,7 @@ cdef _readHekaNextBlock(f, per_file_params, per_block_param_list, per_channel_pa
 #         values[np.isnan(values)] = 0
         data.append(values)
         
-    block = {'data': data,'per_block_params': per_block_params, 'per_channel_params': per_channel_block_params}
-    
-    return block
+    return data
     
 cdef long _getParamListByteLength(param_list):
     '''
