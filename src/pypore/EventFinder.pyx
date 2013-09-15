@@ -3,19 +3,18 @@ Created on Aug 19, 2013
 
 @author: parkin
 '''
-#cython embedsignature=True
 
 import os
 import time, datetime
 import numpy as np
-from src.pypore.eventDatabase import initializeEventsDatabase
 cimport numpy as np
+from src.pypore.eventDatabase import initializeEventsDatabase
 from pypore.DataFileOpener import prepareDataFile, getNextBlocks
 from pypore.eventDatabase import initializeEventsDatabase
 from itertools import chain
 import sys
 from libc.math cimport sqrt, pow, fmax, fmin, abs
-import tables as tb
+# import tables as tb
 
 # Threshold types
 cdef int THRESHOLD_NOISE_BASED = 0
@@ -29,7 +28,7 @@ cdef int BASELINE_FIXED = 4
 DTYPE = np.double
 ctypedef np.double_t DTYPE_t
 
-cpdef inline np.ndarray[DTYPE_t] _getDataRange(dataCache, long i, long n):
+cpdef np.ndarray[DTYPE_t] _getDataRange(dataCache, long i, long n):
     '''
     returns [i,n)
     '''
@@ -40,7 +39,7 @@ cpdef inline np.ndarray[DTYPE_t] _getDataRange(dataCache, long i, long n):
     # do we need to include points from the old data
     # (eg. for raw event points)
     if i < 0:
-        l = len(dataCache[0])
+        l = dataCache[0].size
         # Is the range totally within the old data
         if n <= 0:
             res = dataCache[0][l + i:l + n]
@@ -50,6 +49,7 @@ cpdef inline np.ndarray[DTYPE_t] _getDataRange(dataCache, long i, long n):
         i = 0
     cdef long spot = 0
     cdef np.ndarray[DTYPE_t] cache
+    cdef int q = 0
     for q in xrange(len(dataCache) - 1):
         cache = dataCache[q + 1]
         nn = cache.size
@@ -125,11 +125,11 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
     save_file_name = "".join(save_file_name)
     
     # Open the event datbase
-    h5file = initializeEventsDatabase(save_file_name)
-    rawData = h5file.root.events.rawData
-    eventEntry = h5file.root.events.eventTable.row
-    levelsMatrix = h5file.root.events.levels
-    indicesMatrix = h5file.root.events.levelIndices
+#     h5file = initializeEventsDatabase(save_file_name)
+#     rawData = h5file.root.events.rawData
+#     eventEntry = h5file.root.events.eventTable.row
+#     levelsMatrix = h5file.root.events.levels
+#     indicesMatrix = h5file.root.events.levelIndices
     
     cdef double datapoint = data[0]
     
@@ -172,6 +172,7 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
     cdef:
     
         long i = 0
+        long event_i = 0
         long prevI = 0
         double time1 = time.time()
         double time2 = time1
@@ -204,11 +205,13 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
         double rate = 0
         double total_rate = 0
         int time_left = 0
+        int qq = 0
         long cache_refreshes = 0 #number of times we get new data at the
                                         # end of the loop
         double temp = 0
         
         np.ndarray[DTYPE_t] level_values
+        np.ndarray[DTYPE_t] currData = dataCache[1] # data in dataCache[1]
         
         int last_event_sent = 0
     
@@ -216,7 +219,7 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
     # and use them to decide filter_parameter threshold_start for events.  See
     # http://pubs.rsc.org/en/content/articlehtml/2012/nr/c2nr30951c for more details.
     while i < n:
-        datapoint = dataCache[1][i]
+        datapoint = currData[i]
         if threshold_type == THRESHOLD_NOISE_BASED:
             threshold_start = start_stddev * sqrt(local_variance) 
         
@@ -354,19 +357,17 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
                 for j, level_index in enumerate(level_indexes):
                         level_indexes[j] = level_index + placeInData
                 # end CUSUM
-#                 eventEntry['event_data'] = _getDataRange(dataCache, event_start, event_end)
-                rawData.append(_getDataRange(dataCache, event_start - raw_points_per_side, event_end + raw_points_per_side))
-                eventEntry['baseline'] = local_mean
-                eventEntry['currentBlockage'] = currentBlockage
-                eventEntry['eventStart'] = event_start + placeInData
-                eventEntry['eventLength'] = event_end - event_start
-                eventEntry['rawPointsPerSide'] = raw_points_per_side
-#                 event['sample_rate'] = sample_rate
-                eventEntry['area'] = event_area
-                indicesMatrix.append(level_indexes)
-                levelsMatrix.append(level_values)
-                eventEntry.append()
-                h5file.flush()
+#                 rawData.append(_getDataRange(dataCache, event_start - raw_points_per_side, event_end + raw_points_per_side))
+#                 eventEntry['baseline'] = local_mean
+#                 eventEntry['currentBlockage'] = currentBlockage
+#                 eventEntry['eventStart'] = event_start + placeInData
+#                 eventEntry['eventLength'] = event_end - event_start
+#                 eventEntry['rawPointsPerSide'] = raw_points_per_side
+#                 eventEntry['area'] = event_area
+#                 indicesMatrix.append(level_indexes)
+#                 levelsMatrix.append(level_values)
+#                 eventEntry.append()
+#                 h5file.flush()
                 event_count += 1
         
         
@@ -383,10 +384,10 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
             if len(dataCache) < 2:
                 cache_refreshes += 1
                 datanext, _ = getNextBlocks(f, params, get_blocks)
-                data = datanext[0]
-                dataCache.append(data)
+                dataCache.append(datanext[0])
             if len(dataCache) > 1:
-                n = dataCache[1].size
+                currData = dataCache[1]
+                n = currData.size
             if cache_refreshes % 100 == 0:
                 recent_time = time.time() - time2
                 total_time = time.time() - time1
@@ -426,20 +427,20 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
 # #         sio.savemat(save_file_name, save_file, oned_as='row')
 #         np.save(save_file_name, save_file)
 
-    if event_count > 0:
-        # Save the file
-        # add attributes
-        h5file.root.events.eventTable.flush() # if you don't flush before adding attributes,
-                                                # PyTables might print a warning
-        h5file.root.events.eventTable.attrs.sampleRate = sample_rate
-        h5file.root.events.eventTable.attrs.eventCount = event_count
-        h5file.flush()
-        h5file.close()
-    else:
-        # if no events, just delete the file.
-        h5file.flush()
-        h5file.close()
-        os.remove(save_file_name)
+#     if event_count > 0:
+#         # Save the file
+#         # add attributes
+#         h5file.root.events.eventTable.flush() # if you don't flush before adding attributes,
+#                                                 # PyTables might print a warning
+#         h5file.root.events.eventTable.attrs.sampleRate = sample_rate
+#         h5file.root.events.eventTable.attrs.eventCount = event_count
+#         h5file.flush()
+#         h5file.close()
+#     else:
+#         # if no events, just delete the file.
+#         h5file.flush()
+#         h5file.close()
+#         os.remove(save_file_name)
         
     return save_file_name
     
