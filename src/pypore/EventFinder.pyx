@@ -106,7 +106,7 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
         directionPositive = True
         
     # allocate memory for data
-    datax, _ = getNextBlocks(f, params, get_blocks)
+    datax = getNextBlocks(f, params, get_blocks)
     cdef np.ndarray[DTYPE_t] data = datax[0]  # only get channel 1
     del datax
     
@@ -184,6 +184,8 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
         double time2 = time1
         long event_start = 0
         long event_end = 0
+        long start_index = 0
+        long end_index = 0
         long placeInData = 0
         
         double mean_estimate = 0.0
@@ -214,12 +216,20 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
         int qq = 0
         long cache_refreshes = 0 #number of times we get new data at the
                                         # end of the loop
+        double percent_change_start = 0
+        double percent_change_end = 0
         double temp = 0
+        long tempLong = 0
         
         np.ndarray[DTYPE_t] level_values
         np.ndarray[DTYPE_t] currData = dataCache[1] # data in dataCache[1]
         
         int last_event_sent = 0
+        
+    if 'percent_change_start' in parameters:
+        percent_change_start = parameters['percent_change_start']
+    if 'percent_change_end' in parameters:
+        percent_change_end = parameters['percent_change_end']
     
     # search for events.  Keep track of filter_parameter filtered local (adapting!) mean and variance,
     # and use them to decide filter_parameter threshold_start for events.  See
@@ -231,7 +241,7 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
         
         # could this be an event?
         if threshold_type == THRESHOLD_PERCENTAGE_CHANGE:
-            threshold_start = local_mean * parameters['percent_change_start'] / 100.
+            threshold_start = local_mean * percent_change_start  / 100.
         # Detecting a negative event
         if (directionNegative and datapoint < local_mean - threshold_start):
             isEvent = True
@@ -246,7 +256,7 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
             if threshold_type == THRESHOLD_NOISE_BASED:
                 threshold_end = end_stddev * sqrt(local_variance) 
             elif threshold_type == THRESHOLD_PERCENTAGE_CHANGE:
-                threshold_end = local_mean * parameters['percent_change_end'] / 100.
+                threshold_end = local_mean * percent_change_end / 100.
             event_start = i
             event_end = i + 1
             done = False
@@ -263,21 +273,20 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
             min_Sp = min_Sn = 999999
             ko = i
             event_area = datapoint - local_mean  # integrate the area
+            cache_index = 1  # which index in the cache is event_i
+                                    # trying to grab data from?
             
             # loop until event ends
             while not done and event_i - event_start < max_event_steps:
                 event_i = event_i + 1
                 if event_i % n == 0:  # We may need new data
                     size = 0
-                    cache_index = 1  # which index in the cache is event_i
-                                    # trying to grab data from?
                     for qq in xrange(len(dataCache) - 1):
                         size += dataCache[qq + 1].size
-                        if event_i >= size:
-                            cache_index += 1
                     # we need new data if we've run out
                     if event_i >= size:
-                        datas, _ = getNextBlocks(f, params, get_blocks)
+                        cache_index += 1
+                        datas = getNextBlocks(f, params, get_blocks)
                         datas = datas[0]
                         n = datas.size
                         if n < 1:
@@ -287,7 +296,10 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
                         dataCache.append(datas)
                     else:
                         n = dataCache[cache_index].size
-                datapoint = dataCache[int(1.*event_i / n) + 1][event_i % n]
+                if cache_index == 1:
+                    datapoint = currData[event_i]
+                else:
+                    datapoint = dataCache[cache_index][event_i % n]
                 if (not wasEventPositive and datapoint >= local_mean - threshold_end) or (wasEventPositive and datapoint <= local_mean + threshold_end):
                     event_end = event_i
                     done = True
@@ -324,7 +336,10 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
                     level_indexes.append(minindex)
                     n_levels += 1
                     # reset stuff
-                    mean_estimate = dataCache[int(1.*minindex / n) + 1][minindex % n]
+                    if cache_index == 1:
+                        mean_estimate = currData[event_i]
+                    else:
+                        mean_estimate = dataCache[cache_index][event_i % n]
                     sn = sp = Sn = Sp = Gn = Gp = 0
                     min_Sp = min_Sn = float("inf")
                     # Go back to 1 after the level change found
@@ -340,11 +355,11 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
                 if event_end - event_start > 10:
                     currentBlockage = 0
                     level_values = np.zeros(n_levels, DTYPE)  # Holds the current values of the level_values
-                    for q in xrange(0, n_levels):
-                        start_index = level_indexes[q]
-                        end_index = level_indexes[q + 1]
+                    for qq in xrange(0, n_levels):
+                        start_index = level_indexes[qq]
+                        end_index = level_indexes[qq + 1]
                         temp = np.mean(_getDataRange(dataCache, start_index, end_index))
-                        level_values[q] = temp
+                        level_values[qq] = temp
                         currentBlockage += (start_index-end_index)*temp
                     currentBlockage = currentBlockage/(event_end-event_start) - local_mean # average current - baseline
                 # otherwise just say 1 level and use the maximum change as the value
@@ -389,7 +404,7 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
             # for old data, then we need new data.
             if len(dataCache) < 2:
                 cache_refreshes += 1
-                datanext, _ = getNextBlocks(f, params, get_blocks)
+                datanext = getNextBlocks(f, params, get_blocks)
                 dataCache.append(datanext[0])
             if len(dataCache) > 1:
                 currData = dataCache[1]
