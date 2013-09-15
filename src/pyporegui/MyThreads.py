@@ -111,8 +111,7 @@ class AnalyzeDataThread(QtCore.QThread):
     def run(self):
         self.time1 = time.time()
         self._pipe, child_conn = Pipe()
-        self.parameters['pipe'] = child_conn
-        self.p = Process(target = findEvents, args=(self.dataReady,), kwargs=self.parameters)
+        self.p = Process(target = findEvents, args=(child_conn,), kwargs=self.parameters)
         self.p.start()
         # child_conn needs to be closed in all processes before EOFError is thrown (on Linux)
         # So close it here immediately
