@@ -3,7 +3,6 @@ Created on May 23, 2013
 
 @author: parkin
 '''
-#cython embedsignature=True
 
 import scipy.io as sio
 import numpy as np
