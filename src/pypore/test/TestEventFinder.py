@@ -6,7 +6,7 @@ Created on Aug 27, 2013
 import unittest
 from pypore import cythonsetup
 from pypore.EventFinder import findEvents
-from pypore.EventFinder import _getDataRange
+from pypore.EventFinder import _getDataRangeTestWrapper
 import numpy as np
 import os
 import tables as tb
@@ -25,55 +25,55 @@ class TestEventFinder(unittest.TestCase):
     def tearDown(self):
         pass
     
-    def test_getDataRangeAtNew(self):
+    def test_getDataRangeTestWrapperAtNew(self):
         n = 100
         first = np.zeros(n)
         first[n-1] += 1.
         first[0] += 1.
         dataCache = [first, np.zeros(n)+100., np.zeros(n)+100.+60., np.zeros(n)+200.]
         
-        res = _getDataRange(dataCache, 0, n)
+        res = _getDataRangeTestWrapper(dataCache, 0, n)
         self.assertEqual(res.size, n)
         np.testing.assert_array_equal(res, np.zeros(n)+100.)
          
         # Test negative i to 0
         x = np.zeros(10)
         x[9] += 1.
-        res = _getDataRange(dataCache, -10, 0)
+        res = _getDataRangeTestWrapper(dataCache, -10, 0)
         np.testing.assert_array_equal(res, x)
          
         # Test negative i,n
         x = np.zeros(10)
         x[0] += 1.
-        res = _getDataRange(dataCache, -100, -90)
+        res = _getDataRangeTestWrapper(dataCache, -100, -90)
         np.testing.assert_array_equal(res, x)
          
         # Test negative i, pos n in first spot
         x = np.zeros(10)
         x[4] += 1.
         x[5:10] += 100.
-        res = _getDataRange(dataCache, -5, 5)
+        res = _getDataRangeTestWrapper(dataCache, -5, 5)
         np.testing.assert_array_equal(res, x)
          
         # Test pos i,n both in first spot
         x = np.zeros(10) + 100.
-        res = _getDataRange(dataCache, 60, 70)
+        res = _getDataRangeTestWrapper(dataCache, 60, 70)
         np.testing.assert_array_equal(res, x)
          
         # Test first and second cache overlap
         x = np.zeros(10) + 100.
         x[5:] += 60.
-        res = _getDataRange(dataCache, 95, 105)
+        res = _getDataRangeTestWrapper(dataCache, 95, 105)
         np.testing.assert_array_equal(res, x)
          
         # Test fist cache bumping up on second
         x = np.zeros(10) + 100.
-        res = _getDataRange(dataCache, 90, 100)
+        res = _getDataRangeTestWrapper(dataCache, 90, 100)
         np.testing.assert_array_equal(res, x)
          
         # Test second cache
         x = np.zeros(10) + 160.
-        res = _getDataRange(dataCache, 155, 165)
+        res = _getDataRangeTestWrapper(dataCache, 155, 165)
         np.testing.assert_array_equal(res, x)
         
         # Test neg overlap with 2 pos caches
@@ -81,7 +81,7 @@ class TestEventFinder(unittest.TestCase):
         x[9] += 1.
         x[10:] += 100.
         x[110:] += 60. 
-        res = _getDataRange(dataCache, -10, 110)
+        res = _getDataRangeTestWrapper(dataCache, -10, 110)
         
         # Test neg overlap with 3 pos caches
         x = np.zeros(220)
@@ -89,7 +89,7 @@ class TestEventFinder(unittest.TestCase):
         x[10:] += 100.
         x[110:] += 60.
         x[210:] += 40.
-        res = _getDataRange(dataCache, -10, 210)
+        res = _getDataRangeTestWrapper(dataCache, -10, 210)
         
     def testSavingFiles(self):
         filename = os.path.dirname(os.path.realpath(__file__))

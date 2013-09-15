@@ -28,7 +28,7 @@ cdef int BASELINE_FIXED = 4
 DTYPE = np.double
 ctypedef np.double_t DTYPE_t
 
-cpdef np.ndarray[DTYPE_t] _getDataRange(dataCache, long i, long n):
+cdef np.ndarray[DTYPE_t] _getDataRange(dataCache, long i, long n):
     '''
     returns [i,n)
     '''
@@ -65,6 +65,12 @@ cpdef np.ndarray[DTYPE_t] _getDataRange(dataCache, long i, long n):
             i = spot + nn
         spot += nn
     return res
+
+cpdef np.ndarray[DTYPE_t] _getDataRangeTestWrapper(dataCache, long i, long n):
+    '''
+    Just a wrapper so the python unittests can call _getDataRange
+    '''
+    return _getDataRange(dataCache, i, n)
         
 cdef _lazyLoadFindEvents(parameters, pipe = None):
     cdef int event_count = 0
