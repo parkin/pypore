@@ -14,7 +14,7 @@ from pypore.eventDatabase import initializeEventsDatabase
 from itertools import chain
 import sys
 from libc.math cimport sqrt, pow, fmax, fmin, abs
-# import tables as tb
+import tables as tb
 
 # Threshold types
 cdef int THRESHOLD_NOISE_BASED = 0
@@ -131,11 +131,11 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
     save_file_name = "".join(save_file_name)
     
     # Open the event datbase
-#     h5file = initializeEventsDatabase(save_file_name)
-#     rawData = h5file.root.events.rawData
-#     eventEntry = h5file.root.events.eventTable.row
-#     levelsMatrix = h5file.root.events.levels
-#     indicesMatrix = h5file.root.events.levelIndices
+    h5file = initializeEventsDatabase(save_file_name)
+    rawData = h5file.root.events.rawData
+    eventEntry = h5file.root.events.eventTable.row
+    levelsMatrix = h5file.root.events.levels
+    indicesMatrix = h5file.root.events.levelIndices
     
     cdef double datapoint = data[0]
     
@@ -221,7 +221,7 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
         double temp = 0
         long tempLong = 0
         
-        np.ndarray[DTYPE_t] level_values
+#         np.ndarray[DTYPE_t] level_values
         np.ndarray[DTYPE_t] currData = dataCache[1] # data in dataCache[1]
         
         int last_event_sent = 0
@@ -265,6 +265,7 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
             mean_estimate = datapoint
             level_indexes = [event_start]  # The indexes in data[] where each
                                             # level starts.
+            level_values = []
             sn = sp = Sn = Sp = Gn = Gp = 0
             var_estimate = local_variance
             n_levels = 1  # We're already starting with one level
@@ -272,9 +273,14 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
             min_index_p = min_index_n = i
             min_Sp = min_Sn = 999999
             ko = i
-            event_area = datapoint - local_mean  # integrate the area
+            event_area = datapoint  # integrate the area
             cache_index = 1  # which index in the cache is event_i
                                     # trying to grab data from?
+                                    
+            level_sum = datapoint
+            level_sum_minp = 0.
+            level_sum_minn = 0.
+            prevLevelStart = event_i
             
             # loop until event ends
             while not done and event_i - event_start < max_event_steps:
@@ -304,7 +310,7 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
                     event_end = event_i
                     done = True
                     break
-                event_area = event_area + datapoint - local_mean
+                event_area += datapoint
                 # new mean = old_mean + (new_sample - old_mean)/(N)
                 new_mean = mean_estimate + (datapoint - mean_estimate) / (1 + event_i - ko)
                 # New variance recursion relation 
@@ -324,16 +330,23 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
                 if Sp <= min_Sp:
                     min_Sp = Sp
                     min_index_p = event_i
+                    level_sum_minp = level_sum
                 if Sn <= min_Sn:
                     min_Sn = Sn
                     min_index_n = event_i
+                    level_sum_minn = level_sum
+                level_sum += datapoint
                 h = delta / sqrt(var_estimate)
                 # Did we detect a change?
                 if Gp > h or Gn > h:
-                    minindex = min_index_n
                     if Gp > h:
                         minindex = min_index_p
+                        level_sum = level_sum_minp
+                    else:
+                        minindex = min_index_n
+                        level_sum = level_sum_minn
                     level_indexes.append(minindex)
+                    level_values.append(level_sum/(minindex-prevLevelStart))
                     n_levels += 1
                     # reset stuff
                     if cache_index == 1:
@@ -341,29 +354,22 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
                     else:
                         mean_estimate = dataCache[cache_index][event_i % n]
                     sn = sp = Sn = Sp = Gn = Gp = 0
+                    level_sum = mean_estimate
                     min_Sp = min_Sn = float("inf")
                     # Go back to 1 after the level change found
                     ko = event_i = minindex
                     min_index_p = min_index_n = event_i
+                    prevLevelStart = event_i
                   
             i = event_end
             level_indexes.append(event_end)
+            level_values.append(level_sum/(event_end-prevLevelStart))
             # is the event long enough?
             if done and event_end - event_start > min_event_steps:
+                currentBlockage = event_area/(event_end-event_start) - local_mean # mean of the event - baseline
                 # CUSUM stuff
-                # is there enough for multiple levels?
-                if event_end - event_start > 10:
-                    currentBlockage = 0
-                    level_values = np.zeros(n_levels, DTYPE)  # Holds the current values of the level_values
-                    for qq in xrange(0, n_levels):
-                        start_index = level_indexes[qq]
-                        end_index = level_indexes[qq + 1]
-                        temp = np.mean(_getDataRange(dataCache, start_index, end_index))
-                        level_values[qq] = temp
-                        currentBlockage += (start_index-end_index)*temp
-                    currentBlockage = currentBlockage/(event_end-event_start) - local_mean # average current - baseline
                 # otherwise just say 1 level and use the maximum change as the value
-                else:
+                if event_end - event_start < 11:
                     level_values = np.zeros(1, DTYPE)
                     if wasEventPositive:
                         currentBlockage = np.max(_getDataRange(dataCache, event_start, event_end))
@@ -378,17 +384,17 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
                 for j, level_index in enumerate(level_indexes):
                         level_indexes[j] = level_index + placeInData
                 # end CUSUM
-#                 rawData.append(_getDataRange(dataCache, event_start - raw_points_per_side, event_end + raw_points_per_side))
-#                 eventEntry['baseline'] = local_mean
-#                 eventEntry['currentBlockage'] = currentBlockage
-#                 eventEntry['eventStart'] = event_start + placeInData
-#                 eventEntry['eventLength'] = event_end - event_start
-#                 eventEntry['rawPointsPerSide'] = raw_points_per_side
-#                 eventEntry['area'] = event_area
-#                 indicesMatrix.append(level_indexes)
-#                 levelsMatrix.append(level_values)
-#                 eventEntry.append()
-#                 h5file.flush()
+                rawData.append(_getDataRange(dataCache, event_start - raw_points_per_side, event_end + raw_points_per_side))
+                eventEntry['baseline'] = local_mean
+                eventEntry['currentBlockage'] = currentBlockage
+                eventEntry['eventStart'] = event_start + placeInData
+                eventEntry['eventLength'] = event_end - event_start
+                eventEntry['rawPointsPerSide'] = raw_points_per_side
+                eventEntry['area'] = event_area - local_mean
+                indicesMatrix.append(level_indexes)
+                levelsMatrix.append(level_values)
+                eventEntry.append()
+                h5file.flush()
                 event_count += 1
         
         
@@ -448,20 +454,20 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
 # #         sio.savemat(save_file_name, save_file, oned_as='row')
 #         np.save(save_file_name, save_file)
 
-#     if event_count > 0:
-#         # Save the file
-#         # add attributes
-#         h5file.root.events.eventTable.flush() # if you don't flush before adding attributes,
-#                                                 # PyTables might print a warning
-#         h5file.root.events.eventTable.attrs.sampleRate = sample_rate
-#         h5file.root.events.eventTable.attrs.eventCount = event_count
-#         h5file.flush()
-#         h5file.close()
-#     else:
-#         # if no events, just delete the file.
-#         h5file.flush()
-#         h5file.close()
-#         os.remove(save_file_name)
+    if event_count > 0:
+        # Save the file
+        # add attributes
+        h5file.root.events.eventTable.flush() # if you don't flush before adding attributes,
+                                                # PyTables might print a warning
+        h5file.root.events.eventTable.attrs.sampleRate = sample_rate
+        h5file.root.events.eventTable.attrs.eventCount = event_count
+        h5file.flush()
+        h5file.close()
+    else:
+        # if no events, just delete the file.
+        h5file.flush()
+        h5file.close()
+        os.remove(save_file_name)
         
     return save_file_name
     
