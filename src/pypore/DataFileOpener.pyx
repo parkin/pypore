@@ -289,12 +289,12 @@ cdef openHekaFile(filename, decimate=False):
         
     for i in xrange(0,num_blocks_in_file):
         block = _readHekaNextBlock(f, per_file_params, per_block_param_list, per_channel_param_list, channel_list, points_per_channel_per_block)
-        for j in xrange(0,len(block['data'])):
+        for j in xrange(len(block)):
             if decimate: # if decimating data, only keep max and min of each block
-                data[j][2*i] = np.max(block['data'][0])
-                data[j][2*i+1] = np.min(block['data'][0])
+                data[j][2*i] = np.max(block[j])
+                data[j][2*i+1] = np.min(block[j])
             else:
-                data[j][i*points_per_channel_per_block:(i+1)*points_per_channel_per_block] = block['data'][0]
+                data[j][i*points_per_channel_per_block:(i+1)*points_per_channel_per_block] = block[j]
             
     if decimate:
         sample_rate = sample_rate*2/per_file_params['Points per block'] # we are downsampling
