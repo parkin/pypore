@@ -13,23 +13,30 @@ class Event(tb.IsDescription):
                                     # eventData and rawData etc VLArrays
     eventStart = tb.UIntCol(itemsize=8, pos=1)    # start index of the event in the data
     eventLength = tb.UIntCol(pos=2)
-    rawPointsPerSide = tb.UIntCol(pos=3)
-    baseline = tb.FloatCol(pos=4)
-    currentBlockage = tb.FloatCol(pos=5)
-    area = tb.FloatCol(pos=6)
+    nLevels = tb.UIntCol(pos=3)
+    rawPointsPerSide = tb.UIntCol(pos=4)
+    baseline = tb.FloatCol(pos=5)
+    currentBlockage = tb.FloatCol(pos=6)
+    area = tb.FloatCol(pos=7)
     
-def initializeEventsDatabase(filename):
+def initializeEventsDatabase(filename, maxEventSteps):
     h5file = tb.openFile(filename, mode='w')
     h5file.createGroup(h5file.root, 'events', 'Events')
     h5file.createTable(h5file.root.events, 'eventTable', Event, 'Event parameters')
-    h5file.createVLArray(h5file.root.events, 'rawData',
-                         tb.FloatAtom(shape=()),
-                        "Raw data with raw points buffer.")
-    h5file.createVLArray(h5file.root.events, 'levels',
-                         tb.FloatAtom(shape=()),
-                        "Cusum levels")
-    h5file.createVLArray(h5file.root.events, 'levelIndices',
-                         tb.FloatAtom(shape=()),
-                        "Indices for cusum levels")
+    filters = tb.Filters(complib='blosc', complevel=4)
+    shape = (0,maxEventSteps)
+    a = tb.FloatAtom()
+    h5file.createEArray(h5file.root.events, 'rawData',
+                         a, shape=shape,
+                         title="Raw data points",
+                         filters=filters)
+    h5file.createEArray(h5file.root.events, 'levels',
+                         a, shape=shape,
+                         title="Cusum levels",
+                         filters=filters)
+    h5file.createEArray(h5file.root.events, 'levelIndices',
+                         a, shape=shape,
+                         title="Indices for cusum levels",
+                         filters=filters)
     
     return h5file

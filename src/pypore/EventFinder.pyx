@@ -130,8 +130,10 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
     save_file_name.append('_Events_' + day_time + '.h5')
     save_file_name = "".join(save_file_name)
     
+    cdef maxPoints = max_event_steps + 2*raw_points_per_side
+    
     # Open the event datbase
-    h5file = initializeEventsDatabase(save_file_name)
+    h5file = initializeEventsDatabase(save_file_name, maxPoints)
     rawData = h5file.root.events.rawData
     eventEntry = h5file.root.events.eventTable.row
     levelsMatrix = h5file.root.events.levels
@@ -198,6 +200,7 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
         double new_mean = 0
         double var_estimate = 0
         int n_levels = 0
+        int n_indices = 0
         double delta = 0
         long min_index_p = 0
         long min_index_n = 0
@@ -224,6 +227,10 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
 #         np.ndarray[DTYPE_t] level_values
         np.ndarray[DTYPE_t] currData = dataCache[1] # data in dataCache[1]
         
+        np.ndarray[DTYPE_t] mlevels = np.zeros(maxPoints, dtype=DTYPE)
+        np.ndarray[DTYPE_t] mindices = np.zeros(maxPoints, dtype=DTYPE)
+        np.ndarray[DTYPE_t] mrawData = np.zeros(maxPoints, dtype=DTYPE)
+        
         int last_event_sent = 0
         
     if 'percent_change_start' in parameters:
@@ -241,7 +248,7 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
         
         # could this be an event?
         if threshold_type == THRESHOLD_PERCENTAGE_CHANGE:
-            threshold_start = local_mean * percent_change_start  / 100.
+            threshold_start = local_mean * percent_change_start / 100.
         # Detecting a negative event
         if (directionNegative and datapoint < local_mean - threshold_start):
             isEvent = True
@@ -263,9 +270,10 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
             event_i = i
             # CUSUM stuff
             mean_estimate = datapoint
-            level_indexes = [event_start]  # The indexes in data[] where each
+            mindices[0] = event_start  # The indexes in data[] where each
                                             # level starts.
-            level_values = []
+            n_indices = 1
+            n_levels = 0
             sn = sp = Sn = Sp = Gn = Gp = 0
             var_estimate = local_variance
             n_levels = 1  # We're already starting with one level
@@ -345,8 +353,9 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
                     else:
                         minindex = min_index_n
                         level_sum = level_sum_minn
-                    level_indexes.append(minindex)
-                    level_values.append(level_sum/(minindex-prevLevelStart))
+                    mindices[n_indices] = minindex
+                    n_indices += 1
+                    mlevels[n_levels] = level_sum/(minindex-prevLevelStart)
                     n_levels += 1
                     # reset stuff
                     if cache_index == 1:
@@ -362,40 +371,50 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
                     prevLevelStart = event_i
                   
             i = event_end
-            level_indexes.append(event_end)
-            level_values.append(level_sum/(event_end-prevLevelStart))
+            mindices[n_indices] = event_end
+            n_indices += 1
+            if event_end > prevLevelStart:
+                mlevels[n_levels] = level_sum/(event_end-prevLevelStart)
+                n_levels += 1
             # is the event long enough?
             if done and event_end - event_start > min_event_steps:
                 currentBlockage = event_area/(event_end-event_start) - local_mean # mean of the event - baseline
                 # CUSUM stuff
                 # otherwise just say 1 level and use the maximum change as the value
                 if event_end - event_start < 11:
-                    level_values = np.zeros(1, DTYPE)
+                    n_levels = 1
+                    n_indices = 2
                     if wasEventPositive:
                         currentBlockage = np.max(_getDataRange(dataCache, event_start, event_end))
-                        level_values += currentBlockage
+                        mlevels[0] = currentBlockage
                         currentBlockage -= local_mean
                     else:
                         currentBlockage = np.min(_getDataRange(dataCache, event_start, event_end))
-                        level_values += currentBlockage
+                        mlevels[0] = currentBlockage
                         currentBlockage -= local_mean
-                    level_indexes = [event_start, event_end]
+                    mindices[0] = event_start
+                    mindices[1] = event_end
                     
-                for j, level_index in enumerate(level_indexes):
-                        level_indexes[j] = level_index + placeInData
+                mindices[:n_indices] += placeInData
+                
                 # end CUSUM
-                rawData.append(_getDataRange(dataCache, event_start - raw_points_per_side, event_end + raw_points_per_side))
+                mrawData[:event_end-event_start + 2*raw_points_per_side] = _getDataRange(dataCache, event_start - raw_points_per_side, event_end + raw_points_per_side)
+#                 rawData.append(_getDataRange(dataCache, event_start - raw_points_per_side, event_end + raw_points_per_side))
+                rawData.append(mrawData[np.newaxis,:])
                 eventEntry['baseline'] = local_mean
                 eventEntry['currentBlockage'] = currentBlockage
+                eventEntry['nLevels'] = n_levels
                 eventEntry['eventStart'] = event_start + placeInData
                 eventEntry['eventLength'] = event_end - event_start
                 eventEntry['rawPointsPerSide'] = raw_points_per_side
                 eventEntry['area'] = event_area - local_mean
-                indicesMatrix.append(level_indexes)
-                levelsMatrix.append(level_values)
+                indicesMatrix.append(mindices[np.newaxis,:])
+                levelsMatrix.append(mlevels[np.newaxis,:])
                 eventEntry.append()
-                h5file.flush()
                 event_count += 1
+                if event_count % 1000 == 0:
+                    h5file.root.events.eventTable.flush()
+                    h5file.flush()
         
         
         local_mean = filter_parameter * local_mean + (1 - filter_parameter) * datapoint
