@@ -79,11 +79,6 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
     
     cdef int raw_points_per_side = 50
     
-    # Did we get passed a pipe?
-    pipe = None
-    if 'pipe' in parameters:
-        pipe = parameters['pipe']
-    
     # IMPLEMENT ME pleasE
     f, params = prepareDataFile(parameters['filename'])
     
@@ -217,6 +212,7 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
         double total_rate = 0
         int time_left = 0
         int qq = 0
+        int cacheSize = 0
         long cache_refreshes = 0 #number of times we get new data at the
                                         # end of the loop
         double percent_change_start = 0
@@ -289,29 +285,28 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
             level_sum_minp = 0.
             level_sum_minn = 0.
             prevLevelStart = event_i
+            cacheSize = n
             
             # loop until event ends
             while not done and event_i - event_start < max_event_steps:
                 event_i = event_i + 1
-                if event_i % n == 0:  # We may need new data
-                    size = 0
-                    for qq in xrange(len(dataCache) - 1):
-                        size += dataCache[qq + 1].size
+                if event_i >= cacheSize:  # We may need new data
                     # we need new data if we've run out
-                    if event_i >= size:
-                        cache_index += 1
-                        datas = getNextBlocks(f, params, get_blocks)
-                        datas = datas[0]
-                        n = datas.size
-                        if n < 1:
-                            i = n
-                            print "Done"
-                            break
-                        dataCache.append(datas)
-                    else:
-                        n = dataCache[cache_index].size
+                    cache_index += 1
+                    datas = getNextBlocks(f, params, get_blocks)
+                    datas = datas[0]
+                    n = datas.size
+                    cacheSize += n
+                    if n < 1:
+                        i = n
+                        print "Done"
+                        break
+                    dataCache.append(datas)
                 if cache_index == 1:
-                    datapoint = currData[event_i]
+                    try:
+                        datapoint = currData[event_i]
+                    except:
+                        print 'Except:', len(dataCache), cache_index, event_i
                 else:
                     datapoint = dataCache[cache_index][event_i % n]
                 if (not wasEventPositive and datapoint >= local_mean - threshold_end) or (wasEventPositive and datapoint <= local_mean + threshold_end):

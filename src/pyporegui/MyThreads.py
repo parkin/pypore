@@ -82,11 +82,11 @@ class AnalyzeDataThread(QtCore.QThread):
         self.wait()
         
     def periodicCall(self):
+        self.updateGui()
         if self.cancelled:
             self.p.terminate()
             self.p.join()
             return
-        self.updateGui()
         self.timer.start(500)
         
     def updateGui(self):
