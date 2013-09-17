@@ -17,7 +17,7 @@ def _longImports(**kwargs):
     '''
     global AnalyzeDataThread, PlotThread, FileListItem, FilterListItem,\
             PlotToolBar, DataFileListItem, MyPlotItem, prepareDataFile, pg,\
-            LayoutWidget, PlotCurveItem, linspace, np
+            LayoutWidget, PlotCurveItem, linspace, np, tb
         
     updateSplash = False    
     if 'splash' in kwargs and 'app' in kwargs:
@@ -58,6 +58,11 @@ def _longImports(**kwargs):
         app.processEvents()
     from MyThreads import AnalyzeDataThread, PlotThread
     from views import FileListItem, FilterListItem, PlotToolBar, DataFileListItem, MyPlotItem
+    
+    if updateSplash: 
+        splash.showMessage("Importing PyTables", alignment = QtCore.Qt.AlignBottom)
+        app.processEvents()
+    import tables as tb
     
 # If we are running from a test, name != main, and we'll need to import the above on our own
 if not __name__ == '__main__':
@@ -126,7 +131,7 @@ class MyMainWindow(QtGui.QMainWindow):
         '''
         Opens file dialog box, add names of event database files to open list
         '''
-        fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open event database', self.openDir, '*.npy')[0]
+        fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open event database', self.openDir, '*.h5')[0]
         if len(fnames) > 0:
             self.listEventWidget.clear()
         else:
@@ -606,30 +611,34 @@ class MyMainWindow(QtGui.QMainWindow):
         '''
         Plots event statistics.  
         '''
+        files = []
+        eventCount = 0
+        for filename in filenames:
+            h5file = tb.openFile(filename, mode='r')
+            files.append(h5file)
+            eventCount += h5file.root.events.eventTable.attrs.eventCount
+        
         currentBlockade = []
         dwellTimes = []
-        for filename in filenames:
-            database = np.load(str(filename)).item()
-            events = database['Events']
-            sample_rate = database['sample_rate']
-            for event in events:
-                baseline = event['baseline']
-                levels = event['cusum_values']
-                for level in levels:
-                    currentBlockade.append(level - baseline)
-                dwellTime = (event['event_end']-event['event_start'])/sample_rate
-                dwellTimes.append(dwellTime)
+        for filex in files:
+            eventTable = filex.root.events.eventTable
+            sample_rate = filex.root.events.eventTable.attrs.sampleRate
+            currentBlockade.append([x['currentBlockage'] for x in eventTable.iterrows()])
+            dwellTimes.append([x['eventLength']/sample_rate for x in eventTable.iterrows()])
                 
         color = params['color']
         newcolor = QtGui.QColor(color.red(),color.green(),color.blue(),128)
                  
-        y_dt,x_dt = np.histogram(dwellTimes, bins=40)        
+        y_dt,x_dt = np.histogram(dwellTimes, bins=100)        
         curve_dt = PlotCurveItem(x_dt, y_dt, stepMode=True, fillLevel=0, brush=newcolor)
         self.plot_eventdur.addItem(curve_dt)
         
-        y_cb,x_cb = np.histogram(currentBlockade, bins=40)        
+        y_cb,x_cb = np.histogram(currentBlockade, bins=100)        
         curve_cb = PlotCurveItem(x_cb, y_cb, stepMode=True, fillLevel=0, brush=newcolor)
         self.plot_eventdepth.addItem(curve_cb)
+        
+        for filex in files:
+            filex.close()
         
         return
     
