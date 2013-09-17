@@ -459,7 +459,7 @@ class MyMainWindow(QtGui.QMainWindow):
         
         vwig = pg.GraphicsLayoutWidget()
         self.plot_eventdepth = vwig.addPlot(title='Event Depth')
-        self.plot_eventdur_eventdepth = vwig.addPlot(title='Duration vs. Depth')
+        self.plot_eventdur_eventdepth = vwig.addPlot(title='Depth vs. Duration')
         
         vwig.nextRow()
         
@@ -618,13 +618,14 @@ class MyMainWindow(QtGui.QMainWindow):
             files.append(h5file)
             eventCount += h5file.root.events.eventTable.attrs.eventCount
         
-        currentBlockade = []
-        dwellTimes = []
+        currentBlockade = np.empty(eventCount)
+        dwellTimes = np.empty(eventCount)
         for filex in files:
             eventTable = filex.root.events.eventTable
             sample_rate = filex.root.events.eventTable.attrs.sampleRate
-            currentBlockade.append([x['currentBlockage'] for x in eventTable.iterrows()])
-            dwellTimes.append([x['eventLength']/sample_rate for x in eventTable.iterrows()])
+            for i, row in enumerate(eventTable):
+                currentBlockade[i] = row['currentBlockage']
+                dwellTimes[i] = row['eventLength']/sample_rate
                 
         color = params['color']
         newcolor = QtGui.QColor(color.red(),color.green(),color.blue(),128)
@@ -636,6 +637,8 @@ class MyMainWindow(QtGui.QMainWindow):
         y_cb,x_cb = np.histogram(currentBlockade, bins=100)        
         curve_cb = PlotCurveItem(x_cb, y_cb, stepMode=True, fillLevel=0, brush=newcolor)
         self.plot_eventdepth.addItem(curve_cb)
+        
+        self.plot_eventdur_eventdepth.plot(dwellTimes, currentBlockade, pen=None, symbol = 'o', symbolBrush=newcolor)
         
         for filex in files:
             filex.close()
