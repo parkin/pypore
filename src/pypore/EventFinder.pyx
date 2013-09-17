@@ -227,6 +227,9 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
         np.ndarray[DTYPE_t] mindices = np.zeros(maxPoints, dtype=DTYPE)
         np.ndarray[DTYPE_t] mrawData = np.zeros(maxPoints, dtype=DTYPE)
         
+        double level_sum = 0
+        long prevLevelStart = 0
+        
         int last_event_sent = 0
         
     if 'percent_change_start' in parameters:
@@ -303,10 +306,7 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
                         break
                     dataCache.append(datas)
                 if cache_index == 1:
-                    try:
-                        datapoint = currData[event_i]
-                    except:
-                        print 'Except:', len(dataCache), cache_index, event_i
+                    datapoint = currData[event_i]
                 else:
                     datapoint = dataCache[cache_index][event_i % n]
                 if (not wasEventPositive and datapoint >= local_mean - threshold_end) or (wasEventPositive and datapoint <= local_mean + threshold_end):
