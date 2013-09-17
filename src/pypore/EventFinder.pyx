@@ -447,6 +447,23 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
                     sys.stdout.flush()
                 time2 = time.time()
                 prevI = placeInData + i
+                
+    # Update the status_text one last time
+    recent_time = time.time() - time2
+    total_time = time.time() - time1
+    percent_done = 100.*(placeInData+i) / points_per_channel_total
+    rate = (placeInData + i -prevI)/recent_time
+    total_rate = (placeInData + i)/total_time
+    time_left = int((points_per_channel_total-(placeInData+i))/rate)
+    status_text = "Event Count: %d Percent Done: %.2f Rate: %.2e pt/s Total Rate: %.2e pt/s Time Left: %s" % (event_count, percent_done, rate, total_rate, datetime.timedelta(seconds=time_left))
+    if pipe is not None:
+#                     if event_count > last_event_sent:
+#                         pipe.send({'status_text': status_text, 'Events': save_file['Events'][last_event_sent:]})
+        pipe.send({'status_text': status_text})
+#                         last_event_sent = event_count
+    else:
+        sys.stdout.write("\r" + status_text)
+        sys.stdout.flush()
             
 #     if event_count > 0:
 #         save_file_name = list(parameters['filename'])
