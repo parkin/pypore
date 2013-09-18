@@ -5,16 +5,22 @@
 
 This program is for finding events in files and displaying the results.
 '''
-import sys
+import sys, os
 
 from PySide import QtCore, QtGui # Must import PySide stuff before pyqtgraph so pyqtgraph knows
                                 # to use PySide instead of PyQt
+             
                                 
 # The rest of the imports can be found below in _longImports
 def _longImports(**kwargs):
     '''
     Loads imports and updates the splash screen with information.
     '''
+    # append the src directory to the PYTHONPATH, i.e. '../../' = 'src/'
+    srcdir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    if not srcdir in sys.path:
+        sys.path.append(srcdir)
+    
     global AnalyzeDataThread, PlotThread, FileListItem, FilterListItem,\
             PlotToolBar, DataFileListItem, MyPlotItem, prepareDataFile, pg,\
             LayoutWidget, PlotCurveItem, linspace, np, tb
