@@ -44,5 +44,6 @@ packagepath = os.path.dirname(dirname)
 
 # append directory that contains pypore and pyporegui to 
 # PYTHONPATH
-sys.path.append(packagepath)
+if not packagepath in sys.path:
+    sys.path.append(packagepath)
 
