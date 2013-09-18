@@ -8,7 +8,7 @@ import os
 import time, datetime
 import numpy as np
 cimport numpy as np
-from src.pypore.eventDatabase import initializeEventsDatabase
+from pypore.eventDatabase import initializeEventsDatabase
 from pypore.DataFileOpener import prepareDataFile, getNextBlocks
 from pypore.eventDatabase import initializeEventsDatabase
 from itertools import chain
