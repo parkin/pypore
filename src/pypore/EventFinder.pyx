@@ -244,10 +244,9 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
         datapoint = currData[i]
         if threshold_type == THRESHOLD_NOISE_BASED:
             threshold_start = start_stddev * sqrt(local_variance) 
-        
-        # could this be an event?
-        if threshold_type == THRESHOLD_PERCENTAGE_CHANGE:
+        elif threshold_type == THRESHOLD_PERCENTAGE_CHANGE:
             threshold_start = local_mean * percent_change_start / 100.
+            
         # Detecting a negative event
         if (directionNegative and datapoint < local_mean - threshold_start):
             isEvent = True
