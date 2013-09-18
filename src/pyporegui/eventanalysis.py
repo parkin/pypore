@@ -465,12 +465,13 @@ class MyMainWindow(QtGui.QMainWindow):
         
         vwig = pg.GraphicsLayoutWidget()
         self.plot_eventdepth = vwig.addPlot(title='Event Depth')
-        self.plot_eventdur_eventdepth = vwig.addPlot(title='Depth vs. Duration')
+        self.plot_eventdur_eventdepth = vwig.addPlot(name='Depth vs. Duration', title='Depth vs. Duration')
         
         vwig.nextRow()
         
         self.plot_scatterselect = vwig.addPlot(title='Single Event')
         self.plot_eventdur = vwig.addPlot(title='Event Duration')
+        self.plot_eventdur.setXLink('Depth vs. Duration')
         
         return vwig
         
@@ -911,6 +912,7 @@ class MyMainWindow(QtGui.QMainWindow):
         if 'done' in results:
             if results['done']:
                 self.stop_analyze_button.setEnabled(False)
+                
     def cleanThreads(self):
         for w in self.threadPool:
             w.cancel()
