@@ -465,6 +465,7 @@ class MyMainWindow(QtGui.QMainWindow):
         
         vwig = pg.GraphicsLayoutWidget()
         self.plot_eventdepth = vwig.addPlot(title='Event Depth')
+        self.plot_eventdepth.setMouseEnabled(x=True,y=False)
         self.plot_eventdur_eventdepth = vwig.addPlot(name='Depth vs. Duration', title='Depth vs. Duration')
         
         vwig.nextRow()
@@ -472,6 +473,7 @@ class MyMainWindow(QtGui.QMainWindow):
         self.plot_scatterselect = vwig.addPlot(title='Single Event')
         self.plot_eventdur = vwig.addPlot(title='Event Duration')
         self.plot_eventdur.setXLink('Depth vs. Duration')
+        self.plot_eventdur.setMouseEnabled(x=True,y=False)
         
         return vwig
         
