@@ -72,12 +72,12 @@ cpdef np.ndarray[DTYPE_t] _getDataRangeTestWrapper(dataCache, long i, long n):
     '''
     return _getDataRange(dataCache, i, n)
         
-cdef _lazyLoadFindEvents(parameters, pipe = None):
-    cdef int event_count = 0
+cdef _lazyLoadFindEvents(parameters, pipe = None, h5file = None):
+    cdef unsigned int event_count = 0
     
-    cdef int get_blocks = 1
+    cdef unsigned int get_blocks = 1
     
-    cdef int raw_points_per_side = 50
+    cdef unsigned int raw_points_per_side = 50
     
     # IMPLEMENT ME pleasE
     f, params = prepareDataFile(parameters['filename'])
@@ -85,8 +85,8 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
     cdef double sample_rate = params['sample_rate']
     cdef double timestep = 1. / sample_rate
     # Min and Max number of points in an event
-    cdef int min_event_steps = np.ceil(parameters['min_event_length'] * 1e-6 / timestep)
-    cdef int max_event_steps = np.ceil(parameters['max_event_length'] * 1e-6 / timestep)
+    cdef unsigned int min_event_steps = np.ceil(parameters['min_event_length'] * 1e-6 / timestep)
+    cdef unsigned int max_event_steps = np.ceil(parameters['max_event_length'] * 1e-6 / timestep)
     cdef long points_per_channel_total = params['points_per_channel_total']
     
     # Threshold direction.  -1 for negative, 0 for both, +1 for positive
@@ -105,7 +105,7 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
     cdef np.ndarray[DTYPE_t] data = datax[0]  # only get channel 1
     del datax
     
-    cdef long n = data.size
+    cdef unsigned long n = data.size
     
     if n < 100:
         print 'Not enough datapoints in file.'
@@ -125,10 +125,11 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
     save_file_name.append('_Events_' + day_time + '.h5')
     save_file_name = "".join(save_file_name)
     
-    cdef maxPoints = max_event_steps + 2*raw_points_per_side
+    cdef unsigned long maxPoints = max_event_steps + 2*raw_points_per_side
     
     # Open the event datbase
-    h5file = initializeEventsDatabase(save_file_name, maxPoints)
+    if h5file == None:
+        h5file = initializeEventsDatabase(save_file_name, maxPoints)
     rawData = h5file.root.events.rawData
     eventEntry = h5file.root.events.eventTable.row
     levelsMatrix = h5file.root.events.levels
@@ -174,16 +175,16 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
     
     cdef:
     
-        long i = 0
-        long event_i = 0
-        long prevI = 0
+        unsigned long i = 0
+        unsigned long event_i = 0
+        unsigned long prevI = 0
         double time1 = time.time()
         double time2 = time1
-        long event_start = 0
-        long event_end = 0
-        long start_index = 0
-        long end_index = 0
-        long placeInData = 0
+        unsigned long event_start = 0
+        unsigned long event_end = 0
+        unsigned long start_index = 0
+        unsigned long end_index = 0
+        unsigned long placeInData = 0
         
         double mean_estimate = 0.0
         double sn = 0
@@ -194,18 +195,18 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
         double Gp = 0
         double new_mean = 0
         double var_estimate = 0
-        int n_levels = 0
-        int n_indices = 0
+        unsigned int n_levels = 0
+        unsigned int n_indices = 0
         double delta = 0
-        long min_index_p = 0
-        long min_index_n = 0
+        unsigned long min_index_p = 0
+        unsigned long min_index_n = 0
         double min_Sp = float("inf")
         double min_Sn = float("inf")
         long ko = i
         double event_area = datapoint - local_mean  # integrate the area
         double currentBlockage = 0
         int cache_index = 0
-        int size = 0
+        unsigned int size = 0
         double h = 0
         double percent_done = 0
         double rate = 0
@@ -501,7 +502,7 @@ cdef _lazyLoadFindEvents(parameters, pipe = None):
         
     return save_file_name
     
-def findEvents(pipe = None, **parameters):
+def findEvents(pipe = None, h5file = None, **parameters):
     defaultParams = { 'min_event_length': 10.,
                                    'max_event_length': 10000.,
                                    'threshold_direction': 'Negative',
@@ -512,4 +513,4 @@ def findEvents(pipe = None, **parameters):
     # do a union of defaultParams and parameters, keeping the
     # parameters entries on conflict.
     params = dict(chain(defaultParams.iteritems(), parameters.iteritems()))
-    return _lazyLoadFindEvents(params, pipe)
+    return _lazyLoadFindEvents(params, pipe, h5file)
