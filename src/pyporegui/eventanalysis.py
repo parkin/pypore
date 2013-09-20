@@ -112,7 +112,7 @@ class MyMainWindow(QtGui.QMainWindow):
         Opens file dialog box, adds names of files to open to list
         '''
 
-        fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open data file', self.openDir, "All types(*.hkd *.log);;Heka files *.hkd(*.hkd);;Chimera files *.log(*.log)")[0]
+        fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open data file', self.openDir, "All types(*.hkd *.log *.mat);;Heka files *.hkd(*.hkd);;Chimera files *.log(*.log);;Gabys files *.mat(*.mat)")[0]
         if len(fnames) > 0:
             self.listWidget.clear()
         else:

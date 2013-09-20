@@ -8,17 +8,18 @@ import scipy.io as sio
 import numpy as np
 cimport numpy as np
 import os
+import tables as tb
 
-DTYPE = np.double
-ctypedef np.double_t DTYPE_t
+DTYPE = np.float
+ctypedef np.float_t DTYPE_t
 
 # Data types list, in order specified by the HEKA file header v2.0.
 # Using big-endian.
 # Code 0=uint8,1=uint16,2=uint32,3=int8,4=int16,5=int32,
 #    6=single,7=double,8=string64,9=string512
-encodings = [np.dtype('>u1'), np.dtype('>u2'), np.dtype('>u4'), 
-             np.dtype('>i1'), np.dtype('>i2'), np.dtype('>i4'), 
-             np.dtype('>f4'), np.dtype('>f8'), np.dtype('>S64'), 
+encodings = [np.dtype('>u1'), np.dtype('>u2'), np.dtype('>u4'),
+             np.dtype('>i1'), np.dtype('>i2'), np.dtype('>i4'),
+             np.dtype('>f4'), np.dtype('>f8'), np.dtype('>S64'),
              np.dtype('>S512'), np.dtype('<u2')]
 
 cpdef openData(filename, decimate=False):
@@ -30,11 +31,15 @@ cpdef openData(filename, decimate=False):
      file with the same name to be in the same folder.
      
     Assumes '.hkd' extension is Heka data.
+    
+    Assumes '.mat' extension is Gaby's format.
     '''
     if '.log' in filename:
         return openChimeraFile(filename, decimate)
-    if '.hkd' in filename:
+    elif '.hkd' in filename:
         return openHekaFile(filename, decimate)
+    elif '.mat' in filename:
+        return openGabysFile(filename, decimate)
         
     return {'error': 'File not specified with correct extension. Possibilities are: \'.log\', \'.hkd\''}
     
@@ -47,6 +52,8 @@ cpdef prepareDataFile(filename):
      
     Assumes '.hkd' extension is Heka data.
     
+    Assumes '.mat' extension is Gaby's format.
+    
     Returns
     datafile, params
     
@@ -57,8 +64,10 @@ cpdef prepareDataFile(filename):
         return prepareChimeraFile(filename)
     if '.hkd' in filename:
         return prepareHekaFile(filename)
+    if '.mat' in filename:
+        return prepareGabysFile(filename)
         
-    return 0,{'error': 'File not specified with correct extension. Possibilities are: \'.log\', \'.hkd\''}
+    return 0, {'error': 'File not specified with correct extension. Possibilities are: \'.log\', \'.hkd\', \'.mat\''}
 
 cpdef getNextBlocks(datafile, params, int n=1):
     '''
@@ -72,13 +81,60 @@ cpdef getNextBlocks(datafile, params, int n=1):
      file with the same name to be in the same folder. - not yet implemented
      
     Assumes '.hkd' extension is Heka data.
+    
+    Assumes '.mat' extension is Gaby's format.
     '''
     if '.log' in params['filename']:
         return getNextChimeraBlocks(datafile, params, n)
     if '.hkd' in params['filename']:
         return getNextHekaBlocks(datafile, params, n)
+    if '.mat' in params['filename']:
+        return getNextGabysBlocks(datafile, params, n)
         
     return 'File not specified with correct extension. Possibilities are: \'.log\', \'.hkd\''
+
+cdef prepareGabysFile(filename):
+    '''
+    Opens a file created by Gaby.  The file is a Matlab > 7.3 file, which is
+    an HDF file and can be opened with pytables.
+    
+    '''
+    datafile = tb.openFile(filename, mode='r')
+    
+    group = datafile.getNode('/#refs#').b
+    
+    cdef int points_per_channel_per_block = 10000
+    
+    p = {'filetype': 'gabys',
+        'dataGroup': group,
+        'filename': filename, 'nextToSend': 0, # next point we haven't sent
+        'sample_rate': group.samplerate[0][0],
+        'points_per_channel_per_block': points_per_channel_per_block,
+        'points_per_channel_total': group.Raw[0].size}
+    return datafile, p
+
+cdef openGabysFile(filename, decimate=False):
+    
+    f,p = prepareGabysFile(filename)
+    group = p['dataGroup']
+    
+    specsfile = {'data': [group.Raw[0]], 'SETUP_ADCSAMPLERATE': [[p['sample_rate']]]}
+    f.close()
+    return specsfile
+
+cdef getNextGabysBlocks(datafile, params, int n):
+
+    group = datafile.getNode('/#refs#').b
+    
+    cdef long nextToSend = params['nextToSend']
+    cdef long points_per_block = params['points_per_channel_per_block']
+    cdef totalPoints = params['points_per_channel_total']
+    
+    if nextToSend >= totalPoints:
+        return [group.Raw[0][nextToSend:].astype(DTYPE)]
+    else:
+        params['nextToSend'] += points_per_block
+        return [group.Raw[0][nextToSend:nextToSend+points_per_block].astype(DTYPE)]
 
 cdef openChimeraFile(filename, decimate=False):
     '''
@@ -86,7 +142,7 @@ cdef openChimeraFile(filename, decimate=False):
     filename.log file with the data, and a filename.mat file containing the
     parameters of the run.
     
-    Returns a dictionary with the keys/values in the filename.mat file
+    Returns a dictionary with the keys / values in the filename.mat file
     as well as 'data', a numpy array of the current values
     '''
     # remove 'log' append 'mat'
@@ -280,24 +336,24 @@ cdef openHekaFile(filename, decimate=False):
     cdef long points_per_channel_per_block = p['points_per_channel_per_block']
     
     data = []
-    cdef double sample_rate = 1.0/per_file_params['Sampling interval']
+    cdef double sample_rate = 1.0 / per_file_params['Sampling interval']
     for _ in channel_list:
-        if decimate: # If decimating, just keep max and min value from each block
-            data.append(np.empty(num_blocks_in_file*2))
+        if decimate:  # If decimating, just keep max and min value from each block
+            data.append(np.empty(num_blocks_in_file * 2))
         else:
             data.append(np.empty(points_per_channel_total))  # initialize array
         
-    for i in xrange(0,num_blocks_in_file):
+    for i in xrange(0, num_blocks_in_file):
         block = _readHekaNextBlock(f, per_file_params, per_block_param_list, per_channel_param_list, channel_list, points_per_channel_per_block)
         for j in xrange(len(block)):
-            if decimate: # if decimating data, only keep max and min of each block
-                data[j][2*i] = np.max(block[j])
-                data[j][2*i+1] = np.min(block[j])
+            if decimate:  # if decimating data, only keep max and min of each block
+                data[j][2 * i] = np.max(block[j])
+                data[j][2 * i + 1] = np.min(block[j])
             else:
-                data[j][i*points_per_channel_per_block:(i+1)*points_per_channel_per_block] = block[j]
+                data[j][i * points_per_channel_per_block:(i + 1) * points_per_channel_per_block] = block[j]
             
     if decimate:
-        sample_rate = sample_rate*2/per_file_params['Points per block'] # we are downsampling
+        sample_rate = sample_rate * 2 / per_file_params['Points per block']  # we are downsampling
         
     # return dictionary
     # samplerate is i [[]] because of how chimera data is returned.
@@ -316,16 +372,16 @@ cdef getNextHekaBlocks(datafile, params, int n):
     cdef long totalsize = 0
     cdef long size = 0
     done = False
-    for i in xrange(0,n):
-        block = _readHekaNextBlock(datafile, per_file_params, 
-                                   per_block_param_list, per_channel_param_list, 
+    for i in xrange(0, n):
+        block = _readHekaNextBlock(datafile, per_file_params,
+                                   per_block_param_list, per_channel_param_list,
                                    channel_list, points_per_channel_per_block)
         if block[0].size == 0:
             return block
         blocks.append(block)
         size = block[0].size
         totalsize = totalsize + size
-        if size < points_per_channel_per_block: # did we reach the end?
+        if size < points_per_channel_per_block:  # did we reach the end?
             break
         
     # stitch the data together
@@ -336,7 +392,7 @@ cdef getNextHekaBlocks(datafile, params, int n):
         index.append(0)
     for block in blocks:
         for i in xrange(0, len(channel_list)):
-            data[i][index[i]:index[i]+block[i].size] = block[i]
+            data[i][index[i]:index[i] + block[i].size] = block[i]
             index[i] = index[i] + block[i].size
             
     return data
@@ -354,7 +410,7 @@ cdef _readHekaNextBlock(f, per_file_params, per_block_param_list, per_channel_pa
     
     # Read per channel header
     per_channel_block_params = []
-    for _ in channel_list: # underscore used for discarded parameters
+    for _ in channel_list:  # underscore used for discarded parameters
         channel_params = {}
         # i[0] = name, i[1] = datatype
         for i in per_channel_param_list:
@@ -363,9 +419,9 @@ cdef _readHekaNextBlock(f, per_file_params, per_block_param_list, per_channel_pa
         
     # Read data
     data = []
-    dt = np.dtype('>i2') # int16
+    dt = np.dtype('>i2')  # int16
     cdef np.ndarray values
-    for i in xrange(0,len(channel_list)):
+    for i in xrange(0, len(channel_list)):
         values = np.fromfile(f, dt, count=points_per_channel_per_block) * per_channel_block_params[i]['Scale']
         # get rid of nan's
 #         values[np.isnan(values)] = 0
@@ -412,7 +468,7 @@ cdef _readHekaHeaderParamList(f, datatype, encodings):
     dt = np.dtype('>u1')
     cdef int num_params = np.fromfile(f, dt, 1)[0]
     for _ in xrange(0, num_params):
-        type_code = np.fromfile(f, dt,1)[0]
+        type_code = np.fromfile(f, dt, 1)[0]
         name = np.fromfile(f, datatype, 1)[0].strip()
         param_list.append([name, encodings[type_code]])
     return param_list

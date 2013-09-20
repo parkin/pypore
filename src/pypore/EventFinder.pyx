@@ -25,8 +25,8 @@ cdef int THRESHOLD_PERCENTAGE_CHANGE = 2
 cdef int BASELINE_ADAPTIVE = 3
 cdef int BASELINE_FIXED = 4
 
-DTYPE = np.double
-ctypedef np.double_t DTYPE_t
+DTYPE = np.float
+ctypedef np.float_t DTYPE_t
 
 cdef np.ndarray[DTYPE_t] _getDataRange(dataCache, long i, long n):
     '''
