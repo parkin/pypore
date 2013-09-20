@@ -465,8 +465,9 @@ class MyMainWindow(QtGui.QMainWindow):
         
         vwig = pg.GraphicsLayoutWidget()
         self.plot_eventdepth = vwig.addPlot(title='Event Depth')
-        self.plot_eventdepth.setMouseEnabled(x=True,y=False)
+        self.plot_eventdepth.setMouseEnabled(x=False,y=True)
         self.plot_eventdur_eventdepth = vwig.addPlot(name='Depth vs. Duration', title='Depth vs. Duration')
+        self.plot_eventdepth.setYLink('Depth vs. Duration')
         
         vwig.nextRow()
         
@@ -644,7 +645,8 @@ class MyMainWindow(QtGui.QMainWindow):
         self.plot_eventdur.addItem(curve_dt)
         
         y_cb,x_cb = np.histogram(currentBlockade, bins=100)        
-        curve_cb = PlotCurveItem(x_cb, y_cb, stepMode=True, fillLevel=0, brush=newcolor)
+        curve_cb = PlotCurveItem(-1.*x_cb, y_cb, stepMode=True, fillLevel=0, brush=newcolor)
+        curve_cb.rotate(-90)
         self.plot_eventdepth.addItem(curve_cb)
         
         self.plot_eventdur_eventdepth.plot(dwellTimes, currentBlockade, pen=None, symbol = 'o', symbolBrush=newcolor)
