@@ -177,6 +177,7 @@ cdef _lazyLoadFindEvents(parameters, pipe = None, h5file = None):
     
         unsigned long i = 0
         unsigned long event_i = 0
+        unsigned long minindex = 0
         unsigned long prevI = 0
         double time1 = time.time()
         double time2 = time1
@@ -319,8 +320,8 @@ cdef _lazyLoadFindEvents(parameters, pipe = None, h5file = None):
                 var_estimate = ((event_i - ko) * var_estimate + (datapoint - mean_estimate) * (datapoint - new_mean)) / (1 + event_i - ko)
                 mean_estimate = new_mean
                 if var_estimate > 0:
-                    sp = (delta / var_estimate) * (datapoint - mean_estimate - delta / 2)
-                    sn = -(delta / var_estimate) * (datapoint - mean_estimate + delta / 2)
+                    sp = (delta / var_estimate) * (datapoint - mean_estimate - delta / 2.)
+                    sn = -(delta / var_estimate) * (datapoint - mean_estimate + delta / 2.)
                 elif delta == 0:
                     sp = sn = 0
                 else:
