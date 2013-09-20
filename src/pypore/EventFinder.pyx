@@ -275,7 +275,7 @@ cdef _lazyLoadFindEvents(parameters, pipe = None, h5file = None):
             n_levels = 0
             sn = sp = Sn = Sp = Gn = Gp = 0
             var_estimate = local_variance
-            n_levels = 1  # We're already starting with one level
+#             n_levels = 1  # We're already starting with one level
             delta = abs(mean_estimate - local_mean) / 5.
             min_index_p = min_index_n = i
             min_Sp = min_Sn = 999999
@@ -313,7 +313,6 @@ cdef _lazyLoadFindEvents(parameters, pipe = None, h5file = None):
                     event_end = event_i
                     done = True
                     break
-                event_area += datapoint
                 # new mean = old_mean + (new_sample - old_mean)/(N)
                 new_mean = mean_estimate + (datapoint - mean_estimate) / (1 + event_i - ko)
                 # New variance recursion relation 
@@ -373,10 +372,9 @@ cdef _lazyLoadFindEvents(parameters, pipe = None, h5file = None):
                 n_levels += 1
             # is the event long enough?
             if done and event_end - event_start > min_event_steps:
-                currentBlockage = event_area/(event_end-event_start) - local_mean # mean of the event - baseline
                 # CUSUM stuff
                 # otherwise just say 1 level and use the maximum change as the value
-                if event_end - event_start < 11:
+                if event_end - event_start < 10:
                     n_levels = 1
                     n_indices = 2
                     if wasEventPositive:
@@ -389,6 +387,12 @@ cdef _lazyLoadFindEvents(parameters, pipe = None, h5file = None):
                         currentBlockage -= local_mean
                     mindices[0] = event_start
                     mindices[1] = event_end
+                else:
+                    currentBlockage = 0
+                    # calculate the weighted average of the levels
+                    for qq in xrange(n_levels):
+                        currentBlockage += mlevels[qq]*(mindices[qq+1]-mindices[qq])
+                    currentBlockage = currentBlockage/(event_end-event_start) - local_mean
                     
                 mindices[:n_indices] += placeInData
                 
