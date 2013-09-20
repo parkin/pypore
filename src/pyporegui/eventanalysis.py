@@ -640,11 +640,12 @@ class MyMainWindow(QtGui.QMainWindow):
         color = params['color']
         newcolor = QtGui.QColor(color.red(),color.green(),color.blue(),128)
                  
-        y_dt,x_dt = np.histogram(dwellTimes, bins=100)        
+        bins = eventCount**0.5
+        y_dt,x_dt = np.histogram(dwellTimes, bins=bins)        
         curve_dt = PlotCurveItem(x_dt, y_dt, stepMode=True, fillLevel=0, brush=newcolor)
         self.plot_eventdur.addItem(curve_dt)
         
-        y_cb,x_cb = np.histogram(currentBlockade, bins=100)        
+        y_cb,x_cb = np.histogram(currentBlockade, bins=bins)        
         curve_cb = PlotCurveItem(-1.*x_cb, y_cb, stepMode=True, fillLevel=0, brush=newcolor)
         curve_cb.rotate(-90)
         self.plot_eventdepth.addItem(curve_cb)
