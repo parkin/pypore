@@ -118,7 +118,14 @@ cdef openGabysFile(filename, decimate=False):
     f,p = prepareGabysFile(filename)
     group = p['dataGroup']
     
-    specsfile = {'data': [group.Raw[0]], 'SETUP_ADCSAMPLERATE': [[p['sample_rate']]]}
+    cdef np.ndarray data
+    
+    if decimate:
+        data = group.Raw[0][::5000]
+    else:
+        data = group.Raw[0]
+    
+    specsfile = {'data': [data], 'SETUP_ADCSAMPLERATE': [[p['sample_rate']]]}
     f.close()
     return specsfile
 
