@@ -124,23 +124,22 @@ class TestEventFinder(unittest.TestCase):
         # check raw data array correct length
         rawDataMatrix = events.rawData
         self.assertEqual(rawDataMatrix.nrows, 1)
-        rawData = rawDataMatrix[0]
-        rawPointsPerSide = eventTable[0]['rawPointsPerSide']
         eventLength = eventTable[0]['eventLength']
-        self.assertEqual(rawData.size, eventLength + 2*rawPointsPerSide)
+        self.assertEqual(eventLength, 1000)
         
         # Make sure only 1 event with 1 level
         levelsMatrix = events.levels
         self.assertEqual(levelsMatrix.nrows, 1)
+        nLevels = eventTable[0]['nLevels']
+        self.assertEqual(nLevels, 1)
         levels = levelsMatrix[0]
-        self.assertEqual(levels.size, 1)
         self.assertAlmostEqual(levels[0], 0.9332, 4)
         
         # Check 1 event with 1 level -> 2 indices
         indicesMatrix = events.levelIndices
         self.assertEqual(indicesMatrix.nrows, 1)
         indices = indicesMatrix[0]
-        self.assertEqual(indices.size, 2)
+        self.assertEqual(nLevels+1, 2)
         self.assertEqual(indices[0], 2000)
         self.assertEqual(indices[1], 3000)
         
@@ -165,22 +164,21 @@ class TestEventFinder(unittest.TestCase):
         # check raw data array correct length
         rawDataMatrix = events.rawData
         self.assertEqual(rawDataMatrix.nrows, 1)
-        rawData = rawDataMatrix[0]
-        rawPointsPerSide = eventTable[0]['rawPointsPerSide']
         eventLength = eventTable[0]['eventLength']
-        self.assertEqual(rawData.size, eventLength + 2*rawPointsPerSide)
+        self.assertEqual(eventLength, 1500)
         
         levelsMatrix = events.levels
         self.assertEqual(levelsMatrix.nrows, 1)
         levels = levelsMatrix[0]
-        self.assertEqual(levels.size, 2)
+        nLevels = eventTable[0]['nLevels']
+        self.assertEqual(nLevels, 2)
         self.assertAlmostEqual(levels[0], 0.9332, 4)
         self.assertAlmostEqual(levels[1], 0.78064, 4)
         
         indicesMatrix = events.levelIndices
         self.assertEqual(indicesMatrix.nrows, 1)
         indices = indicesMatrix[0]
-        self.assertEqual(indices.size, 3)
+        self.assertEqual(nLevels+1, 3)
         self.assertEqual(indices[0], 2000)
         self.assertEqual(indices[1], 2750)
         self.assertEqual(indices[2], 3500)
@@ -207,37 +205,33 @@ class TestEventFinder(unittest.TestCase):
         # check raw data array correct length
         rawDataMatrix = events.rawData
         self.assertEqual(rawDataMatrix.nrows, 2)
-        rawData = rawDataMatrix[0]
-        rawPointsPerSide = eventTable[0]['rawPointsPerSide']
         eventLength = eventTable[0]['eventLength']
-        self.assertEqual(rawData.size, eventLength + 2*rawPointsPerSide)
+        self.assertEqual(eventLength, 1000)
         # second event
-        rawData = rawDataMatrix[1]
-        rawPointsPerSide = eventTable[1]['rawPointsPerSide']
         eventLength = eventTable[1]['eventLength']
-        self.assertEqual(rawData.size, eventLength + 2*rawPointsPerSide)
+        self.assertEqual(eventLength, 1000)
         
         # Make sure only 2 events with 1 level each
         levelsMatrix = events.levels
         self.assertEqual(levelsMatrix.nrows, 2)
         levels = levelsMatrix[0]
-        self.assertEqual(levels.size, 1)
+        nLevels = eventTable[0]['nLevels']
+        self.assertEqual(nLevels, 1)
         self.assertAlmostEqual(levels[0], 0.9332, 4)
         # event 2
         levels = levelsMatrix[1]
-        self.assertEqual(levels.size, 1)
+        nLevels1 = eventTable[1]['nLevels']
+        self.assertEqual(nLevels1, 1)
         self.assertAlmostEqual(levels[0], 0.9332, 4)
         
         # Check 1 event with 1 level -> 2 indices
         indicesMatrix = events.levelIndices
         self.assertEqual(indicesMatrix.nrows, 2)
         indices = indicesMatrix[0]
-        self.assertEqual(indices.size, 2)
         self.assertEqual(indices[0], 2000)
         self.assertEqual(indices[1], 3000)
         # event
         indices = indicesMatrix[1]
-        self.assertEqual(indices.size, 2)
         self.assertEqual(indices[0], 4500)
         self.assertEqual(indices[1], 5500)
         
