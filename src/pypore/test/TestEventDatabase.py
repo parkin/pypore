@@ -24,7 +24,7 @@ class TestEventDatabase(unittest.TestCase):
         filename = 'testInitializeDatabase.h5'
         
         # Get an open file descriptor
-        fileh = ed.initializeEventsDatabase(filename)
+        fileh = ed.initializeEventsDatabase(filename, 100)
         
         # Check that only the root group and event group exist
         names = []
@@ -50,11 +50,11 @@ class TestEventDatabase(unittest.TestCase):
         self.assertEqual(fileh.root.events.levelIndices.nrows, 0)
         
         # Check the eventTable columns are correct and in correct order
-        columnNames = ['arrayRow', 'eventStart', 'eventLength', 'rawPointsPerSide', 'baseline', 'currentBlockage', 'area']
+        columnNames = ['arrayRow', 'eventStart', 'eventLength', 'nLevels', 'rawPointsPerSide', 'baseline', 'currentBlockage', 'area']
         self.assertEqual(fileh.root.events.eventTable.colnames, columnNames)
         
         # Check is in write mode
-        fileh.root.events.rawData.append(np.zeros(10))
+        fileh.root.events.rawData.append(np.zeros((1,100)))
         fileh.flush()
         fileh.close()
         
