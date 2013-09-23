@@ -55,11 +55,13 @@ class AnalyzeDataThread(QtCore.QThread):
     
     readyForEvents = True
     
-    def __init__(self, parameters):
+    def __init__(self, filenames, parameters):
 #     def __init__(self, axes, filename='', threshold_type='adaptive', filter_parameter=0.93,
 #                  threshold_direction='negative', min_event_length=10., max_event_length=1000.):
         QtCore.QThread.__init__(self)
         self.parameters = parameters
+        
+        self.filenames = filenames
         
         self.event_count = 0
         self.timer = QtCore.QTimer()
@@ -112,7 +114,7 @@ class AnalyzeDataThread(QtCore.QThread):
     def run(self):
         self.time1 = time.time()
         self._pipe, child_conn = Pipe()
-        self.p = Process(target = findEvents, args=(child_conn,), kwargs=self.parameters)
+        self.p = Process(target = findEvents, args=(self.filenames, child_conn,), kwargs=self.parameters)
         self.p.start()
         # child_conn needs to be closed in all processes before EOFError is thrown (on Linux)
         # So close it here immediately

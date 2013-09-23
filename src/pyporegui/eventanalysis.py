@@ -809,12 +809,12 @@ class MyMainWindow(QtGui.QMainWindow):
         
         # Add axes and the filename to the parameters
         parameters['axes'] = self.plot_event_zoomed
-        parameters['filename'] = str(currItem.getFileName())
+        filenames = [str(currItem.getFileName())]
         
         self.status_text.setText('Event Count: 0 Percent Done: 0')
         
         # Start analyzing data in new analyzethread.
-        self.analyzethread = AnalyzeDataThread(parameters)
+        self.analyzethread = AnalyzeDataThread(filenames, parameters)
         self.analyzethread.dataReady.connect(self._analyze_data_thread_callback)
         self.threadPool.append(self.analyzethread)
         self.analyzethread.start()

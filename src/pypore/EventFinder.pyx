@@ -72,7 +72,7 @@ cpdef np.ndarray[DTYPE_t] _getDataRangeTestWrapper(dataCache, long i, long n):
     '''
     return _getDataRange(dataCache, i, n)
         
-cdef _lazyLoadFindEvents(parameters, pipe = None, h5file = None):
+cdef _lazyLoadFindEvents(filename, parameters, pipe = None, h5file = None):
     cdef unsigned int event_count = 0
     
     cdef unsigned int get_blocks = 1
@@ -80,7 +80,7 @@ cdef _lazyLoadFindEvents(parameters, pipe = None, h5file = None):
     cdef unsigned int raw_points_per_side = 50
     
     # IMPLEMENT ME pleasE
-    f, params = prepareDataFile(parameters['filename'])
+    f, params = prepareDataFile(filename)
     
     cdef double sample_rate = params['sample_rate']
     cdef double timestep = 1. / sample_rate
@@ -116,7 +116,7 @@ cdef _lazyLoadFindEvents(parameters, pipe = None, h5file = None):
     # Get the name of the database file we want to save
     # if we have input.hkd, then save database to
     # input_Events_YYmmdd_HHMMSS.h5
-    save_file_name = list(parameters['filename'])
+    save_file_name = list(filename)
     # Remove the .mat off the end
     for _ in xrange(0, 4):
         save_file_name.pop()
@@ -507,7 +507,7 @@ cdef _lazyLoadFindEvents(parameters, pipe = None, h5file = None):
         
     return save_file_name
     
-def findEvents(pipe = None, h5file = None, **parameters):
+def findEvents(filenames, pipe = None, h5file = None, **parameters):
     defaultParams = { 'min_event_length': 10.,
                                    'max_event_length': 10000.,
                                    'threshold_direction': 'Negative',
@@ -518,4 +518,7 @@ def findEvents(pipe = None, h5file = None, **parameters):
     # do a union of defaultParams and parameters, keeping the
     # parameters entries on conflict.
     params = dict(chain(defaultParams.iteritems(), parameters.iteritems()))
-    return _lazyLoadFindEvents(params, pipe, h5file)
+    eventDatabases = []
+    for filename in filenames:
+        eventDatabases.append(_lazyLoadFindEvents(filename, params, pipe, h5file))
+    return eventDatabases
