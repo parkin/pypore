@@ -807,8 +807,6 @@ class MyMainWindow(QtGui.QMainWindow):
         del self.events[:]
         self.prev_concat_time = 0.
         
-        # Add axes and the filename to the parameters
-        parameters['axes'] = self.plot_event_zoomed
         filenames = [str(currItem.getFileName())]
         
         self.status_text.setText('Event Count: 0 Percent Done: 0')
