@@ -669,7 +669,7 @@ class MyMainWindow(QtGui.QMainWindow):
             axes = self.plot
         # Read the first file, store data in dictionary
         data = plot_options['datadict']['data'][0]
-        sample_rate = plot_options['datadict']['SETUP_ADCSAMPLERATE'][0][0]
+        sample_rate = plot_options['datadict']['sample_rate']
         plot_range = plot_options['plot_range']
     
         n = len(data)

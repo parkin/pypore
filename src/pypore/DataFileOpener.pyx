@@ -125,7 +125,7 @@ cdef openGabysFile(filename, decimate=False):
     else:
         data = group.Raw[0]
     
-    specsfile = {'data': [data], 'SETUP_ADCSAMPLERATE': [[p['sample_rate']]]}
+    specsfile = {'data': [data], 'sample_rate': p['sample_rate']}
     f.close()
     return specsfile
 
@@ -172,6 +172,7 @@ cdef openChimeraFile(filename, decimate=False):
     cdef long i = 0
     cdef np.ndarray[DTYPE_t] logdata, readvalues
     cdef np.ndarray rawvalues
+    cdef double sample_rate = specsfile['SETUP_ADCSAMPLERATE'][0][0]
     if decimate:
         # Calculate number of points in the dataset
         filesize = os.path.getsize(filename)
@@ -193,15 +194,14 @@ cdef openChimeraFile(filename, decimate=False):
             i += 2
             
         # Change the sample rate
-        specsfile['SETUP_ADCSAMPLERATE'][0][0] = specsfile['SETUP_ADCSAMPLERATE'][0][0]*2/block_size
+        sample_rate = sample_rate*2.0/block_size
     else:
         rawvalues = np.fromfile(datafile,datatype)
         rawvalues = rawvalues & bitmask
         logdata = -ADCvref + (2*ADCvref) * rawvalues / (2**16);
 
-    specsfile['data'] = [logdata]
     datafile.close()
-    return specsfile
+    return {'data': [logdata], 'sample_rate': sample_rate}
 
 cdef prepareChimeraFile(filename):
     # remove 'log' append 'mat'
@@ -219,7 +219,7 @@ cdef prepareChimeraFile(filename):
     # Calculate number of points per channel
     filesize = os.path.getsize(filename)
     datatype = np.dtype('<u2')
-    cdef int points_per_channel_per_block = 10000
+    cdef int points_per_channel_per_blocks = 10000
     cdef long points_per_channel_total = filesize/datatype.itemsize
 
     cdef long ADCBITS = specsfile['SETUP_ADCBITS'][0][0]
@@ -229,12 +229,14 @@ cdef prepareChimeraFile(filename):
     
     cdef long bitmaskk = (2**16) - 1 - (2**(16-ADCBITS) - 1)
     
+    cdef double sample_rate = 1.0*specsfile['SETUP_ADCSAMPLERATE'][0][0]
+    
     p = {'filetype': 'chimera',
          'ADCBITS': ADCBITS, 'ADCvref': ADCvref, 'datafile': datafile,
          'datatype': datatype, 'specsfile': specsfile, 
          'bitmask': bitmaskk, 'filename': filename,
-         'sample_rate': specsfile['SETUP_ADCSAMPLERATE'][0][0],
-         'points_per_channel_per_block': points_per_channel_per_block,
+         'sample_rate': sample_rate,
+         'points_per_channel_per_block': points_per_channel_per_blocks,
          'points_per_channel_total': points_per_channel_total}
     
     return datafile, p
@@ -364,7 +366,7 @@ cdef openHekaFile(filename, decimate=False):
         
     # return dictionary
     # samplerate is i [[]] because of how chimera data is returned.
-    specsfile = {'data': data, 'SETUP_ADCSAMPLERATE': [[sample_rate]]}
+    specsfile = {'data': data, 'sample_rate': sample_rate}
     
     return specsfile
 
