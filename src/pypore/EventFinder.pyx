@@ -181,6 +181,7 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe = None, h5file = None):
         unsigned long prevI = 0
         double time1 = time.time()
         double time2 = time1
+        double timetemp = 0
         unsigned long event_start = 0
         unsigned long event_end = 0
         unsigned long start_index = 0
@@ -434,23 +435,24 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe = None, h5file = None):
             if len(dataCache) > 1:
                 currData = dataCache[1]
                 n = currData.size
-            if cache_refreshes % 100 == 0:
-                recent_time = time.time() - time2
-                total_time = time.time() - time1
+            if cache_refreshes % 100 == 0 and len(dataCache) == 2:
+                timetemp = time.time()
+                recent_time = timetemp - time2
+                total_time = timetemp - time1
                 percent_done = 100.*(placeInData+i) / points_per_channel_total
                 rate = (placeInData + i -prevI)/recent_time
                 total_rate = (placeInData + i)/total_time
                 time_left = int((points_per_channel_total-(placeInData+i))/rate)
                 status_text = "Event Count: %d Percent Done: %.2f Rate: %.2e pt/s Total Rate: %.2e pt/s Time Left: %s" % (event_count, percent_done, rate, total_rate, datetime.timedelta(seconds=time_left))
                 if pipe is not None:
-#                     if event_count > last_event_sent:
-#                         pipe.send({'status_text': status_text, 'Events': save_file['Events'][last_event_sent:]})
+        #                     if event_count > last_event_sent:
+        #                         pipe.send({'status_text': status_text, 'Events': save_file['Events'][last_event_sent:]})
                     pipe.send({'status_text': status_text})
-#                         last_event_sent = event_count
+        #                         last_event_sent = event_count
                 else:
                     sys.stdout.write("\r" + status_text)
                     sys.stdout.flush()
-                time2 = time.time()
+                time2 = timetemp
                 prevI = placeInData + i
                 
     # Update the status_text one last time
