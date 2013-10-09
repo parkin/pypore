@@ -480,7 +480,8 @@ class MyMainWindow(QtGui.QMainWindow):
     
     def onScatterPointsClicked(self, plot, points):
         """
-        Callback for when a scatter
+        Callback for when a scatter plot points are clicked.
+        Highlights the points and unhighlights previously selected points.
         """
         for p in self.lastScatterClicked:
             p.resetPen()
