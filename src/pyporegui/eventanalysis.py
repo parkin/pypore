@@ -22,7 +22,7 @@ def _longImports(**kwargs):
         sys.path.append(srcdir)
     
     global AnalyzeDataThread, PlotThread, FileListItem, FilterListItem,\
-            PlotToolBar, DataFileListItem, MyPlotItem, prepareDataFile, pg,\
+            PlotToolBar, DataFileListItem, MyPlotItem, prepareDataFile, pg, pgc,\
             LayoutWidget, PlotCurveItem, linspace, np, tb
         
     updateSplash = False    
@@ -35,6 +35,7 @@ def _longImports(**kwargs):
         splash.showMessage("Importing PyQtGraph...", alignment = QtCore.Qt.AlignBottom)
         app.processEvents()
     import pyqtgraph as pg
+    import pyqtgraph.console as pgc
     from pyqtgraph.widgets.LayoutWidget import LayoutWidget
     from pyqtgraph.graphicsItems.PlotCurveItem import PlotCurveItem
     
@@ -105,8 +106,6 @@ class MyMainWindow(QtGui.QMainWindow):
         self.create_main_frame()
         self.create_status_bar()
         
-    
-    
     def open_files(self):
         '''
         Opens file dialog box, adds names of files to open to list
@@ -531,7 +530,31 @@ class MyMainWindow(QtGui.QMainWindow):
         self.main_tabwig.addTab(event_finding, 'Event Finding')
         self.main_tabwig.addTab(event_analysis, 'Event Analysis')
         
-        self.setCentralWidget(self.main_tabwig)
+        text = """*********************
+Welcome to pyporegui!
+
+If you are unfamiliar with the python console, feel free to ignore this console.
+
+However, you can use this console to interact with your data and the gui!
+Type globals() to see globally defined variabels.
+Type locals() to see application-specific variables.
+
+The current namespace should include:
+    np        -    numpy
+    pg        -    pyqtgraph
+    tb        -    PyTables
+    main_plot -    Top plot in the event finding tab.
+*********************"""
+
+        namespace = {'np': np, 'pg': pg, 'tb': tb, 'main_plot': self.plotwid}
+        self.console = pgc.ConsoleWidget(namespace=namespace, text=text)
+        
+        frame = QtGui.QSplitter()
+        frame.setOrientation(QtCore.Qt.Vertical)
+        frame.addWidget(self.main_tabwig)
+        frame.addWidget(self.console)
+        
+        self.setCentralWidget(frame)
         
     def _eventDisplayEditOnChange(self, text):
         if len(text) < 1:
