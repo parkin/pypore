@@ -7,7 +7,7 @@ This program is for finding events in files and displaying the results.
 '''
 import sys, os
 
-from PySide import QtCore, QtGui # Must import PySide stuff before pyqtgraph so pyqtgraph knows
+from PySide import QtCore, QtGui  # Must import PySide stuff before pyqtgraph so pyqtgraph knows
                                 # to use PySide instead of PyQt
              
                                 
@@ -21,8 +21,8 @@ def _longImports(**kwargs):
     if not srcdir in sys.path:
         sys.path.append(srcdir)
     
-    global AnalyzeDataThread, PlotThread, FileListItem, FilterListItem,\
-            PlotToolBar, DataFileListItem, MyPlotItem, prepareDataFile, pg, pgc,\
+    global AnalyzeDataThread, PlotThread, FileListItem, FilterListItem, \
+            PlotToolBar, DataFileListItem, MyPlotItem, prepareDataFile, pg, pgc, \
             LayoutWidget, PlotCurveItem, linspace, np, tb
         
     updateSplash = False    
@@ -32,7 +32,7 @@ def _longImports(**kwargs):
         app = kwargs['app']
        
     if updateSplash: 
-        splash.showMessage("Importing PyQtGraph...", alignment = QtCore.Qt.AlignBottom)
+        splash.showMessage("Importing PyQtGraph...", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
     import pyqtgraph as pg
     import pyqtgraph.console as pgc
@@ -40,34 +40,34 @@ def _longImports(**kwargs):
     from pyqtgraph.graphicsItems.PlotCurveItem import PlotCurveItem
     
     if updateSplash: 
-        splash.showMessage("Importing SciPy...", alignment = QtCore.Qt.AlignBottom)
+        splash.showMessage("Importing SciPy...", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
     from scipy import linspace
     
     if updateSplash: 
-        splash.showMessage("Importing NumPy...", alignment = QtCore.Qt.AlignBottom)
+        splash.showMessage("Importing NumPy...", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
     import numpy as np
             
     # My stuff
     if updateSplash: 
-        splash.showMessage("Setting up Cython imports...", alignment = QtCore.Qt.AlignBottom)
+        splash.showMessage("Setting up Cython imports...", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
     from pypore import cythonsetup
     
     if updateSplash: 
-        splash.showMessage("Compiling Cython imports... DataFileOpener", alignment = QtCore.Qt.AlignBottom)
+        splash.showMessage("Compiling Cython imports... DataFileOpener", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
     from pypore.DataFileOpener import prepareDataFile
     
     if updateSplash: 
-        splash.showMessage("Compiling Cython imports... EventFinder", alignment = QtCore.Qt.AlignBottom)
+        splash.showMessage("Compiling Cython imports... EventFinder", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
     from MyThreads import AnalyzeDataThread, PlotThread
     from views import FileListItem, FilterListItem, PlotToolBar, DataFileListItem, MyPlotItem
     
     if updateSplash: 
-        splash.showMessage("Importing PyTables", alignment = QtCore.Qt.AlignBottom)
+        splash.showMessage("Importing PyTables", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
     import tables as tb
     
@@ -76,10 +76,10 @@ if not __name__ == '__main__':
     _longImports()
 
 class PathItem(QtGui.QGraphicsPathItem):
-        def __init__(self, x, y, conn = 'all'):
+        def __init__(self, x, y, conn='all'):
             xr = x.min(), x.max()
             yr = y.min(), y.max()
-            self._bounds = QtCore.QRectF(xr[0],yr[0],xr[1]-xr[0],yr[1]-yr[0])
+            self._bounds = QtCore.QRectF(xr[0], yr[0], xr[1] - xr[0], yr[1] - yr[0])
             self.path = pg.arrayToQPath(x, y, conn)
             QtGui.QGraphicsPathItem.__init__(self, self.path)
             
@@ -91,7 +91,7 @@ class MyMainWindow(QtGui.QMainWindow):
     def __init__(self, app, parent=None):
         super(MyMainWindow, self).__init__()
         
-        self.events = [] # holds the events from the most recent analysis run
+        self.events = []  # holds the events from the most recent analysis run
         self.app = app
         
         pg.setConfigOption('leftButtonPan', False)
@@ -99,6 +99,7 @@ class MyMainWindow(QtGui.QMainWindow):
         self.openDir = '../../data'
         
         self.threadPool = []
+        self.lastScatterClicked = []
         
         self.setWindowTitle('Translocation Event Analysis')
         
@@ -145,7 +146,7 @@ class MyMainWindow(QtGui.QMainWindow):
         for w in fnames:
             areFilesOpened = True
             item = FileListItem(w)
-            self.openDir = item.getDirectory() # save the directory info for later
+            self.openDir = item.getDirectory()  # save the directory info for later
             self.listEventWidget.addItem(item)
             
         if areFilesOpened:
@@ -166,7 +167,7 @@ class MyMainWindow(QtGui.QMainWindow):
         # adding by emitting signal in different thread
         self.status_text.setText('Plotting...')
         decimates = self.plotToolBar.isDecimateChecked()
-        thread = PlotThread(self.p1, filename=str(item.getFileName()), decimate = decimates)
+        thread = PlotThread(self.p1, filename=str(item.getFileName()), decimate=decimates)
         thread.dataReady.connect(self._on_file_item_doubleclick_callback)
         self.threadPool.append(thread)
         self.threadPool[len(self.threadPool) - 1].start()
@@ -338,7 +339,7 @@ class MyMainWindow(QtGui.QMainWindow):
         files_options = QtGui.QFormLayout()
         files_options.addRow('Event Databases:', self.listEventWidget)
         
-        ## Color Picker
+        # # Color Picker
         self.event_color = QtGui.QColor('blue')
         pickColorBtn = QtGui.QPushButton()
         pickColorBtn.setText('Choose a Color')
@@ -352,7 +353,7 @@ class MyMainWindow(QtGui.QMainWindow):
         
         files_options.addRow(pickColorBtn, self.frm)
         
-        ## List of filters created
+        # # List of filters created
         self.btnAddFilter = QtGui.QPushButton('Add selections as filter')
         self.btnAddFilter.clicked.connect(self.addFilterClicked)
         self.btnAddFilter.setEnabled(False)
@@ -411,18 +412,18 @@ class MyMainWindow(QtGui.QMainWindow):
 #         wig.setMinimumSize(400, 600)
 
         # Main plot        
-        self.plotwid = MyPlotItem(title = 'Current Trace', name='Plot')
+        self.plotwid = MyPlotItem(title='Current Trace', name='Plot')
         wig.addItem(self.plotwid)
-        self.plotwid.enableAutoRange('xy',False)
-        self.p1 = self.plotwid.plot() # create an empty plot curve to be filled later
+        self.plotwid.enableAutoRange('xy', False)
+        self.p1 = self.plotwid.plot()  # create an empty plot curve to be filled later
         
         wig.nextRow()
         # Create Qwt plot for concatenated events
-        self.plot_concatevents = wig.addPlot(title = 'Concatenated Events', name='Concat')
+        self.plot_concatevents = wig.addPlot(title='Concatenated Events', name='Concat')
         
         wig.nextRow()
         # Qwt plot for each event found
-        self.plot_event_zoomed = wig.addPlot(title = 'Single Event', name='Single')
+        self.plot_event_zoomed = wig.addPlot(title='Single Event', name='Single')
         
         # Tool bar for main plot.  Contains zoom button and different checkboxes
         self.plotToolBar = PlotToolBar(self)
@@ -438,8 +439,8 @@ class MyMainWindow(QtGui.QMainWindow):
         
         self.eventDisplayedEdit = QtGui.QLineEdit()
         self.eventDisplayedEdit.setText('0')
-        self.eventDisplayedEdit.setMaxLength(int(len(self.events)/10)+1)
-        self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(0,len(self.events)))
+        self.eventDisplayedEdit.setMaxLength(int(len(self.events) / 10) + 1)
+        self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(0, len(self.events)))
         self.eventDisplayedEdit.textChanged.connect(self._eventDisplayEditOnChange)
         eventSelectToolbar.addWidget(self.eventDisplayedEdit)
         
@@ -464,7 +465,7 @@ class MyMainWindow(QtGui.QMainWindow):
         
         vwig = pg.GraphicsLayoutWidget()
         self.plot_eventdepth = vwig.addPlot(title='Event Depth')
-        self.plot_eventdepth.setMouseEnabled(x=False,y=True)
+        self.plot_eventdepth.setMouseEnabled(x=False, y=True)
         self.plot_eventdur_eventdepth = vwig.addPlot(name='Depth vs. Duration', title='Depth vs. Duration')
         self.plot_eventdepth.setYLink('Depth vs. Duration')
         
@@ -473,10 +474,20 @@ class MyMainWindow(QtGui.QMainWindow):
         self.plot_scatterselect = vwig.addPlot(title='Single Event')
         self.plot_eventdur = vwig.addPlot(title='Event Duration')
         self.plot_eventdur.setXLink('Depth vs. Duration')
-        self.plot_eventdur.setMouseEnabled(x=True,y=False)
+        self.plot_eventdur.setMouseEnabled(x=True, y=False)
         
         return vwig
-        
+    
+    def onScatterPointsClicked(self, plot, points):
+        """
+        Callback for when a scatter
+        """
+        for p in self.lastScatterClicked:
+            p.resetPen()
+#         print 'Points clicked:', points, plot
+        point = points[0]
+        point.setPen('w', width=2)
+        self.lastScatterClicked = [point]
     
     def _create_event_analysis_tab(self):
         frame = QtGui.QSplitter()
@@ -526,7 +537,7 @@ class MyMainWindow(QtGui.QMainWindow):
         event_analysis = self._create_event_analysis_tab()
         
         # Layout holding everything        
-        self.main_tabwig = QtGui.QTabWidget() # Splitter allows for drag to resize between children
+        self.main_tabwig = QtGui.QTabWidget()  # Splitter allows for drag to resize between children
         self.main_tabwig.addTab(event_finding, 'Event Finding')
         self.main_tabwig.addTab(event_analysis, 'Event Analysis')
         
@@ -560,7 +571,7 @@ The current namespace should include:
         if len(text) < 1:
             return
         eventCount = int(self.eventDisplayedEdit.text())
-        self.plotSingleEvent(self.events[eventCount-1])
+        self.plotSingleEvent(self.events[eventCount - 1])
         return
         
     def previousClicked(self):
@@ -601,7 +612,7 @@ The current namespace should include:
             shortcut="Ctrl+O", slot=self.open_files,
             tip="Open data Files")
         load_events_database_action = self.create_action("&Open Events Database",
-            shortcut="Ctrl+E", slot=self.open_event_database, 
+            shortcut="Ctrl+E", slot=self.open_event_database,
             tip="Open Events Database")
         quit_action = self.create_action("&Quit", slot=self.close,
             shortcut="Ctrl+Q", tip="Close the application")
@@ -658,22 +669,25 @@ The current namespace should include:
             sample_rate = filex.root.events.eventTable.attrs.sampleRate
             for i, row in enumerate(eventTable):
                 currentBlockade[i] = row['currentBlockage']
-                dwellTimes[i] = row['eventLength']/sample_rate
+                dwellTimes[i] = row['eventLength'] / sample_rate
                 
         color = params['color']
-        newcolor = QtGui.QColor(color.red(),color.green(),color.blue(),128)
+        newcolor = QtGui.QColor(color.red(), color.green(), color.blue(), 128)
                  
-        bins = eventCount**0.5
-        y_dt,x_dt = np.histogram(dwellTimes, bins=bins)        
+        bins = eventCount ** 0.5
+        y_dt, x_dt = np.histogram(dwellTimes, bins=bins)        
         curve_dt = PlotCurveItem(x_dt, y_dt, stepMode=True, fillLevel=0, brush=newcolor)
         self.plot_eventdur.addItem(curve_dt)
         
-        y_cb,x_cb = np.histogram(currentBlockade, bins=bins)        
+        y_cb, x_cb = np.histogram(currentBlockade, bins=bins)        
         curve_cb = PlotCurveItem(-1.*x_cb, y_cb, stepMode=True, fillLevel=0, brush=newcolor)
         curve_cb.rotate(-90)
         self.plot_eventdepth.addItem(curve_cb)
         
-        self.plot_eventdur_eventdepth.plot(dwellTimes, currentBlockade, pen=None, symbol = 'o', symbolBrush=newcolor)
+        scatterItem = pg.ScatterPlotItem(size=10, pen=pg.mkPen(None), brush=newcolor)
+        scatterItem.setData(dwellTimes, currentBlockade)
+        self.plot_eventdur_eventdepth.addItem(scatterItem)
+        scatterItem.sigClicked.connect(self.onScatterPointsClicked)
         
         for filex in files:
             filex.close()
@@ -704,11 +718,11 @@ The current namespace should include:
     
         Ts = 1 / sample_rate
         
-        times = linspace(Ts * plot_range[0], Ts*plot_range[1], n)
-        yData = data[plot_range[0]:(plot_range[1]+1)]
+        times = linspace(Ts * plot_range[0], Ts * plot_range[1], n)
+        yData = data[plot_range[0]:(plot_range[1] + 1)]
         
         self.plotwid.clearEventItems()
-        self.p1.setData(x=times,y=yData)
+        self.p1.setData(x=times, y=yData)
         self.plotwid.autoRange()
         self.app.processEvents()
         
@@ -720,14 +734,14 @@ The current namespace should include:
             size += event['raw_data'].size
         data = np.empty(size)
         sample_rate = events[0]['sample_rate']
-        ts = 1/sample_rate
-        times = np.linspace(0., (size-1)*ts, size) + self.prev_concat_time
-        self.prev_concat_time += size*ts
+        ts = 1 / sample_rate
+        times = np.linspace(0., (size - 1) * ts, size) + self.prev_concat_time
+        self.prev_concat_time += size * ts
         index = 0
         for event in events:
             d = event['raw_data'].size
             baseline = event['baseline']
-            data[index:index+d] = (event['raw_data'] - baseline)
+            data[index:index + d] = (event['raw_data'] - baseline)
             index += d
             
         item = PathItem(times, data)
@@ -742,8 +756,8 @@ The current namespace should include:
         times, data, times2, levels2 = self.getEventAndLevelsData(event)
         
         self.plot_event_zoomed.clear()
-        self.plot_event_zoomed.plot(x=times,y=data)
-        self.plot_event_zoomed.plot(x=times2,y=levels2, pen=pg.mkPen('g'))
+        self.plot_event_zoomed.plot(x=times, y=data)
+        self.plot_event_zoomed.plot(x=times2, y=levels2, pen=pg.mkPen('g'))
         
     def getEventAndLevelsData(self, event):
         data = event['raw_data']
@@ -760,19 +774,19 @@ The current namespace should include:
         n = data.size
         
         times = linspace(Ts * (event_start - raw_points_per_side), Ts * (event_start - raw_points_per_side + n - 1), n)
-        times2 = [(event_start - raw_points_per_side) * Ts, (event_start-1)*Ts]
+        times2 = [(event_start - raw_points_per_side) * Ts, (event_start - 1) * Ts]
         levels2 = [baseline, baseline]
         for i, level_value in enumerate(levels_values):
             times2.append(levels_index[i] * Ts)
             levels2.append(level_value)
-            if i < len(levels_values) -1 :
-                times2.append((levels_index[i+1]-1) * Ts)
+            if i < len(levels_values) - 1 :
+                times2.append((levels_index[i + 1] - 1) * Ts)
                 levels2.append(level_value)
         times2.append(event_end * Ts)
         levels2.append(levels_values[len(levels_values) - 1])
-        times2.append((event_end + 1)* Ts)
+        times2.append((event_end + 1) * Ts)
         levels2.append(baseline)
-        times2.append((event_end + raw_points_per_side)* Ts)
+        times2.append((event_end + raw_points_per_side) * Ts)
         levels2.append(baseline)
         return times, data, times2, levels2
         
@@ -785,7 +799,7 @@ The current namespace should include:
         data = np.empty(size)
         sample_rate = events[0]['sample_rate']
         raw_points_per_side = events[0]['raw_points_per_side']
-        ts = 1/sample_rate
+        ts = 1 / sample_rate
         times = np.empty(size)
         conn = np.ones(size)
         index = 0
@@ -793,9 +807,9 @@ The current namespace should include:
             event_start = event['event_start']
             event_data = event['raw_data']
             d = event_data.size
-            times[index:index+d] = linspace(ts * (event_start - raw_points_per_side), ts * (event_start - raw_points_per_side + d - 1), d)
-            data[index:index+d] = event_data
-            conn[index-1] = False # disconnect separate events
+            times[index:index + d] = linspace(ts * (event_start - raw_points_per_side), ts * (event_start - raw_points_per_side + d - 1), d)
+            data[index:index + d] = event_data
+            conn[index - 1] = False  # disconnect separate events
             index += d
             
         item = PathItem(times, data, conn)
@@ -925,8 +939,8 @@ The current namespace should include:
                 # if this is our first time plotting events, include the single event plot!
                 singlePlot = True
             self.events += events
-            self.eventDisplayedEdit.setMaxLength(int(len(self.events)/10)+1)
-            self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(1,len(self.events)))
+            self.eventDisplayedEdit.setMaxLength(int(len(self.events) / 10) + 1)
+            self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(1, len(self.events)))
             self.eventCountText.setText('/' + str(len(self.events)))
             if self.plotToolBar.isPlotDuringChecked():
                 self.plotEventsOnMainPlot(events)
@@ -952,7 +966,7 @@ def main():
     splash = QtGui.QSplashScreen(pixmap, QtCore.Qt.WindowStaysOnTopHint)
     splash.show()
     _longImports(splash=splash, app=app)
-    splash.showMessage("Creating main window...", alignment = QtCore.Qt.AlignBottom)
+    splash.showMessage("Creating main window...", alignment=QtCore.Qt.AlignBottom)
     app.processEvents()
     ex = MyMainWindow(app)
     ex.show()
