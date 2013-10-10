@@ -477,18 +477,6 @@ class MyMainWindow(QtGui.QMainWindow):
         
         return vwig
     
-    def onScatterPointsClicked(self, plot, points):
-        """
-        Callback for when a scatter plot points are clicked.
-        Highlights the points and unhighlights previously selected points.
-        """
-        for p in self.lastScatterClicked:
-            p.resetPen()
-#         print 'Points clicked:', points, plot
-        point = points[0]
-        point.setPen('w', width=2)
-        self.lastScatterClicked = [point]
-    
     def _create_event_analysis_tab(self):
         frame = QtGui.QSplitter()
         
@@ -651,6 +639,23 @@ The current namespace should include:
         if checkable:
             action.setCheckable(True)
         return action
+    
+    def onScatterPointsClicked(self, plot, points):
+        """
+        Callback for when a scatter plot points are clicked.
+        Highlights the points and unhighlights previously selected points.
+        """
+        for p in self.lastScatterClicked:
+            p.resetPen()
+            # remove point we've already selected so we
+            # can select points behind it.
+            if p in points and len(points) > 1:
+                points.remove(p)
+#         print 'Points clicked:', points, plot
+        for point in points:
+            point.setPen('w', width=2)
+            self.lastScatterClicked = [point]
+            break # only take first point
     
     def plotEventDatabaseAnalyses(self, filenames, params):
         '''
