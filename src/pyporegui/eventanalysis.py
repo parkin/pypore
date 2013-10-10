@@ -409,7 +409,6 @@ class MyMainWindow(QtGui.QMainWindow):
         
     def _create_eventfinder_plots_widget(self):
         wig = pg.GraphicsLayoutWidget()
-#         wig.setMinimumSize(400, 600)
 
         # Main plot        
         self.plotwid = MyPlotItem(title='Current Trace', name='Plot')
@@ -555,10 +554,10 @@ The current namespace should include:
     np        -    numpy
     pg        -    pyqtgraph
     tb        -    PyTables
-    main_plot -    Top plot in the event finding tab.
+    currentPlot -  Top plot in the event finding tab.
 *********************"""
 
-        namespace = {'np': np, 'pg': pg, 'tb': tb, 'main_plot': self.plotwid}
+        namespace = {'np': np, 'pg': pg, 'tb': tb, 'currentPlot': self.plotwid}
         self.console = pgc.ConsoleWidget(namespace=namespace, text=text)
         
         frame = QtGui.QSplitter()
