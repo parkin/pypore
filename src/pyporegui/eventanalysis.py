@@ -656,17 +656,21 @@ The current namespace should include:
             point.setPen('w', width=2)
             self.lastScatterClicked = [point]
             break # only take first point
+        print self.lastScatterClicked
     
     def plotEventDatabaseAnalyses(self, filenames, params):
         '''
         Plots event statistics.  
         '''
         files = []
+        counts = []
         eventCount = 0
         for filename in filenames:
             h5file = tb.openFile(filename, mode='r')
             files.append(h5file)
-            eventCount += h5file.root.events.eventTable.attrs.eventCount
+            count = h5file.root.events.eventTable.attrs.eventCount
+            eventCount += count
+            counts.append(count)
         
         currentBlockade = np.empty(eventCount)
         dwellTimes = np.empty(eventCount)
