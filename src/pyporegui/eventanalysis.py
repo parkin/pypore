@@ -540,6 +540,7 @@ class MyMainWindow(QtGui.QMainWindow):
         self.main_tabwig = QtGui.QTabWidget()  # Splitter allows for drag to resize between children
         self.main_tabwig.addTab(event_finding, 'Event Finding')
         self.main_tabwig.addTab(event_analysis, 'Event Analysis')
+        self.main_tabwig.setMinimumSize(1000,600)
         
         text = """*********************
 Welcome to pyporegui!
