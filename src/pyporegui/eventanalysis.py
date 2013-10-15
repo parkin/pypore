@@ -646,6 +646,9 @@ The current namespace should include:
         """
         Callback for when a scatter plot points are clicked.
         Highlights the points and unhighlights previously selected points.
+        
+        plot should be a MyScatterPlotItem
+        points should be a MySpotItem
         """
         for p in self.lastScatterClicked:
             p.resetPen()
@@ -672,15 +675,43 @@ The current namespace should include:
         rawPointsPerSide = row['rawPointsPerSide']
         n = eventLength+2*rawPointsPerSide
         
-        arr = h5file.root.events.rawData[arrayRow]
+        rawData = h5file.root.events.rawData[arrayRow][:n]
         
         times = np.linspace(0.0, 1.0*n/sampleRate, n)
         
         self.plot_scatterselect.clear()
-        self.plot_scatterselect.plot(times, arr[:n])
+        self.plot_scatterselect.plot(times, rawData)
         # plot the event points in yellow
         self.plot_scatterselect.plot(times[rawPointsPerSide:rawPointsPerSide+eventLength],\
-                                     arr[rawPointsPerSide:rawPointsPerSide+eventLength], pen='y')
+                                     rawData[rawPointsPerSide:rawPointsPerSide+eventLength], pen='y')
+        
+        # Plot the cusum levels
+        nLevels = row['nLevels']
+        baseline = row['baseline']
+        eventStart = row['eventStart']
+        # left, start-1, start, 
+        levels = h5file.root.events.levels[arrayRow][:nLevels]
+        indices = h5file.root.events.levelIndices[arrayRow][:nLevels+1]
+        indices -= eventStart
+        
+        levelTimes = np.zeros(2*nLevels+4)
+        levelValues = np.zeros(2*nLevels+4)
+        
+        levelTimes[1] = 1.0*(rawPointsPerSide-1)/sampleRate
+        levelValues[0] = levelValues[1] = baseline
+        i = 0
+        for i in xrange(nLevels):
+            levelTimes[2*i+2] = times[rawPointsPerSide] + 1.0*(indices[i])/sampleRate
+            levelValues[2*i+2] = levels[i]
+            if i < nLevels:
+                levelTimes[2*i+3] = times[rawPointsPerSide] + 1.0*(indices[i+1])/sampleRate
+                levelValues[2*i+3] = levels[i]
+        i += 1        
+        levelTimes[2*i+2] = times[rawPointsPerSide+eventLength]
+        levelTimes[2*i+3] = times[n-1]
+        levelValues[2*i+2] = levelValues[2*i+3] = baseline
+        
+        self.plot_scatterselect.plot(levelTimes, levelValues, pen='g')
         
         h5file.close()
     
