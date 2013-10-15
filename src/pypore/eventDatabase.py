@@ -26,6 +26,7 @@ def initializeEventsDatabase(filename, maxEventSteps):
     filters = tb.Filters(complib='blosc', complevel=4)
     shape = (0,maxEventSteps)
     a = tb.FloatAtom()
+    b = tb.IntAtom()
     h5file.createEArray(h5file.root.events, 'rawData',
                          a, shape=shape,
                          title="Raw data points",
@@ -35,7 +36,7 @@ def initializeEventsDatabase(filename, maxEventSteps):
                          title="Cusum levels",
                          filters=filters)
     h5file.createEArray(h5file.root.events, 'levelIndices',
-                         a, shape=shape,
+                         b, shape=shape,
                          title="Indices for cusum levels",
                          filters=filters)
     
