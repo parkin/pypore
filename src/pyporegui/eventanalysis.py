@@ -23,7 +23,8 @@ def _longImports(**kwargs):
     
     global AnalyzeDataThread, PlotThread, FileListItem, FilterListItem, \
             PlotToolBar, DataFileListItem, MyPlotItem, prepareDataFile, pg, pgc, \
-            LayoutWidget, PlotCurveItem, linspace, np, tb
+            LayoutWidget, PlotCurveItem, linspace, np, tb, \
+            MySpotItem, MyScatterPlotItem
         
     updateSplash = False    
     if 'splash' in kwargs and 'app' in kwargs:
@@ -65,6 +66,7 @@ def _longImports(**kwargs):
         app.processEvents()
     from MyThreads import AnalyzeDataThread, PlotThread
     from views import FileListItem, FilterListItem, PlotToolBar, DataFileListItem, MyPlotItem
+    from views import MySpotItem, MyScatterPlotItem
     
     if updateSplash: 
         splash.showMessage("Importing PyTables", alignment=QtCore.Qt.AlignBottom)
@@ -528,7 +530,7 @@ class MyMainWindow(QtGui.QMainWindow):
         self.main_tabwig = QtGui.QTabWidget()  # Splitter allows for drag to resize between children
         self.main_tabwig.addTab(event_finding, 'Event Finding')
         self.main_tabwig.addTab(event_analysis, 'Event Analysis')
-        self.main_tabwig.setMinimumSize(1000,600)
+        self.main_tabwig.setMinimumSize(1000,550)
         
         text = """*********************
 Welcome to pyporegui!
@@ -656,7 +658,29 @@ The current namespace should include:
             point.setPen('w', width=2)
             self.lastScatterClicked = [point]
             break # only take first point
-        print self.lastScatterClicked
+        
+        # Plot the new point clicked on the single event display
+        filename, position = plot.getFileNameFromPosition(self.lastScatterClicked[0].eventPosition)
+        
+        h5file = tb.openFile(filename, mode='r')
+        
+        table = h5file.root.events.eventTable
+        row = table[position]
+        arrayRow = row['arrayRow']
+        sampleRate = table.attrs.sampleRate
+        eventLength = row['eventLength']
+        rawPointsPerSide = row['rawPointsPerSide']
+        n = eventLength+2*rawPointsPerSide
+        
+        arr = h5file.root.events.rawData[arrayRow]
+        rawData = arr[:n]
+        
+        times = np.linspace(0.0, 1.0*n/sampleRate, n)
+        
+        self.plot_scatterselect.clear()
+        self.plot_scatterselect.plot(times, rawData)
+        
+        h5file.close()
     
     def plotEventDatabaseAnalyses(self, filenames, params):
         '''
@@ -674,12 +698,12 @@ The current namespace should include:
         
         currentBlockade = np.empty(eventCount)
         dwellTimes = np.empty(eventCount)
-        for filex in files:
+        for j, filex in enumerate(files):
             eventTable = filex.root.events.eventTable
             sample_rate = filex.root.events.eventTable.attrs.sampleRate
             for i, row in enumerate(eventTable):
-                currentBlockade[i] = row['currentBlockage']
-                dwellTimes[i] = row['eventLength'] / sample_rate
+                currentBlockade[j+i] = row['currentBlockage']
+                dwellTimes[j+i] = row['eventLength'] / sample_rate
                 
         color = params['color']
         newcolor = QtGui.QColor(color.red(), color.green(), color.blue(), 128)
@@ -694,7 +718,7 @@ The current namespace should include:
         curve_cb.rotate(-90)
         self.plot_eventdepth.addItem(curve_cb)
         
-        scatterItem = pg.ScatterPlotItem(size=10, pen=pg.mkPen(None), brush=newcolor)
+        scatterItem = MyScatterPlotItem(size=10, pen=pg.mkPen(None), brush=newcolor, files=filenames, counts=counts)
         scatterItem.setData(dwellTimes, currentBlockade)
         self.plot_eventdur_eventdepth.addItem(scatterItem)
         scatterItem.sigClicked.connect(self.onScatterPointsClicked)

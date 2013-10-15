@@ -409,6 +409,7 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe = None, h5file = None):
                 eventEntry['eventLength'] = event_end - event_start
                 eventEntry['rawPointsPerSide'] = raw_points_per_side
                 eventEntry['area'] = event_area - local_mean
+                eventEntry['arrayRow'] = event_count
                 indicesMatrix.append(mindices[np.newaxis,:])
                 levelsMatrix.append(mlevels[np.newaxis,:])
                 eventEntry.append()
