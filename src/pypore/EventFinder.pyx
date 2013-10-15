@@ -278,7 +278,7 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe = None, h5file = None):
             sn = sp = Sn = Sp = Gn = Gp = 0
             var_estimate = local_variance
 #             n_levels = 1  # We're already starting with one level
-            delta = abs(mean_estimate - local_mean) / 5.
+            delta = abs(mean_estimate - local_mean) / 2.
             min_index_p = min_index_n = i
             min_Sp = min_Sn = 999999
             ko = i
@@ -349,7 +349,7 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe = None, h5file = None):
                     else:
                         minindex = min_index_n
                         level_sum = level_sum_minn
-                    mindices[n_indices] = minindex
+                    mindices[n_indices] = minindex+1
                     n_indices += 1
                     mlevels[n_levels] = level_sum/(minindex-prevLevelStart)
                     n_levels += 1
