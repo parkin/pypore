@@ -731,12 +731,14 @@ The current namespace should include:
         
         currentBlockade = np.empty(eventCount)
         dwellTimes = np.empty(eventCount)
+        count = 0
         for j, filex in enumerate(files):
             eventTable = filex.root.events.eventTable
             sample_rate = filex.root.events.eventTable.attrs.sampleRate
             for i, row in enumerate(eventTable):
-                currentBlockade[j+i] = row['currentBlockage']
-                dwellTimes[j+i] = row['eventLength'] / sample_rate
+                currentBlockade[count+i] = row['currentBlockage']
+                dwellTimes[count+i] = row['eventLength'] / sample_rate
+            count += counts[j]
                 
         color = params['color']
         newcolor = QtGui.QColor(color.red(), color.green(), color.blue(), 128)
