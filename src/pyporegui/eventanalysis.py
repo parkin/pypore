@@ -673,12 +673,14 @@ The current namespace should include:
         n = eventLength+2*rawPointsPerSide
         
         arr = h5file.root.events.rawData[arrayRow]
-        rawData = arr[:n]
         
         times = np.linspace(0.0, 1.0*n/sampleRate, n)
         
         self.plot_scatterselect.clear()
-        self.plot_scatterselect.plot(times, rawData)
+        self.plot_scatterselect.plot(times, arr[:n])
+        # plot the event points in yellow
+        self.plot_scatterselect.plot(times[rawPointsPerSide:rawPointsPerSide+eventLength],\
+                                     arr[rawPointsPerSide:rawPointsPerSide+eventLength], pen='y')
         
         h5file.close()
     
