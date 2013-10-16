@@ -116,6 +116,10 @@ class MyHistogramItem(PlotItem):
         del self.maximumArray[index]
         del self.nbinsArray[index]
         
+        # return if no more histograms to display
+        if len(self.dataArray) < 1:
+            return
+        
         reHist = False
         # do we need to replot?
         maxi = max(self.maximumArray)
