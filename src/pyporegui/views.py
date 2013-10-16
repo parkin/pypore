@@ -15,13 +15,132 @@ from pyqtgraph.widgets.GraphicsLayoutWidget import GraphicsLayoutWidget
 from pyqtgraph.graphicsItems.PlotCurveItem import PlotCurveItem
 from pyqtgraph.functions import mkPen
 
+
+class MyHistogramItem(PlotItem):
+    
+    def __init__(self, *args, **kargs):
+        self.rotate = False
+        if 'rotate' in kargs:
+            self.rotate = kargs['rotate']
+            del kargs['rotate'] # if you dont delete, MyHistogramItem will start with
+                                # a PlotDataItem for some reason
+        
+        super(MyHistogramItem, self).__init__(*args, **kargs)
+            
+        self.dataArray = []
+        self.bins = np.zeros(1)
+        self.nbins = 0
+        self.minimum = 0.
+        self.maximum = 0.
+        
+        self.minimumArray = []
+        self.maximumArray = []
+        self.nbinsArray = []
+            
+    def addHistogram(self, data, nbins=None, color=None):
+        """
+        Adds a histogram to the plot.
+        
+        data should be 1D numpy array
+        
+        nbins = number of bins for numpy.histogram()
+               default is nbins = sqrt(data.size)
+        """
+        if nbins == None:
+            nbins = data.size ** 0.5
+            
+        minimum = data.min()
+        maximum = data.max()
+        
+        self.minimumArray.append(minimum)
+        self.maximumArray.append(maximum)
+        self.nbinsArray.append(nbins)
+        
+        # if this is the first histogram plotted,
+        # initialize settings
+        if len(self.dataArray) < 1:
+            self.minimum = minimum
+            self.maximum = maximum
+            self.nbins = nbins
+            self.bins = np.linspace(self.minimum, self.maximum, self.nbins + 1)
+        
+        # replot the other histograms with this new
+        # binning if needed
+        rehist = False
+        if minimum < self.minimum:
+            self.minimum = minimum
+            rehist = True
+        if maximum > self.maximum:
+            self.maximum = maximum
+            rehist = True
+        if nbins > self.nbins:
+            self.nbins = nbins
+            rehist = True
+            
+        if rehist:
+            self.reHistogram()
+            
+        self.plotHistogram(data, color)
+        
+    def plotHistogram(self, data, color=None):
+        if color == None:
+            color = QtGui.QColor(0, 0, 255, 128)
+            
+        y, x = np.histogram(data, bins=self.bins)
+        
+        if self.rotate:
+            x = -1. * x
+        curve = PlotCurveItem(x, y, stepMode=True, fillLevel=0, brush=color)
+        if self.rotate:
+            curve.rotate(-90)
+        self.addItem(curve)
+        
+        self.dataArray.append(data)
+        
+    def reHistogram(self):
+        self.bins = np.linspace(self.minimum, self.maximum, self.nbins + 1)
+        items = self.listDataItems()
+        for i, item in enumerate(items):
+            y, x = np.histogram(self.dataArray[i], bins=self.bins)
+            if self.rotate:
+                x = -1. * x
+            item.setData(x,y)
+            
+    def removeItemAt(self, index):
+        if len(self.dataArray) < 1:
+            return
+        
+        self.removeItem(self.listDataItems()[index])
+        del self.dataArray[index]
+        del self.minimumArray[index]
+        del self.maximumArray[index]
+        del self.nbinsArray[index]
+        
+        reHist = False
+        # do we need to replot?
+        maxi = max(self.maximumArray)
+        if maxi < self.maximum:
+            reHist = True
+            self.maximum = maxi
+        mini = min(self.minimumArray)
+        if mini > self.minimum:
+            reHist = True
+            self.minimum = mini
+        nb = max(self.nbinsArray)
+        if nb < self.nbins:
+            reHist = True
+            self.nbins = nb
+            
+        if reHist:
+            self.reHistogram()
+
 class EventAnalysisWidget(GraphicsLayoutWidget):
-    pass
 
     def __init__(self):
         super(EventAnalysisWidget, self).__init__()
         
-        self.plot_eventdepth = self.addPlot(title='Event Depth')
+        self.plot_eventdepth = MyHistogramItem(title='Event Depth', rotate=True)
+        self.addItem(self.plot_eventdepth)
         self.plot_eventdepth.setMouseEnabled(x=False, y=True)
         self.plot_eventdur_eventdepth = self.addPlot(name='Depth vs. Duration', title='Depth vs. Duration')
         self.plot_eventdepth.setYLink('Depth vs. Duration')
@@ -29,11 +148,16 @@ class EventAnalysisWidget(GraphicsLayoutWidget):
         self.nextRow()
         
         self.plot_scatterselect = self.addPlot(title='Single Event')
-        self.plot_eventdur = self.addPlot(title='Event Duration')
+        
+        self.plot_eventdur = MyHistogramItem(title='Event Duration')
+        self.addItem(self.plot_eventdur)
         self.plot_eventdur.setXLink('Depth vs. Duration')
         self.plot_eventdur.setMouseEnabled(x=True, y=False)
         
         self.lastScatterClicked = []
+        
+        self.nbins = 0
+        self.bins = np.zeros(0)
         
     def addSelections(self, filenames, params):
         '''
@@ -56,22 +180,17 @@ class EventAnalysisWidget(GraphicsLayoutWidget):
             eventTable = filex.root.events.eventTable
             sample_rate = filex.root.events.eventTable.attrs.sampleRate
             for i, row in enumerate(eventTable):
-                currentBlockade[count+i] = row['currentBlockage']
-                dwellTimes[count+i] = row['eventLength'] / sample_rate
+                currentBlockade[count + i] = row['currentBlockage']
+                dwellTimes[count + i] = row['eventLength'] / sample_rate
             count += counts[j]
                 
         color = params['color']
         newcolor = QtGui.QColor(color.red(), color.green(), color.blue(), 128)
                  
-        bins = eventCount ** 0.5
-        y_dt, x_dt = np.histogram(dwellTimes, bins=bins)        
-        curve_dt = PlotCurveItem(x_dt, y_dt, stepMode=True, fillLevel=0, brush=newcolor)
-        self.plot_eventdur.addItem(curve_dt)
+        self.plot_eventdur.addHistogram(dwellTimes, color=newcolor)
         
-        y_cb, x_cb = np.histogram(currentBlockade, bins=bins)        
-        curve_cb = PlotCurveItem(-1.*x_cb, y_cb, stepMode=True, fillLevel=0, brush=newcolor)
-        curve_cb.rotate(-90)
-        self.plot_eventdepth.addItem(curve_cb)
+        self.plot_eventdepth.addHistogram(currentBlockade, color=newcolor)
+        
         scatterItem = MyScatterPlotItem(size=10, pen=mkPen(None), brush=newcolor, files=filenames, counts=counts)
         scatterItem.setData(dwellTimes, currentBlockade)
         self.plot_eventdur_eventdepth.addItem(scatterItem)
@@ -83,8 +202,8 @@ class EventAnalysisWidget(GraphicsLayoutWidget):
         return
     
     def removeFilter(self, index):
-        self.plot_eventdur.removeItem(self.plot_eventdur.listDataItems()[index])
-        self.plot_eventdepth.removeItem(self.plot_eventdepth.listDataItems()[index])
+        self.plot_eventdur.removeItemAt(index)
+        self.plot_eventdepth.removeItemAt(index)
         self.plot_eventdur_eventdepth.removeItem(self.plot_eventdur_eventdepth.listDataItems()[index])
     
     def onScatterPointsClicked(self, plot, points):
@@ -105,7 +224,7 @@ class EventAnalysisWidget(GraphicsLayoutWidget):
         for point in points:
             point.setPen('w', width=2)
             self.lastScatterClicked = [point]
-            break # only take first point
+            break  # only take first point
         
         # Plot the new point clicked on the single event display
         filename, position = plot.getFileNameFromPosition(self.lastScatterClicked[0].eventPosition)
@@ -118,17 +237,17 @@ class EventAnalysisWidget(GraphicsLayoutWidget):
         sampleRate = table.attrs.sampleRate
         eventLength = row['eventLength']
         rawPointsPerSide = row['rawPointsPerSide']
-        n = eventLength+2*rawPointsPerSide
+        n = eventLength + 2 * rawPointsPerSide
         
         rawData = h5file.root.events.rawData[arrayRow][:n]
         
-        times = np.linspace(0.0, 1.0*n/sampleRate, n)
+        times = np.linspace(0.0, 1.0 * n / sampleRate, n)
         
         self.plot_scatterselect.clear()
         self.plot_scatterselect.plot(times, rawData)
         # plot the event points in yellow
-        self.plot_scatterselect.plot(times[rawPointsPerSide:rawPointsPerSide+eventLength],\
-                                     rawData[rawPointsPerSide:rawPointsPerSide+eventLength], pen='y')
+        self.plot_scatterselect.plot(times[rawPointsPerSide:rawPointsPerSide + eventLength], \
+                                     rawData[rawPointsPerSide:rawPointsPerSide + eventLength], pen='y')
         
         # Plot the cusum levels
         nLevels = row['nLevels']
@@ -136,25 +255,25 @@ class EventAnalysisWidget(GraphicsLayoutWidget):
         eventStart = row['eventStart']
         # left, start-1, start, 
         levels = h5file.root.events.levels[arrayRow][:nLevels]
-        indices = h5file.root.events.levelIndices[arrayRow][:nLevels+1]
+        indices = h5file.root.events.levelIndices[arrayRow][:nLevels + 1]
         indices -= eventStart
         
-        levelTimes = np.zeros(2*nLevels+4)
-        levelValues = np.zeros(2*nLevels+4)
+        levelTimes = np.zeros(2 * nLevels + 4)
+        levelValues = np.zeros(2 * nLevels + 4)
         
-        levelTimes[1] = 1.0*(rawPointsPerSide-1)/sampleRate
+        levelTimes[1] = 1.0 * (rawPointsPerSide - 1) / sampleRate
         levelValues[0] = levelValues[1] = baseline
         i = 0
         for i in xrange(nLevels):
-            levelTimes[2*i+2] = times[rawPointsPerSide] + 1.0*(indices[i])/sampleRate
-            levelValues[2*i+2] = levels[i]
+            levelTimes[2 * i + 2] = times[rawPointsPerSide] + 1.0 * (indices[i]) / sampleRate
+            levelValues[2 * i + 2] = levels[i]
             if i < nLevels:
-                levelTimes[2*i+3] = times[rawPointsPerSide] + 1.0*(indices[i+1])/sampleRate
-                levelValues[2*i+3] = levels[i]
+                levelTimes[2 * i + 3] = times[rawPointsPerSide] + 1.0 * (indices[i + 1]) / sampleRate
+                levelValues[2 * i + 3] = levels[i]
         i += 1        
-        levelTimes[2*i+2] = times[rawPointsPerSide+eventLength]
-        levelTimes[2*i+3] = times[n-1]
-        levelValues[2*i+2] = levelValues[2*i+3] = baseline
+        levelTimes[2 * i + 2] = times[rawPointsPerSide + eventLength]
+        levelTimes[2 * i + 3] = times[n - 1]
+        levelValues[2 * i + 2] = levelValues[2 * i + 3] = baseline
         
         self.plot_scatterselect.plot(levelTimes, levelValues, pen='g')
         
@@ -173,7 +292,7 @@ class MyScatterPlotItem(ScatterPlotItem):
     def __init__(self, *args, **kargs):
         super(MyScatterPlotItem, self).__init__(*args, **kargs)
         self.files = kargs['files']
-        self.counts = kargs['counts'] # number of events in each file
+        self.counts = kargs['counts']  # number of events in each file
         
     def points(self):
         for i, rec in enumerate(self.data):
@@ -193,7 +312,7 @@ class MyScatterPlotItem(ScatterPlotItem):
         return None
 
 class MyPlotItem(PlotItem):
-    def __init__(self, parent = None, title = None, name = None):
+    def __init__(self, parent=None, title=None, name=None):
         super(MyPlotItem, self).__init__(parent=parent, title=title, name=name)
         self._myItemList = []
         self._myEventItemList = []
@@ -220,7 +339,7 @@ class PlotToolBar(QtGui.QToolBar):
     '''
     A toolbar for plots, with a zoom button, check boxes for options.
     '''
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         super(PlotToolBar, self).__init__(parent)
         
         self.widgetList = []
@@ -338,7 +457,7 @@ class FilterListItem(QtGui.QListWidgetItem):
             self.params['color'] = QtGui.QColor.fromRgbF(0., 0., 1.)
         # set the icon color
 #         self.setForeground(params['color'])
-        pixmap = QtGui.QPixmap(20,20)
+        pixmap = QtGui.QPixmap(20, 20)
         pixmap.fill(self.params['color'])
         self.setIcon(QtGui.QIcon(pixmap))
         
