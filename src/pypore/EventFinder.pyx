@@ -426,8 +426,8 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
                 
                 if eventCacheIndex >= numRowsInEventCache:
                     rawData.append(eventCache)
-                    indicesMatrix.append(levelsCache)
-                    levelsMatrix.append(levelIndexCache)
+                    indicesMatrix.append(levelIndexCache)
+                    levelsMatrix.append(levelsCache)
                     eventCacheIndex = 0
                     
                 if event_count % 1000 == 0:
@@ -476,8 +476,8 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
     # clean up the caches, make sure everything is saved
     if eventCacheIndex > 0:
         rawData.append(eventCache[:eventCacheIndex])
-        indicesMatrix.append(levelsCache[:eventCacheIndex])
-        levelsMatrix.append(levelIndexCache[:eventCacheIndex])
+        indicesMatrix.append(levelIndexCache[:eventCacheIndex])
+        levelsMatrix.append(levelsCache[:eventCacheIndex])
         eventCacheIndex = 0
                 
     # Update the status_text one last time
