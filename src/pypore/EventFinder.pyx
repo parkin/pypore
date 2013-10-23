@@ -33,9 +33,9 @@ cdef np.ndarray[DTYPE_t] _getDataRange(dataCache, long i, long n):
     returns [i,n)
     '''
     cdef np.ndarray[DTYPE_t,
-                    negative_indices=False,
-                    mode='c'] res = np.zeros(n - i, dtype = DTYPE)
-    cdef long resspot =0, l, nn
+                    negative_indices = False,
+                    mode = 'c'] res = np.zeros(n - i, dtype=DTYPE)
+    cdef long resspot = 0, l, nn
     # do we need to include points from the old data
     # (eg. for raw event points)
     if i < 0:
@@ -61,7 +61,7 @@ cdef np.ndarray[DTYPE_t] _getDataRange(dataCache, long i, long n):
         # else we must need to visit more caches
         elif i < spot + nn:
             res[resspot:resspot + nn - (i - spot)] = cache[i - spot:]
-            resspot += nn - (i-spot)
+            resspot += nn - (i - spot)
             i = spot + nn
         spot += nn
     return res
@@ -72,7 +72,7 @@ cpdef np.ndarray[DTYPE_t] _getDataRangeTestWrapper(dataCache, long i, long n):
     '''
     return _getDataRange(dataCache, i, n)
         
-cdef _lazyLoadFindEvents(filename, parameters, pipe = None, h5file = None):
+cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
     cdef unsigned int event_count = 0
     
     cdef unsigned int get_blocks = 1
@@ -125,7 +125,7 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe = None, h5file = None):
     save_file_name.append('_Events_' + day_time + '.h5')
     save_file_name = "".join(save_file_name)
     
-    cdef unsigned long maxPoints = max_event_steps + 2*raw_points_per_side
+    cdef unsigned long maxPoints = max_event_steps + 2 * raw_points_per_side
     
     # Open the event datbase
     if h5file == None:
@@ -168,10 +168,19 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe = None, h5file = None):
         threshold_end = datapoint
         threshold_type = THRESHOLD_NOISE_BASED
     
-    dataCache = [np.zeros(n, dtype = DTYPE) + datapoint, data]
+    dataCache = [np.zeros(n, dtype=DTYPE) + datapoint, data]
     
     isEvent = False
     wasEventPositive = False  # Was the event an up spike?
+    
+    # Figure out how many rows will it take to have a cache of 10MB (1048576 bytes = 1MB)
+    cdef numRowsInEventCache = int(10 * 1048576 / (maxPoints * (np.dtype(DTYPE).itemsize)))
+    # Make an array to hold events in memory before writing to disk.
+    cdef np.ndarray[DTYPE_t, ndim = 2] eventCache = np.zeros((numRowsInEventCache, maxPoints), dtype=DTYPE)
+    cdef np.ndarray[DTYPE_t, ndim = 2] levelsCache = np.zeros((numRowsInEventCache, maxPoints), dtype=DTYPE)
+    cdef np.ndarray[DTYPE_t, ndim = 2] levelIndexCache = np.zeros((numRowsInEventCache, maxPoints), dtype=DTYPE)
+    
+    cdef eventCacheIndex = 0
     
     cdef:
     
@@ -216,7 +225,7 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe = None, h5file = None):
         int time_left = 0
         int qq = 0
         int cacheSize = 0
-        long cache_refreshes = 0 #number of times we get new data at the
+        long cache_refreshes = 0  # number of times we get new data at the
                                         # end of the loop
         double percent_change_start = 0
         double percent_change_end = 0
@@ -224,11 +233,10 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe = None, h5file = None):
         long tempLong = 0
         
 #         np.ndarray[DTYPE_t] level_values
-        np.ndarray[DTYPE_t] currData = dataCache[1] # data in dataCache[1]
+        np.ndarray[DTYPE_t] currData = dataCache[1]  # data in dataCache[1]
         
         np.ndarray[DTYPE_t] mlevels = np.zeros(maxPoints, dtype=DTYPE)
         np.ndarray[DTYPE_t] mindices = np.zeros(maxPoints, dtype=DTYPE)
-        np.ndarray[DTYPE_t] mrawData = np.zeros(maxPoints, dtype=DTYPE)
         
         double level_sum = 0
         long prevLevelStart = 0
@@ -349,9 +357,9 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe = None, h5file = None):
                     else:
                         minindex = min_index_n
                         level_sum = level_sum_minn
-                    mindices[n_indices] = minindex+1
+                    mindices[n_indices] = minindex + 1
                     n_indices += 1
-                    mlevels[n_levels] = level_sum/(minindex-prevLevelStart)
+                    mlevels[n_levels] = level_sum / (minindex - prevLevelStart)
                     n_levels += 1
                     # reset stuff
                     if cache_index == 1:
@@ -370,7 +378,7 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe = None, h5file = None):
             mindices[n_indices] = event_end
             n_indices += 1
             if event_end > prevLevelStart:
-                mlevels[n_levels] = level_sum/(event_end-prevLevelStart)
+                mlevels[n_levels] = level_sum / (event_end - prevLevelStart)
                 n_levels += 1
             # is the event long enough?
             if done and event_end - event_start > min_event_steps:
@@ -393,15 +401,12 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe = None, h5file = None):
                     currentBlockage = 0
                     # calculate the weighted average of the levels
                     for qq in xrange(n_levels):
-                        currentBlockage += mlevels[qq]*(mindices[qq+1]-mindices[qq])
-                    currentBlockage = currentBlockage/(event_end-event_start) - local_mean
+                        currentBlockage += mlevels[qq] * (mindices[qq + 1] - mindices[qq])
+                    currentBlockage = currentBlockage / (event_end - event_start) - local_mean
                     
                 mindices[:n_indices] += placeInData
-                
-                # end CUSUM
-                mrawData[:event_end-event_start + 2*raw_points_per_side] = _getDataRange(dataCache, event_start - raw_points_per_side, event_end + raw_points_per_side)
-#                 rawData.append(_getDataRange(dataCache, event_start - raw_points_per_side, event_end + raw_points_per_side))
-                rawData.append(mrawData[np.newaxis,:])
+                    
+                # end CUSUM, save events to file/cache
                 eventEntry['baseline'] = local_mean
                 eventEntry['currentBlockage'] = currentBlockage
                 eventEntry['nLevels'] = n_levels
@@ -410,10 +415,21 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe = None, h5file = None):
                 eventEntry['rawPointsPerSide'] = raw_points_per_side
                 eventEntry['area'] = event_area - local_mean
                 eventEntry['arrayRow'] = event_count
-                indicesMatrix.append(mindices[np.newaxis,:])
-                levelsMatrix.append(mlevels[np.newaxis,:])
                 eventEntry.append()
+                
+                eventCache[eventCacheIndex][:event_end - event_start + 2 * raw_points_per_side] = _getDataRange(dataCache, event_start - raw_points_per_side, event_end + raw_points_per_side)
+                levelsCache[eventCacheIndex][:n_levels] = mlevels[:n_levels]
+                levelIndexCache[eventCacheIndex][:n_levels + 1] = mindices[:n_levels + 1]
+                
                 event_count += 1
+                eventCacheIndex += 1
+                
+                if eventCacheIndex >= numRowsInEventCache:
+                    rawData.append(eventCache)
+                    indicesMatrix.append(levelsCache)
+                    levelsMatrix.append(levelIndexCache)
+                    eventCacheIndex = 0
+                    
                 if event_count % 1000 == 0:
                     h5file.root.events.eventTable.flush()
                     h5file.flush()
@@ -441,10 +457,10 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe = None, h5file = None):
                 recent_time = timetemp - time2
                 if recent_time > 0:
                     total_time = timetemp - time1
-                    percent_done = 100.*(placeInData+i) / points_per_channel_total
-                    rate = (placeInData + i -prevI)/recent_time
-                    total_rate = (placeInData + i)/total_time
-                    time_left = int((points_per_channel_total-(placeInData+i))/rate)
+                    percent_done = 100.*(placeInData + i) / points_per_channel_total
+                    rate = (placeInData + i - prevI) / recent_time
+                    total_rate = (placeInData + i) / total_time
+                    time_left = int((points_per_channel_total - (placeInData + i)) / rate)
                     status_text = "Event Count: %d Percent Done: %.2f Rate: %.2e pt/s Total Rate: %.2e pt/s Time Left: %s" % (event_count, percent_done, rate, total_rate, datetime.timedelta(seconds=time_left))
                     if pipe is not None:
             #                     if event_count > last_event_sent:
@@ -456,14 +472,21 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe = None, h5file = None):
                         sys.stdout.flush()
                     time2 = timetemp
                     prevI = placeInData + i
+                    
+    # clean up the caches, make sure everything is saved
+    if eventCacheIndex > 0:
+        rawData.append(eventCache[:eventCacheIndex])
+        indicesMatrix.append(levelsCache[:eventCacheIndex])
+        levelsMatrix.append(levelIndexCache[:eventCacheIndex])
+        eventCacheIndex = 0
                 
     # Update the status_text one last time
     recent_time = time.time() - time2
     total_time = time.time() - time1
-    percent_done = 100.*(placeInData+i) / points_per_channel_total
-    rate = (placeInData + i -prevI)/recent_time
-    total_rate = (placeInData + i)/total_time
-    time_left = int((points_per_channel_total-(placeInData+i))/rate)
+    percent_done = 100.*(placeInData + i) / points_per_channel_total
+    rate = (placeInData + i - prevI) / recent_time
+    total_rate = (placeInData + i) / total_time
+    time_left = int((points_per_channel_total - (placeInData + i)) / rate)
     status_text = "Event Count: %d Percent Done: %.2f Rate: %.2e pt/s Total Rate: %.2e pt/s Time Left: %s" % (event_count, percent_done, rate, total_rate, datetime.timedelta(seconds=time_left))
     if pipe is not None:
 #                     if event_count > last_event_sent:
@@ -497,7 +520,7 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe = None, h5file = None):
     if event_count > 0:
         # Save the file
         # add attributes
-        h5file.root.events.eventTable.flush() # if you don't flush before adding attributes,
+        h5file.root.events.eventTable.flush()  # if you don't flush before adding attributes,
                                                 # PyTables might print a warning
         h5file.root.events.eventTable.attrs.sampleRate = sample_rate
         h5file.root.events.eventTable.attrs.eventCount = event_count
@@ -511,7 +534,7 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe = None, h5file = None):
         
     return save_file_name
     
-def findEvents(filenames, pipe = None, h5file = None, **parameters):
+def findEvents(filenames, pipe=None, h5file=None, **parameters):
     defaultParams = { 'min_event_length': 10.,
                                    'max_event_length': 10000.,
                                    'threshold_direction': 'Negative',
