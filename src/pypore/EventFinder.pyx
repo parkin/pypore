@@ -28,6 +28,9 @@ cdef int BASELINE_FIXED = 4
 DTYPE = np.float
 ctypedef np.float_t DTYPE_t
 
+DTYPE_UINT32 = np.uint32
+ctypedef np.uint32_t DTYPE_UINT32_t
+
 cdef np.ndarray[DTYPE_t] _getDataRange(dataCache, long i, long n):
     '''
     returns [i,n)
@@ -235,7 +238,7 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
         np.ndarray[DTYPE_t] currData = dataCache[1]  # data in dataCache[1]
         
         np.ndarray[DTYPE_t] mlevels = np.zeros(maxPoints, dtype=DTYPE)
-        np.ndarray[DTYPE_t] mlevelsLength = np.zeros(maxPoints, dtype=DTYPE)
+        np.ndarray[DTYPE_UINT32_t] mlevelsLength = np.zeros(maxPoints, dtype=DTYPE_UINT32)
         
         double level_sum = 0
         long prevLevelStart = 0
@@ -388,7 +391,7 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
                         currentBlockage = np.min(_getDataRange(dataCache, event_start, event_end))
                         mlevels[0] = currentBlockage
                         currentBlockage -= local_mean
-                    mlevelsLength[0] = event_start - event_end
+                    mlevelsLength[0] = event_end - event_start
                 else:
                     currentBlockage = 0
                     # calculate the weighted average of the levels
