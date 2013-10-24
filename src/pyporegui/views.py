@@ -256,11 +256,9 @@ class EventAnalysisWidget(GraphicsLayoutWidget):
         # Plot the cusum levels
         nLevels = row['nLevels']
         baseline = row['baseline']
-        eventStart = row['eventStart']
         # left, start-1, start, 
         levels = h5file.root.events.levels[arrayRow][:nLevels]
-        indices = h5file.root.events.levelIndices[arrayRow][:nLevels + 1]
-        indices -= eventStart
+        indices = h5file.root.events.levelLengths[arrayRow][:nLevels]
         
         levelTimes = np.zeros(2 * nLevels + 4)
         levelValues = np.zeros(2 * nLevels + 4)
@@ -268,12 +266,13 @@ class EventAnalysisWidget(GraphicsLayoutWidget):
         levelTimes[1] = 1.0 * (rawPointsPerSide - 1) / sampleRate
         levelValues[0] = levelValues[1] = baseline
         i = 0
+        length = 0
         for i in xrange(nLevels):
-            levelTimes[2 * i + 2] = times[rawPointsPerSide] + 1.0 * (indices[i]) / sampleRate
+            levelTimes[2 * i + 2] = times[rawPointsPerSide] + 1.0 * (length) / sampleRate
             levelValues[2 * i + 2] = levels[i]
-            if i < nLevels:
-                levelTimes[2 * i + 3] = times[rawPointsPerSide] + 1.0 * (indices[i + 1]) / sampleRate
-                levelValues[2 * i + 3] = levels[i]
+            levelTimes[2 * i + 3] = times[rawPointsPerSide] + 1.0 * (length + indices[i]) / sampleRate
+            levelValues[2 * i + 3] = levels[i]
+            length += indices[i]
         i += 1        
         levelTimes[2 * i + 2] = times[rawPointsPerSide + eventLength]
         levelTimes[2 * i + 3] = times[n - 1]

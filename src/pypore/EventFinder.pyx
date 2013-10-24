@@ -133,7 +133,7 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
     rawData = h5file.root.events.rawData
     eventEntry = h5file.root.events.eventTable.row
     levelsMatrix = h5file.root.events.levels
-    indicesMatrix = h5file.root.events.levelIndices
+    lengthsMatrix = h5file.root.events.levelLengths
     
     cdef double datapoint = data[0]
     
@@ -207,7 +207,6 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
         double new_mean = 0
         double var_estimate = 0
         unsigned int n_levels = 0
-        unsigned int n_indices = 0
         double delta = 0
         unsigned long min_index_p = 0
         unsigned long min_index_n = 0
@@ -236,7 +235,7 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
         np.ndarray[DTYPE_t] currData = dataCache[1]  # data in dataCache[1]
         
         np.ndarray[DTYPE_t] mlevels = np.zeros(maxPoints, dtype=DTYPE)
-        np.ndarray[DTYPE_t] mindices = np.zeros(maxPoints, dtype=DTYPE)
+        np.ndarray[DTYPE_t] mlevelsLength = np.zeros(maxPoints, dtype=DTYPE)
         
         double level_sum = 0
         long prevLevelStart = 0
@@ -279,9 +278,6 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
             event_i = i
             # CUSUM stuff
             mean_estimate = datapoint
-            mindices[0] = event_start  # The indexes in data[] where each
-                                            # level starts.
-            n_indices = 1
             n_levels = 0
             sn = sp = Sn = Sp = Gn = Gp = 0
             var_estimate = local_variance
@@ -357,8 +353,7 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
                     else:
                         minindex = min_index_n
                         level_sum = level_sum_minn
-                    mindices[n_indices] = minindex + 1
-                    n_indices += 1
+                    mlevelsLength[n_levels] = minindex + 1 - ko
                     mlevels[n_levels] = level_sum / (minindex - prevLevelStart)
                     n_levels += 1
                     # reset stuff
@@ -370,14 +365,13 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
                     level_sum = mean_estimate
                     min_Sp = min_Sn = float("inf")
                     # Go back to 1 after the level change found
-                    ko = event_i = minindex
+                    ko = event_i = minindex + 1
                     min_index_p = min_index_n = event_i
                     prevLevelStart = event_i
                   
             i = event_end
-            mindices[n_indices] = event_end
-            n_indices += 1
             if event_end > prevLevelStart:
+                mlevelsLength[n_levels] = event_end - ko
                 mlevels[n_levels] = level_sum / (event_end - prevLevelStart)
                 n_levels += 1
             # is the event long enough?
@@ -386,7 +380,6 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
                 # otherwise just say 1 level and use the maximum change as the value
                 if event_end - event_start < 10:
                     n_levels = 1
-                    n_indices = 2
                     if wasEventPositive:
                         currentBlockage = np.max(_getDataRange(dataCache, event_start, event_end))
                         mlevels[0] = currentBlockage
@@ -395,16 +388,13 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
                         currentBlockage = np.min(_getDataRange(dataCache, event_start, event_end))
                         mlevels[0] = currentBlockage
                         currentBlockage -= local_mean
-                    mindices[0] = event_start
-                    mindices[1] = event_end
+                    mlevelsLength[0] = event_start - event_end
                 else:
                     currentBlockage = 0
                     # calculate the weighted average of the levels
                     for qq in xrange(n_levels):
-                        currentBlockage += mlevels[qq] * (mindices[qq + 1] - mindices[qq])
+                        currentBlockage += mlevels[qq] * mlevelsLength[qq]
                     currentBlockage = currentBlockage / (event_end - event_start) - local_mean
-                    
-                mindices[:n_indices] += placeInData
                     
                 # end CUSUM, save events to file/cache
                 eventEntry['baseline'] = local_mean
@@ -419,14 +409,14 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
                 
                 eventCache[eventCacheIndex][:event_end - event_start + 2 * raw_points_per_side] = _getDataRange(dataCache, event_start - raw_points_per_side, event_end + raw_points_per_side)
                 levelsCache[eventCacheIndex][:n_levels] = mlevels[:n_levels]
-                levelIndexCache[eventCacheIndex][:n_levels + 1] = mindices[:n_levels + 1]
+                levelIndexCache[eventCacheIndex][:n_levels] = mlevelsLength[:n_levels]
                 
                 event_count += 1
                 eventCacheIndex += 1
                 
                 if eventCacheIndex >= numRowsInEventCache:
                     rawData.append(eventCache)
-                    indicesMatrix.append(levelIndexCache)
+                    lengthsMatrix.append(levelIndexCache)
                     levelsMatrix.append(levelsCache)
                     eventCacheIndex = 0
                     
@@ -476,7 +466,7 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
     # clean up the caches, make sure everything is saved
     if eventCacheIndex > 0:
         rawData.append(eventCache[:eventCacheIndex])
-        indicesMatrix.append(levelIndexCache[:eventCacheIndex])
+        lengthsMatrix.append(levelIndexCache[:eventCacheIndex])
         levelsMatrix.append(levelsCache[:eventCacheIndex])
         eventCacheIndex = 0
                 

@@ -35,9 +35,9 @@ def initializeEventsDatabase(filename, maxEventSteps):
                          a, shape=shape,
                          title="Cusum levels",
                          filters=filters)
-    h5file.createEArray(h5file.root.events, 'levelIndices',
+    h5file.createEArray(h5file.root.events, 'levelLengths',
                          b, shape=shape,
-                         title="Indices for cusum levels",
+                         title="Lengths of the cusum levels",
                          filters=filters)
     
     return h5file
