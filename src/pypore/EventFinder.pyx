@@ -181,7 +181,7 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
     # Make an array to hold events in memory before writing to disk.
     cdef np.ndarray[DTYPE_t, ndim = 2] eventCache = np.zeros((numRowsInEventCache, maxPoints), dtype=DTYPE)
     cdef np.ndarray[DTYPE_t, ndim = 2] levelsCache = np.zeros((numRowsInEventCache, maxPoints), dtype=DTYPE)
-    cdef np.ndarray[DTYPE_t, ndim = 2] levelIndexCache = np.zeros((numRowsInEventCache, maxPoints), dtype=DTYPE)
+    cdef np.ndarray[DTYPE_UINT32_t, ndim = 2] levelLengthCache = np.zeros((numRowsInEventCache, maxPoints), dtype=DTYPE_UINT32)
     
     cdef eventCacheIndex = 0
     
@@ -412,14 +412,14 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
                 
                 eventCache[eventCacheIndex][:event_end - event_start + 2 * raw_points_per_side] = _getDataRange(dataCache, event_start - raw_points_per_side, event_end + raw_points_per_side)
                 levelsCache[eventCacheIndex][:n_levels] = mlevels[:n_levels]
-                levelIndexCache[eventCacheIndex][:n_levels] = mlevelsLength[:n_levels]
+                levelLengthCache[eventCacheIndex][:n_levels] = mlevelsLength[:n_levels]
                 
                 event_count += 1
                 eventCacheIndex += 1
                 
                 if eventCacheIndex >= numRowsInEventCache:
                     rawData.append(eventCache)
-                    lengthsMatrix.append(levelIndexCache)
+                    lengthsMatrix.append(levelLengthCache)
                     levelsMatrix.append(levelsCache)
                     eventCacheIndex = 0
                     
@@ -469,7 +469,7 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
     # clean up the caches, make sure everything is saved
     if eventCacheIndex > 0:
         rawData.append(eventCache[:eventCacheIndex])
-        lengthsMatrix.append(levelIndexCache[:eventCacheIndex])
+        lengthsMatrix.append(levelLengthCache[:eventCacheIndex])
         levelsMatrix.append(levelsCache[:eventCacheIndex])
         eventCacheIndex = 0
                 
