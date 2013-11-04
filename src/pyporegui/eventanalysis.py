@@ -505,8 +505,8 @@ class MyMainWindow(QtGui.QMainWindow):
                 self.eventviewerPlots.append(plot)
                 
         # Tool bar for main plot.  Contains zoom button and different checkboxes
-        self.plotToolBar = PlotToolBar(self)
-        self.addToolBar(self.plotToolBar)
+#         self.plotToolBar = PlotToolBar(self)
+#         self.addToolBar(self.plotToolBar)
         
         eventSelectToolbar = QtGui.QToolBar(self)
         self.addToolBar(eventSelectToolbar)
@@ -538,7 +538,7 @@ class MyMainWindow(QtGui.QMainWindow):
         frame.addWidget(wig2)
         
         eventfinderplots_layout = LayoutWidget()
-        eventfinderplots_layout.addWidget(self.plotToolBar, row=1, col=0, colspan=3)
+#         eventfinderplots_layout.addWidget(self.plotToolBar, row=1, col=0, colspan=3)
         eventfinderplots_layout.addWidget(frame, row=2, col=0, colspan=3)
         eventfinderplots_layout.addWidget(eventSelectToolbar, row=5, col=0, colspan=3)
         
@@ -939,10 +939,6 @@ The current namespace should include:
             self.status_text.setText(parameters['error'])
             return
         
-        self.plot_concatevents.clear()
-        self.plot_event_zoomed.clear()
-        self.plotwid.clearEventItems()
-        
         # Clear the current events
         del self.events[:]
         self.prev_concat_time = 0.
@@ -959,9 +955,6 @@ The current namespace should include:
         
         self.stop_analyze_button.setEnabled(True)
         
-        # Clear the concatenated_events plot and the single event plot
-        self.plot_concatevents.clear()
-        self.plot_event_zoomed.clear()
         
     def get_current_analysis_parameters(self):
         '''
