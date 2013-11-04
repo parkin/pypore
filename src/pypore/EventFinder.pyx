@@ -517,6 +517,7 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
                                                 # PyTables might print a warning
         h5file.root.events.eventTable.attrs.sampleRate = sample_rate
         h5file.root.events.eventTable.attrs.eventCount = event_count
+        h5file.root.events.eventTable.attrs.dataFilename = filename
         h5file.flush()
         h5file.close()
     else:
