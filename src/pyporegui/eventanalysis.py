@@ -141,6 +141,7 @@ class MyMainWindow(QtGui.QMainWindow):
         fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open event database', self.openDir, '*.h5')[0]
         if len(fnames) > 0:
             self.listEventWidget.clear()
+            self.eventviewListWidget.clear()
         else:
             return
         areFilesOpened = False
@@ -150,9 +151,14 @@ class MyMainWindow(QtGui.QMainWindow):
             self.openDir = item.getDirectory()  # save the directory info for later
             self.listEventWidget.addItem(item)
             
+            item = FileListItem(w)
+            self.eventviewListWidget.addItem(item)
+            
+            
         if areFilesOpened:
             self.btnAddFilter.setEnabled(False)
-            self.main_tabwig.setCurrentIndex(1)
+            if self.main_tabwig.currentIndex() < 1:
+                self.main_tabwig.setCurrentIndex(2)
             
     def _on_event_file_selection_changed(self):
         self.btnAddFilter.setEnabled(True)
@@ -325,6 +331,46 @@ class MyMainWindow(QtGui.QMainWindow):
         
         return scrollArea
     
+    def _create_event_viewer_options(self):
+        scrollArea = QtGui.QScrollArea()
+        scrollArea.setWidgetResizable(True)
+        
+        # Create filter_parameter list for files want to analyze
+        self.eventviewListWidget = QtGui.QListWidget()
+        self.eventviewListWidget.itemSelectionChanged.connect(self._on_file_item_selection_changed)
+        self.eventviewListWidget.itemDoubleClicked.connect(self._onEventviewFileItemDoubleclick)
+        self.eventviewListWidget.setMaximumHeight(100)
+        
+        fixed_analysis_options = QtGui.QFormLayout()
+        fixed_analysis_options.addRow('Event Databases:', self.eventviewListWidget)
+        
+        vbox_left = QtGui.QVBoxLayout()
+        vbox_left.addLayout(fixed_analysis_options)
+        
+        vbox_left_widget = QtGui.QWidget()
+        vbox_left_widget.setLayout(vbox_left)
+        
+        scrollArea.setWidget(vbox_left_widget)
+        
+        return scrollArea
+        
+    def _onEventviewFileItemDoubleclick(self, item):
+        '''
+        '''
+        self.eventViewItem = item
+        
+        h5file = tb.openFile(item.getFileName())
+        
+        eventCount = h5file.root.events.eventTable.attrs.eventCount
+        
+        h5file.close()
+        
+        self.eventDisplayedEdit.setMaxLength(int(eventCount / 10) + 1)
+        self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(1, eventCount))
+        self.eventCountText.setText('/' + str(eventCount))
+        self.eventDisplayedEdit.setText('')
+        self.eventDisplayedEdit.setText('1')
+    
     def _create_event_analysis_options(self):
         scrollArea = QtGui.QScrollArea()
         scrollArea.setWidgetResizable(True)
@@ -425,14 +471,39 @@ class MyMainWindow(QtGui.QMainWindow):
         self.plotwid.enableAutoRange('xy', False)
         self.p1 = self.plotwid.plot()  # create an empty plot curve to be filled later
         
+        # Tool bar for main plot.  Contains zoom button and different checkboxes
+        self.plotToolBar = PlotToolBar(self)
+        self.addToolBar(self.plotToolBar)
+        
+        eventfinderplots_layout = LayoutWidget()
+        eventfinderplots_layout.addWidget(self.plotToolBar, row=1, col=0, colspan=3)
+        eventfinderplots_layout.addWidget(wig, row=2, col=0, colspan=3)
+        
+        return eventfinderplots_layout
+    
+    def _create_eventviewer_plot_widget(self):
+        wig = pg.GraphicsLayoutWidget()
+        wig2 = pg.GraphicsLayoutWidget()
+
+        # Main plot        
+        self.eventview_plotwid = MyPlotItem(title='Current Trace', name='Plot')
+        wig.addItem(self.eventview_plotwid)
+        self.eventview_plotwid.enableAutoRange('xy', False)
+        self.eventview_p1 = self.eventview_plotwid.plot()  # create an empty plot curve to be filled later
+        
         wig.nextRow()
         # Create Qwt plot for concatenated events
         self.plot_concatevents = wig.addPlot(title='Concatenated Events', name='Concat')
         
-        wig.nextRow()
-        # Qwt plot for each event found
-        self.plot_event_zoomed = wig.addPlot(title='Single Event', name='Single')
+        self.eventviewerPlots = []
         
+        # Now add 9 plots to view events in
+        for i in xrange(3):
+            wig2.nextRow()
+            for j in xrange(3):
+                plot = wig2.addPlot(title='Event ' + str(i*3+j), name='Single' + str(i*3+j))
+                self.eventviewerPlots.append(plot)
+                
         # Tool bar for main plot.  Contains zoom button and different checkboxes
         self.plotToolBar = PlotToolBar(self)
         self.addToolBar(self.plotToolBar)
@@ -461,9 +532,14 @@ class MyMainWindow(QtGui.QMainWindow):
         btnNext.clicked.connect(self.nextClicked)
         eventSelectToolbar.addWidget(btnNext)
         
+        frame = QtGui.QSplitter()
+        frame.setOrientation(QtCore.Qt.Vertical)
+        frame.addWidget(wig)
+        frame.addWidget(wig2)
+        
         eventfinderplots_layout = LayoutWidget()
         eventfinderplots_layout.addWidget(self.plotToolBar, row=1, col=0, colspan=3)
-        eventfinderplots_layout.addWidget(wig, row=2, col=0, colspan=3)
+        eventfinderplots_layout.addWidget(frame, row=2, col=0, colspan=3)
         eventfinderplots_layout.addWidget(eventSelectToolbar, row=5, col=0, colspan=3)
         
         return eventfinderplots_layout
@@ -495,6 +571,25 @@ class MyMainWindow(QtGui.QMainWindow):
         
         return frame
     
+    def _create_event_viewer_tab(self):
+        frame = QtGui.QSplitter()
+        
+        options = self._create_event_viewer_options()
+        plots = self._create_eventviewer_plot_widget()
+        
+        # Put everything in filter_parameter scroll area
+        scrollOptions = QtGui.QScrollArea()
+        scrollPlots = QtGui.QScrollArea()
+        scrollOptions.setWidgetResizable(True)
+        scrollPlots.setWidgetResizable(True)
+        
+        scrollOptions.setWidget(options)
+        scrollPlots.setWidget(plots)
+        
+        frame.addWidget(scrollOptions)
+        frame.addWidget(scrollPlots)
+        return frame
+    
     def _create_event_finding_tab(self):
         frame = QtGui.QSplitter()
         
@@ -520,11 +615,13 @@ class MyMainWindow(QtGui.QMainWindow):
         Initializes the main gui frame.
         '''
         event_finding = self._create_event_finding_tab()
+        event_viewer = self._create_event_viewer_tab()
         event_analysis = self._create_event_analysis_tab()
         
         # Layout holding everything        
         self.main_tabwig = QtGui.QTabWidget()  # Splitter allows for drag to resize between children
         self.main_tabwig.addTab(event_finding, 'Event Finding')
+        self.main_tabwig.addTab(event_viewer, 'Event View')
         self.main_tabwig.addTab(event_analysis, 'Event Analysis')
         self.main_tabwig.setMinimumSize(1000,550)
         
@@ -557,29 +654,36 @@ The current namespace should include:
     def _eventDisplayEditOnChange(self, text):
         if len(text) < 1:
             return
-        eventCount = int(self.eventDisplayedEdit.text())
-        self.plotSingleEvent(self.events[eventCount - 1])
+        position = int(self.eventDisplayedEdit.text())
+        self.plotSingleEvents(position-1)
         return
         
     def previousClicked(self):
-        self.moveEventDisplayBy(-1)
+        self.moveEventDisplayBy(-1*len(self.eventviewerPlots))
         
     def nextClicked(self):
-        self.moveEventDisplayBy(1)
+        self.moveEventDisplayBy(len(self.eventviewerPlots))
                 
     def moveEventDisplayBy(self, count):
         '''
         Changes the event displayed on the event display plot to
         current value + count
         '''
+        h5eventCount = 0
+        try:
+            h5file = tb.openFile(self.eventViewItem.getFileName())
+            h5eventCount = h5file.root.events.eventTable.attrs.eventCount
+            h5file.close()
+        except:
+            return
         try:
             eventCount = int(self.eventDisplayedEdit.text())
-            if 0 < eventCount + count <= len(self.events):
+            if 0 < eventCount + count <= h5eventCount:
                 self.eventDisplayedEdit.setText(str(eventCount + count))
         except ValueError:
             # if we can't parse the event display text but there are events,
             # just set to zero
-            if len(self.events) > 0:
+            if h5eventCount > 0:
                 self.eventDisplayedEdit.setText('1')
         
     def create_status_bar(self):
@@ -692,16 +796,71 @@ The current namespace should include:
         item.setPen(pg.mkPen('w'))
         self.plot_concatevents.addItem(item)
         
-    def plotSingleEvent(self, event):
+    def plotSingleEvents(self, event):
         '''
         Plots the event on the plot with 
         '''
+        h5file = tb.openFile(self.eventViewItem.getFileName(), mode='r')
         
-        times, data, times2, levels2 = self.getEventAndLevelsData(event)
+        eventCount = h5file.root.events.eventTable.attrs.eventCount
         
-        self.plot_event_zoomed.clear()
-        self.plot_event_zoomed.plot(x=times, y=data)
-        self.plot_event_zoomed.plot(x=times2, y=levels2, pen=pg.mkPen('g'))
+        for i in xrange(3):
+            for j in xrange(3):
+                pos = 3*i+j
+                if pos+event >= eventCount or pos+event < 0:
+                    self.eventviewerPlots[pos].clear()
+                    self.eventviewerPlots[pos].setTitle('')
+                else:
+                    self.plotSingleEvent(h5file, event + pos, self.eventviewerPlots[pos])
+                    self.eventviewerPlots[pos].setTitle('Event ' + str(event+pos+1))
+        
+        h5file.close()
+        
+    def plotSingleEvent(self, h5file, position, plot):
+        table = h5file.root.events.eventTable
+        row = table[position]
+        arrayRow = row['arrayRow']
+        sampleRate = table.attrs.sampleRate
+        eventLength = row['eventLength']
+        rawPointsPerSide = row['rawPointsPerSide']
+        n = eventLength + 2 * rawPointsPerSide
+        
+        rawData = h5file.root.events.rawData[arrayRow][:n]
+        
+        times = np.linspace(0.0, 1.0 * n / sampleRate, n)
+        
+        plot.clear()
+        plot.plot(times, rawData)
+        # plot the event points in yellow
+        plot.plot(times[rawPointsPerSide:rawPointsPerSide + eventLength], \
+                                     rawData[rawPointsPerSide:rawPointsPerSide + eventLength], pen='y')
+        
+        # Plot the cusum levels
+        nLevels = row['nLevels']
+        baseline = row['baseline']
+        # left, start-1, start, 
+        levels = h5file.root.events.levels[arrayRow][:nLevels]
+        indices = h5file.root.events.levelLengths[arrayRow][:nLevels]
+        
+        levelTimes = np.zeros(2 * nLevels + 4)
+        levelValues = np.zeros(2 * nLevels + 4)
+        
+        levelTimes[1] = 1.0 * (rawPointsPerSide - 1) / sampleRate
+        levelValues[0] = levelValues[1] = baseline
+        i = 0
+        length = 0
+        for i in xrange(nLevels):
+            levelTimes[2 * i + 2] = times[rawPointsPerSide] + 1.0 * (length) / sampleRate
+            levelValues[2 * i + 2] = levels[i]
+            levelTimes[2 * i + 3] = times[rawPointsPerSide] + 1.0 * (length + indices[i]) / sampleRate
+            levelValues[2 * i + 3] = levels[i]
+            length += indices[i]
+        i += 1        
+        levelTimes[2 * i + 2] = times[rawPointsPerSide + eventLength]
+        levelTimes[2 * i + 3] = times[n - 1]
+        levelValues[2 * i + 2] = levelValues[2 * i + 3] = baseline
+        
+        plot.plot(levelTimes, levelValues, pen='g')
         
     def getEventAndLevelsData(self, event):
         data = event['raw_data']
