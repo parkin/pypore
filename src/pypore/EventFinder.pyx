@@ -8,9 +8,8 @@ import os
 import time, datetime
 import numpy as np
 cimport numpy as np
-from pypore.eventDatabase import initializeEventsDatabase
+import pypore.eventDatabase as ed
 from pypore.DataFileOpener import prepareDataFile, getNextBlocks
-from pypore.eventDatabase import initializeEventsDatabase
 from itertools import chain
 import sys
 from libc.math cimport sqrt, pow, fmax, fmin, abs
@@ -132,7 +131,7 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
     
     # Open the event datbase
     if h5file == None:
-        h5file = initializeEventsDatabase(save_file_name, maxPoints)
+        h5file = ed.openFile(save_file_name, maxEventSteps = maxPoints, mode='w')
     rawData = h5file.root.events.rawData
     eventEntry = h5file.root.events.eventTable.row
     levelsMatrix = h5file.root.events.levels

@@ -11,22 +11,22 @@ import pypore.eventDatabase as ed
 
 class TestEventDatabase(unittest.TestCase):
 
-
     def setUp(self):
-        pass
-
+        self.filename = 'testInitializeDatabase.h5'
+        self.maxEventSteps = 100
+        self.database = ed.openFile(self.filename, mode='w', maxEventSteps = self.maxEventSteps)
 
     def tearDown(self):
-        pass
-
-
-    def testInitializeEventsDatabase(self):
-        filename = 'testInitializeDatabase.h5'
+        self.database.close()
+        os.remove(self.filename)
         
-        # Get an open file descriptor
-        fileh = ed.initializeEventsDatabase(filename, 100)
+    def _testInitialRoot(self, fileh = None):
+        """
+        Check that only the root group and event group exist
+        """
+        if fileh == None:
+            fileh = self.database
         
-        # Check that only the root group and event group exist
         names = []
         for group in fileh.walkGroups():
             names.append(group._v_name)
@@ -34,33 +34,61 @@ class TestEventDatabase(unittest.TestCase):
         self.assertIn('/', names, 'file missing root group')
         self.assertIn('events', names, "file missing event group.")
         
+    def _testEmptyEventsGroup(self, eventsGroup = None):
+        """
+        Checks that the events group has the correct (and empty) tables/arrays
+        """
+        if eventsGroup == None:
+            eventsGroup = self.database.root.events
+        
         # Check the events group has the correct nodes
         # Should be events, eventTable, eventData, rawData
         names = []
-        for node in fileh.walkNodes(fileh.root.events):
+        for node in self.database.walkNodes(eventsGroup):
             names.append(node._v_name)
-        namesShouldBe = ['events', 'eventTable', 'rawData', 'levels', 'levelIndices']
+        namesShouldBe = ['events', 'eventTable', 'rawData', 'levels', 'levelLengths']
         self.assertEqual(len(names), len(namesShouldBe))
         self.assertEqual(sorted(names), sorted(namesShouldBe)) # i don't care what order these lists are
         
         # Assert table, vlarrays are empty
-        self.assertEqual(fileh.root.events.eventTable.nrows, 0)
-        self.assertEqual(fileh.root.events.rawData.nrows, 0)
-        self.assertEqual(fileh.root.events.levels.nrows, 0)
-        self.assertEqual(fileh.root.events.levelIndices.nrows, 0)
+        self.assertEqual(eventsGroup.eventTable.nrows, 0)
+        self.assertEqual(eventsGroup.rawData.nrows, 0)
+        self.assertEqual(eventsGroup.levels.nrows, 0)
+        self.assertEqual(eventsGroup.levelLengths.nrows, 0)
         
         # Check the eventTable columns are correct and in correct order
         columnNames = ['arrayRow', 'eventStart', 'eventLength', 'nLevels', 'rawPointsPerSide', 'baseline', 'currentBlockage', 'area']
-        self.assertEqual(fileh.root.events.eventTable.colnames, columnNames)
+        self.assertEqual(eventsGroup.eventTable.colnames, columnNames)
+        
+    def testInitializeEventsDatabase(self):
+        self._testInitialRoot(self.database)
+        
+        self._testEmptyEventsGroup()
         
         # Check is in write mode
-        fileh.root.events.rawData.append(np.zeros((1,100)))
-        fileh.flush()
-        fileh.close()
+        self.database.root.events.rawData.append(np.zeros((1,100)))
+        self.database.flush()
         
-        os.remove(filename)
+    def testOpenExistingEmptyDatabase(self):
+        """
+        Tests opening an existing h5 file with an empty 
+        EventsDatabase structure.
+        """
+        self.database.close()
         
-
+        self.database = ed.openFile(self.filename)
+        
+        self._testInitialRoot(self.database)
+        
+        self._testEmptyEventsGroup()
+        
+    def testGetEventsGroup(self):
+        """
+        """
+        eventsGroup = self.database.getEventsGroup()
+        self._testEmptyEventsGroup(eventsGroup)
+        
+        
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
