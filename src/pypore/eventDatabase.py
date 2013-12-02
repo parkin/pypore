@@ -21,17 +21,39 @@ class _Event(tb.IsDescription):
     
 class EventDatabase(tb.file.File):
     '''
-    HDF5 database storing events and corresponding data.
+    PyTables HDF5 database storing events and corresponding data.
+    Inherits from tables.file.File, so you can interact with this
+    just as you would a PyTables File object. However, this contains
+    some extra convenience methods for storing/reading events
+    and event data.
     '''
     
     def __init__(self, *args, **kargs):
         pass
+    
+    def appendLevelLengths(self, levelLengths):
+        """
+        Appends a numpy matrix levelLengths to root.events.levelLengths
+        """
+        self.root.events.levelLengths.append(levelLengths)
+    
+    def appendLevels(self, levels):
+        """
+        Appends a numpy matrix levels to root.events.levels
+        """
+        self.root.events.levels.append(levels)
     
     def appendRawData(self, data):
         """
         Appends a numpy matrix data to root.events.rawData
         """
         self.root.events.rawData.append(data)
+        
+    def getEventRow(self):
+        """
+        Gets the PyTables Row object of the eventTable.
+        """
+        return self.root.events.eventTable.row
     
     def getEventsGroup(self):
         """
@@ -40,32 +62,49 @@ class EventDatabase(tb.file.File):
         return self.root.events
     
     def initializeEmptyDatabase(self, *args, **kargs):
-        maxEventSteps = 100
-        if 'maxEventSteps' in kargs:
-            maxEventSteps = kargs['maxEventSteps']
-        self.createGroup(self.root, 'events', 'Events')
-        self.createTable(self.root.events, 'eventTable', _Event, 'Event parameters')
+        """
+        Initializes the EventDatabase.  Adds a group 'events' with
+        table 'eventsTable' and matrices 'rawData', 'levels', and 'levelLengths'.
+        """
+        maxEventLength = 100
+        if 'maxEventLength' in kargs:
+            maxEventLength = kargs['maxEventLength']
+        if 'events' not in self.root:
+            self.createGroup(self.root, 'events', 'Events')
+            
+        if not 'eventTable' in self.root.events:
+            self.createTable(self.root.events, 'eventTable', _Event, 'Event parameters')
+            
         filters = tb.Filters(complib='blosc', complevel=4)
-        shape = (0, maxEventSteps)
+        shape = (0, maxEventLength)
         a = tb.FloatAtom()
         b = tb.IntAtom()
-        self.createEArray(self.root.events, 'rawData',
-                             a, shape=shape,
-                             title="Raw data points",
-                             filters=filters)
-        self.createEArray(self.root.events, 'levels',
-                             a, shape=shape,
-                             title="Cusum levels",
-                             filters=filters)
-        self.createEArray(self.root.events, 'levelLengths',
-                             b, shape=shape,
-                             title="Lengths of the cusum levels",
-                             filters=filters)
+        
+        if not 'rawData' in self.root.events:
+            self.createEArray(self.root.events, 'rawData',
+                                 a, shape=shape,
+                                 title="Raw data points",
+                                 filters=filters)
+        
+        if not 'levels' in self.root.events:
+            self.createEArray(self.root.events, 'levels',
+                                 a, shape=shape,
+                                 title="Cusum levels",
+                                 filters=filters)
+        
+        if not 'levelLengths' in self.root.events:
+            self.createEArray(self.root.events, 'levelLengths',
+                                 b, shape=shape,
+                                 title="Lengths of the cusum levels",
+                                 filters=filters)
         
 def openFile(*args, **kargs):
     """
     Opens an EventDatabase by calling tables.openFile and then
     copying the __dict__ to a new EventDatabase instance.
+    
+    Args:
+        maxEventLength: Maximum length of an event for the table. Default is 100.
     """
     f = tb.openFile(*args, **kargs)
     e = EventDatabase()

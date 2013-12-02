@@ -5,6 +5,7 @@ Created on Sep 13, 2013
 '''
 import unittest, os
 import numpy as np
+import numpy.testing as npt
 # import pypore.cythonsetup
 import pypore.eventDatabase as ed
 
@@ -12,9 +13,10 @@ import pypore.eventDatabase as ed
 class TestEventDatabase(unittest.TestCase):
 
     def setUp(self):
-        self.filename = 'testInitializeDatabase.h5'
-        self.maxEventSteps = 100
-        self.database = ed.openFile(self.filename, mode='w', maxEventSteps = self.maxEventSteps)
+        self.filename = 'testEventDatabase_938247283278128.h5'
+        self.maxEventLength = 100
+        self.database = ed.openFile(self.filename, mode='w', maxEventLength = self.maxEventLength)
+        self.database.initializeEmptyDatabase()
 
     def tearDown(self):
         self.database.close()
@@ -81,6 +83,57 @@ class TestEventDatabase(unittest.TestCase):
         self._testInitialRoot(self.database)
         
         self._testEmptyEventsGroup()
+        
+    def testOpenExistingFullDatabase(self):
+        """
+        Tests opening an existing h5 file with events in
+        the EventDatabase structure.
+        """
+        # Add to the rawData matrix
+        rawData = np.zeros((2,self.maxEventLength))
+        rawData[1][:] += 1
+        self.database.appendRawData(rawData)
+        
+        # Add to the levels matrix
+        levels = rawData + 1
+        self.database.appendLevels(levels)
+        
+        # Add to the levelLengths matrix
+        levelLengths = rawData + 2
+        self.database.appendLevelLengths(levelLengths)
+        
+        # Add to the event table
+        eventRow = self.database.getEventRow()
+        eventRow['arrayRow'] = 1
+        eventRow['eventStart'] = 2
+        eventRow['eventLength'] = 3
+        eventRow['nLevels'] = 4
+        eventRow['rawPointsPerSide'] = 5
+        eventRow['baseline'] = 6
+        eventRow['currentBlockage'] = 7
+        eventRow['area'] = 8
+        eventRow.append()
+        
+        # Close the file
+        self.database.flush()
+        self.database.close()
+        
+        # Open the existing file
+        self.database = ed.openFile(self.filename, mode='r')
+        
+        # Check the rawData matrix
+        npt.assert_array_equal(rawData, self.database.root.events.rawData[:])
+        
+        # Check the levels matrix
+        npt.assert_array_equal(levels, self.database.root.events.levels[:])
+        
+        # Check the levelLengths matrix
+        npt.assert_array_equal(levelLengths, self.database.root.events.levelLengths[:])
+        
+        # Check the eventTable
+        row = self.database.root.events.eventTable[0]
+        self.assertEqual(row['arrayRow'], 1)
+        self.assertEqual(row['area'], 8)
         
     def testGetEventsGroup(self):
         """
