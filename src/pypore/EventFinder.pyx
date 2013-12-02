@@ -13,7 +13,6 @@ from pypore.DataFileOpener import prepareDataFile, getNextBlocks
 from itertools import chain
 import sys
 from libc.math cimport sqrt, pow, fmax, fmin, abs
-import tables as tb
 
 # Threshold types
 cdef int THRESHOLD_NOISE_BASED = 0
@@ -129,11 +128,10 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
     
     cdef unsigned long maxPoints = max_event_steps + 2 * raw_points_per_side
     
-    # Open the event datbase
+    # Open the event database
     if h5file == None:
-        h5file = ed.openFile(save_file_name, maxEventSteps = maxPoints, mode='w')
+        h5file = ed.openFile(save_file_name, maxEventLength = maxPoints, mode='w')
     rawData = h5file.root.events.rawData
-    eventEntry = h5file.root.events.eventTable.row
     levelsMatrix = h5file.root.events.levels
     lengthsMatrix = h5file.root.events.levelLengths
     
@@ -399,15 +397,11 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
                     currentBlockage = currentBlockage / (event_end - event_start) - local_mean
                     
                 # end CUSUM, save events to file/cache
-                eventEntry['baseline'] = local_mean
-                eventEntry['currentBlockage'] = currentBlockage
-                eventEntry['nLevels'] = n_levels
-                eventEntry['eventStart'] = event_start + placeInData
-                eventEntry['eventLength'] = event_end - event_start
-                eventEntry['rawPointsPerSide'] = raw_points_per_side
-                eventEntry['area'] = event_area - local_mean
-                eventEntry['arrayRow'] = event_count
-                eventEntry.append()
+#                 arrayRow, eventStart, eventLength, nLevels, rawPointsPerSide,\
+#                     baseline, currentBlockage, area, rawData = None, levels = None, levelLengths = None):
+                h5file.appendEvent(event_count, event_start + placeInData, event_end - event_start,\
+                                   n_levels, raw_points_per_side, local_mean, currentBlockage,\
+                                   event_area - local_mean)
                 
                 eventCache[eventCacheIndex][:event_end - event_start + 2 * raw_points_per_side] = _getDataRange(dataCache, event_start - raw_points_per_side, event_end + raw_points_per_side)
                 levelsCache[eventCacheIndex][:n_levels] = mlevels[:n_levels]
@@ -420,6 +414,7 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
                     rawData.append(eventCache)
                     lengthsMatrix.append(levelLengthCache)
                     levelsMatrix.append(levelsCache)
+                    h5file.root.events.eventTable.flush()
                     eventCacheIndex = 0
                     
                 if event_count % 1000 == 0:
@@ -467,6 +462,7 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
                     
     # clean up the caches, make sure everything is saved
     if eventCacheIndex > 0:
+        h5file.root.events.eventTable.flush()
         rawData.append(eventCache[:eventCacheIndex])
         lengthsMatrix.append(levelLengthCache[:eventCacheIndex])
         levelsMatrix.append(levelsCache[:eventCacheIndex])
