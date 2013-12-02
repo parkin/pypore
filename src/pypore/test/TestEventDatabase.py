@@ -61,6 +61,73 @@ class TestEventDatabase(unittest.TestCase):
         columnNames = ['arrayRow', 'eventStart', 'eventLength', 'nLevels', 'rawPointsPerSide', 'baseline', 'currentBlockage', 'area']
         self.assertEqual(eventsGroup.eventTable.colnames, columnNames)
         
+    def testCleanDatabase(self):
+        """
+        Tests that cleanDatabase removing eventsTable, rawData, levels, and levelData
+        and initializing with empty table/matrices.
+        """
+        # put stuff in rawData
+        rawData = np.ones((1,self.database.maxEventLength))
+        self.database.appendEvent(1,2,3,4,5,6,7,8, rawData, rawData, rawData)
+        
+        # clean the database
+        self.database.cleanDatabase()
+        
+        # check that the database has all the empty table/matrices
+        self._testEmptyEventsGroup(self.database.root.events)
+
+    def testAppendEvent(self):
+        """
+        Tests appendEvent
+        
+        arrayRow, eventStart, eventLength, nLevels, rawPointsPerSide,\
+                    baseline, currentBlockage, area, rawData = None, levels = None, levelLengths = None
+        """
+        table = self.database.getEventTable()
+        
+        # add an event
+        self.database.appendEvent(1,2,3,4,5,6,7,8)
+        self.database.flush()
+        
+        # Check eventTable for one correct row.
+        self.assertEqual(self.database.getEventTable().nrows, 1)
+        self.assertEqual(table[0]['arrayRow'], 1)
+        self.assertEqual(table[0]['eventStart'], 2)
+        self.assertEqual(table[0]['eventLength'], 3)
+        self.assertEqual(table[0]['nLevels'], 4)
+        self.assertEqual(table[0]['rawPointsPerSide'], 5)
+        self.assertEqual(table[0]['baseline'], 6)
+        self.assertEqual(table[0]['currentBlockage'], 7)
+        self.assertEqual(table[0]['area'], 8)
+        
+        # Check for nothing in rawData, levels, levelLengths
+        self.assertEqual(self.database.root.events.rawData.nrows, 0)
+        self.assertEqual(self.database.root.events.levels.nrows, 0)
+        self.assertEqual(self.database.root.events.levelLengths.nrows, 0)
+        
+        # add another event, this time with rawData
+        rawData = np.ones((1,self.database.maxEventLength))
+        self.database.appendEvent(10,20,30,40,50,60,70,80, rawData)
+        self.database.flush()
+        
+        # Check eventTable for two correct rows.
+        self.assertEqual(self.database.getEventTable().nrows, 2)
+        self.assertEqual(table[1]['arrayRow'], 10)
+        self.assertEqual(table[1]['eventStart'], 20)
+        self.assertEqual(table[1]['eventLength'], 30)
+        self.assertEqual(table[1]['nLevels'], 40)
+        self.assertEqual(table[1]['rawPointsPerSide'], 50)
+        self.assertEqual(table[1]['baseline'], 60)
+        self.assertEqual(table[1]['currentBlockage'], 70)
+        self.assertEqual(table[1]['area'], 80)
+        
+        # Check for 1 row in rawData and nothing in levels, levelLengths
+        self.assertEqual(self.database.root.events.rawData.nrows, 1)
+        self.assertEqual(self.database.root.events.levels.nrows, 0)
+        self.assertEqual(self.database.root.events.levelLengths.nrows, 0)
+        npt.assert_array_equal(self.database.root.events.rawData[:], rawData)
+        
+        
     def testInitializeEventsDatabase(self):
         self._testInitialRoot(self.database)
         

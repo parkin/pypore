@@ -25,7 +25,10 @@ class EventDatabase(tb.file.File):
     Inherits from tables.file.File, so you can interact with this
     just as you would a PyTables File object. However, this contains
     some extra convenience methods for storing/reading events
-    and event data.
+    and event data. Note that EventDatabase allows you to interact
+    with this PyTables file in the usual PyTables file manner, so you
+    can potentially mangle the data from the original EventDatabase
+    format.
     
     Automatically adds a group
     /events
@@ -40,7 +43,8 @@ class EventDatabase(tb.file.File):
     >>> os.remove('test.h5')
     '''
     
-    maxEventLength = 100
+    DEFAULT_MAX_EVENT_LENGTH = 100
+    maxEventLength = DEFAULT_MAX_EVENT_LENGTH
     
     def __init__(self, pytablesFile, *args, **kargs):
         """
@@ -57,24 +61,72 @@ class EventDatabase(tb.file.File):
         if 'mode' in kargs:
             if 'w' in kargs['mode']:
                 self.initializeDatabase(*args, **kargs)
+                
+    def appendEvent(self, arrayRow, eventStart, eventLength, nLevels, rawPointsPerSide,\
+                    baseline, currentBlockage, area, rawData = None, levels = None, levelLengths = None):
+        """
+        Appends an event with the specified values to the eventsTable.  If rawData, levels, or levelLengths
+        are included, they are added to the corresponding matrices.
+        
+        Args:
+            arrayRow: The row in the rawData, levels, and levelLengths array that corresponds
+                    to this event.
+            eventStart: The starting index of this event in the data.
+            eventLength: Number of data points in the event.
+            nLevels: Number of levels in the event.
+            rawPointsPerSide: Number of extra points kept on either side of the event in rawData.
+            baseline: Open-pore current at the time of the event.
+            currentBlockage: The mean current blockage of the event.
+            area: The area of the event.
+            rawData: Numpy array of the raw data.
+            levels: Numpy array of the levels.
+            levelLengths: Numpy array of the level lengths.
+        """
+        row = self.getEventRow()
+        row['arrayRow'] = arrayRow
+        row['eventStart'] = eventStart
+        row['eventLength'] = eventLength
+        row['nLevels'] = nLevels
+        row['rawPointsPerSide'] = rawPointsPerSide
+        row['baseline'] = baseline
+        row['currentBlockage'] = currentBlockage
+        row['area'] = area
+        row.append()
+        
+        self.appendRawData(rawData)
+        self.appendLevels(levels)
+        self.appendLevelLengths(levelLengths)
+        
     
     def appendLevelLengths(self, levelLengths):
         """
         Appends a numpy matrix levelLengths to root.events.levelLengths
         """
-        self.root.events.levelLengths.append(levelLengths)
+        if levelLengths is not None:
+            self.root.events.levelLengths.append(levelLengths)
     
     def appendLevels(self, levels):
         """
         Appends a numpy matrix levels to root.events.levels
         """
-        self.root.events.levels.append(levels)
+        if levels is not None:
+            self.root.events.levels.append(levels)
     
-    def appendRawData(self, data):
+    def appendRawData(self, rawData):
         """
-        Appends a numpy matrix data to root.events.rawData
+        Appends a numpy matrix rawData to root.events.rawData
         """
-        self.root.events.rawData.append(data)
+        if rawData is not None:
+            self.root.events.rawData.append(rawData)
+            
+    def cleanDatabase(self):
+        """
+        Removes /events and then reinitializes the /events group.
+        """
+        # remove the events group
+        self.root.events._f_remove(recursive=True)
+        
+        self.initializeDatabase()
         
     def getEventRow(self):
         """
@@ -88,6 +140,12 @@ class EventDatabase(tb.file.File):
         """
         return self.root.events
     
+    def getEventTable(self):
+        """
+        returns /events/eventTable
+        """
+        return self.root.events.eventTable
+    
     def initializeDatabase(self, *args, **kargs):
         """
         Initializes the EventDatabase.  Adds a group 'events' with
@@ -98,7 +156,8 @@ class EventDatabase(tb.file.File):
             -maxEventLength: Maximum number of datapoints for an event to be added.
         """
         if 'maxEventLength' in kargs:
-            self.maxEventLength = kargs['maxEventLength']
+            if kargs['maxEventLength'] > self.maxEventLength:
+                self.maxEventLength = kargs['maxEventLength']
         if 'events' not in self.root:
             self.createGroup(self.root, 'events', 'Events')
             
