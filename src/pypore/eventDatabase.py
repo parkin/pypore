@@ -26,10 +26,37 @@ class EventDatabase(tb.file.File):
     just as you would a PyTables File object. However, this contains
     some extra convenience methods for storing/reading events
     and event data.
+    
+    Automatically adds a group
+    /events
+    With table
+    /events/eventTable
+    and matrices
+    /events/rawData, /event/levels, and /event/levelLength
+    
+    Must be instantiated by calling eventDatabase's
+    
+    >>> eventDatabase = openFile('test.h5',mode='w')
+    >>> os.remove('test.h5')
     '''
     
-    def __init__(self, *args, **kargs):
-        pass
+    maxEventLength = 100
+    
+    def __init__(self, pytablesFile, *args, **kargs):
+        """
+        Constructor for a new EventDatabase.  Must be called with
+        an open tables.file.File object.
+        
+        Args:
+            pytablesFile: Open tables.file.File object to be converted
+                        to an EventDatabase object
+        Kargs:
+            mode: pytables mode used to open the pytablesFile.
+        """
+        self.__dict__ = pytablesFile.__dict__
+        if 'mode' in kargs:
+            if 'w' in kargs['mode']:
+                self.initializeDatabase(*args, **kargs)
     
     def appendLevelLengths(self, levelLengths):
         """
@@ -61,14 +88,17 @@ class EventDatabase(tb.file.File):
         """
         return self.root.events
     
-    def initializeEmptyDatabase(self, *args, **kargs):
+    def initializeDatabase(self, *args, **kargs):
         """
         Initializes the EventDatabase.  Adds a group 'events' with
         table 'eventsTable' and matrices 'rawData', 'levels', and 'levelLengths'.
+        
+        Args:
+        Kargs:
+            -maxEventLength: Maximum number of datapoints for an event to be added.
         """
-        maxEventLength = 100
         if 'maxEventLength' in kargs:
-            maxEventLength = kargs['maxEventLength']
+            self.maxEventLength = kargs['maxEventLength']
         if 'events' not in self.root:
             self.createGroup(self.root, 'events', 'Events')
             
@@ -76,7 +106,7 @@ class EventDatabase(tb.file.File):
             self.createTable(self.root.events, 'eventTable', _Event, 'Event parameters')
             
         filters = tb.Filters(complib='blosc', complevel=4)
-        shape = (0, maxEventLength)
+        shape = (0, self.maxEventLength)
         a = tb.FloatAtom()
         b = tb.IntAtom()
         
@@ -107,9 +137,5 @@ def openFile(*args, **kargs):
         maxEventLength: Maximum length of an event for the table. Default is 100.
     """
     f = tb.openFile(*args, **kargs)
-    e = EventDatabase()
-    e.__dict__ = f.__dict__
-    if 'mode' in kargs:
-        if kargs['mode'] == 'w':
-            e.initializeEmptyDatabase(*args, **kargs)
+    e = EventDatabase(f, *args, **kargs)
     return e
