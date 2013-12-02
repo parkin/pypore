@@ -45,23 +45,8 @@ class EventDatabase(tb.file.File):
     
     DEFAULT_MAX_EVENT_LENGTH = 100
     maxEventLength = DEFAULT_MAX_EVENT_LENGTH
+    eventRow = None
     
-    def __init__(self, pytablesFile, *args, **kargs):
-        """
-        Constructor for a new EventDatabase.  Must be called with
-        an open tables.file.File object.
-        
-        Args:
-            pytablesFile: Open tables.file.File object to be converted
-                        to an EventDatabase object
-        Kargs:
-            mode: pytables mode used to open the pytablesFile.
-        """
-        self.__dict__ = pytablesFile.__dict__
-        if 'mode' in kargs:
-            if 'w' in kargs['mode']:
-                self.initializeDatabase(*args, **kargs)
-                
     def appendEvent(self, arrayRow, eventStart, eventLength, nLevels, rawPointsPerSide,\
                     baseline, currentBlockage, area, rawData = None, levels = None, levelLengths = None):
         """
@@ -93,9 +78,12 @@ class EventDatabase(tb.file.File):
         row['area'] = area
         row.append()
         
-        self.appendRawData(rawData)
-        self.appendLevels(levels)
-        self.appendLevelLengths(levelLengths)
+        if rawData is not None:
+            self.appendRawData(rawData)
+        if levels is not None:
+            self.appendLevels(levels)
+        if levelLengths is not None:
+            self.appendLevelLengths(levelLengths)
         
     
     def appendLevelLengths(self, levelLengths):
@@ -128,11 +116,21 @@ class EventDatabase(tb.file.File):
         
         self.initializeDatabase()
         
+    @classmethod
+    def convertToEventDatabase(cls, tablesObject):
+        """
+        Converts a PyTables object's __class__ field to EventDatabase so
+        you can use the object as an EventDatabase object.
+        """
+        tablesObject.__class__ = EventDatabase
+        
     def getEventRow(self):
         """
         Gets the PyTables Row object of the eventTable.
         """
-        return self.root.events.eventTable.row
+        if self.eventRow == None:
+            self.eventRow = self.root.events.eventTable.row
+        return self.eventRow
     
     def getEventsGroup(self):
         """
@@ -196,5 +194,8 @@ def openFile(*args, **kargs):
         maxEventLength: Maximum length of an event for the table. Default is 100.
     """
     f = tb.openFile(*args, **kargs)
-    e = EventDatabase(f, *args, **kargs)
-    return e
+    EventDatabase.convertToEventDatabase(f)
+    if 'mode' in kargs:
+        if 'w' in kargs['mode']:
+            f.initializeDatabase(*args, **kargs)
+    return f
