@@ -23,8 +23,8 @@ def _longImports(**kwargs):
     
     global AnalyzeDataThread, PlotThread, FileListItem, FilterListItem, \
             PlotToolBar, DataFileListItem, MyPlotItem, prepareDataFile, pg, pgc, \
-            LayoutWidget, PlotCurveItem, linspace, np, tb, \
-            MySpotItem, MyScatterPlotItem, EventAnalysisWidget
+            LayoutWidget, PlotCurveItem, linspace, np, \
+            MySpotItem, MyScatterPlotItem, EventAnalysisWidget, ed
         
     updateSplash = False    
     if 'splash' in kwargs and 'app' in kwargs:
@@ -69,9 +69,9 @@ def _longImports(**kwargs):
     from views import MySpotItem, MyScatterPlotItem, EventAnalysisWidget
     
     if updateSplash: 
-        splash.showMessage("Importing PyTables", alignment=QtCore.Qt.AlignBottom)
+        splash.showMessage("Importing EventDatabase", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
-    import tables as tb
+    import pypore.eventDatabase as ed
     
 # If we are running from a test, name != main, and we'll need to import the above on our own
 if not __name__ == '__main__':
@@ -359,7 +359,7 @@ class MyMainWindow(QtGui.QMainWindow):
         '''
         self.eventViewItem = item
         
-        h5file = tb.openFile(item.getFileName())
+        h5file = ed.openFile(item.getFileName())
         
         eventCount = h5file.root.events.eventTable.attrs.eventCount
         
@@ -671,7 +671,7 @@ The current namespace should include:
         '''
         h5eventCount = 0
         try:
-            h5file = tb.openFile(self.eventViewItem.getFileName())
+            h5file = ed.openFile(self.eventViewItem.getFileName())
             h5eventCount = h5file.root.events.eventTable.attrs.eventCount
             h5file.close()
         except:
@@ -800,7 +800,7 @@ The current namespace should include:
         '''
         Plots the event on the plot with 
         '''
-        h5file = tb.openFile(self.eventViewItem.getFileName(), mode='r')
+        h5file = ed.openFile(self.eventViewItem.getFileName(), mode='r')
         
         eventCount = h5file.root.events.eventTable.attrs.eventCount
         
