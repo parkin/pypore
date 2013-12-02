@@ -16,7 +16,6 @@ class TestEventDatabase(unittest.TestCase):
         self.filename = 'testEventDatabase_938247283278128.h5'
         self.maxEventLength = 100
         self.database = ed.openFile(self.filename, mode='w', maxEventLength = self.maxEventLength)
-        self.database.initializeEmptyDatabase()
 
     def tearDown(self):
         self.database.close()
@@ -135,11 +134,34 @@ class TestEventDatabase(unittest.TestCase):
         self.assertEqual(row['arrayRow'], 1)
         self.assertEqual(row['area'], 8)
         
+    def testInitializeDatabaseWithExistingNodes(self):
+        """
+        Test that calling initialize database with existing nodes does not
+        throw an error (ie existing nodes ignored).
+        """
+        self.assertIn('eventTable', self.database.root.events)
+        self.assertIn('rawData', self.database.root.events)
+        
+        raw = np.ones((1,self.maxEventLength))
+        self.database.appendRawData(raw)
+        
+        # test to see if error thrown
+        self.database.initializeDatabase()
+        
+        # check that rawData is still the same
+        npt.assert_array_equal(raw, self.database.root.events.rawData[:])
+        
+        
     def testGetEventsGroup(self):
         """
+        Test the getter for /events
         """
         eventsGroup = self.database.getEventsGroup()
         self._testEmptyEventsGroup(eventsGroup)
+        
+        self.assertIn('rawData', eventsGroup)
+        self.assertIn('levels', eventsGroup)
+        self.assertIn('levelLengths', eventsGroup)
         
         
 if __name__ == "__main__":
