@@ -72,7 +72,7 @@ class EventDatabase(tb.file.File):
             levels: Numpy array of the levels.
             levelLengths: Numpy array of the level lengths.
         """
-        row = self.getEventRow()
+        row = self.getEventTableRow()
         row['arrayRow'] = arrayRow
         row['eventStart'] = eventStart
         row['eventLength'] = eventLength
@@ -144,14 +144,6 @@ class EventDatabase(tb.file.File):
         self.getEventTable().flush()
         return self.getEventTable().nrows
         
-    def getEventRow(self):
-        """
-        Gets the PyTables Row object of the eventTable.
-        """
-        if self.eventRow == None:
-            self.eventRow = self.root.events.eventTable.row
-        return self.eventRow
-    
     def getEventsGroup(self):
         """
         Returns the events group in the PyTables HDF5 file.
@@ -163,6 +155,15 @@ class EventDatabase(tb.file.File):
         returns /events/eventTable
         """
         return self.root.events.eventTable
+    
+    def getEventTableRow(self):
+        """
+        Gets the PyTables Row object of the eventTable.
+        root.events.eventTable.row
+        """
+        if self.eventRow == None:
+            self.eventRow = self.root.events.eventTable.row
+        return self.eventRow
     
     def initializeDatabase(self, *args, **kargs):
         """

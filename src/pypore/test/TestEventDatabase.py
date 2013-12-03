@@ -272,7 +272,7 @@ class TestEventDatabase(unittest.TestCase):
         self.database.appendLevelLengths(levelLengths)
         
         # Add to the event table
-        eventRow = self.database.getEventRow()
+        eventRow = self.database.getEventTableRow()
         eventRow['arrayRow'] = 1
         eventRow['eventStart'] = 2
         eventRow['eventLength'] = 3
