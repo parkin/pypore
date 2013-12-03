@@ -8,6 +8,9 @@ import tables as tb
 
 # Description of events table
 class _Event(tb.IsDescription):
+    """
+    Description of the table /events/eventTable.
+    """
     # UIntAtom = uint32
     arrayRow = tb.UIntCol(pos=0)  # indicates the corresponding row in the
                                     # eventData and rawData etc VLArrays
@@ -39,7 +42,9 @@ class EventDatabase(tb.file.File):
     
     Must be instantiated by calling eventDatabase's
     
-    >>> eventDatabase = openFile('test.h5',mode='w')
+    >>> import pypore.eventDatabase as ed
+    >>> database = ed.openFile('test.h5',mode='w')
+    >>> database.close()
     >>> os.remove('test.h5')
     '''
     
@@ -109,7 +114,14 @@ class EventDatabase(tb.file.File):
             
     def cleanDatabase(self):
         """
-        Removes /events and then reinitializes the /events group.
+        Removes /events and then reinitializes the /events group. Note
+        that any references to any table/matrix in this group will
+        be broken and need to be refreshed.
+        
+        >>> h5 = openFile('test.h5',mode='a')
+        >>> table = h5.getEventTable()
+        >>> h5.cleanDatabase() // table is now refers to deleted table
+        >>> table = h5.getEventTable() // table now refers to live table
         """
         # remove the events group
         self.root.events._f_remove(recursive=True)
@@ -123,6 +135,14 @@ class EventDatabase(tb.file.File):
         you can use the object as an EventDatabase object.
         """
         tablesObject.__class__ = EventDatabase
+        
+    def getEventCount(self):
+        """
+        Returns the number of rows in the /events/eventTable table.
+        Note this will flush the table so the data is correct.
+        """
+        self.getEventTable().flush()
+        return self.getEventTable().nrows
         
     def getEventRow(self):
         """
@@ -161,6 +181,7 @@ class EventDatabase(tb.file.File):
             
         if not 'eventTable' in self.root.events:
             self.createTable(self.root.events, 'eventTable', _Event, 'Event parameters')
+            self.eventRow = None
             
         filters = tb.Filters(complib='blosc', complevel=4)
         shape = (0, self.maxEventLength)
@@ -184,6 +205,37 @@ class EventDatabase(tb.file.File):
                                  b, shape=shape,
                                  title="Lengths of the cusum levels",
                                  filters=filters)
+            
+    def removeEvent(self, i):
+        """
+        Deletes event i from /events/eventTable. Does nothing if
+        i < 0 or i >= eventCount. Note the table will be flushed.
+        Note that deleting a row in a table of length 1 is not
+        currently supported.
+        """
+        self.removeEvents(i, i+1)
+            
+    def removeEvents(self, i, j):
+        """
+        Deletes events [i,j) from /events/eventTable. Does nothing
+        if deleting out of range events is requested. Note the table
+        will be flushed. Note that deleting all the rows in a 
+        table is not currently supported. Refer to cleanDatabase for
+        deleting everything.
+        
+        Args:
+            i - First entry to delete.  Must be within range
+                0 < i < eventCount
+            j - 1 past last entry to delete.  Must be within range
+                i < j <= eventCount
+        """
+        eventCount = self.getEventCount()
+        
+        if i >= 0 and i < eventCount and j > i and j <= eventCount:
+            # Currently cannot delete EVERY row in a table.
+            if j-i < eventCount:
+                self.getEventTable().removeRows(i,j)
+        self.getEventTable().flush()
         
 def openFile(*args, **kargs):
     """
@@ -196,6 +248,7 @@ def openFile(*args, **kargs):
     f = tb.openFile(*args, **kargs)
     EventDatabase.convertToEventDatabase(f)
     if 'mode' in kargs:
-        if 'w' in kargs['mode']:
+        mode = kargs['mode']
+        if 'w' in mode or 'a' in mode:
             f.initializeDatabase(*args, **kargs)
     return f
