@@ -819,10 +819,11 @@ The current namespace should include:
     def plotSingleEvent(self, h5file, position, plot):
         sampleRate = h5file.getSampleRate()
         row = h5file.getEventRow(position)
+        arrayRow = row['arrayRow']
         eventLength = row['eventLength']
         rawPointsPerSide = row['rawPointsPerSide']
         
-        rawData = h5file.getRawDataAt(position)
+        rawData = h5file.getRawDataAt(arrayRow)
         
         n = len(rawData)
         
@@ -838,8 +839,8 @@ The current namespace should include:
         nLevels = row['nLevels']
         baseline = row['baseline']
         # left, start-1, start, 
-        levels = h5file.getLevelsAt(position)
-        indices = h5file.getLevelLengthsAt(position)
+        levels = h5file.getLevelsAt(arrayRow)
+        indices = h5file.getLevelLengthsAt(arrayRow)
         
         levelTimes = np.zeros(2 * nLevels + 4)
         levelValues = np.zeros(2 * nLevels + 4)
