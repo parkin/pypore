@@ -361,7 +361,7 @@ class MyMainWindow(QtGui.QMainWindow):
         
         h5file = ed.openFile(item.getFileName())
         
-        eventCount = h5file.root.events.eventTable.attrs.eventCount
+        eventCount = h5file.getEventCount()
         
         h5file.close()
         
@@ -637,11 +637,11 @@ Type locals() to see application-specific variables.
 The current namespace should include:
     np        -    numpy
     pg        -    pyqtgraph
-    tb        -    PyTables
+    ed        -    pypore.eventDatabase
     currentPlot -  Top plot in the event finding tab.
 *********************"""
 
-        namespace = {'np': np, 'pg': pg, 'tb': tb, 'currentPlot': self.plotwid}
+        namespace = {'np': np, 'pg': pg, 'ed': ed, 'currentPlot': self.plotwid}
         self.console = pgc.ConsoleWidget(namespace=namespace, text=text)
         
         frame = QtGui.QSplitter()
@@ -672,7 +672,7 @@ The current namespace should include:
         h5eventCount = 0
         try:
             h5file = ed.openFile(self.eventViewItem.getFileName())
-            h5eventCount = h5file.root.events.eventTable.attrs.eventCount
+            h5eventCount = h5file.getEventCount()
             h5file.close()
         except:
             return
@@ -802,7 +802,7 @@ The current namespace should include:
         '''
         h5file = ed.openFile(self.eventViewItem.getFileName(), mode='r')
         
-        eventCount = h5file.root.events.eventTable.attrs.eventCount
+        eventCount = h5file.getEventCount()
         
         for i in xrange(3):
             for j in xrange(3):
@@ -817,15 +817,14 @@ The current namespace should include:
         h5file.close()
         
     def plotSingleEvent(self, h5file, position, plot):
-        table = h5file.root.events.eventTable
-        row = table[position]
-        arrayRow = row['arrayRow']
-        sampleRate = table.attrs.sampleRate
+        sampleRate = h5file.getSampleRate()
+        row = h5file.getEventRow(position)
         eventLength = row['eventLength']
         rawPointsPerSide = row['rawPointsPerSide']
-        n = eventLength + 2 * rawPointsPerSide
         
-        rawData = h5file.root.events.rawData[arrayRow][:n]
+        rawData = h5file.getRawDataAt(position)
+        
+        n = len(rawData)
         
         times = np.linspace(0.0, 1.0 * n / sampleRate, n)
         
@@ -839,8 +838,8 @@ The current namespace should include:
         nLevels = row['nLevels']
         baseline = row['baseline']
         # left, start-1, start, 
-        levels = h5file.root.events.levels[arrayRow][:nLevels]
-        indices = h5file.root.events.levelLengths[arrayRow][:nLevels]
+        levels = h5file.getLevelsAt(position)
+        indices = h5file.getLevelLengthsAt(position)
         
         levelTimes = np.zeros(2 * nLevels + 4)
         levelValues = np.zeros(2 * nLevels + 4)
