@@ -127,7 +127,110 @@ class TestEventDatabase(unittest.TestCase):
         self.assertEqual(self.database.root.events.levelLengths.nrows, 0)
         npt.assert_array_equal(self.database.root.events.rawData[:], rawData)
         
+    def testDeleteEvent(self):
+        """
+        Tests deleting single events from eventTable.
+        """
+        table = self.database.getEventTable()
         
+        # Test deleting all events in database does nothing
+        self.database.appendEvent(1,2,3,4,5,6,7,8)
+        self.database.removeEvent(0)
+        self.assertEqual(self.database.getEventCount(), 1)
+        
+        # Test deleting out of range does nothing
+        self.database.removeEvent(-1)
+        self.assertEqual(self.database.getEventCount(), 1)
+        self.database.removeEvent(1)
+        self.assertEqual(self.database.getEventCount(), 1)
+        self.database.removeEvent(10)
+        self.assertEqual(self.database.getEventCount(), 1)
+        
+        # Test deleting first event in database
+        for i in xrange(1,10):
+            self.database.appendEvent(i+1,i+2,i+3,i+4,i+5,i+6,i+7,i+8)
+        self.assertEqual(self.database.getEventCount(), 10)
+        self.assertEqual(table[0]['arrayRow'], 1)
+        self.database.removeEvent(0)
+        self.assertEqual(self.database.getEventCount(), 9)
+        self.assertEqual(table[0]['arrayRow'], 2)
+        
+        # Test deleting last event in database
+        self.assertEqual(table[8]['arrayRow'], 10)
+        self.database.removeEvent(8)
+        self.assertEqual(self.database.getEventCount(), 8)
+        self.assertEqual(table[7]['arrayRow'], 9)
+        
+        # Test deleting second to last row
+        self.assertEqual(table[6]['arrayRow'], 8)
+        self.database.removeEvent(6)
+        self.assertEqual(self.database.getEventCount(), 7)
+        self.assertEqual(table[6]['arrayRow'], 9)
+        self.assertEqual(table[5]['arrayRow'], 7)
+        
+    def testDeleteEvents(self):
+        """
+        Test removing ranges of events from event table.
+        """
+        table = self.database.getEventTable()
+        
+        # Test deleting all events in database does nothing
+        self.database.appendEvent(1,2,3,4,5,6,7,8)
+        self.database.removeEvents(0,1)
+        self.assertEqual(self.database.getEventCount(), 1)
+        
+        # Add to total of 10 events
+        for i in xrange(1,10):
+            self.database.appendEvent(i+1,i+2,i+3,i+4,i+5,i+6,i+7,i+8)
+            
+        # Test deleting all events does nothing
+        self.database.removeEvents(0,10)
+        self.assertEqual(self.database.getEventCount(), 10)
+        
+        # Test for i out of range
+        self.database.removeEvents(-1,5)
+        self.assertEqual(self.database.getEventCount(), 10)
+        self.database.removeEvents(-9999,5)
+        self.assertEqual(self.database.getEventCount(), 10)
+        self.database.removeEvents(5,5)
+        self.assertEqual(self.database.getEventCount(), 10)
+        self.database.removeEvents(6,5)
+        self.assertEqual(self.database.getEventCount(), 10)
+        self.database.removeEvents(50,5)
+        self.assertEqual(self.database.getEventCount(), 10)
+        self.database.removeEvents(50,51)
+        self.assertEqual(self.database.getEventCount(), 10)
+        
+        # Test for j out of range
+        self.database.removeEvents(5,5)
+        self.assertEqual(self.database.getEventCount(), 10)
+        self.database.removeEvents(5,4)
+        self.assertEqual(self.database.getEventCount(), 10)
+        self.database.removeEvents(5,-1)
+        self.assertEqual(self.database.getEventCount(), 10)
+        self.database.removeEvents(5,-100)
+        self.assertEqual(self.database.getEventCount(), 10)
+        self.database.removeEvents(5,11)
+        self.assertEqual(self.database.getEventCount(), 10)
+        self.database.removeEvents(5,100)
+        self.assertEqual(self.database.getEventCount(), 10)
+        
+        # Test removing first event
+        self.database.removeEvents(0,1)
+        self.assertEqual(self.database.getEventCount(), 9)
+        self.assertEqual(table[0]['arrayRow'], 2)
+        
+        # Test removing final event
+        self.database.removeEvents(8,9)
+        self.assertEqual(self.database.getEventCount(), 8)
+        self.assertEqual(table[7]['arrayRow'], 9)
+        
+        # Test removing range
+        self.database.removeEvents(1,7)
+        self.assertEqual(self.database.getEventCount(), 2)
+        self.assertEqual(table[0]['arrayRow'], 2)
+        self.assertEqual(table[1]['arrayRow'], 9)
+    
     def testInitializeEventsDatabase(self):
         self._testInitialRoot(self.database)
         
@@ -218,7 +321,6 @@ class TestEventDatabase(unittest.TestCase):
         # check that rawData is still the same
         npt.assert_array_equal(raw, self.database.root.events.rawData[:])
         
-        
     def testGetEventsGroup(self):
         """
         Test the getter for /events
@@ -229,6 +331,21 @@ class TestEventDatabase(unittest.TestCase):
         self.assertIn('rawData', eventsGroup)
         self.assertIn('levels', eventsGroup)
         self.assertIn('levelLengths', eventsGroup)
+
+    def testGetEventCount(self):
+        """
+        Tests that getEventCount returns the correct value, even
+        after events are added/deleted.
+        """
+        self.assertEqual(self.database.getEventCount(), 0)
+        
+        for i in xrange(100):
+            self.database.appendEvent(i+1,i+2,i+3,i+4,i+5,i+6,i+7,i+8)
+            self.assertEqual(self.database.getEventCount(), i+1)
+            
+        for i in xrange(50):
+            self.database.removeEvent(0)
+            self.assertEqual(self.database.getEventCount(), 99-i)
         
         
 if __name__ == "__main__":
