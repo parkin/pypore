@@ -6,8 +6,9 @@ Created on Aug 6, 2013
 from PySide import QtGui
 import os.path
 
-import tables as tb
 import numpy as np
+
+import pypore.eventDatabase as ed
 
 from pyqtgraph.graphicsItems.PlotItem.PlotItem import PlotItem
 from pyqtgraph.graphicsItems.ScatterPlotItem import ScatterPlotItem, SpotItem
@@ -171,9 +172,9 @@ class EventAnalysisWidget(GraphicsLayoutWidget):
         counts = []
         eventCount = 0
         for filename in filenames:
-            h5file = tb.openFile(filename, mode='r')
+            h5file = ed.openFile(filename, mode='r')
             files.append(h5file)
-            count = h5file.root.events.eventTable.attrs.eventCount
+            count = h5file.getEventCount()
             eventCount += count
             counts.append(count)
         
@@ -181,8 +182,8 @@ class EventAnalysisWidget(GraphicsLayoutWidget):
         dwellTimes = np.empty(eventCount)
         count = 0
         for j, filex in enumerate(files):
-            eventTable = filex.root.events.eventTable
-            sample_rate = filex.root.events.eventTable.attrs.sampleRate
+            eventTable = filex.getEventTable()
+            sample_rate = filex.getSampleRate()
             for i, row in enumerate(eventTable):
                 currentBlockade[count + i] = row['currentBlockage']
                 dwellTimes[count + i] = row['eventLength'] / sample_rate
@@ -233,17 +234,18 @@ class EventAnalysisWidget(GraphicsLayoutWidget):
         # Plot the new point clicked on the single event display
         filename, position = plot.getFileNameFromPosition(self.lastScatterClicked[0].eventPosition)
         
-        h5file = tb.openFile(filename, mode='r')
+        h5file = ed.openFile(filename, mode='r')
         
         table = h5file.root.events.eventTable
-        row = table[position]
+        row = h5file.getEventRow(position)
         arrayRow = row['arrayRow']
-        sampleRate = table.attrs.sampleRate
+        sampleRate = h5file.getSampleRate()
         eventLength = row['eventLength']
         rawPointsPerSide = row['rawPointsPerSide']
-        n = eventLength + 2 * rawPointsPerSide
         
-        rawData = h5file.root.events.rawData[arrayRow][:n]
+        rawData = h5file.getRawDataAt(arrayRow)
+        
+        n = len(rawData)
         
         times = np.linspace(0.0, 1.0 * n / sampleRate, n)
         
@@ -257,8 +259,8 @@ class EventAnalysisWidget(GraphicsLayoutWidget):
         nLevels = row['nLevels']
         baseline = row['baseline']
         # left, start-1, start, 
-        levels = h5file.root.events.levels[arrayRow][:nLevels]
-        indices = h5file.root.events.levelLengths[arrayRow][:nLevels]
+        levels = h5file.getLevelsAt(arrayRow)
+        indices = h5file.getLevelLengthsAt(arrayRow)
         
         levelTimes = np.zeros(2 * nLevels + 4)
         levelValues = np.zeros(2 * nLevels + 4)
