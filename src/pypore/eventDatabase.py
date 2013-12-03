@@ -52,8 +52,8 @@ class EventDatabase(tb.file.File):
     maxEventLength = DEFAULT_MAX_EVENT_LENGTH
     eventRow = None
     
-    def appendEvent(self, arrayRow, eventStart, eventLength, nLevels, rawPointsPerSide,\
-                    baseline, currentBlockage, area, rawData = None, levels = None, levelLengths = None):
+    def appendEvent(self, arrayRow, eventStart, eventLength, nLevels, rawPointsPerSide, \
+                    baseline, currentBlockage, area, rawData=None, levels=None, levelLengths=None):
         """
         Appends an event with the specified values to the eventsTable.  If rawData, levels, or levelLengths
         are included, they are added to the corresponding matrices.
@@ -143,6 +143,26 @@ class EventDatabase(tb.file.File):
         """
         self.getEventTable().flush()
         return self.getEventTable().nrows
+    
+    def getEventDataAt(self, i):
+        """
+        Returns the event data portion of rawData[i], ie excluding the
+        raw buffer points kept on each side of an event.
+        """
+        row = self.getEventRow(i)
+        arrayRow = row['arrayRow']
+        eventLength = row['eventLength']
+        rawPointsPerSide = row['rawPointsPerSide']
+        return self.root.events.rawData[arrayRow][rawPointsPerSide:eventLength+rawPointsPerSide]
+    
+    def getEventRow(self, i):
+        """
+        Returns the i'th row in /events/eventTable. Throws IndexOutOfBounds
+        or similar error if i out of bounds. Note this flushes the
+        eventTable before returning.
+        """
+        self.root.events.eventTable.flush()
+        return self.root.events.eventTable[i]
         
     def getEventsGroup(self):
         """
@@ -160,10 +180,48 @@ class EventDatabase(tb.file.File):
         """
         Gets the PyTables Row object of the eventTable.
         root.events.eventTable.row
+        
+        If you need a specific row in eventTable, use getEventRow(i)
         """
         if self.eventRow == None:
             self.eventRow = self.root.events.eventTable.row
         return self.eventRow
+    
+    def getLevelLengthsAt(self, i):
+        """
+        Returns a numpy array of the levelLengths corresponding to the event
+        in row 'i' of eventTable.
+        """
+        row = self.getEventRow(i)
+        arrayRow = row['arrayRow']
+        nLevels = row['nLevels']
+        return self.root.events.levelLengths[arrayRow][:nLevels]
+    
+    def getLevelsAt(self, i):
+        """
+        Returns a numpy array of the levels corresponding to the event
+        in row 'i' of eventTable.
+        """
+        row = self.getEventRow(i)
+        arrayRow = row['arrayRow']
+        nLevels = row['nLevels']
+        return self.root.events.levels[arrayRow][:nLevels]
+    
+    def getRawDataAt(self, i):
+        """
+        Returns the rawData numpy matrix associated with event 'i'.
+        """
+        row = self.getEventRow(i)
+        arrayRow = row['arrayRow']
+        eventLength = row['eventLength']
+        rawPointsPerSide = row['rawPointsPerSide']
+        return self.root.events.rawData[arrayRow][:eventLength+2*rawPointsPerSide]
+    
+    def getSampleRate(self):
+        """
+        Gets the sample rate at root.events.eventTable.attrs.sampleRate
+        """
+        return self.root.events.eventTable.attrs.sampleRate
     
     def initializeDatabase(self, *args, **kargs):
         """
@@ -214,7 +272,7 @@ class EventDatabase(tb.file.File):
         Note that deleting a row in a table of length 1 is not
         currently supported.
         """
-        self.removeEvents(i, i+1)
+        self.removeEvents(i, i + 1)
             
     def removeEvents(self, i, j):
         """
@@ -234,8 +292,10 @@ class EventDatabase(tb.file.File):
         
         if i >= 0 and i < eventCount and j > i and j <= eventCount:
             # Currently cannot delete EVERY row in a table.
-            if j-i < eventCount:
-                self.getEventTable().removeRows(i,j)
+            if j - i < eventCount:
+                self.getEventTable().removeRows(i, j)
+            else:
+                print "removeEvents FAILED: Removing all rows in table not currently supported."
         self.getEventTable().flush()
         
 def openFile(*args, **kargs):

@@ -9,7 +9,6 @@ import numpy.testing as npt
 # import pypore.cythonsetup
 import pypore.eventDatabase as ed
 
-
 class TestEventDatabase(unittest.TestCase):
 
     def setUp(self):
@@ -346,7 +345,89 @@ class TestEventDatabase(unittest.TestCase):
         for i in xrange(50):
             self.database.removeEvent(0)
             self.assertEqual(self.database.getEventCount(), 99-i)
+            
+    def testGetEventDataAt(self):
+        """
+        Tests getting only the event points from rawData
+        """
+        raw = np.linspace(0.0, 100.0, self.maxEventLength).reshape((1,100))
         
+        self.database.appendEvent(0,2,3,4,5,6,7,8,raw) # eventLength=3, rawPointsPerSide=5
+        
+        row = self.database.getEventRow(0)
+        eventLength = row['eventLength']
+        rawPointsPerSide = row['rawPointsPerSide']
+        
+        self.assertEqual(eventLength, 3)
+        self.assertEqual(rawPointsPerSide, 5)
+        npt.assert_array_equal(self.database.getEventDataAt(0), raw[0][rawPointsPerSide:eventLength+rawPointsPerSide])
+        
+    def testGetEventRow(self):
+        """
+        Test that getEventRow returns correct row.
+        """
+        for i in xrange(10):
+            self.database.appendEvent(i+1,i+2,i+3,i+4,i+5,i+6,i+7,i+8)
+            
+        row = self.database.getEventRow(1)
+        self.assertEqual(row['arrayRow'], 2)
+        
+    def testGetLevelLengthsAt(self):
+        """
+        Tests that getLevelLengthsAt returns a numpy matrix of the 
+        levelLengths corresponding to the event
+        in row 'i' of eventTable.
+        """
+        levelLengths = np.array(range(self.maxEventLength)).reshape((1,self.maxEventLength))
+        
+        self.database.appendEvent(0,2,3,4,5,6,7,8,levelLengths=levelLengths) # eventLength=3, rawPointsPerSide=5
+        
+        row = self.database.getEventRow(0)
+        nLevels = row['nLevels']
+        
+        self.assertEqual(nLevels, 4)
+        npt.assert_array_equal(self.database.getLevelLengthsAt(0), levelLengths[0][:nLevels])
+        
+    def testGetLevelsAt(self):
+        """
+        Tests that getLevelsAt returns a numpy matrix of the levels corresponding to the event
+        in row 'i' of eventTable.
+        """
+        levels = np.linspace(0.0, 100.0, self.maxEventLength).reshape((1,self.maxEventLength))
+        
+        self.database.appendEvent(0,2,3,4,5,6,7,8,levels=levels) # eventLength=3, rawPointsPerSide=5
+        
+        row = self.database.getEventRow(0)
+        nLevels = row['nLevels']
+        
+        self.assertEqual(nLevels, 4)
+        npt.assert_array_equal(self.database.getLevelsAt(0), levels[0][:nLevels])
+        
+    def testGetRawDataAt(self):
+        """
+        Tests that getRawDataAt returns correctly sized(eventLength + 2*rawPointsPerSide)
+        numpy array with correct data.
+        """
+        raw = np.linspace(0.0, 100.0, self.maxEventLength).reshape((1,self.maxEventLength))
+        
+        self.database.appendEvent(0,2,3,4,5,6,7,8,raw) # eventLength=3, rawPointsPerSide=5
+        
+        row = self.database.getEventRow(0)
+        eventLength = row['eventLength']
+        rawPointsPerSide = row['rawPointsPerSide']
+        
+        self.assertEqual(eventLength, 3)
+        self.assertEqual(rawPointsPerSide, 5)
+        npt.assert_array_equal(self.database.getRawDataAt(0), raw[0][:eventLength+2*rawPointsPerSide])
+        
+    def testGetSampleRate(self):
+        """
+        Test that getSampleRate returns root.events.eventTable.attrs.sampleRate
+        """
+        rate = 13928.99
+        self.database.root.events.eventTable.attrs.sampleRate = rate
+        
+        self.assertEqual(self.database.getSampleRate(), rate)
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
