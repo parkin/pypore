@@ -73,7 +73,7 @@ cpdef np.ndarray[DTYPE_t] _getDataRangeTestWrapper(dataCache, long i, long n):
     '''
     return _getDataRange(dataCache, i, n)
         
-cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
+cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None, save_file_name=None):
     cdef unsigned int event_count = 0
     
     cdef unsigned int get_blocks = 1
@@ -114,17 +114,18 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
             pipe.close()
         return 'Not enough datapoints in file.'
     
-    # Get the name of the database file we want to save
-    # if we have input.hkd, then save database to
-    # input_Events_YYmmdd_HHMMSS.h5
-    save_file_name = list(filename)
-    # Remove the .mat off the end
-    for _ in xrange(0, 4):
-        save_file_name.pop()
-    # Get a string with the current year/month/day/hour/minute to label the file
-    day_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    save_file_name.append('_Events_' + day_time + '.h5')
-    save_file_name = "".join(save_file_name)
+    if save_file_name is None:
+        # Get the name of the database file we want to save
+        # if we have input.hkd, then save database to
+        # input_Events_YYmmdd_HHMMSS.h5
+        save_file_name = list(filename)
+        # Remove the .mat off the end
+        for _ in xrange(0, 4):
+            save_file_name.pop()
+        # Get a string with the current year/month/day/hour/minute to label the file
+        day_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        save_file_name.append('_Events_' + day_time + '.h5')
+        save_file_name = "".join(save_file_name)
     
     cdef unsigned long maxPoints = max_event_steps + 2 * raw_points_per_side
     
@@ -210,8 +211,9 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
         double delta = 0
         unsigned long min_index_p = 0
         unsigned long min_index_n = 0
-        double min_Sp = float("inf")
-        double min_Sn = float("inf")
+        double floatInf = np.finfo('d').max
+        double min_Sp = floatInf
+        double min_Sn = floatInf
         long ko = i
         double event_area = datapoint - local_mean  # integrate the area
         double currentBlockage = 0
@@ -284,21 +286,21 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
 #             n_levels = 1  # We're already starting with one level
             delta = abs(mean_estimate - local_mean) / 2.
             min_index_p = min_index_n = i
-            min_Sp = min_Sn = 999999
+            min_Sp = min_Sn = floatInf
             ko = i
             event_area = datapoint  # integrate the area
             cache_index = 1  # which index in the cache is event_i
                                     # trying to grab data from?
                                     
             level_sum = datapoint
-            level_sum_minp = 0.
-            level_sum_minn = 0.
+            level_sum_minp = datapoint
+            level_sum_minn = datapoint
             prevLevelStart = event_i
             cacheSize = n
             
             # loop until event ends
             while not done and event_i - event_start < max_event_steps:
-                event_i = event_i + 1
+                event_i += 1
                 if event_i >= cacheSize:  # We may need new data
                     # we need new data if we've run out
                     cache_index += 1
@@ -330,20 +332,22 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
                 elif delta == 0:
                     sp = sn = 0
                 else:
-                    sp = sn = float('inf')
+                    sp = sn = floatInf
                 Sp = Sp + sp
                 Sn = Sn + sn
                 Gp = fmax(0.0, Gp + sp)
                 Gn = fmax(0.0, Gn + sn)
-                if Sp <= min_Sp:
+                level_sum += datapoint
+                if Sp <= 0:
+                    Sp = 0
                     min_Sp = Sp
                     min_index_p = event_i
                     level_sum_minp = level_sum
-                if Sn <= min_Sn:
+                if Sn <= 0:
+                    Sn = 0
                     min_Sn = Sn
                     min_index_n = event_i
                     level_sum_minn = level_sum
-                level_sum += datapoint
                 h = delta / sqrt(var_estimate)
                 # Did we detect a change?
                 if Gp > h or Gn > h:
@@ -354,24 +358,24 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
                         minindex = min_index_n
                         level_sum = level_sum_minn
                     mlevelsLength[n_levels] = minindex + 1 - ko
-                    mlevels[n_levels] = level_sum / (minindex - prevLevelStart)
+                    mlevels[n_levels] = level_sum / mlevelsLength[n_levels] ##
                     n_levels += 1
                     # reset stuff
-                    if cache_index == 1:
-                        mean_estimate = currData[event_i]
-                    else:
-                        mean_estimate = dataCache[cache_index][event_i % n]
                     sn = sp = Sn = Sp = Gn = Gp = 0
-                    level_sum = mean_estimate
-                    min_Sp = min_Sn = float("inf")
+                    min_Sp = min_Sn = floatInf
                     # Go back to 1 after the level change found
                     ko = event_i = minindex + 1
                     min_index_p = min_index_n = event_i
                     prevLevelStart = event_i
+                    if cache_index == 1:
+                        mean_estimate = currData[event_i]
+                    else:
+                        mean_estimate = dataCache[cache_index][event_i % n]
+                    level_sum = level_sum_minp = level_sum_minn = mean_estimate
                   
             i = event_end
             if event_end > prevLevelStart:
-                mlevelsLength[n_levels] = event_end - ko
+                mlevelsLength[n_levels] = event_end - prevLevelStart
                 mlevels[n_levels] = level_sum / (event_end - prevLevelStart)
                 n_levels += 1
             # is the event long enough?
@@ -397,8 +401,6 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
                     currentBlockage = currentBlockage / (event_end - event_start) - local_mean
                     
                 # end CUSUM, save events to file/cache
-#                 arrayRow, eventStart, eventLength, nLevels, rawPointsPerSide,\
-#                     baseline, currentBlockage, area, rawData = None, levels = None, levelLengths = None):
                 h5file.appendEvent(event_count, event_start + placeInData, event_end - event_start,\
                                    n_levels, raw_points_per_side, local_mean, currentBlockage,\
                                    event_area - local_mean)
@@ -485,26 +487,6 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
         sys.stdout.write("\r" + status_text)
         sys.stdout.flush()
             
-#     if event_count > 0:
-#         save_file_name = list(parameters['filename'])
-#         # Remove the .mat off the end
-#         for i in xrange(0, 4):
-#             save_file_name.pop()
-#             
-#         # Get a string with the current year/month/day/hour/minute to label the file
-#         day_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-#         save_file_name.append('_Events_' + day_time + '.npy')
-#         save_file_name = "".join(save_file_name)
-#         save_file['filename'] = parameters['filename']
-#         save_file['database_filename'] = save_file_name
-#         save_file['sample_rate'] = sample_rate
-#         save_file['event_count'] = event_count
-#         # save the user's analysis parameters
-#         parameters.pop('axes', None)  # remove the axes before saving.
-#         save_file['parameters'] = parameters
-# #         sio.savemat(save_file_name, save_file, oned_as='row')
-#         np.save(save_file_name, save_file)
-
     if event_count > 0:
         # Save the file
         # add attributes
@@ -515,15 +497,16 @@ cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None):
         h5file.root.events.eventTable.attrs.dataFilename = filename
         h5file.flush()
         h5file.close()
+        return save_file_name
     else:
         # if no events, just delete the file.
         h5file.flush()
         h5file.close()
         os.remove(save_file_name)
         
-    return save_file_name
+    return None
     
-def findEvents(filenames, pipe=None, h5file=None, **parameters):
+def findEvents(filenames, pipe=None, h5file=None, save_file_names = None, **parameters):
     defaultParams = { 'min_event_length': 10.,
                                    'max_event_length': 10000.,
                                    'threshold_direction': 'Negative',
@@ -535,6 +518,11 @@ def findEvents(filenames, pipe=None, h5file=None, **parameters):
     # parameters entries on conflict.
     params = dict(chain(defaultParams.iteritems(), parameters.iteritems()))
     eventDatabases = []
-    for filename in filenames:
-        eventDatabases.append(_lazyLoadFindEvents(filename, params, pipe, h5file))
+    save_file_name = None
+    for i, filename in enumerate(filenames):
+        if save_file_names is not None:
+            save_file_name = save_file_names[i]
+        databaseFilename = _lazyLoadFindEvents(filename, params, pipe, h5file, save_file_name)
+        if databaseFilename is not None:
+            eventDatabases.append(databaseFilename)
     return eventDatabases
