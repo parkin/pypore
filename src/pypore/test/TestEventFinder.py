@@ -9,7 +9,7 @@ from pypore.EventFinder import findEvents
 from pypore.EventFinder import _getDataRangeTestWrapper
 import numpy as np
 import os
-import tables as tb
+import pypore.eventDatabase as ed
 
 class TestEventFinder(unittest.TestCase):
     
@@ -94,11 +94,12 @@ class TestEventFinder(unittest.TestCase):
     def testSavingFiles(self):
         filename = os.path.dirname(os.path.realpath(__file__))
         filename = os.path.join(filename, 'testDataFiles', 'chimera_1event.log')
-        eventDatabase = findEvents([filename])[0]
+        
+        eventDatabase = findEvents([filename], save_file_name = ['_testSavingFiles_9238.h5'])[0]
         
         self.assertTrue(os.path.isfile(eventDatabase))
         
-        h5file = tb.openFile(eventDatabase, mode='r')
+        h5file = ed.openFile(eventDatabase, mode='r')
         
         self.assertTrue(h5file.isopen)
         
@@ -110,10 +111,10 @@ class TestEventFinder(unittest.TestCase):
     def testChimera_nonoise_1Event(self):
         filename = os.path.dirname(os.path.realpath(__file__))
         filename = os.path.join(filename, 'testDataFiles', 'chimera_nonoise_1event.log')
-        eventDatabase = findEvents([filename],
+        eventDatabase = findEvents([filename], save_file_name = ['_testChimera_nonoise_1Event_9238.h5'], 
                                    **self.defaultParams)[0]
         
-        h5file = tb.openFile(eventDatabase, mode='r')
+        h5file = ed.openFile(eventDatabase, mode='r')
         
         events = h5file.root.events
 
@@ -135,13 +136,11 @@ class TestEventFinder(unittest.TestCase):
         levels = levelsMatrix[0]
         self.assertAlmostEqual(levels[0], 0.9332, 4)
         
-        # Check 1 event with 1 level -> 2 indices
-        indicesMatrix = events.levelIndices
-        self.assertEqual(indicesMatrix.nrows, 1)
-        indices = indicesMatrix[0]
-        self.assertEqual(nLevels + 1, 2)
-        self.assertEqual(indices[0], 2000)
-        self.assertEqual(indices[1], 3000)
+        # Check 1 event with 1 levelLength
+        lengthsMatrix = events.levelLengths
+        self.assertEqual(lengthsMatrix.nrows, 1)
+        lengths = lengthsMatrix[0]
+        self.assertEqual(lengths[0], 1000)
         
         h5file.close()
         
@@ -168,21 +167,20 @@ class TestEventFinder(unittest.TestCase):
         self.assertAlmostEqual(levels[0], 0.9332, 4)
         self.assertAlmostEqual(levels[1], 0.78064, 4)
         
-        indicesMatrix = events.levelIndices
-        self.assertEqual(indicesMatrix.nrows, 1)
-        indices = indicesMatrix[0]
-        self.assertEqual(nLevels + 1, 3)
-        self.assertEqual(indices[0], 2000)
-        self.assertEqual(indices[1], 2750)
-        self.assertEqual(indices[2], 3500)
+        levelsMatrix = events.levelLengths
+        self.assertEqual(levelsMatrix.nrows, 1)
+        levels = h5file.getLevelLengthsAt(0)
+        self.assertEqual(len(levels), 2)
+        self.assertEqual(levels[0], 750)
+        self.assertEqual(levels[1], 750)
         
     def testChimera_nonoise_1Event_2Levels(self):
         filename = os.path.dirname(os.path.realpath(__file__))
         filename = os.path.join(filename, 'testDataFiles', 'chimera_nonoise_1event_2levels.log')
-        eventDatabase = findEvents([filename],
+        eventDatabase = findEvents([filename], save_file_name = ['_testChimera_nonoise_1Event_2Levels_9238.h5'],
                                    **self.defaultParams)[0]
         
-        h5file = tb.openFile(eventDatabase, mode='r')
+        h5file = ed.openFile(eventDatabase, mode='r')
         self._testChimera_nonoise_1Event_2Levels_helper(h5file)
         h5file.close()
         
@@ -218,24 +216,24 @@ class TestEventFinder(unittest.TestCase):
         self.assertEqual(nLevels1, 1)
         self.assertAlmostEqual(levels[0], 0.9332, 4)
         
-        # Check 1 event with 1 level -> 2 indices
-        indicesMatrix = events.levelIndices
-        self.assertEqual(indicesMatrix.nrows, 2)
-        indices = indicesMatrix[0]
-        self.assertEqual(indices[0], 2000)
-        self.assertEqual(indices[1], 3000)
+        # Check 2 events with 1 level -> 1 lengths
+        lengthsMatrix = events.levelLengths
+        self.assertEqual(lengthsMatrix.nrows, 2)
+        lengths1 = h5file.getLevelLengthsAt(0)
+        self.assertEqual(len(lengths1), 1)
+        self.assertEqual(lengths1[0], 1000)
         # event
-        indices = indicesMatrix[1]
-        self.assertEqual(indices[0], 4500)
-        self.assertEqual(indices[1], 5500)
+        lengths2 = h5file.getLevelLengthsAt(1)
+        self.assertEqual(len(lengths2), 1)
+        self.assertEqual(lengths2[0], 1000)
         
     def testChimera_nonoise_2events_1levels(self):
         filename = os.path.dirname(os.path.realpath(__file__))
         filename = os.path.join(filename, 'testDataFiles', 'chimera_nonoise_2events_1levels.log')
-        eventDatabase = findEvents([filename],
+        eventDatabase = findEvents([filename], save_file_name = ['_testChimera_nonoise_2events_1levels_9238.h5'], 
                                    **self.defaultParams)[0]
         
-        h5file = tb.openFile(eventDatabase, mode='r')
+        h5file = ed.openFile(eventDatabase, mode='r')
         self._testChimera_nonoise_2events_1levels_wrapper(h5file)
         h5file.close()
         
@@ -248,16 +246,18 @@ class TestEventFinder(unittest.TestCase):
         filename2 = os.path.dirname(os.path.realpath(__file__))
         filename2 = os.path.join(filename2, 'testDataFiles', 'chimera_nonoise_1event_2levels.log')
         filenames = [filename1, filename2]
-        eventDatabases = findEvents(filenames, **self.defaultParams)
+        eventDatabases = findEvents(filenames,
+                                    save_file_names = ['_testMultipleFiles_1_9238.h5', '_testMultipleFiles_2_9238.h5'],
+                                    **self.defaultParams)
         
         self.assertEqual(len(eventDatabases), 2)
         
-        h5file = tb.openFile(eventDatabases[0], mode='r')
+        h5file = ed.openFile(eventDatabases[0], mode='r')
         self._testChimera_nonoise_2events_1levels_wrapper(h5file)
         h5file.close()
         os.remove(eventDatabases[0])
         
-        h5file = tb.openFile(eventDatabases[1], mode='r')
+        h5file = ed.openFile(eventDatabases[1], mode='r')
         self._testChimera_nonoise_1Event_2Levels_helper(h5file)
         h5file.close()
         os.remove(eventDatabases[1])
