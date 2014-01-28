@@ -23,7 +23,7 @@ class MyHistogramItem(PlotItem):
         self.rotate = False
         if 'rotate' in kargs:
             self.rotate = kargs['rotate']
-            del kargs['rotate'] # if you dont delete, MyHistogramItem will start with
+            del kargs['rotate']  # if you dont delete, MyHistogramItem will start with
                                 # a PlotDataItem for some reason
         
         super(MyHistogramItem, self).__init__(*args, **kargs)
@@ -105,7 +105,7 @@ class MyHistogramItem(PlotItem):
             y, x = np.histogram(self.dataArray[i], bins=self.bins)
             if self.rotate:
                 x = -1. * x
-            item.setData(x,y)
+            item.setData(x, y)
             
     def removeItemAt(self, index):
         if len(self.dataArray) < 1:
@@ -359,6 +359,12 @@ class PlotToolBar(QtGui.QToolBar):
         self.plotDuringCheckBox.setText('Plot Events')
         self.plotDuringCheckBox.setToolTip('Select to have events plotted during event finding.')
         self.addWidget(self.plotDuringCheckBox)
+        
+        self.filterData = QtGui.QCheckBox()
+        self.filterData.setChecked(True)
+        self.filterData.setText('Show filtered')
+        self.filterData.setToolTip('Select to have events plotted during event finding.')
+        self.addWidget(self.filterData)
         
     def isDecimateChecked(self):
         '''

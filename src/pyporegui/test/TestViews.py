@@ -119,21 +119,21 @@ class TestPlotToolBar(unittest.TestCase):
         self.assertTrue(toolbar.isDecimateChecked())
         self.assertTrue(toolbar.isPlotDuringChecked())
         wiglist = toolbar.getWidgetList()
-        self.assertEqual(len(wiglist), 2)
+        self.assertEqual(len(wiglist), 3)
         
     def testPlotToolBarWidgetList(self):
         toolbar = PlotToolBar()
         wiglist = toolbar.getWidgetList()
-        self.assertEqual(len(wiglist), 2)
+        self.assertEqual(len(wiglist), 3)
         
         # test for immutability
         wiglist.append(QCheckBox())
-        self.assertEqual(len(toolbar.getWidgetList()), 2)
+        self.assertEqual(len(toolbar.getWidgetList()), 3)
         
         # test adding widget
         checkbox = QCheckBox()
         toolbar.addWidget(checkbox)
-        self.assertEqual(len(toolbar.getWidgetList()), 3)
+        self.assertEqual(len(toolbar.getWidgetList()), 4)
         
 class TestFileListItem(unittest.TestCase):
     
