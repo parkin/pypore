@@ -113,7 +113,7 @@ class MyMainWindow(QtGui.QMainWindow):
         Opens file dialog box, adds names of files to open to list
         '''
 
-        fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open data file', self.openDir, "All types(*.hkd *.log *.mat);;Heka files *.hkd(*.hkd);;Chimera files *.log(*.log);;Gabys files *.mat(*.mat)")[0]
+        fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open data file', self.openDir, "All types(*.h5 *.hkd *.log *.mat);;Pypore data files *.h5(*.h5);;Heka files *.hkd(*.hkd);;Chimera files *.log(*.log);;Gabys files *.mat(*.mat)")[0]
         if len(fnames) > 0:
             self.listWidget.clear()
         else:
@@ -501,7 +501,7 @@ class MyMainWindow(QtGui.QMainWindow):
         for i in xrange(3):
             wig2.nextRow()
             for j in xrange(3):
-                plot = wig2.addPlot(title='Event ' + str(i*3+j), name='Single' + str(i*3+j))
+                plot = wig2.addPlot(title='Event ' + str(i * 3 + j), name='Single' + str(i * 3 + j))
                 self.eventviewerPlots.append(plot)
                 
         # Tool bar for main plot.  Contains zoom button and different checkboxes
@@ -623,7 +623,7 @@ class MyMainWindow(QtGui.QMainWindow):
         self.main_tabwig.addTab(event_finding, 'Event Finding')
         self.main_tabwig.addTab(event_viewer, 'Event View')
         self.main_tabwig.addTab(event_analysis, 'Event Analysis')
-        self.main_tabwig.setMinimumSize(1000,550)
+        self.main_tabwig.setMinimumSize(1000, 550)
         
         text = """*********************
 Welcome to pyporegui!
@@ -655,11 +655,11 @@ The current namespace should include:
         if len(text) < 1:
             return
         position = int(self.eventDisplayedEdit.text())
-        self.plotSingleEvents(position-1)
+        self.plotSingleEvents(position - 1)
         return
         
     def previousClicked(self):
-        self.moveEventDisplayBy(-1*len(self.eventviewerPlots))
+        self.moveEventDisplayBy(-1 * len(self.eventviewerPlots))
         
     def nextClicked(self):
         self.moveEventDisplayBy(len(self.eventviewerPlots))
@@ -806,13 +806,13 @@ The current namespace should include:
         
         for i in xrange(3):
             for j in xrange(3):
-                pos = 3*i+j
-                if pos+event >= eventCount or pos+event < 0:
+                pos = 3 * i + j
+                if pos + event >= eventCount or pos + event < 0:
                     self.eventviewerPlots[pos].clear()
                     self.eventviewerPlots[pos].setTitle('')
                 else:
                     self.plotSingleEvent(h5file, event + pos, self.eventviewerPlots[pos])
-                    self.eventviewerPlots[pos].setTitle('Event ' + str(event+pos+1))
+                    self.eventviewerPlots[pos].setTitle('Event ' + str(event + pos + 1))
         
         h5file.close()
         

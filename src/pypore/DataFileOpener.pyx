@@ -9,6 +9,7 @@ import numpy as np
 cimport numpy as np
 import os
 import tables as tb
+import dataFile as df
 
 DTYPE = np.float
 ctypedef np.float_t DTYPE_t
@@ -34,6 +35,8 @@ cpdef openData(filename, decimate=False):
     
     Assumes '.mat' extension is Gaby's format.
     '''
+    if '.h5' in filename:
+        return openPyporeFile(filename, decimate)
     if '.log' in filename:
         return openChimeraFile(filename, decimate)
     elif '.hkd' in filename:
@@ -60,6 +63,8 @@ cpdef prepareDataFile(filename):
     If there was an error opening the files, params will have 'error' key
     with string description
     '''
+    if '.h5' in filename:
+        return preparePyporeFile(filename)
     if '.log' in filename:
         return prepareChimeraFile(filename)
     if '.hkd' in filename:
@@ -84,6 +89,8 @@ cpdef getNextBlocks(datafile, params, int n=1):
     
     Assumes '.mat' extension is Gaby's format.
     '''
+    if '.h5' in params['filename']:
+        return getNextPyporeBlocks(datafile, params, n)
     if '.log' in params['filename']:
         return getNextChimeraBlocks(datafile, params, n)
     if '.hkd' in params['filename']:
@@ -92,6 +99,53 @@ cpdef getNextBlocks(datafile, params, int n=1):
         return getNextGabysBlocks(datafile, params, n)
         
     return 'File not specified with correct extension. Possibilities are: \'.log\', \'.hkd\''
+
+cdef preparePyporeFile(filename):
+    datafile = df.openFile(filename, mode='r')
+    
+    cdef int points_per_channel_per_block = 5000
+    
+    p = {'filetype': 'pypore', 'filename': filename,
+         'sample_rate': datafile.root.data.attrs.sampleRate,
+         'points_per_channel_per_block': points_per_channel_per_block,
+         'points_per_channel_total': datafile.root.data.nrows,
+         'nextToSend': 0}
+    return datafile, p
+
+cdef getNextPyporeBlocks(datafile, params, int n):
+
+    data = datafile.root.data
+    
+    cdef long nextToSend = params['nextToSend']
+    cdef long points_per_block = params['points_per_channel_per_block']
+    cdef totalPoints = params['points_per_channel_total']
+    
+    if nextToSend >= totalPoints:
+        return [data[nextToSend:].astype(DTYPE)]
+    else:
+        params['nextToSend'] += points_per_block
+        print "nextToSend:", nextToSend, "data[nTS]:", data[nextToSend]
+        return [data[nextToSend:nextToSend + points_per_block].astype(DTYPE)]
+    
+cdef openPyporeFile(filename, decimate=False):
+    
+    f, p = preparePyporeFile(filename)
+    
+    arr = f.root.data
+    
+    cdef np.ndarray data
+    
+    cdef float sample_rate = p['sample_rate']
+    
+    if decimate:
+        data = arr[::5000]
+        sample_rate = sample_rate / 5000.
+    else:
+        data = arr[:]
+        
+    specsfile = {'data': [data], 'sample_rate': sample_rate}
+    f.close()
+    return specsfile
 
 cdef prepareGabysFile(filename):
     '''
@@ -107,7 +161,7 @@ cdef prepareGabysFile(filename):
     
     p = {'filetype': 'gabys',
         'dataGroup': group,
-        'filename': filename, 'nextToSend': 0, # next point we haven't sent
+        'filename': filename, 'nextToSend': 0,  # next point we haven't sent
         'sample_rate': group.samplerate[0][0],
         'points_per_channel_per_block': points_per_channel_per_block,
         'points_per_channel_total': group.Raw[0].size}
@@ -115,17 +169,20 @@ cdef prepareGabysFile(filename):
 
 cdef openGabysFile(filename, decimate=False):
     
-    f,p = prepareGabysFile(filename)
+    f, p = prepareGabysFile(filename)
     group = p['dataGroup']
     
-    cdef np.ndarray data
+    cdef np.ndarray data2
+    
+    cdef float sample_rate = p['sample_rate']
     
     if decimate:
-        data = group.Raw[0][::5000]
+        data2 = group.Raw[0][::5000]
+        sample_rate = sample_rate / 5000.
     else:
-        data = group.Raw[0]
+        data2 = group.Raw[0]
     
-    specsfile = {'data': [data], 'sample_rate': p['sample_rate']}
+    specsfile = {'data': [data2], 'sample_rate': sample_rate}
     f.close()
     return specsfile
 
@@ -133,15 +190,15 @@ cdef getNextGabysBlocks(datafile, params, int n):
 
     group = datafile.getNode('/#refs#').b
     
-    cdef long nextToSend = params['nextToSend']
-    cdef long points_per_block = params['points_per_channel_per_block']
-    cdef totalPoints = params['points_per_channel_total']
+    cdef long nextToSend2 = params['nextToSend']
+    cdef long points_per_block2 = params['points_per_channel_per_block']
+    cdef totalPoints2 = params['points_per_channel_total']
     
-    if nextToSend >= totalPoints:
-        return [group.Raw[0][nextToSend:].astype(DTYPE)]
+    if nextToSend2 >= totalPoints2:
+        return [group.Raw[0][nextToSend2:].astype(DTYPE)]
     else:
-        params['nextToSend'] += points_per_block
-        return [group.Raw[0][nextToSend:nextToSend+points_per_block].astype(DTYPE)]
+        params['nextToSend'] += points_per_block2
+        return [group.Raw[0][nextToSend2:nextToSend2 + points_per_block2].astype(DTYPE)]
 
 cdef openChimeraFile(filename, decimate=False):
     '''
@@ -165,7 +222,7 @@ cdef openChimeraFile(filename, decimate=False):
     specsfile = p['specsfile']
     
 
-    cdef long bitmask = (2**16) - 1 - (2**(16-ADCBITS) - 1)
+    cdef long bitmask = (2 ** 16) - 1 - (2 ** (16 - ADCBITS) - 1)
     cdef long num_points = 0
     cdef int block_size = 0
     cdef long decimated_size = 0
@@ -176,30 +233,30 @@ cdef openChimeraFile(filename, decimate=False):
     if decimate:
         # Calculate number of points in the dataset
         filesize = os.path.getsize(filename)
-        num_points = filesize/datatype.itemsize
+        num_points = filesize / datatype.itemsize
         # use 5000 for plot decimation
         block_size = 5000
-        decimated_size = int(2*num_points/block_size)
-        if num_points%block_size > 0: # will there be a block at the end with < block_size datapoints?
+        decimated_size = int(2 * num_points / block_size)
+        if num_points % block_size > 0:  # will there be a block at the end with < block_size datapoints?
             decimated_size = decimated_size + 2
         logdata = np.empty(decimated_size)
         i = 0
         while True:
-            rawvalues = np.fromfile(datafile,datatype,block_size)
+            rawvalues = np.fromfile(datafile, datatype, block_size)
             if rawvalues.size < 1:
                 break
-            readvalues = -ADCvref + (2*ADCvref)*(rawvalues & bitmask)/(2**16)
+            readvalues = -ADCvref + (2 * ADCvref) * (rawvalues & bitmask) / (2 ** 16)
             logdata[i] = np.max(readvalues)
-            logdata[i+1] = np.min(readvalues)
+            logdata[i + 1] = np.min(readvalues)
             i += 2
             
         # Change the sample rate
-        sample_rate = sample_rate*2.0/block_size
+        sample_rate = sample_rate * 2.0 / block_size
     else:
-        rawvalues = np.fromfile(datafile,datatype)
+        rawvalues = np.fromfile(datafile, datatype)
         rawvalues = rawvalues & bitmask
-        logdata = -ADCvref + (2*ADCvref) * rawvalues / (2**16);
-
+        logdata = -ADCvref + (2 * ADCvref) * rawvalues / (2 ** 16);
+        
     datafile.close()
     return {'data': [logdata], 'sample_rate': sample_rate}
 
@@ -220,20 +277,20 @@ cdef prepareChimeraFile(filename):
     filesize = os.path.getsize(filename)
     datatype = np.dtype('<u2')
     cdef int points_per_channel_per_blocks = 10000
-    cdef long points_per_channel_total = filesize/datatype.itemsize
+    cdef long points_per_channel_total = filesize / datatype.itemsize
 
     cdef long ADCBITS = specsfile['SETUP_ADCBITS'][0][0]
     cdef double ADCvref = specsfile['SETUP_ADCVREF'][0][0]
     
     datafile = open(filename, 'rb')
     
-    cdef long bitmaskk = (2**16) - 1 - (2**(16-ADCBITS) - 1)
+    cdef long bitmaskk = (2 ** 16) - 1 - (2 ** (16 - ADCBITS) - 1)
     
-    cdef double sample_rate = 1.0*specsfile['SETUP_ADCSAMPLERATE'][0][0]
+    cdef double sample_rate = 1.0 * specsfile['SETUP_ADCSAMPLERATE'][0][0]
     
     p = {'filetype': 'chimera',
          'ADCBITS': ADCBITS, 'ADCvref': ADCvref, 'datafile': datafile,
-         'datatype': datatype, 'specsfile': specsfile, 
+         'datatype': datatype, 'specsfile': specsfile,
          'bitmask': bitmaskk, 'filename': filename,
          'sample_rate': sample_rate,
          'points_per_channel_per_block': points_per_channel_per_blocks,
@@ -250,9 +307,9 @@ cdef getNextChimeraBlocks(datafile, params, int n):
     cdef long bitmask = params['bitmask']
     cdef double ADCvref = params['ADCvref']
     
-    cdef np.ndarray rawvalues = np.fromfile(datafile,datatype, n*block_size)
+    cdef np.ndarray rawvalues = np.fromfile(datafile, datatype, n * block_size)
     rawvalues = rawvalues & bitmask
-    cdef np.ndarray[DTYPE_t] logdata = -ADCvref + (2*ADCvref) * rawvalues / (2**16)
+    cdef np.ndarray[DTYPE_t] logdata = -ADCvref + (2 * ADCvref) * rawvalues / (2 ** 16)
 
     return [logdata]
         
@@ -271,16 +328,16 @@ cdef prepareHekaFile(filename):
     
     # So now f should be at the binary data.
     
-    ## Read binary header parameter lists
+    # # Read binary header parameter lists
     per_file_param_list = _readHekaHeaderParamList(f, np.dtype('>S64'), encodings)
     per_block_param_list = _readHekaHeaderParamList(f, np.dtype('>S64'), encodings)
     per_channel_param_list = _readHekaHeaderParamList(f, np.dtype('>S64'), encodings)
     channel_list = _readHekaHeaderParamList(f, np.dtype('>S512'), encodings)
     
-    ## Read per_file parameters
+    # # Read per_file parameters
     per_file_params = _readHekaHeaderParams(f, per_file_param_list)
     
-    ## Calculate sizes of blocks, channels, etc
+    # # Calculate sizes of blocks, channels, etc
     cdef long per_file_header_length = f.tell()
     
     # Calculate the block lengths
@@ -289,14 +346,14 @@ cdef prepareHekaFile(filename):
     
     cdef int channel_list_number = len(channel_list)
     
-    cdef long header_bytes_per_block = per_channel_per_block_length*channel_list_number
+    cdef long header_bytes_per_block = per_channel_per_block_length * channel_list_number
     cdef long data_bytes_per_block = per_file_params['Points per block'] * 2 * channel_list_number
     cdef long total_bytes_per_block = header_bytes_per_block + data_bytes_per_block + per_block_length
     
     # Calculate number of points per channel
     cdef long filesize = os.path.getsize(filename)
-    cdef long num_blocks_in_file = int((filesize - per_file_header_length)/total_bytes_per_block)
-    cdef long remainder = (filesize - per_file_header_length)%total_bytes_per_block
+    cdef long num_blocks_in_file = int((filesize - per_file_header_length) / total_bytes_per_block)
+    cdef long remainder = (filesize - per_file_header_length) % total_bytes_per_block
     if not remainder == 0:
         f.close()
         return 0, {'error': 'Error, data file ends with incomplete block'}
@@ -309,13 +366,13 @@ cdef prepareHekaFile(filename):
          'per_file_params': per_file_params, 'per_file_header_length': per_file_header_length,
          'per_channel_per_block_length': per_channel_per_block_length,
          'per_block_length': per_block_length, 'channel_list_number': channel_list_number,
-         'header_bytes_per_block': header_bytes_per_block, 
+         'header_bytes_per_block': header_bytes_per_block,
          'data_bytes_per_block': data_bytes_per_block,
-         'total_bytes_per_block': total_bytes_per_block,  'filesize': filesize,
+         'total_bytes_per_block': total_bytes_per_block, 'filesize': filesize,
          'num_blocks_in_file': num_blocks_in_file,
          'points_per_channel_total': points_per_channel_total,
          'points_per_channel_per_block': points_per_channel_per_block,
-         'sample_rate': 1.0/per_file_params['Sampling interval'],
+         'sample_rate': 1.0 / per_file_params['Sampling interval'],
          'filename': filename}
     
     return f, p
