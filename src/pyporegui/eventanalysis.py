@@ -1,38 +1,39 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-'''
+"""
 
 This program is for finding events in files and displaying the results.
-'''
-import sys, os
+"""
+import sys
+import os
 
 from PySide import QtCore, QtGui  # Must import PySide stuff before pyqtgraph so pyqtgraph knows
                                 # to use PySide instead of PyQt
              
                                 
 # The rest of the imports can be found below in _longImports
-def _longImports(**kwargs):
-    '''
+def _long_imports(**kwargs):
+    """
     Loads imports and updates the splash screen with information.
-    '''
+    """
     # append the src directory to the PYTHONPATH, i.e. '../../' = 'src/'
-    srcdir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    if not srcdir in sys.path:
-        sys.path.append(srcdir)
+    src_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    if not src_dir in sys.path:
+        sys.path.append(src_dir)
     
     global AnalyzeDataThread, PlotThread, FileListItem, FilterListItem, \
             PlotToolBar, DataFileListItem, MyPlotItem, prepareDataFile, pg, pgc, \
             LayoutWidget, PlotCurveItem, linspace, np, \
             MySpotItem, MyScatterPlotItem, EventAnalysisWidget, ed
         
-    updateSplash = False    
+    update_splash = False
     if 'splash' in kwargs and 'app' in kwargs:
-        updateSplash = True
+        update_splash = True
         splash = kwargs['splash']
         app = kwargs['app']
        
-    if updateSplash: 
+    if update_splash:
         splash.showMessage("Importing PyQtGraph...", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
     import pyqtgraph as pg
@@ -40,42 +41,43 @@ def _longImports(**kwargs):
     from pyqtgraph.widgets.LayoutWidget import LayoutWidget
     from pyqtgraph.graphicsItems.PlotCurveItem import PlotCurveItem
     
-    if updateSplash: 
+    if update_splash:
         splash.showMessage("Importing SciPy...", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
     from scipy import linspace
     
-    if updateSplash: 
+    if update_splash:
         splash.showMessage("Importing NumPy...", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
     import numpy as np
             
     # My stuff
-    if updateSplash: 
+    if update_splash:
         splash.showMessage("Setting up Cython imports...", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
     from pypore import cythonsetup
     
-    if updateSplash: 
+    if update_splash:
         splash.showMessage("Compiling Cython imports... DataFileOpener", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
     from pypore.DataFileOpener import prepareDataFile
     
-    if updateSplash: 
+    if update_splash:
         splash.showMessage("Compiling Cython imports... EventFinder", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
     from MyThreads import AnalyzeDataThread, PlotThread
     from views import FileListItem, FilterListItem, PlotToolBar, DataFileListItem, MyPlotItem
     from views import MySpotItem, MyScatterPlotItem, EventAnalysisWidget
     
-    if updateSplash: 
+    if update_splash:
         splash.showMessage("Importing EventDatabase", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
     import pypore.eventDatabase as ed
     
 # If we are running from a test, name != main, and we'll need to import the above on our own
 if not __name__ == '__main__':
-    _longImports()
+    _long_imports()
+
 
 class PathItem(QtGui.QGraphicsPathItem):
         def __init__(self, x, y, conn='all'):
@@ -87,7 +89,8 @@ class PathItem(QtGui.QGraphicsPathItem):
             
         def boundingRect(self):
             return self._bounds
-            
+
+
 class MyMainWindow(QtGui.QMainWindow):
     
     def __init__(self, app, parent=None):
@@ -98,9 +101,9 @@ class MyMainWindow(QtGui.QMainWindow):
         
         pg.setConfigOption('leftButtonPan', False)
         
-        self.openDir = '../../data'
+        self.open_dir = '../../data'
         
-        self.threadPool = []
+        self.thread_pool = []
         
         self.setWindowTitle('Translocation Event Analysis')
         
@@ -109,53 +112,58 @@ class MyMainWindow(QtGui.QMainWindow):
         self.create_status_bar()
         
     def open_files(self):
-        '''
+        """
         Opens file dialog box, adds names of files to open to list
-        '''
+        """
 
-        fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open data file', self.openDir, "All types(*.h5 *.hkd *.log *.mat);;Pypore data files *.h5(*.h5);;Heka files *.hkd(*.hkd);;Chimera files *.log(*.log);;Gabys files *.mat(*.mat)")[0]
+        fnames = QtGui.QFileDialog.getOpenFileNames(self,
+                                                    'Open data file',
+                                                    self.open_dir,
+                                                    "All types(*.h5 *.hkd *.log *.mat);;"
+                                                    "Pypore data files *.h5(*.h5);;"
+                                                    "Heka files *.hkd(*.hkd);;"
+                                                    "Chimera files *.log(*.log);;Gabys files *.mat(*.mat)")[0]
         if len(fnames) > 0:
-            self.listWidget.clear()
+            self.list_widget.clear()
         else:
             return
-        areFilesOpened = False
+        are_files_opened = False
         for w in fnames:
-            areFilesOpened = True
+            are_files_opened = True
             f, params = prepareDataFile(w)
             if 'error' in params:
                 self.status_text.setText(params['error'])
             else:
                 f.close()
                 item = DataFileListItem(w, params)
-                self.openDir = item.getDirectory()
-                self.listWidget.addItem(item)
+                self.open_dir = item.getDirectory()
+                self.list_widget.addItem(item)
             
-        if areFilesOpened:
+        if are_files_opened:
             self.analyze_button.setEnabled(False)
             self.main_tabwig.setCurrentIndex(0)
             
     def open_event_database(self):
-        '''
+        """
         Opens file dialog box, add names of event database files to open list
-        '''
-        fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open event database', self.openDir, '*.h5')[0]
+        """
+        fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open event database', self.open_dir, '*.h5')[0]
         if len(fnames) > 0:
-            self.listEventWidget.clear()
-            self.eventviewListWidget.clear()
+            self.list_event_widget.clear()
+            self.eventview_list_widget.clear()
         else:
             return
-        areFilesOpened = False
+        are_files_opened = False
         for w in fnames:
-            areFilesOpened = True
+            are_files_opened = True
             item = FileListItem(w)
-            self.openDir = item.getDirectory()  # save the directory info for later
-            self.listEventWidget.addItem(item)
+            self.open_dir = item.getDirectory()  # save the directory info for later
+            self.list_event_widget.addItem(item)
             
             item = FileListItem(w)
-            self.eventviewListWidget.addItem(item)
+            self.eventview_list_widget.addItem(item)
             
-            
-        if areFilesOpened:
+        if are_files_opened:
             self.btnAddFilter.setEnabled(False)
             if self.main_tabwig.currentIndex() < 1:
                 self.main_tabwig.setCurrentIndex(2)
@@ -167,17 +175,17 @@ class MyMainWindow(QtGui.QMainWindow):
         self.analyze_button.setEnabled(True)
         
     def _on_file_item_doubleclick(self, item):
-        '''
+        """
         Called when filter_parameter file list item is double clicked.
         Starts the plotting thread, which opens the file, parses data, then passes to plotData
-        '''
+        """
         # adding by emitting signal in different thread
         self.status_text.setText('Plotting...')
-        decimates = self.plotToolBar.isDecimateChecked()
+        decimates = self.plot_tool_bar.isDecimateChecked()
         thread = PlotThread(self.p1, filename=str(item.getFileName()), decimate=decimates)
         thread.dataReady.connect(self._on_file_item_doubleclick_callback)
-        self.threadPool.append(thread)
-        self.threadPool[len(self.threadPool) - 1].start()
+        self.thread_pool.append(thread)
+        self.thread_pool[len(self.thread_pool) - 1].start()
         
     def _on_file_item_doubleclick_callback(self, results):
         if 'plot_options' in results:
@@ -185,17 +193,17 @@ class MyMainWindow(QtGui.QMainWindow):
         if 'status_text' in results:
             self.status_text.setText(results['status_text'])
         if 'thread' in results:
-            self.threadPool.remove(results['thread'])
+            self.thread_pool.remove(results['thread'])
             
     def _create_event_finding_options(self):
-        scrollArea = QtGui.QScrollArea()
-        scrollArea.setWidgetResizable(True)
+        scroll_area = QtGui.QScrollArea()
+        scroll_area.setWidgetResizable(True)
         
         # Create filter_parameter list for files want to analyze
-        self.listWidget = QtGui.QListWidget()
-        self.listWidget.itemSelectionChanged.connect(self._on_file_item_selection_changed)
-        self.listWidget.itemDoubleClicked.connect(self._on_file_item_doubleclick)
-        self.listWidget.setMaximumHeight(100)
+        self.list_widget = QtGui.QListWidget()
+        self.list_widget.itemSelectionChanged.connect(self._on_file_item_selection_changed)
+        self.list_widget.itemDoubleClicked.connect(self._on_file_item_doubleclick)
+        self.list_widget.setMaximumHeight(100)
         
         # Other GUI controls
         # 
@@ -215,7 +223,7 @@ class MyMainWindow(QtGui.QMainWindow):
         self.max_event_length_edit.setText('1000.0')
         self.max_event_length_edit.setValidator(QtGui.QDoubleValidator(0, 1e12, 5))
         fixed_analysis_options = QtGui.QFormLayout()
-        fixed_analysis_options.addRow('Data Files:', self.listWidget)
+        fixed_analysis_options.addRow('Data Files:', self.list_widget)
         fixed_analysis_options.addRow('Min Event Length [us]:', self.min_event_length_edit)
         fixed_analysis_options.addRow('Max Event Length [us]:', self.max_event_length_edit)
         
@@ -234,14 +242,14 @@ class MyMainWindow(QtGui.QMainWindow):
         adaptive_options_widget = QtGui.QWidget()
         adaptive_options_widget.setLayout(adaptive_options_layout)
         
-        chooseBaselineBtn = QtGui.QPushButton('Baseline:')
-        chooseBaselineBtn.setToolTip('Click to choose the baseline from the plot.')
+        choose_baseline_btn = QtGui.QPushButton('Baseline:')
+        choose_baseline_btn.setToolTip('Click to choose the baseline from the plot.')
         
         fixed_options_layout = QtGui.QFormLayout()
         self.baseline_current_edit = QtGui.QLineEdit()
         self.baseline_current_edit.setValidator(QtGui.QDoubleValidator(-9999, 9999, 9))
         self.baseline_current_edit.setText('0.0')
-        fixed_options_layout.addRow(chooseBaselineBtn, self.baseline_current_edit)
+        fixed_options_layout.addRow(choose_baseline_btn, self.baseline_current_edit)
         fixed_options_widget = QtGui.QWidget()
         fixed_options_widget.setLayout(fixed_options_layout)
         
@@ -327,22 +335,22 @@ class MyMainWindow(QtGui.QMainWindow):
         vbox_left_widget = QtGui.QWidget()
         vbox_left_widget.setLayout(vbox_left)
         
-        scrollArea.setWidget(vbox_left_widget)
+        scroll_area.setWidget(vbox_left_widget)
         
-        return scrollArea
+        return scroll_area
     
     def _create_event_viewer_options(self):
-        scrollArea = QtGui.QScrollArea()
-        scrollArea.setWidgetResizable(True)
+        scroll_area = QtGui.QScrollArea()
+        scroll_area.setWidgetResizable(True)
         
         # Create filter_parameter list for files want to analyze
-        self.eventviewListWidget = QtGui.QListWidget()
-        self.eventviewListWidget.itemSelectionChanged.connect(self._on_file_item_selection_changed)
-        self.eventviewListWidget.itemDoubleClicked.connect(self._onEventviewFileItemDoubleclick)
-        self.eventviewListWidget.setMaximumHeight(100)
+        self.eventview_list_widget = QtGui.QListWidget()
+        self.eventview_list_widget.itemSelectionChanged.connect(self._on_file_item_selection_changed)
+        self.eventview_list_widget.itemDoubleClicked.connect(self._on_eventview_file_item_doubleclick)
+        self.eventview_list_widget.setMaximumHeight(100)
         
         fixed_analysis_options = QtGui.QFormLayout()
-        fixed_analysis_options.addRow('Event Databases:', self.eventviewListWidget)
+        fixed_analysis_options.addRow('Event Databases:', self.eventview_list_widget)
         
         vbox_left = QtGui.QVBoxLayout()
         vbox_left.addLayout(fixed_analysis_options)
@@ -350,47 +358,47 @@ class MyMainWindow(QtGui.QMainWindow):
         vbox_left_widget = QtGui.QWidget()
         vbox_left_widget.setLayout(vbox_left)
         
-        scrollArea.setWidget(vbox_left_widget)
+        scroll_area.setWidget(vbox_left_widget)
         
-        return scrollArea
+        return scroll_area
         
-    def _onEventviewFileItemDoubleclick(self, item):
-        '''
-        '''
-        self.eventViewItem = item
+    def _on_eventview_file_item_doubleclick(self, item):
+        """
+        """
+        self.event_view_item = item
         
         h5file = ed.openFile(item.getFileName())
         
-        eventCount = h5file.getEventCount()
+        event_count = h5file.getEventCount()
         
         h5file.close()
         
-        self.eventDisplayedEdit.setMaxLength(int(eventCount / 10) + 1)
-        self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(1, eventCount))
-        self.eventCountText.setText('/' + str(eventCount))
+        self.eventDisplayedEdit.setMaxLength(int(event_count / 10) + 1)
+        self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(1, event_count))
+        self.eventCountText.setText('/' + str(event_count))
         self.eventDisplayedEdit.setText('')
         self.eventDisplayedEdit.setText('1')
     
     def _create_event_analysis_options(self):
-        scrollArea = QtGui.QScrollArea()
-        scrollArea.setWidgetResizable(True)
+        scroll_area = QtGui.QScrollArea()
+        scroll_area.setWidgetResizable(True)
         
         # Create filter_parameter list for files want to analyze
-        self.listEventWidget = QtGui.QListWidget()
+        self.list_event_widget = QtGui.QListWidget()
 #         self.listEventWidget.itemSelectionChanged.connect(self._on_file_item_selection_changed)
 #         self.listEventWidget.itemDoubleClicked.connect(self._on_file_item_doubleclick)
-        self.listEventWidget.setMaximumHeight(100)
-        self.listEventWidget.itemSelectionChanged.connect(self._on_event_file_selection_changed)
-        self.listEventWidget.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
+        self.list_event_widget.setMaximumHeight(100)
+        self.list_event_widget.itemSelectionChanged.connect(self._on_event_file_selection_changed)
+        self.list_event_widget.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         
         files_options = QtGui.QFormLayout()
-        files_options.addRow('Event Databases:', self.listEventWidget)
+        files_options.addRow('Event Databases:', self.list_event_widget)
         
         # # Color Picker
         self.event_color = QtGui.QColor('blue')
-        pickColorBtn = QtGui.QPushButton()
-        pickColorBtn.setText('Choose a Color')
-        pickColorBtn.clicked.connect(self.colorPickerBtnClicked)
+        pick_color_btn = QtGui.QPushButton()
+        pick_color_btn.setText('Choose a Color')
+        pick_color_btn.clicked.connect(self.color_picker_btn_clicked)
         
         self.frm = QtGui.QFrame()
         self.frm.setStyleSheet("QWidget { background-color: %s }" 
@@ -398,11 +406,11 @@ class MyMainWindow(QtGui.QMainWindow):
         self.frm.setMinimumSize(15, 15)
         self.frm.setMaximumSize(30, 30)
         
-        files_options.addRow(pickColorBtn, self.frm)
+        files_options.addRow(pick_color_btn, self.frm)
         
         # # List of filters created
         self.btnAddFilter = QtGui.QPushButton('Add selections as filter')
-        self.btnAddFilter.clicked.connect(self.addFilterClicked)
+        self.btnAddFilter.clicked.connect(self.add_filter_clicked)
         self.btnAddFilter.setEnabled(False)
         formFilter = QtGui.QFormLayout()
         formFilter.addRow('Filters:', self.btnAddFilter)
@@ -410,9 +418,9 @@ class MyMainWindow(QtGui.QMainWindow):
         vbox = QtGui.QVBoxLayout()
         vbox.addLayout(formFilter)
         vbox.addWidget(self.listFilterWidget)
-        btnRemoveFilter = QtGui.QPushButton('Remove selected filters')
-        btnRemoveFilter.clicked.connect(self.removeFilterClicked)
-        vbox.addWidget(btnRemoveFilter)
+        btn_remove_filter = QtGui.QPushButton('Remove selected filters')
+        btn_remove_filter.clicked.connect(self.remove_filter_clicked)
+        vbox.addWidget(btn_remove_filter)
         
         vbox_left = QtGui.QVBoxLayout()
         vbox_left.addLayout(files_options)
@@ -421,16 +429,16 @@ class MyMainWindow(QtGui.QMainWindow):
         vbox_left_widget = QtGui.QWidget()
         vbox_left_widget.setLayout(vbox_left)
         
-        scrollArea.setWidget(vbox_left_widget)
+        scroll_area.setWidget(vbox_left_widget)
         
-        return scrollArea
+        return scroll_area
     
-    def addFilterClicked(self):
-        items = self.listEventWidget.selectedItems()
-        if items == None or len(items) < 1:
+    def add_filter_clicked(self):
+        items = self.list_event_widget.selectedItems()
+        if items is None or len(items) < 1:
             return
         
-        params = self._getCurrentEventAnalysisParams()
+        params = self._get_current_event_analysis_params()
         
         filenames = []
         
@@ -442,19 +450,19 @@ class MyMainWindow(QtGui.QMainWindow):
         
         self.eventAnalysisWidget.addSelections(filenames, params)
         
-    def removeFilterClicked(self):
+    def remove_filter_clicked(self):
         items = self.listFilterWidget.selectedItems()
         for item in items:
             index = self.listFilterWidget.indexFromItem(item).row()
             self.eventAnalysisWidget.removeFilter(index)
             self.listFilterWidget.takeItem(index)
         
-    def _getCurrentEventAnalysisParams(self):
+    def _get_current_event_analysis_params(self):
         params = {}
         params['color'] = self.event_color
         return params
     
-    def colorPickerBtnClicked(self):
+    def color_picker_btn_clicked(self):
         col = QtGui.QColorDialog.getColor(initial=self.event_color)
         
         if col.isValid():
@@ -472,11 +480,11 @@ class MyMainWindow(QtGui.QMainWindow):
         self.p1 = self.plotwid.plot()  # create an empty plot curve to be filled later
         
         # Tool bar for main plot.  Contains zoom button and different checkboxes
-        self.plotToolBar = PlotToolBar(self)
-        self.addToolBar(self.plotToolBar)
+        self.plot_tool_bar = PlotToolBar(self)
+        self.addToolBar(self.plot_tool_bar)
         
         eventfinderplots_layout = LayoutWidget()
-        eventfinderplots_layout.addWidget(self.plotToolBar, row=1, col=0, colspan=3)
+        eventfinderplots_layout.addWidget(self.plot_tool_bar, row=1, col=0, colspan=3)
         eventfinderplots_layout.addWidget(wig, row=2, col=0, colspan=3)
         
         return eventfinderplots_layout
@@ -495,14 +503,14 @@ class MyMainWindow(QtGui.QMainWindow):
         # Create Qwt plot for concatenated events
         self.plot_concatevents = wig.addPlot(title='Concatenated Events', name='Concat')
         
-        self.eventviewerPlots = []
+        self.eventviewer_plots = []
         
         # Now add 9 plots to view events in
         for i in xrange(3):
             wig2.nextRow()
             for j in xrange(3):
                 plot = wig2.addPlot(title='Event ' + str(i * 3 + j), name='Single' + str(i * 3 + j))
-                self.eventviewerPlots.append(plot)
+                self.eventviewer_plots.append(plot)
                 
         # Tool bar for main plot.  Contains zoom button and different checkboxes
 #         self.plotToolBar = PlotToolBar(self)
@@ -659,10 +667,10 @@ The current namespace should include:
         return
         
     def previousClicked(self):
-        self.moveEventDisplayBy(-1 * len(self.eventviewerPlots))
+        self.moveEventDisplayBy(-1 * len(self.eventviewer_plots))
         
     def nextClicked(self):
-        self.moveEventDisplayBy(len(self.eventviewerPlots))
+        self.moveEventDisplayBy(len(self.eventviewer_plots))
                 
     def moveEventDisplayBy(self, count):
         '''
@@ -671,7 +679,7 @@ The current namespace should include:
         '''
         h5eventCount = 0
         try:
-            h5file = ed.openFile(self.eventViewItem.getFileName())
+            h5file = ed.openFile(self.event_view_item.getFileName())
             h5eventCount = h5file.getEventCount()
             h5file.close()
         except:
@@ -800,7 +808,7 @@ The current namespace should include:
         '''
         Plots the event on the plot with 
         '''
-        h5file = ed.openFile(self.eventViewItem.getFileName(), mode='r')
+        h5file = ed.openFile(self.event_view_item.getFileName(), mode='r')
         
         eventCount = h5file.getEventCount()
         
@@ -808,11 +816,11 @@ The current namespace should include:
             for j in xrange(3):
                 pos = 3 * i + j
                 if pos + event >= eventCount or pos + event < 0:
-                    self.eventviewerPlots[pos].clear()
-                    self.eventviewerPlots[pos].setTitle('')
+                    self.eventviewer_plots[pos].clear()
+                    self.eventviewer_plots[pos].setTitle('')
                 else:
-                    self.plotSingleEvent(h5file, event + pos, self.eventviewerPlots[pos])
-                    self.eventviewerPlots[pos].setTitle('Event ' + str(event + pos + 1))
+                    self.plotSingleEvent(h5file, event + pos, self.eventviewer_plots[pos])
+                    self.eventviewer_plots[pos].setTitle('Event ' + str(event + pos + 1))
         
         h5file.close()
         
@@ -928,7 +936,7 @@ The current namespace should include:
         '''
         Searches for events in the file that is currently highlighted in the files list.
         '''
-        selectedItems = self.listWidget.selectedItems()
+        selectedItems = self.list_widget.selectedItems()
         if len(selectedItems) > 0:
             currItem = selectedItems[0]
         else:
@@ -950,7 +958,7 @@ The current namespace should include:
         # Start analyzing data in new analyzethread.
         self.analyzethread = AnalyzeDataThread(filenames, parameters)
         self.analyzethread.dataReady.connect(self._analyze_data_thread_callback)
-        self.threadPool.append(self.analyzethread)
+        self.thread_pool.append(self.analyzethread)
         self.analyzethread.start()
         
         self.stop_analyze_button.setEnabled(True)
@@ -1038,7 +1046,7 @@ The current namespace should include:
             self.eventDisplayedEdit.setMaxLength(int(len(self.events) / 10) + 1)
             self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(1, len(self.events)))
             self.eventCountText.setText('/' + str(len(self.events)))
-            if self.plotToolBar.isPlotDuringChecked():
+            if self.plot_tool_bar.isPlotDuringChecked():
                 self.plotEventsOnMainPlot(events)
                 self.addEventsToConcatEventPlot(events)
             if singlePlot:
@@ -1050,10 +1058,10 @@ The current namespace should include:
                 self.stop_analyze_button.setEnabled(False)
                 
     def cleanThreads(self):
-        for w in self.threadPool:
+        for w in self.thread_pool:
             w.cancel()
 #             w.wait()
-            self.threadPool.remove(w)
+            self.thread_pool.remove(w)
         
 def main():
     
@@ -1061,7 +1069,7 @@ def main():
     pixmap = QtGui.QPixmap('splash.png')
     splash = QtGui.QSplashScreen(pixmap, QtCore.Qt.WindowStaysOnTopHint)
     splash.show()
-    _longImports(splash=splash, app=app)
+    _long_imports(splash=splash, app=app)
     splash.showMessage("Creating main window...", alignment=QtCore.Qt.AlignBottom)
     app.processEvents()
     ex = MyMainWindow(app)
