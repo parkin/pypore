@@ -5,8 +5,8 @@ Created on Aug 27, 2013
 '''
 import unittest
 from pypore import cythonsetup
-from pypore.EventFinder import findEvents
-from pypore.EventFinder import _getDataRangeTestWrapper
+from pypore.eventFinder import findEvents
+from pypore.eventFinder import _getDataRangeTestWrapper
 import numpy as np
 import os
 import pypore.eventDatabase as ed

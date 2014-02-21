@@ -6,7 +6,7 @@ Created on Aug 19, 2013
 import unittest
 import os.path
 from pypore import cythonsetup
-from pypore.DataFileOpener import openData, prepareDataFile
+from pypore.dataFileOpener import openData, prepareDataFile
 
 class TestDataFileOpener(unittest.TestCase):
 

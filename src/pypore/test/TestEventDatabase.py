@@ -70,7 +70,7 @@ class TestEventDatabase(unittest.TestCase):
         self.database.appendEvent(1,2,3,4,5,6,7,8, rawData, rawData, rawData)
         
         # clean the database
-        self.database.cleanDatabase()
+        self.database.clean_database()
         
         # check that the database has all the empty table/matrices
         self._testEmptyEventsGroup(self.database.root.events)

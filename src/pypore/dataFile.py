@@ -1,13 +1,14 @@
-'''
+"""
 Created on Jan 28, 2014
 
-@author: will
-'''
+@author: `@parkin1 <https://github.com/parkin1>`_
+"""
 
 import tables as tb
 
+
 class DataFile(tb.file.File):
-    '''
+    """
     PyTables HDF5 database storing raw data.
     Inherits from tables.file.File, so you can interact with this
     just as you would a PyTables File object. However, this contains
@@ -22,13 +23,13 @@ class DataFile(tb.file.File):
     
     Must be instantiated by calling dataFile's
     
-    >>> import pypore.dataFile as df
-    >>> database = df.openFile('test.h5',mode='w')
+    >>> import pypore.dataFile as dF
+    >>> database = dF.openFile('test.h5',mode='w')
     >>> database.close()
     >>> os.remove('test.h5')
-    '''
-    
-    def cleanDatabase(self):
+    """
+
+    def clean_database(self):
         """
         Removes /events and then reinitializes the /events group. Note
         that any references to any table/matrix in this group will
@@ -36,22 +37,22 @@ class DataFile(tb.file.File):
         
         >>> h5 = openFile('test.h5',mode='a')
         >>> table = h5.getEventTable()
-        >>> h5.cleanDatabase() // table is now refers to deleted table
+        >>> h5.clean_database() // table is now refers to deleted table
         >>> table = h5.getEventTable() // table now refers to live table
         """
         # remove the events group
         self.root._f_remove(recursive=True)
-        
+
         self.initializeDatabase()
-        
+
     @classmethod
-    def convertToEventDatabase(cls, tablesObject):
+    def convertToEventDatabase(cls, tables_object):
         """
-        Converts a PyTables object's __class__ field to EventDatabase so
-        you can use the object as an EventDatabase object.
+        Converts a PyTables object's __class__ field to DataFile so
+        you can use the object as an DataFile object.
         """
-        tablesObject.__class__ = DataFile
-        
+        tables_object.__class__ = DataFile
+
     def getDataLength(self):
         """
         Returns the number of rows in the data matrix.
@@ -59,13 +60,13 @@ class DataFile(tb.file.File):
         """
         self.root.data.flush()
         return self.root.data.nrows
-    
+
     def getSampleRate(self):
         """
         Gets the sample rate at root.events.eventTable.attrs.sampleRate
         """
         return self.root.attrs.sampleRate
-    
+
     def initializeDatabase(self, *args, **kargs):
         """
         Initializes the EventDatabase.  Adds a group 'events' with
@@ -75,16 +76,17 @@ class DataFile(tb.file.File):
         Kargs:
             -maxEventLength: Maximum number of datapoints for an event to be added.
         """
-        
+
         filters = tb.Filters(complib='blosc', complevel=4)
         shape = (kargs['nPoints'],)
         a = tb.FloatAtom()
         if not 'data' in self.root:
             self.createCArray(self.root, 'data', a, shape=shape, title='Data', filters=filters)
-            
+
         # set the attributes
         self.root.data.attrs.sampleRate = kargs['sampleRate']
-        
+
+
 def openFile(*args, **kargs):
     """
     Opens an EventDatabase by calling tables.openFile and then

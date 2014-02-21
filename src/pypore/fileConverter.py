@@ -1,70 +1,71 @@
-'''
+"""
 Created on Jan 28, 2014
 
-@author: will
-'''
+@author: parkin1
+"""
 import cythonsetup
-from DataFileOpener import prepareDataFile, getNextBlocks, openData
-import dataFile as df
+from dataFileOpener import prepareDataFile, getNextBlocks, openData
+import dataFile as dF
 import scipy.signal as sig
 
-def convertFile(filename, outputFilename=None):
-    '''
+
+def convert_file(filename, output_filename=None):
+    """
     Convert a file to the pypore .h5 file format. Returns the new file's name.
-    '''
+    """
     f, params = prepareDataFile(filename)
     
-    sampleRate = params['sample_rate']
-    nPoints = params['points_per_channel_total']
+    sample_rate = params['sample_rate']
+    n_points = params['points_per_channel_total']
     
-    if outputFilename is None:
-        outputFilename = filename.split('.')[0] + '.h5'
+    if output_filename is None:
+        output_filename = filename.split('.')[0] + '.h5'
     
-    saveFile = df.openFile(outputFilename, mode='w', sampleRate=sampleRate, nPoints=nPoints)
+    save_file = dF.openFile(output_filename, mode='w', sampleRate=sample_rate, nPoints=n_points)
     
-    blocksToGet = 1
-    data = getNextBlocks(f, params, blocksToGet)[0]
+    blocks_to_get = 1
+    data = getNextBlocks(f, params, blocks_to_get)[0]
     
     n = data.size
     i = 0
     while n > 0:
-        print "n:", n, "i:", i
-        saveFile.root.data[i:n + i] = data[:]
+        save_file.root.data[i:n + i] = data[:]
         i += n
-        data = getNextBlocks(f, params, blocksToGet)[0]
+        data = getNextBlocks(f, params, blocks_to_get)[0]
         n = data.size
         
     f.close()
     
-    saveFile.flush()
-    saveFile.close()
-    return outputFilename
+    save_file.flush()
+    save_file.close()
+    return output_filename
 
-def filterFile(filename, filterFrequency, outputFileName=None):
-    print "opening data"
+
+def filter_file(filename, filter_frequency, output_file_name=None):
+    """
+    Filters the data.
+    """
     specs = openData(filename)
-    print "data open"
-    
+
     data = specs['data'][0]
     
-    sampleRate = specs['sample_rate']
-    nPoints = len(data)
+    sample_rate = specs['sample_rate']
+    n_points = len(data)
     
-    if outputFileName is None:
-        outputFileName = filename.split('.')[0] + '.h5'
+    if output_file_name is None:
+        output_file_name = filename.split('.')[0] + '.h5'
     
-    saveFile = df.openFile(outputFileName, mode='w', sampleRate=sampleRate, nPoints=nPoints)
-    
-    Wn = filterFrequency / (0.5 * sampleRate)  # Wn is a fraction of the Nyquist frequency (half the sampling frequency).
-    
-    print "Wn:", Wn
-    b, a = sig.butter(6, Wn)
-    print "filter set"
-    
-    saveFile.root.data[:] = sig.filtfilt(b, a, data)[:]
-    
-    saveFile.flush()
-    saveFile.close()
-    return outputFileName
+    save_file = dF.openFile(output_file_name, mode='w', sampleRate=sample_rate, nPoints=n_points)
 
-filterFile('../data/spheres_20140114_154938.log', 1e5, 'testFilter.h5')
+    # wn is a fraction of the Nyquist frequency (half the sampling frequency).
+    wn = filter_frequency / (0.5 * sample_rate)
+    
+    b, a = sig.butter(6, wn)
+
+    save_file.root.data[:] = sig.filtfilt(b, a, data)[:]
+    
+    save_file.flush()
+    save_file.close()
+    return output_file_name
+
+filter_file('../data/spheres_20140114_154938.log', 1e5, 'testFilter.h5')

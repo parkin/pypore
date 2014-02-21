@@ -67,16 +67,17 @@
           <div class="body">
             
   <h1>Source code for pypore.dataFile</h1><div class="highlight"><pre>
-<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Created on Jan 28, 2014</span>
 
-<span class="sd">@author: will</span>
-<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">@author: `parkin1 &lt;https://github.com/parkin1/pypore&gt;`_</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">tables</span> <span class="kn">as</span> <span class="nn">tb</span>
 
+
 <div class="viewcode-block" id="DataFile"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.dataFile.DataFile">[docs]</a><span class="k">class</span> <span class="nc">DataFile</span><span class="p">(</span><span class="n">tb</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">File</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    PyTables HDF5 database storing raw data.</span>
 <span class="sd">    Inherits from tables.file.File, so you can interact with this</span>
 <span class="sd">    just as you would a PyTables File object. However, this contains</span>
@@ -95,8 +96,8 @@
 <span class="sd">    &gt;&gt;&gt; database = df.openFile(&#39;test.h5&#39;,mode=&#39;w&#39;)</span>
 <span class="sd">    &gt;&gt;&gt; database.close()</span>
 <span class="sd">    &gt;&gt;&gt; os.remove(&#39;test.h5&#39;)</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    
+<span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="DataFile.cleanDatabase"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.dataFile.DataFile.cleanDatabase">[docs]</a>    <span class="k">def</span> <span class="nf">cleanDatabase</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Removes /events and then reinitializes the /events group. Note</span>
@@ -110,9 +111,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c"># remove the events group</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">_f_remove</span><span class="p">(</span><span class="n">recursive</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">initializeDatabase</span><span class="p">()</span>
-        </div>
+</div>
     <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="DataFile.convertToEventDatabase"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.dataFile.DataFile.convertToEventDatabase">[docs]</a>    <span class="k">def</span> <span class="nf">convertToEventDatabase</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">tablesObject</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -120,7 +121,7 @@
 <span class="sd">        you can use the object as an EventDatabase object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tablesObject</span><span class="o">.</span><span class="n">__class__</span> <span class="o">=</span> <span class="n">DataFile</span>
-        </div>
+</div>
 <div class="viewcode-block" id="DataFile.getDataLength"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.dataFile.DataFile.getDataLength">[docs]</a>    <span class="k">def</span> <span class="nf">getDataLength</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the number of rows in the data matrix.</span>
@@ -128,13 +129,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">nrows</span>
-    </div>
+</div>
 <div class="viewcode-block" id="DataFile.getSampleRate"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.dataFile.DataFile.getSampleRate">[docs]</a>    <span class="k">def</span> <span class="nf">getSampleRate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the sample rate at root.events.eventTable.attrs.sampleRate</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">sampleRate</span>
-    </div>
+</div>
 <div class="viewcode-block" id="DataFile.initializeDatabase"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.dataFile.DataFile.initializeDatabase">[docs]</a>    <span class="k">def</span> <span class="nf">initializeDatabase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initializes the EventDatabase.  Adds a group &#39;events&#39; with</span>
@@ -144,16 +145,17 @@
 <span class="sd">        Kargs:</span>
 <span class="sd">            -maxEventLength: Maximum number of datapoints for an event to be added.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        
+
         <span class="n">filters</span> <span class="o">=</span> <span class="n">tb</span><span class="o">.</span><span class="n">Filters</span><span class="p">(</span><span class="n">complib</span><span class="o">=</span><span class="s">&#39;blosc&#39;</span><span class="p">,</span> <span class="n">complevel</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
         <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="s">&#39;nPoints&#39;</span><span class="p">],)</span>
         <span class="n">a</span> <span class="o">=</span> <span class="n">tb</span><span class="o">.</span><span class="n">FloatAtom</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;data&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">createCArray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="s">&#39;data&#39;</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">&#39;Data&#39;</span><span class="p">,</span> <span class="n">filters</span><span class="o">=</span><span class="n">filters</span><span class="p">)</span>
-            
+
         <span class="c"># set the attributes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">sampleRate</span> <span class="o">=</span> <span class="n">kargs</span><span class="p">[</span><span class="s">&#39;sampleRate&#39;</span><span class="p">]</span>
-        </div></div>
+
+</div></div>
 <div class="viewcode-block" id="openFile"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.dataFile.openFile">[docs]</a><span class="k">def</span> <span class="nf">openFile</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Opens an EventDatabase by calling tables.openFile and then</span>

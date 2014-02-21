@@ -120,7 +120,7 @@ class EventDatabase(tb.file.File):
         
         >>> h5 = openFile('test.h5',mode='a')
         >>> table = h5.getEventTable()
-        >>> h5.cleanDatabase() // table is now refers to deleted table
+        >>> h5.clean_database() // table is now refers to deleted table
         >>> table = h5.getEventTable() // table now refers to live table
         """
         # remove the events group
