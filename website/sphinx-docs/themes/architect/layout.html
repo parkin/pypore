@@ -13,6 +13,19 @@
 <link href="https://fonts.googleapis.com/css?family=Architects+Daughter" rel="stylesheet" type="text/css">
 {% endblock %}
 
+{% block relbar1 %}
+<header>
+    <div class="inner">
+        <h1><a href="http://parkin1.github.io/pypore/">Pypore</a></h1>
+
+        <h2></h2>
+        <a href="https://github.com/parkin1/pypore" class="button">
+            <small>View project on</small>
+            GitHub</a>
+    </div>
+</header>
+{{super() }}{% endblock %}
+
 {# put the sidebar before the body #}
 {% block sidebar1 %}{{ sidebar() }}{% endblock %}
 {% block sidebar2 %}{% endblock %}

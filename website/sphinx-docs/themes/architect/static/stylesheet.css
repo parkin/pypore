@@ -273,14 +273,7 @@ form {
   font-size: 15px;
   font-weight: bold;
   color: #474747;
-}
-
-h4:before {
-  content: "////";
-  color: #9ddcff;
-  padding-right: 0.3em;
-  margin-left: -2.8em;
-}
+} 
 
 #main-content h5 {
   font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif; 
@@ -395,7 +388,6 @@ footer a:hover {
   #main-content h1:before,
   #main-content h2:before,
   #main-content h3:before,
-  #main-content h4:before,
   #main-content h5:before,
   #main-content h6:before {
     content: none;
@@ -463,7 +455,6 @@ footer a:hover {
   #main-content h1:before,
   #main-content h2:before,
   #main-content h3:before,
-  #main-content h4:before,
   #main-content h5:before,
   #main-content h6:before {
     content: none;
