@@ -58,11 +58,11 @@
 <li><a class="reference internal" href="#">pypore package</a><ul>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#pypore-datafileopener-module">pypore.DataFileOpener module</a></li>
-<li><a class="reference internal" href="#pypore-eventfinder-module">pypore.EventFinder module</a></li>
 <li><a class="reference internal" href="#module-pypore.cythonsetup">pypore.cythonsetup module</a></li>
 <li><a class="reference internal" href="#module-pypore.dataFile">pypore.dataFile module</a></li>
+<li><a class="reference internal" href="#module-pypore.dataFileOpener">pypore.dataFileOpener module</a></li>
 <li><a class="reference internal" href="#module-pypore.eventDatabase">pypore.eventDatabase module</a></li>
+<li><a class="reference internal" href="#module-pypore.eventFinder">pypore.eventFinder module</a></li>
 <li><a class="reference internal" href="#pypore-fileconverter-module">pypore.fileConverter module</a></li>
 <li><a class="reference internal" href="#module-pypore">Module contents</a></li>
 </ul>
@@ -121,12 +121,6 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="pypore-datafileopener-module">
-<h2>pypore.DataFileOpener module<a class="headerlink" href="#pypore-datafileopener-module" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="pypore-eventfinder-module">
-<h2>pypore.EventFinder module<a class="headerlink" href="#pypore-eventfinder-module" title="Permalink to this headline">¶</a></h2>
-</div>
 <div class="section" id="module-pypore.cythonsetup">
 <span id="pypore-cythonsetup-module"></span><h2>pypore.cythonsetup module<a class="headerlink" href="#module-pypore.cythonsetup" title="Permalink to this headline">¶</a></h2>
 <p>This module sets up pyximport so that any .pyx file is automatically
@@ -137,7 +131,7 @@ compiled on import.</p>
 <div class="section" id="module-pypore.dataFile">
 <span id="pypore-datafile-module"></span><h2>pypore.dataFile module<a class="headerlink" href="#module-pypore.dataFile" title="Permalink to this headline">¶</a></h2>
 <p>Created on Jan 28, 2014</p>
-<p>&#64;author: will</p>
+<p>&#64;author: <a class="reference external" href="https://github.com/parkin1">&#64;parkin1</a></p>
 <dl class="class">
 <dt id="pypore.dataFile.DataFile">
 <em class="property">class </em><tt class="descclassname">pypore.dataFile.</tt><tt class="descname">DataFile</tt><big>(</big><em>filename</em>, <em>mode='r'</em>, <em>title=''</em>, <em>rootUEP='/'</em>, <em>filters=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/pypore/dataFile.html#DataFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.dataFile.DataFile" title="Permalink to this definition">¶</a></dt>
@@ -153,44 +147,37 @@ format.</p>
 <p>Automatically adds matrix
 /data</p>
 <p>Must be instantiated by calling dataFile&#8217;s</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pypore.dataFile</span> <span class="kn">as</span> <span class="nn">df</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">database</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">openFile</span><span class="p">(</span><span class="s">&#39;test.h5&#39;</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&#39;w&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pypore.dataFile</span> <span class="kn">as</span> <span class="nn">dF</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">database</span> <span class="o">=</span> <span class="n">dF</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s">&#39;test.h5&#39;</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&#39;w&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">database</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s">&#39;test.h5&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="method">
-<dt id="pypore.dataFile.DataFile.cleanDatabase">
-<tt class="descname">cleanDatabase</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/dataFile.html#DataFile.cleanDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.dataFile.DataFile.cleanDatabase" title="Permalink to this definition">¶</a></dt>
+<dt id="pypore.dataFile.DataFile.clean_database">
+<tt class="descname">clean_database</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/dataFile.html#DataFile.clean_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.dataFile.DataFile.clean_database" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes /events and then reinitializes the /events group. Note
 that any references to any table/matrix in this group will
 be broken and need to be refreshed.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">h5</span> <span class="o">=</span> <span class="n">openFile</span><span class="p">(</span><span class="s">&#39;test.h5&#39;</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&#39;a&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">h5</span> <span class="o">=</span> <span class="n">open_file</span><span class="p">(</span><span class="s">&#39;test.h5&#39;</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&#39;a&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">h5</span><span class="o">.</span><span class="n">getEventTable</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">h5</span><span class="o">.</span><span class="n">cleanDatabase</span><span class="p">()</span> <span class="o">//</span> <span class="n">table</span> <span class="ow">is</span> <span class="n">now</span> <span class="n">refers</span> <span class="n">to</span> <span class="n">deleted</span> <span class="n">table</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h5</span><span class="o">.</span><span class="n">clean_database</span><span class="p">()</span> <span class="o">//</span> <span class="n">table</span> <span class="ow">is</span> <span class="n">now</span> <span class="n">refers</span> <span class="n">to</span> <span class="n">deleted</span> <span class="n">table</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">h5</span><span class="o">.</span><span class="n">getEventTable</span><span class="p">()</span> <span class="o">//</span> <span class="n">table</span> <span class="n">now</span> <span class="n">refers</span> <span class="n">to</span> <span class="n">live</span> <span class="n">table</span>
 </pre></div>
 </div>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="pypore.dataFile.DataFile.convertToEventDatabase">
-<em class="property">classmethod </em><tt class="descname">convertToEventDatabase</tt><big>(</big><em>tablesObject</em><big>)</big><a class="reference internal" href="../_modules/pypore/dataFile.html#DataFile.convertToEventDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.dataFile.DataFile.convertToEventDatabase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts a PyTables object&#8217;s __class__ field to EventDatabase so
-you can use the object as an EventDatabase object.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pypore.dataFile.DataFile.getDataLength">
-<tt class="descname">getDataLength</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/dataFile.html#DataFile.getDataLength"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.dataFile.DataFile.getDataLength" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the number of rows in the data matrix.
-Note this will flush the table so the data is correct.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="pypore.dataFile.DataFile.getSampleRate">
 <tt class="descname">getSampleRate</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/dataFile.html#DataFile.getSampleRate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.dataFile.DataFile.getSampleRate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the sample rate at root.events.eventTable.attrs.sampleRate</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypore.dataFile.DataFile.get_data_length">
+<tt class="descname">get_data_length</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/dataFile.html#DataFile.get_data_length"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.dataFile.DataFile.get_data_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of rows in the data matrix.
+Note this will flush the table so the data is correct.</p>
 </dd></dl>
 
 <dl class="method">
@@ -207,8 +194,8 @@ Kargs:</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="pypore.dataFile.openFile">
-<tt class="descclassname">pypore.dataFile.</tt><tt class="descname">openFile</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/pypore/dataFile.html#openFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.dataFile.openFile" title="Permalink to this definition">¶</a></dt>
+<dt id="pypore.dataFile.open_file">
+<tt class="descclassname">pypore.dataFile.</tt><tt class="descname">open_file</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/pypore/dataFile.html#open_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.dataFile.open_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Opens an EventDatabase by calling tables.openFile and then
 copying the __dict__ to a new EventDatabase instance.</p>
 <dl class="docutils">
@@ -219,10 +206,59 @@ sampleRate: sample rate of the data.</dd>
 </dd></dl>
 
 </div>
+<div class="section" id="module-pypore.dataFileOpener">
+<span id="pypore-datafileopener-module"></span><h2>pypore.dataFileOpener module<a class="headerlink" href="#module-pypore.dataFileOpener" title="Permalink to this headline">¶</a></h2>
+<p>Created on May 23, 2013</p>
+<p>&#64;author: parkin1</p>
+<dl class="function">
+<dt id="pypore.dataFileOpener.getNextBlocks">
+<tt class="descclassname">pypore.dataFileOpener.</tt><tt class="descname">getNextBlocks</tt><big>(</big><big>)</big><a class="headerlink" href="#pypore.dataFileOpener.getNextBlocks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the next n blocks (~5000 datapoints) of data from filename</p>
+<p>Pass in an open datafile,
+params - 
+n - number of blocks to read and return.</p>
+<dl class="docutils">
+<dt>Assumes &#8216;.log&#8217; extension is Chimera data.  Chimera data requires a &#8216;.mat&#8217;</dt>
+<dd>file with the same name to be in the same folder. - not yet implemented</dd>
+</dl>
+<p>Assumes &#8216;.hkd&#8217; extension is Heka data.</p>
+<p>Assumes &#8216;.mat&#8217; extension is Gaby&#8217;s format.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pypore.dataFileOpener.openData">
+<tt class="descclassname">pypore.dataFileOpener.</tt><tt class="descname">openData</tt><big>(</big><big>)</big><a class="headerlink" href="#pypore.dataFileOpener.openData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens a datafile and returns a dictionary with the data in &#8216;data&#8217;.
+If unable to return, will return an error message.</p>
+<dl class="docutils">
+<dt>Assumes &#8216;.log&#8217; extension is Chimera data.  Chimera data requires a &#8216;.mat&#8217;</dt>
+<dd>file with the same name to be in the same folder.</dd>
+</dl>
+<p>Assumes &#8216;.hkd&#8217; extension is Heka data.</p>
+<p>Assumes &#8216;.mat&#8217; extension is Gaby&#8217;s format.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pypore.dataFileOpener.prepareDataFile">
+<tt class="descclassname">pypore.dataFileOpener.</tt><tt class="descname">prepareDataFile</tt><big>(</big><big>)</big><a class="headerlink" href="#pypore.dataFileOpener.prepareDataFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens a data file, reads relevant parameters, and</p>
+<dl class="docutils">
+<dt>Assumes &#8216;.log&#8217; extension is Chimera data.  Chimera data requires a &#8216;.mat&#8217;</dt>
+<dd>file with the same name to be in the same folder. - not yet implemented</dd>
+</dl>
+<p>Assumes &#8216;.hkd&#8217; extension is Heka data.</p>
+<p>Assumes &#8216;.mat&#8217; extension is Gaby&#8217;s format.</p>
+<p>Returns
+datafile, params</p>
+<p>If there was an error opening the files, params will have &#8216;error&#8217; key
+with string description</p>
+</dd></dl>
+
+</div>
 <div class="section" id="module-pypore.eventDatabase">
 <span id="pypore-eventdatabase-module"></span><h2>pypore.eventDatabase module<a class="headerlink" href="#module-pypore.eventDatabase" title="Permalink to this headline">¶</a></h2>
 <p>Created on Sep 13, 2013</p>
-<p>&#64;author: parkin</p>
+<p>&#64;author: <a class="reference external" href="https://github.com/parkin1">&#64;parkin1</a></p>
 <dl class="class">
 <dt id="pypore.eventDatabase.EventDatabase">
 <em class="property">class </em><tt class="descclassname">pypore.eventDatabase.</tt><tt class="descname">EventDatabase</tt><big>(</big><em>filename</em>, <em>mode='r'</em>, <em>title=''</em>, <em>rootUEP='/'</em>, <em>filters=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/pypore/eventDatabase.html#EventDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.eventDatabase.EventDatabase" title="Permalink to this definition">¶</a></dt>
@@ -304,7 +340,7 @@ that any references to any table/matrix in this group will
 be broken and need to be refreshed.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">h5</span> <span class="o">=</span> <span class="n">openFile</span><span class="p">(</span><span class="s">&#39;test.h5&#39;</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&#39;a&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">h5</span><span class="o">.</span><span class="n">getEventTable</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">h5</span><span class="o">.</span><span class="n">cleanDatabase</span><span class="p">()</span> <span class="o">//</span> <span class="n">table</span> <span class="ow">is</span> <span class="n">now</span> <span class="n">refers</span> <span class="n">to</span> <span class="n">deleted</span> <span class="n">table</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h5</span><span class="o">.</span><span class="n">clean_database</span><span class="p">()</span> <span class="o">//</span> <span class="n">table</span> <span class="ow">is</span> <span class="n">now</span> <span class="n">refers</span> <span class="n">to</span> <span class="n">deleted</span> <span class="n">table</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">h5</span><span class="o">.</span><span class="n">getEventTable</span><span class="p">()</span> <span class="o">//</span> <span class="n">table</span> <span class="n">now</span> <span class="n">refers</span> <span class="n">to</span> <span class="n">live</span> <span class="n">table</span>
 </pre></div>
 </div>
@@ -447,6 +483,16 @@ copying the __dict__ to a new EventDatabase instance.</p>
 <dd>maxEventLength: Maximum length of an event for the table. Default is 100.</dd>
 </dl>
 </dd></dl>
+
+</div>
+<div class="section" id="module-pypore.eventFinder">
+<span id="pypore-eventfinder-module"></span><h2>pypore.eventFinder module<a class="headerlink" href="#module-pypore.eventFinder" title="Permalink to this headline">¶</a></h2>
+<p>Created on Aug 19, 2013</p>
+<p>&#64;author: parkin1</p>
+<dl class="function">
+<dt id="pypore.eventFinder.findEvents">
+<tt class="descclassname">pypore.eventFinder.</tt><tt class="descname">findEvents</tt><big>(</big><big>)</big><a class="headerlink" href="#pypore.eventFinder.findEvents" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </div>
 <div class="section" id="pypore-fileconverter-module">

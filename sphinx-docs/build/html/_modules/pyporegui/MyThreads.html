@@ -78,8 +78,9 @@
 <span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtCore</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span><span class="p">,</span> <span class="n">Pipe</span>
-<span class="kn">from</span> <span class="nn">pypore.DataFileOpener</span> <span class="kn">import</span> <span class="n">openData</span><span class="p">,</span> <span class="n">prepareDataFile</span><span class="p">,</span> <span class="n">getNextBlocks</span>
-<span class="kn">from</span> <span class="nn">pypore.EventFinder</span> <span class="kn">import</span> <span class="n">findEvents</span>
+<span class="kn">from</span> <span class="nn">pypore.dataFileOpener</span> <span class="kn">import</span> <span class="n">openData</span><span class="p">,</span> <span class="n">prepareDataFile</span><span class="p">,</span> <span class="n">getNextBlocks</span>
+<span class="kn">from</span> <span class="nn">pypore.eventFinder</span> <span class="kn">import</span> <span class="n">findEvents</span>
+
 
 <div class="viewcode-block" id="PlotThread"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.MyThreads.PlotThread">[docs]</a><span class="k">class</span> <span class="nc">PlotThread</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QThread</span><span class="p">):</span>
     <span class="n">dataReady</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>

@@ -4,22 +4,23 @@ Installation
 
 
 Basic Installation Steps
-------------------
+--------------------------
 
-The main steps to get all of the dependencies are:
+The dependencies of the project are:
 
-#. Install Python v2.7
-#. Install NumPy
-#. Install SciPy
-#. Install PySide
-#. Install PyQtGraph
+#. Python v2.7.+
+#. NumPy
+#. SciPy
+#. PySide
+#. PyQtGraph
+#. PyTables
 
 
 Windows Installation
------------------
+----------------------
 
 Install Python v2.7
-++++++++++++++++++
++++++++++++++++++++++++
 
 The Python v2.7.5 Windows installer can be found `here <http://www.python.org/download/releases/2.7.5/>`_.
 
@@ -47,7 +48,7 @@ Install SciPy
 Download and execute the latest SciPy installer from `here <http://sourceforge.net/projects/scipy/>`_.
 
 Install PySide
-++++++++++++++
+++++++++++++++++
 
 Next, use easy_install to install PySide.  Open the command prompt (Start->Run->type 'cmd' hit Enter) and type:
 
@@ -56,7 +57,7 @@ Next, use easy_install to install PySide.  Open the command prompt (Start->Run->
 You've just installed PySide!
 
 Install PyQtGraph
-+++++++++++++++
+++++++++++++++++++++
 Use easy_install as before, in a command prompt type:
 
 ``c:\Python27\Scripts\easy_install pyqtgraph``
@@ -65,6 +66,7 @@ You now have all of the dependencies and are ready to `Get the Code`_.
 
 Get the Code
 -----------------
+`Fork me on GitHub! <https://github.com/parkin1/pypore>`_.
 
 Install Git, see above for instructions.  Sign up for a BitBucket account, see above.  Before cloning the repository, you will need to be added by **wmparkin** with at least read access.
 
