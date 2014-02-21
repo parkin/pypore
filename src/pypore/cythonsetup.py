@@ -9,7 +9,7 @@ This file should be imported before importing any cython modules.
 This automatically chooses the correct C compiler based on the operating
 system, ie MinGW for Windows, gcc for Unix.
 
-To import a Cython module, for example `eventFinder`, simply do:
+To import a Cython module, for example :py:mod:`pypore.eventFinder`, simply do:
 
 >>> import pypore.cythonsetup
 >>> import pypore.eventFinder
