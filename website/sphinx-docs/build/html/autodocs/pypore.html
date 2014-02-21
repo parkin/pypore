@@ -32,6 +32,17 @@
 
   </head>
   <body>
+<header>
+    <div class="inner">
+        <h1><a href="http://parkin1.github.io/pypore/">Pypore</a></h1>
+
+        <h2></h2>
+        <a href="https://github.com/parkin1/pypore" class="button">
+            <small>View project on</small>
+            GitHub</a>
+    </div>
+</header>
+
     <div class="related">
       <h3>Navigation</h3>
       <ul>
@@ -123,10 +134,18 @@
 </div>
 <div class="section" id="module-pypore.cythonsetup">
 <span id="pypore-cythonsetup-module"></span><h2>pypore.cythonsetup module<a class="headerlink" href="#module-pypore.cythonsetup" title="Permalink to this headline">¶</a></h2>
-<p>This module sets up pyximport so that any .pyx file is automatically
+<p>&#64;author: <a class="reference external" href="https://github.com/parkin1">&#64;parkin1</a>
+This module sets up pyximport so that any .pyx file is automatically
 compiled on import.</p>
 <p>This file should be imported before importing any cython modules.
-(Unless building cython modules yourself)</p>
+(Unless building cython modules yourself).</p>
+<p>This automatically chooses the correct C compiler based on the operating
+system, ie MinGW for Windows, gcc for Unix.</p>
+<p>To import a Cython module, for example <a class="reference internal" href="#module-pypore.eventFinder" title="pypore.eventFinder"><tt class="xref py py-mod docutils literal"><span class="pre">pypore.eventFinder</span></tt></a>, simply do:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pypore.cythonsetup</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pypore.eventFinder</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="module-pypore.dataFile">
 <span id="pypore-datafile-module"></span><h2>pypore.dataFile module<a class="headerlink" href="#module-pypore.dataFile" title="Permalink to this headline">¶</a></h2>
@@ -500,7 +519,7 @@ copying the __dict__ to a new EventDatabase instance.</p>
 </div>
 <div class="section" id="module-pypore">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pypore" title="Permalink to this headline">¶</a></h2>
-<p>Created by Will 8/6/13</p>
+<p>Created by <a class="reference external" href="https://github.com/parkin1">&#64;parkin1</a> 8/6/13</p>
 <p>pypore is a nanopore translocation analysis package.</p>
 </div>
 </div>
