@@ -11,22 +11,6 @@ Subpackages
 Submodules
 ----------
 
-pypore.DataFileOpener module
-----------------------------
-
-.. automodule:: pypore.DataFileOpener
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pypore.EventFinder module
--------------------------
-
-.. automodule:: pypore.EventFinder
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 pypore.cythonsetup module
 -------------------------
 
@@ -43,10 +27,26 @@ pypore.dataFile module
     :undoc-members:
     :show-inheritance:
 
+pypore.dataFileOpener module
+----------------------------
+
+.. automodule:: pypore.dataFileOpener
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 pypore.eventDatabase module
 ---------------------------
 
 .. automodule:: pypore.eventDatabase
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pypore.eventFinder module
+-------------------------
+
+.. automodule:: pypore.eventFinder
     :members:
     :undoc-members:
     :show-inheritance:

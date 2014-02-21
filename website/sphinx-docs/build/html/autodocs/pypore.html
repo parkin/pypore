@@ -58,11 +58,11 @@
 <li><a class="reference internal" href="#">pypore package</a><ul>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#pypore-datafileopener-module">pypore.DataFileOpener module</a></li>
-<li><a class="reference internal" href="#pypore-eventfinder-module">pypore.EventFinder module</a></li>
 <li><a class="reference internal" href="#module-pypore.cythonsetup">pypore.cythonsetup module</a></li>
 <li><a class="reference internal" href="#module-pypore.dataFile">pypore.dataFile module</a></li>
+<li><a class="reference internal" href="#module-pypore.dataFileOpener">pypore.dataFileOpener module</a></li>
 <li><a class="reference internal" href="#module-pypore.eventDatabase">pypore.eventDatabase module</a></li>
+<li><a class="reference internal" href="#module-pypore.eventFinder">pypore.eventFinder module</a></li>
 <li><a class="reference internal" href="#pypore-fileconverter-module">pypore.fileConverter module</a></li>
 <li><a class="reference internal" href="#module-pypore">Module contents</a></li>
 </ul>
@@ -109,9 +109,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="pypore.test.html">pypore.test package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="pypore.test.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pypore.test.html#module-pypore.test.TestDataFileOpener">pypore.test.TestDataFileOpener module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pypore.test.html#pypore-test-testdatafileopener-module">pypore.test.TestDataFileOpener module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pypore.test.html#module-pypore.test.TestEventDatabase">pypore.test.TestEventDatabase module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pypore.test.html#module-pypore.test.TestEventFinder">pypore.test.TestEventFinder module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pypore.test.html#pypore-test-testeventfinder-module">pypore.test.TestEventFinder module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pypore.test.html#module-pypore.test">Module contents</a></li>
 </ul>
 </li>
@@ -120,12 +120,6 @@
 </div>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="pypore-datafileopener-module">
-<h2>pypore.DataFileOpener module<a class="headerlink" href="#pypore-datafileopener-module" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="pypore-eventfinder-module">
-<h2>pypore.EventFinder module<a class="headerlink" href="#pypore-eventfinder-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-pypore.cythonsetup">
 <span id="pypore-cythonsetup-module"></span><h2>pypore.cythonsetup module<a class="headerlink" href="#module-pypore.cythonsetup" title="Permalink to this headline">¶</a></h2>
@@ -216,6 +210,55 @@ copying the __dict__ to a new EventDatabase instance.</p>
 <dd>nPoints: Number of points that should be in the array.
 sampleRate: sample rate of the data.</dd>
 </dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pypore.dataFileOpener">
+<span id="pypore-datafileopener-module"></span><h2>pypore.dataFileOpener module<a class="headerlink" href="#module-pypore.dataFileOpener" title="Permalink to this headline">¶</a></h2>
+<p>Created on May 23, 2013</p>
+<p>&#64;author: parkin1</p>
+<dl class="function">
+<dt id="pypore.dataFileOpener.getNextBlocks">
+<tt class="descclassname">pypore.dataFileOpener.</tt><tt class="descname">getNextBlocks</tt><big>(</big><big>)</big><a class="headerlink" href="#pypore.dataFileOpener.getNextBlocks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the next n blocks (~5000 datapoints) of data from filename</p>
+<p>Pass in an open datafile,
+params - 
+n - number of blocks to read and return.</p>
+<dl class="docutils">
+<dt>Assumes &#8216;.log&#8217; extension is Chimera data.  Chimera data requires a &#8216;.mat&#8217;</dt>
+<dd>file with the same name to be in the same folder. - not yet implemented</dd>
+</dl>
+<p>Assumes &#8216;.hkd&#8217; extension is Heka data.</p>
+<p>Assumes &#8216;.mat&#8217; extension is Gaby&#8217;s format.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pypore.dataFileOpener.openData">
+<tt class="descclassname">pypore.dataFileOpener.</tt><tt class="descname">openData</tt><big>(</big><big>)</big><a class="headerlink" href="#pypore.dataFileOpener.openData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens a datafile and returns a dictionary with the data in &#8216;data&#8217;.
+If unable to return, will return an error message.</p>
+<dl class="docutils">
+<dt>Assumes &#8216;.log&#8217; extension is Chimera data.  Chimera data requires a &#8216;.mat&#8217;</dt>
+<dd>file with the same name to be in the same folder.</dd>
+</dl>
+<p>Assumes &#8216;.hkd&#8217; extension is Heka data.</p>
+<p>Assumes &#8216;.mat&#8217; extension is Gaby&#8217;s format.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pypore.dataFileOpener.prepareDataFile">
+<tt class="descclassname">pypore.dataFileOpener.</tt><tt class="descname">prepareDataFile</tt><big>(</big><big>)</big><a class="headerlink" href="#pypore.dataFileOpener.prepareDataFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens a data file, reads relevant parameters, and</p>
+<dl class="docutils">
+<dt>Assumes &#8216;.log&#8217; extension is Chimera data.  Chimera data requires a &#8216;.mat&#8217;</dt>
+<dd>file with the same name to be in the same folder. - not yet implemented</dd>
+</dl>
+<p>Assumes &#8216;.hkd&#8217; extension is Heka data.</p>
+<p>Assumes &#8216;.mat&#8217; extension is Gaby&#8217;s format.</p>
+<p>Returns
+datafile, params</p>
+<p>If there was an error opening the files, params will have &#8216;error&#8217; key
+with string description</p>
 </dd></dl>
 
 </div>
@@ -447,6 +490,16 @@ copying the __dict__ to a new EventDatabase instance.</p>
 <dd>maxEventLength: Maximum length of an event for the table. Default is 100.</dd>
 </dl>
 </dd></dl>
+
+</div>
+<div class="section" id="module-pypore.eventFinder">
+<span id="pypore-eventfinder-module"></span><h2>pypore.eventFinder module<a class="headerlink" href="#module-pypore.eventFinder" title="Permalink to this headline">¶</a></h2>
+<p>Created on Aug 19, 2013</p>
+<p>&#64;author: parkin1</p>
+<dl class="function">
+<dt id="pypore.eventFinder.findEvents">
+<tt class="descclassname">pypore.eventFinder.</tt><tt class="descname">findEvents</tt><big>(</big><big>)</big><a class="headerlink" href="#pypore.eventFinder.findEvents" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </div>
 <div class="section" id="pypore-fileconverter-module">

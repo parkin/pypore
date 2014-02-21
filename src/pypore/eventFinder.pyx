@@ -1,15 +1,16 @@
-'''
+"""
 Created on Aug 19, 2013
 
-@author: parkin
-'''
+@author: parkin1
+"""
+#cython: embedsignature=True
 
 import os
 import time, datetime
 import numpy as np
 cimport numpy as np
 import pypore.eventDatabase as ed
-from pypore.DataFileOpener import prepareDataFile, getNextBlocks
+from pypore.dataFileOpener import prepareDataFile, getNextBlocks
 from itertools import chain
 import sys
 from libc.math cimport sqrt, pow, fmax, fmin, abs
@@ -29,7 +30,7 @@ ctypedef np.float_t DTYPE_t
 DTYPE_UINT32 = np.uint32
 ctypedef np.uint32_t DTYPE_UINT32_t
 
-cdef np.ndarray[DTYPE_t] _getDataRange(dataCache, long i, long n):
+cpdef np.ndarray[DTYPE_t] _getDataRange(dataCache, long i, long n):
     '''
     returns [i,n)
     '''
@@ -73,7 +74,7 @@ cpdef np.ndarray[DTYPE_t] _getDataRangeTestWrapper(dataCache, long i, long n):
     '''
     return _getDataRange(dataCache, i, n)
         
-cdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None, save_file_name=None):
+cpdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None, save_file_name=None):
     cdef unsigned int event_count = 0
     
     cdef unsigned int get_blocks = 1

@@ -9,8 +9,9 @@ Created on Jul 23, 2013
 from PySide import QtCore
 import time
 from multiprocessing import Process, Pipe
-from pypore.DataFileOpener import openData, prepareDataFile, getNextBlocks
-from pypore.EventFinder import findEvents
+from pypore.dataFileOpener import openData, prepareDataFile, getNextBlocks
+from pypore.eventFinder import findEvents
+
 
 class PlotThread(QtCore.QThread):
     dataReady = QtCore.Signal(object)

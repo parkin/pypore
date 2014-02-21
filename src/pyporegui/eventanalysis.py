@@ -60,8 +60,8 @@ def _long_imports(**kwargs):
     if update_splash:
         splash.showMessage("Compiling Cython imports... DataFileOpener", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
-    from pypore.DataFileOpener import prepareDataFile
-    
+    from pypore.dataFileOpener import prepareDataFile
+
     if update_splash:
         splash.showMessage("Compiling Cython imports... EventFinder", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
