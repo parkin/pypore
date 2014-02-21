@@ -2,11 +2,13 @@
 
 set -ex
 
-REPO="git@github.com:square/retrofit.git"
-GROUP_ID="com.squareup.retrofit"
-ARTIFACT_ID="retrofit"
+REPO="https://github.com/parkin1/pypore.git"
 
-DIR=temp-clone
+DIR=temp-pages-clone
+WEBSITE_DIR=website
+
+# update the sphinx documentation
+./autogen_sphinx_apidoc.sh
 
 # Delete any existing temporary website clone
 rm -rf $DIR
@@ -24,9 +26,7 @@ git checkout -t origin/gh-pages
 rm -rf *
 
 # Copy website files from real repo
-cp -R ../website/* .
-
-# Download the latest javadoc
+cp -R ../$WEBSITE_DIR/* .
 
 # Stage all files in git and create a commit
 git add .
