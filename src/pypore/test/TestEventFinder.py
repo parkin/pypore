@@ -9,12 +9,13 @@ from pypore.eventFinder import findEvents
 from pypore.eventFinder import _getDataRangeTestWrapper
 import numpy as np
 import os
-import pypore.eventDatabase as ed
+import pypore.eventDatabase as eD
+
 
 class TestEventFinder(unittest.TestCase):
     
     def setUp(self):
-        self.defaultParams = { 'min_event_length': 10.,
+        self.default_params = {'min_event_length': 10.,
                                    'max_event_length': 10000.,
                                    'threshold_direction': 'Negative',
                                    'filter_parameter': 0.93,
@@ -25,55 +26,55 @@ class TestEventFinder(unittest.TestCase):
     def tearDown(self):
         pass
     
-    def test_getDataRangeTestWrapperAtNew(self):
+    def test_get_data_range_test_wrapper_at_new(self):
         n = 100
         first = np.zeros(n)
         first[n - 1] += 1.
         first[0] += 1.
-        dataCache = [first, np.zeros(n) + 100., np.zeros(n) + 100. + 60., np.zeros(n) + 200.]
+        data_cache = [first, np.zeros(n) + 100., np.zeros(n) + 100. + 60., np.zeros(n) + 200.]
         
-        res = _getDataRangeTestWrapper(dataCache, 0, n)
+        res = _getDataRangeTestWrapper(data_cache, 0, n)
         self.assertEqual(res.size, n)
         np.testing.assert_array_equal(res, np.zeros(n) + 100.)
          
         # Test negative i to 0
         x = np.zeros(10)
         x[9] += 1.
-        res = _getDataRangeTestWrapper(dataCache, -10, 0)
+        res = _getDataRangeTestWrapper(data_cache, -10, 0)
         np.testing.assert_array_equal(res, x)
          
         # Test negative i,n
         x = np.zeros(10)
         x[0] += 1.
-        res = _getDataRangeTestWrapper(dataCache, -100, -90)
+        res = _getDataRangeTestWrapper(data_cache, -100, -90)
         np.testing.assert_array_equal(res, x)
          
         # Test negative i, pos n in first spot
         x = np.zeros(10)
         x[4] += 1.
         x[5:10] += 100.
-        res = _getDataRangeTestWrapper(dataCache, -5, 5)
+        res = _getDataRangeTestWrapper(data_cache, -5, 5)
         np.testing.assert_array_equal(res, x)
          
         # Test pos i,n both in first spot
         x = np.zeros(10) + 100.
-        res = _getDataRangeTestWrapper(dataCache, 60, 70)
+        res = _getDataRangeTestWrapper(data_cache, 60, 70)
         np.testing.assert_array_equal(res, x)
          
         # Test first and second cache overlap
         x = np.zeros(10) + 100.
         x[5:] += 60.
-        res = _getDataRangeTestWrapper(dataCache, 95, 105)
+        res = _getDataRangeTestWrapper(data_cache, 95, 105)
         np.testing.assert_array_equal(res, x)
          
         # Test fist cache bumping up on second
         x = np.zeros(10) + 100.
-        res = _getDataRangeTestWrapper(dataCache, 90, 100)
+        res = _getDataRangeTestWrapper(data_cache, 90, 100)
         np.testing.assert_array_equal(res, x)
          
         # Test second cache
         x = np.zeros(10) + 160.
-        res = _getDataRangeTestWrapper(dataCache, 155, 165)
+        res = _getDataRangeTestWrapper(data_cache, 155, 165)
         np.testing.assert_array_equal(res, x)
         
         # Test neg overlap with 2 pos caches
@@ -81,7 +82,7 @@ class TestEventFinder(unittest.TestCase):
         x[9] += 1.
         x[10:] += 100.
         x[110:] += 60. 
-        res = _getDataRangeTestWrapper(dataCache, -10, 110)
+        res = _getDataRangeTestWrapper(data_cache, -10, 110)
         
         # Test neg overlap with 3 pos caches
         x = np.zeros(220)
@@ -89,32 +90,32 @@ class TestEventFinder(unittest.TestCase):
         x[10:] += 100.
         x[110:] += 60.
         x[210:] += 40.
-        res = _getDataRangeTestWrapper(dataCache, -10, 210)
+        res = _getDataRangeTestWrapper(data_cache, -10, 210)
         
-    def testSavingFiles(self):
+    def test_saving_files(self):
         filename = os.path.dirname(os.path.realpath(__file__))
         filename = os.path.join(filename, 'testDataFiles', 'chimera_1event.log')
         
-        eventDatabase = findEvents([filename], save_file_name = ['_testSavingFiles_9238.h5'])[0]
+        event_database = findEvents([filename], save_file_name = ['_testSavingFiles_9238.h5'])[0]
         
-        self.assertTrue(os.path.isfile(eventDatabase))
+        self.assertTrue(os.path.isfile(event_database))
         
-        h5file = ed.openFile(eventDatabase, mode='r')
+        h5file = eD.openFile(event_database, mode='r')
         
         self.assertTrue(h5file.isopen)
         
         h5file.close()
         
         # delete the newly created event file
-        os.remove(eventDatabase)
+        os.remove(event_database)
 
-    def testChimera_nonoise_1Event(self):
+    def test_chimera_no_noise_1event(self):
         filename = os.path.dirname(os.path.realpath(__file__))
         filename = os.path.join(filename, 'testDataFiles', 'chimera_nonoise_1event.log')
-        eventDatabase = findEvents([filename], save_file_name = ['_testChimera_nonoise_1Event_9238.h5'], 
-                                   **self.defaultParams)[0]
+        event_database = findEvents([filename], save_file_name = ['_testChimera_nonoise_1Event_9238.h5'],
+                                   **self.default_params)[0]
         
-        h5file = ed.openFile(eventDatabase, mode='r')
+        h5file = eD.openFile(event_database, mode='r')
         
         events = h5file.root.events
 
@@ -145,7 +146,7 @@ class TestEventFinder(unittest.TestCase):
         h5file.close()
         
         # delete the newly created event file
-        os.remove(eventDatabase)
+        os.remove(event_database)
         
     def _testChimera_nonoise_1Event_2Levels_helper(self, h5file):
         events = h5file.root.events
@@ -178,9 +179,9 @@ class TestEventFinder(unittest.TestCase):
         filename = os.path.dirname(os.path.realpath(__file__))
         filename = os.path.join(filename, 'testDataFiles', 'chimera_nonoise_1event_2levels.log')
         eventDatabase = findEvents([filename], save_file_name = ['_testChimera_nonoise_1Event_2Levels_9238.h5'],
-                                   **self.defaultParams)[0]
+                                   **self.default_params)[0]
         
-        h5file = ed.openFile(eventDatabase, mode='r')
+        h5file = eD.openFile(eventDatabase, mode='r')
         self._testChimera_nonoise_1Event_2Levels_helper(h5file)
         h5file.close()
         
@@ -231,9 +232,9 @@ class TestEventFinder(unittest.TestCase):
         filename = os.path.dirname(os.path.realpath(__file__))
         filename = os.path.join(filename, 'testDataFiles', 'chimera_nonoise_2events_1levels.log')
         eventDatabase = findEvents([filename], save_file_name = ['_testChimera_nonoise_2events_1levels_9238.h5'], 
-                                   **self.defaultParams)[0]
+                                   **self.default_params)[0]
         
-        h5file = ed.openFile(eventDatabase, mode='r')
+        h5file = eD.openFile(eventDatabase, mode='r')
         self._testChimera_nonoise_2events_1levels_wrapper(h5file)
         h5file.close()
         
@@ -248,16 +249,16 @@ class TestEventFinder(unittest.TestCase):
         filenames = [filename1, filename2]
         eventDatabases = findEvents(filenames,
                                     save_file_names = ['_testMultipleFiles_1_9238.h5', '_testMultipleFiles_2_9238.h5'],
-                                    **self.defaultParams)
+                                    **self.default_params)
         
         self.assertEqual(len(eventDatabases), 2)
         
-        h5file = ed.openFile(eventDatabases[0], mode='r')
+        h5file = eD.openFile(eventDatabases[0], mode='r')
         self._testChimera_nonoise_2events_1levels_wrapper(h5file)
         h5file.close()
         os.remove(eventDatabases[0])
         
-        h5file = ed.openFile(eventDatabases[1], mode='r')
+        h5file = eD.openFile(eventDatabases[1], mode='r')
         self._testChimera_nonoise_1Event_2Levels_helper(h5file)
         h5file.close()
         os.remove(eventDatabases[1])
