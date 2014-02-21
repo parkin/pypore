@@ -1,10 +1,19 @@
-'''
+"""
+@author: `@parkin1`_
 This module sets up pyximport so that any .pyx file is automatically
 compiled on import.
 
 This file should be imported before importing any cython modules.
-(Unless building cython modules yourself)
-'''
+(Unless building cython modules yourself).
+
+This automatically chooses the correct C compiler based on the operating
+system, ie MinGW for Windows, gcc for Unix.
+
+To import a Cython module, for example `eventFinder`, simply do:
+
+>>> import pypore.cythonsetup
+>>> import pypore.eventFinder
+"""
 
 import os
 import sys
