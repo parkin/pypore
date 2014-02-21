@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyporegui.test.TestEventanalysis &mdash; translocationcode-python 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="translocationcode-python 0.0.1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">translocationcode-python 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyporegui.test.TestEventanalysis</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on Aug 27, 2013</span>
+
+<span class="sd">@author: parkin</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">from</span> <span class="nn">helper</span> <span class="kn">import</span> <span class="n">UsesQApplication</span>
+<span class="kn">from</span> <span class="nn">pyporegui.eventanalysis</span> <span class="kn">import</span> <span class="n">PathItem</span><span class="p">,</span> <span class="n">MyMainWindow</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<div class="viewcode-block" id="TestPathItem"><a class="viewcode-back" href="../../../autodocs/pyporegui.test.html#pyporegui.test.TestEventanalysis.TestPathItem">[docs]</a><span class="k">class</span> <span class="nc">TestPathItem</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    
+<div class="viewcode-block" id="TestPathItem.testBoundingRect"><a class="viewcode-back" href="../../../autodocs/pyporegui.test.html#pyporegui.test.TestEventanalysis.TestPathItem.testBoundingRect">[docs]</a>    <span class="k">def</span> <span class="nf">testBoundingRect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        
+        <span class="n">xmax</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="n">xmin</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="n">ymax</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="n">ymin</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        
+        <span class="n">item</span> <span class="o">=</span> <span class="n">PathItem</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">rect</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">boundingRect</span><span class="p">()</span>
+        <span class="n">rectleft</span> <span class="o">=</span> <span class="n">rect</span><span class="o">.</span><span class="n">left</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">rectleft</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+        <span class="n">recttop</span> <span class="o">=</span> <span class="n">rect</span><span class="o">.</span><span class="n">top</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">recttop</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+        <span class="n">wid</span> <span class="o">=</span> <span class="n">rect</span><span class="o">.</span><span class="n">width</span><span class="p">()</span>
+        <span class="n">hei</span> <span class="o">=</span> <span class="n">rect</span><span class="o">.</span><span class="n">height</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">wid</span><span class="p">,</span> <span class="n">xmax</span><span class="o">-</span><span class="n">xmin</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">hei</span><span class="p">,</span> <span class="n">ymax</span><span class="o">-</span><span class="n">ymin</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="TestPathItem.testBoundingRectSmallVales"><a class="viewcode-back" href="../../../autodocs/pyporegui.test.html#pyporegui.test.TestEventanalysis.TestPathItem.testBoundingRectSmallVales">[docs]</a>    <span class="k">def</span> <span class="nf">testBoundingRectSmallVales</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">1.e-9</span><span class="p">,</span><span class="mf">1.e-9</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">1.e-9</span><span class="p">,</span><span class="mf">1.e-9</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        
+        <span class="n">xmax</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="n">xmin</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="n">ymax</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="n">ymin</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        
+        <span class="n">item</span> <span class="o">=</span> <span class="n">PathItem</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">rect</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">boundingRect</span><span class="p">()</span>
+        <span class="n">rectleft</span> <span class="o">=</span> <span class="n">rect</span><span class="o">.</span><span class="n">left</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">rectleft</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+        <span class="n">recttop</span> <span class="o">=</span> <span class="n">rect</span><span class="o">.</span><span class="n">top</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">recttop</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+        <span class="n">wid</span> <span class="o">=</span> <span class="n">rect</span><span class="o">.</span><span class="n">width</span><span class="p">()</span>
+        <span class="n">hei</span> <span class="o">=</span> <span class="n">rect</span><span class="o">.</span><span class="n">height</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">wid</span><span class="p">,</span> <span class="n">xmax</span><span class="o">-</span><span class="n">xmin</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">hei</span><span class="p">,</span> <span class="n">ymax</span><span class="o">-</span><span class="n">ymin</span><span class="p">)</span>
+</div></div>
+<div class="viewcode-block" id="TestEventAnalysis"><a class="viewcode-back" href="../../../autodocs/pyporegui.test.html#pyporegui.test.TestEventanalysis.TestEventAnalysis">[docs]</a><span class="k">class</span> <span class="nc">TestEventAnalysis</span><span class="p">(</span><span class="n">UsesQApplication</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TestEventAnalysis.setUp"><a class="viewcode-back" href="../../../autodocs/pyporegui.test.html#pyporegui.test.TestEventanalysis.TestEventAnalysis.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TestEventAnalysis</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">setUp</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">window</span> <span class="o">=</span> <span class="n">MyMainWindow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qapplication</span><span class="p">,</span> <span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="TestEventAnalysis.tearDown"><a class="viewcode-back" href="../../../autodocs/pyporegui.test.html#pyporegui.test.TestEventanalysis.TestEventAnalysis.tearDown">[docs]</a>    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TestEventAnalysis</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">tearDown</span><span class="p">()</span>
+        </div>
+<div class="viewcode-block" id="TestEventAnalysis.testName"><a class="viewcode-back" href="../../../autodocs/pyporegui.test.html#pyporegui.test.TestEventanalysis.TestEventAnalysis.testName">[docs]</a>    <span class="k">def</span> <span class="nf">testName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+</div></div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c"># import sys;sys.argv = [&#39;&#39;, &#39;Test.testName&#39;]</span>
+    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">translocationcode-python 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Will Parkin.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
+    </div>
+  </body>
+</html>
