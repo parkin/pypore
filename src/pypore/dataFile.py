@@ -1,7 +1,7 @@
 """
 Created on Jan 28, 2014
 
-@author: `@parkin1 <https://github.com/parkin1>`_
+@author: `@parkin1`_
 """
 
 import tables as tb
@@ -24,7 +24,7 @@ class DataFile(tb.file.File):
     Must be instantiated by calling dataFile's
     
     >>> import pypore.dataFile as dF
-    >>> database = dF.openFile('test.h5',mode='w')
+    >>> database = dF.open_file('test.h5',mode='w')
     >>> database.close()
     >>> os.remove('test.h5')
     """
@@ -35,7 +35,7 @@ class DataFile(tb.file.File):
         that any references to any table/matrix in this group will
         be broken and need to be refreshed.
         
-        >>> h5 = openFile('test.h5',mode='a')
+        >>> h5 = open_file('test.h5',mode='a')
         >>> table = h5.getEventTable()
         >>> h5.clean_database() // table is now refers to deleted table
         >>> table = h5.getEventTable() // table now refers to live table
@@ -46,14 +46,14 @@ class DataFile(tb.file.File):
         self.initializeDatabase()
 
     @classmethod
-    def convertToEventDatabase(cls, tables_object):
+    def _convert_to_event_database(cls, tables_object):
         """
         Converts a PyTables object's __class__ field to DataFile so
         you can use the object as an DataFile object.
         """
         tables_object.__class__ = DataFile
 
-    def getDataLength(self):
+    def get_data_length(self):
         """
         Returns the number of rows in the data matrix.
         Note this will flush the table so the data is correct.
@@ -87,7 +87,7 @@ class DataFile(tb.file.File):
         self.root.data.attrs.sampleRate = kargs['sampleRate']
 
 
-def openFile(*args, **kargs):
+def open_file(*args, **kargs):
     """
     Opens an EventDatabase by calling tables.openFile and then
     copying the __dict__ to a new EventDatabase instance.
@@ -97,7 +97,7 @@ def openFile(*args, **kargs):
         sampleRate: sample rate of the data.
     """
     f = tb.openFile(*args, **kargs)
-    DataFile.convertToEventDatabase(f)
+    DataFile._convert_to_event_database(f)
     if 'mode' in kargs:
         mode = kargs['mode']
         if 'w' in mode or 'a' in mode:

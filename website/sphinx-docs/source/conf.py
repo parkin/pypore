@@ -246,3 +246,10 @@ texinfo_documents = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'http://docs.python.org/': None}
+
+# Code to be adde to the end of every file, useful for common links
+rst_epilog = """
+.. _GH_PAGES: http://parkin1.github.io/pypore/
+.. _GITHUB: https://github.com/parkin1/pypore
+.. _@parkin1: https://github.com/parkin1
+"""

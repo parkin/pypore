@@ -1,7 +1,7 @@
 '''
 Created on Sep 13, 2013
 
-@author: parkin
+@author: `@parkin1`_
 '''
 
 import tables as tb

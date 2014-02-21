@@ -102,7 +102,7 @@ cpdef getNextBlocks(datafile, params, int n=1):
     return 'File not specified with correct extension. Possibilities are: \'.log\', \'.hkd\''
 
 cdef preparePyporeFile(filename):
-    datafile = df.openFile(filename, mode='r')
+    datafile = df.open_file(filename, mode='r')
     
     cdef int points_per_channel_per_block = 5000
     

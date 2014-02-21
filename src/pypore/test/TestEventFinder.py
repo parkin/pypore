@@ -1,7 +1,7 @@
 '''
 Created on Aug 27, 2013
 
-@author: parkin
+@author: `@parkin1`_
 '''
 import unittest
 from pypore import cythonsetup
