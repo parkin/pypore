@@ -26,7 +26,8 @@ git checkout -t origin/gh-pages
 rm -rf *
 
 # Copy website files from real repo
-cp -R ../$WEBSITE_DIR/* .
+# Use rsync so we can ignore hidden files
+rsync -av --exclude=".*" ../$WEBSITE_DIR/* .
 
 # Stage all files in git and create a commit
 git add .

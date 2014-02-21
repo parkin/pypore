@@ -26,7 +26,7 @@ body {
 
 div.document {
     text-align: left;
-    background: #fafafa url(../../../themes/architect/images/body-bg.jpg) 0 0 repeat;
+    background: #fafafa url(../../../themes/architect-theme-sphinx/images/body-bg.jpg) 0 0 repeat;
 }
 
 div.body {
@@ -39,7 +39,7 @@ div.bodywrapper {
 }
 
 header {
-    background: #fafafa url(../../../themes/architect/images/header-bg.jpg) 0 0 repeat;
+    background: #fafafa url(../../../themes/architect-theme-sphinx/images/header-bg.jpg) 0 0 repeat;
 }
 
 header a {
@@ -48,7 +48,7 @@ header a {
 }
 
 header a.button {
-    background: transparent url(../../../themes/architect/images/github-button.png) 0 0 no-repeat;
+    background: transparent url(../../../themes/architect-theme-sphinx/images/github-button.png) 0 0 no-repeat;
 }
 
 div.related {
@@ -57,7 +57,7 @@ div.related {
 }
 
 div.related ul {
-    background: #2e7bcf url(../../../themes/architect/images/header-bg.jpg) 0 0 repeat-x;
+    background: #2e7bcf url(../../../themes/architect-theme-sphinx/images/header-bg.jpg) 0 0 repeat-x;
     border-bottom: solid 1px #275da1;
     padding-top: 10px;
     height: 2em;
@@ -99,7 +99,7 @@ div.sphinxsidebar {
     float: right;
     font-size: 1em;
     text-align: left;
-    background: transparent url(../../../themes/architect/images/sidebar-bg.jpg) 0 0 no-repeat;
+    background: transparent url(../../../themes/architect-theme-sphinx/images/sidebar-bg.jpg) 0 0 no-repeat;
 }
 
 div.sphinxsidebar h3, div.sphinxsidebar h4 {
