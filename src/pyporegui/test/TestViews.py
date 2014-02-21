@@ -8,10 +8,10 @@ from helper import UsesQApplication
 import os
 from PySide.QtGui import QColor, QCheckBox
 # from PySide.QtTest import QTest
-from src.pyporegui.views import FilterListItem, FileListItem, DataFileListItem,\
+from pyporegui.views import FilterListItem, FileListItem, DataFileListItem,\
     PlotToolBar, MyPlotItem
 from pyqtgraph.graphicsItems.PlotCurveItem import PlotCurveItem
-from src.pyporegui.eventanalysis import PathItem
+from pyporegui.eventanalysis import PathItem
 import numpy as np
     
     
