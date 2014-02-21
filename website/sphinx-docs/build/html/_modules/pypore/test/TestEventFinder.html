@@ -70,7 +70,7 @@
 <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">Created on Aug 27, 2013</span>
 
-<span class="sd">@author: parkin</span>
+<span class="sd">@author: `@parkin1`_</span>
 <span class="sd">&#39;&#39;&#39;</span>
 <span class="kn">import</span> <span class="nn">unittest</span>
 <span class="kn">from</span> <span class="nn">pypore</span> <span class="kn">import</span> <span class="n">cythonsetup</span>
@@ -78,12 +78,13 @@
 <span class="kn">from</span> <span class="nn">pypore.eventFinder</span> <span class="kn">import</span> <span class="n">_getDataRangeTestWrapper</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">pypore.eventDatabase</span> <span class="kn">as</span> <span class="nn">ed</span>
+<span class="kn">import</span> <span class="nn">pypore.eventDatabase</span> <span class="kn">as</span> <span class="nn">eD</span>
+
 
 <div class="viewcode-block" id="TestEventFinder"><a class="viewcode-back" href="../../../autodocs/pypore.test.html#pypore.test.TestEventFinder.TestEventFinder">[docs]</a><span class="k">class</span> <span class="nc">TestEventFinder</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
     
 <div class="viewcode-block" id="TestEventFinder.setUp"><a class="viewcode-back" href="../../../autodocs/pypore.test.html#pypore.test.TestEventFinder.TestEventFinder.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">defaultParams</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&#39;min_event_length&#39;</span><span class="p">:</span> <span class="mf">10.</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;min_event_length&#39;</span><span class="p">:</span> <span class="mf">10.</span><span class="p">,</span>
                                    <span class="s">&#39;max_event_length&#39;</span><span class="p">:</span> <span class="mf">10000.</span><span class="p">,</span>
                                    <span class="s">&#39;threshold_direction&#39;</span><span class="p">:</span> <span class="s">&#39;Negative&#39;</span><span class="p">,</span>
                                    <span class="s">&#39;filter_parameter&#39;</span><span class="p">:</span> <span class="mf">0.93</span><span class="p">,</span>
@@ -94,55 +95,55 @@
 <div class="viewcode-block" id="TestEventFinder.tearDown"><a class="viewcode-back" href="../../../autodocs/pypore.test.html#pypore.test.TestEventFinder.TestEventFinder.tearDown">[docs]</a>    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
     </div>
-<div class="viewcode-block" id="TestEventFinder.test_getDataRangeTestWrapperAtNew"><a class="viewcode-back" href="../../../autodocs/pypore.test.html#pypore.test.TestEventFinder.TestEventFinder.test_getDataRangeTestWrapperAtNew">[docs]</a>    <span class="k">def</span> <span class="nf">test_getDataRangeTestWrapperAtNew</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestEventFinder.test_get_data_range_test_wrapper_at_new"><a class="viewcode-back" href="../../../autodocs/pypore.test.html#pypore.test.TestEventFinder.TestEventFinder.test_get_data_range_test_wrapper_at_new">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_data_range_test_wrapper_at_new</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">n</span> <span class="o">=</span> <span class="mi">100</span>
         <span class="n">first</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
         <span class="n">first</span><span class="p">[</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">1.</span>
         <span class="n">first</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">1.</span>
-        <span class="n">dataCache</span> <span class="o">=</span> <span class="p">[</span><span class="n">first</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="mf">100.</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="mf">100.</span> <span class="o">+</span> <span class="mf">60.</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="mf">200.</span><span class="p">]</span>
+        <span class="n">data_cache</span> <span class="o">=</span> <span class="p">[</span><span class="n">first</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="mf">100.</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="mf">100.</span> <span class="o">+</span> <span class="mf">60.</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="mf">200.</span><span class="p">]</span>
         
-        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRangeTestWrapper</span><span class="p">(</span><span class="n">dataCache</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRangeTestWrapper</span><span class="p">(</span><span class="n">data_cache</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="mf">100.</span><span class="p">)</span>
          
         <span class="c"># Test negative i to 0</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
         <span class="n">x</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">1.</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRangeTestWrapper</span><span class="p">(</span><span class="n">dataCache</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRangeTestWrapper</span><span class="p">(</span><span class="n">data_cache</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
          
         <span class="c"># Test negative i,n</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
         <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">1.</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRangeTestWrapper</span><span class="p">(</span><span class="n">dataCache</span><span class="p">,</span> <span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="o">-</span><span class="mi">90</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRangeTestWrapper</span><span class="p">(</span><span class="n">data_cache</span><span class="p">,</span> <span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="o">-</span><span class="mi">90</span><span class="p">)</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
          
         <span class="c"># Test negative i, pos n in first spot</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
         <span class="n">x</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">1.</span>
         <span class="n">x</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">100.</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRangeTestWrapper</span><span class="p">(</span><span class="n">dataCache</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRangeTestWrapper</span><span class="p">(</span><span class="n">data_cache</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
          
         <span class="c"># Test pos i,n both in first spot</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="mf">100.</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRangeTestWrapper</span><span class="p">(</span><span class="n">dataCache</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">70</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRangeTestWrapper</span><span class="p">(</span><span class="n">data_cache</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">70</span><span class="p">)</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
          
         <span class="c"># Test first and second cache overlap</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="mf">100.</span>
         <span class="n">x</span><span class="p">[</span><span class="mi">5</span><span class="p">:]</span> <span class="o">+=</span> <span class="mf">60.</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRangeTestWrapper</span><span class="p">(</span><span class="n">dataCache</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">105</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRangeTestWrapper</span><span class="p">(</span><span class="n">data_cache</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">105</span><span class="p">)</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
          
         <span class="c"># Test fist cache bumping up on second</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="mf">100.</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRangeTestWrapper</span><span class="p">(</span><span class="n">dataCache</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRangeTestWrapper</span><span class="p">(</span><span class="n">data_cache</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
          
         <span class="c"># Test second cache</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="mf">160.</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRangeTestWrapper</span><span class="p">(</span><span class="n">dataCache</span><span class="p">,</span> <span class="mi">155</span><span class="p">,</span> <span class="mi">165</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRangeTestWrapper</span><span class="p">(</span><span class="n">data_cache</span><span class="p">,</span> <span class="mi">155</span><span class="p">,</span> <span class="mi">165</span><span class="p">)</span>
         <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
         
         <span class="c"># Test neg overlap with 2 pos caches</span>
@@ -150,7 +151,7 @@
         <span class="n">x</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">1.</span>
         <span class="n">x</span><span class="p">[</span><span class="mi">10</span><span class="p">:]</span> <span class="o">+=</span> <span class="mf">100.</span>
         <span class="n">x</span><span class="p">[</span><span class="mi">110</span><span class="p">:]</span> <span class="o">+=</span> <span class="mf">60.</span> 
-        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRangeTestWrapper</span><span class="p">(</span><span class="n">dataCache</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">110</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRangeTestWrapper</span><span class="p">(</span><span class="n">data_cache</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">110</span><span class="p">)</span>
         
         <span class="c"># Test neg overlap with 3 pos caches</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">220</span><span class="p">)</span>
@@ -158,32 +159,32 @@
         <span class="n">x</span><span class="p">[</span><span class="mi">10</span><span class="p">:]</span> <span class="o">+=</span> <span class="mf">100.</span>
         <span class="n">x</span><span class="p">[</span><span class="mi">110</span><span class="p">:]</span> <span class="o">+=</span> <span class="mf">60.</span>
         <span class="n">x</span><span class="p">[</span><span class="mi">210</span><span class="p">:]</span> <span class="o">+=</span> <span class="mf">40.</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRangeTestWrapper</span><span class="p">(</span><span class="n">dataCache</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">210</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">_getDataRangeTestWrapper</span><span class="p">(</span><span class="n">data_cache</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">210</span><span class="p">)</span>
         </div>
-<div class="viewcode-block" id="TestEventFinder.testSavingFiles"><a class="viewcode-back" href="../../../autodocs/pypore.test.html#pypore.test.TestEventFinder.TestEventFinder.testSavingFiles">[docs]</a>    <span class="k">def</span> <span class="nf">testSavingFiles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestEventFinder.test_saving_files"><a class="viewcode-back" href="../../../autodocs/pypore.test.html#pypore.test.TestEventFinder.TestEventFinder.test_saving_files">[docs]</a>    <span class="k">def</span> <span class="nf">test_saving_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;testDataFiles&#39;</span><span class="p">,</span> <span class="s">&#39;chimera_1event.log&#39;</span><span class="p">)</span>
         
-        <span class="n">eventDatabase</span> <span class="o">=</span> <span class="n">findEvents</span><span class="p">([</span><span class="n">filename</span><span class="p">],</span> <span class="n">save_file_name</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;_testSavingFiles_9238.h5&#39;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">event_database</span> <span class="o">=</span> <span class="n">findEvents</span><span class="p">([</span><span class="n">filename</span><span class="p">],</span> <span class="n">save_file_name</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;_testSavingFiles_9238.h5&#39;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">eventDatabase</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">event_database</span><span class="p">))</span>
         
-        <span class="n">h5file</span> <span class="o">=</span> <span class="n">ed</span><span class="o">.</span><span class="n">openFile</span><span class="p">(</span><span class="n">eventDatabase</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+        <span class="n">h5file</span> <span class="o">=</span> <span class="n">eD</span><span class="o">.</span><span class="n">openFile</span><span class="p">(</span><span class="n">event_database</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">h5file</span><span class="o">.</span><span class="n">isopen</span><span class="p">)</span>
         
         <span class="n">h5file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         
         <span class="c"># delete the newly created event file</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">eventDatabase</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">event_database</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestEventFinder.testChimera_nonoise_1Event"><a class="viewcode-back" href="../../../autodocs/pypore.test.html#pypore.test.TestEventFinder.TestEventFinder.testChimera_nonoise_1Event">[docs]</a>    <span class="k">def</span> <span class="nf">testChimera_nonoise_1Event</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestEventFinder.test_chimera_no_noise_1event"><a class="viewcode-back" href="../../../autodocs/pypore.test.html#pypore.test.TestEventFinder.TestEventFinder.test_chimera_no_noise_1event">[docs]</a>    <span class="k">def</span> <span class="nf">test_chimera_no_noise_1event</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;testDataFiles&#39;</span><span class="p">,</span> <span class="s">&#39;chimera_nonoise_1event.log&#39;</span><span class="p">)</span>
-        <span class="n">eventDatabase</span> <span class="o">=</span> <span class="n">findEvents</span><span class="p">([</span><span class="n">filename</span><span class="p">],</span> <span class="n">save_file_name</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;_testChimera_nonoise_1Event_9238.h5&#39;</span><span class="p">],</span> 
-                                   <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultParams</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">event_database</span> <span class="o">=</span> <span class="n">findEvents</span><span class="p">([</span><span class="n">filename</span><span class="p">],</span> <span class="n">save_file_name</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;_testChimera_nonoise_1Event_9238.h5&#39;</span><span class="p">],</span>
+                                   <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">default_params</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         
-        <span class="n">h5file</span> <span class="o">=</span> <span class="n">ed</span><span class="o">.</span><span class="n">openFile</span><span class="p">(</span><span class="n">eventDatabase</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+        <span class="n">h5file</span> <span class="o">=</span> <span class="n">eD</span><span class="o">.</span><span class="n">openFile</span><span class="p">(</span><span class="n">event_database</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
         
         <span class="n">events</span> <span class="o">=</span> <span class="n">h5file</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">events</span>
 
@@ -214,7 +215,7 @@
         <span class="n">h5file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         
         <span class="c"># delete the newly created event file</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">eventDatabase</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">event_database</span><span class="p">)</span>
         </div>
     <span class="k">def</span> <span class="nf">_testChimera_nonoise_1Event_2Levels_helper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h5file</span><span class="p">):</span>
         <span class="n">events</span> <span class="o">=</span> <span class="n">h5file</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">events</span>
@@ -247,9 +248,9 @@
         <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;testDataFiles&#39;</span><span class="p">,</span> <span class="s">&#39;chimera_nonoise_1event_2levels.log&#39;</span><span class="p">)</span>
         <span class="n">eventDatabase</span> <span class="o">=</span> <span class="n">findEvents</span><span class="p">([</span><span class="n">filename</span><span class="p">],</span> <span class="n">save_file_name</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;_testChimera_nonoise_1Event_2Levels_9238.h5&#39;</span><span class="p">],</span>
-                                   <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultParams</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                                   <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">default_params</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         
-        <span class="n">h5file</span> <span class="o">=</span> <span class="n">ed</span><span class="o">.</span><span class="n">openFile</span><span class="p">(</span><span class="n">eventDatabase</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+        <span class="n">h5file</span> <span class="o">=</span> <span class="n">eD</span><span class="o">.</span><span class="n">openFile</span><span class="p">(</span><span class="n">eventDatabase</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_testChimera_nonoise_1Event_2Levels_helper</span><span class="p">(</span><span class="n">h5file</span><span class="p">)</span>
         <span class="n">h5file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         
@@ -300,9 +301,9 @@
         <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;testDataFiles&#39;</span><span class="p">,</span> <span class="s">&#39;chimera_nonoise_2events_1levels.log&#39;</span><span class="p">)</span>
         <span class="n">eventDatabase</span> <span class="o">=</span> <span class="n">findEvents</span><span class="p">([</span><span class="n">filename</span><span class="p">],</span> <span class="n">save_file_name</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;_testChimera_nonoise_2events_1levels_9238.h5&#39;</span><span class="p">],</span> 
-                                   <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultParams</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                                   <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">default_params</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         
-        <span class="n">h5file</span> <span class="o">=</span> <span class="n">ed</span><span class="o">.</span><span class="n">openFile</span><span class="p">(</span><span class="n">eventDatabase</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+        <span class="n">h5file</span> <span class="o">=</span> <span class="n">eD</span><span class="o">.</span><span class="n">openFile</span><span class="p">(</span><span class="n">eventDatabase</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_testChimera_nonoise_2events_1levels_wrapper</span><span class="p">(</span><span class="n">h5file</span><span class="p">)</span>
         <span class="n">h5file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         
@@ -317,16 +318,16 @@
         <span class="n">filenames</span> <span class="o">=</span> <span class="p">[</span><span class="n">filename1</span><span class="p">,</span> <span class="n">filename2</span><span class="p">]</span>
         <span class="n">eventDatabases</span> <span class="o">=</span> <span class="n">findEvents</span><span class="p">(</span><span class="n">filenames</span><span class="p">,</span>
                                     <span class="n">save_file_names</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;_testMultipleFiles_1_9238.h5&#39;</span><span class="p">,</span> <span class="s">&#39;_testMultipleFiles_2_9238.h5&#39;</span><span class="p">],</span>
-                                    <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultParams</span><span class="p">)</span>
+                                    <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">default_params</span><span class="p">)</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">eventDatabases</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
         
-        <span class="n">h5file</span> <span class="o">=</span> <span class="n">ed</span><span class="o">.</span><span class="n">openFile</span><span class="p">(</span><span class="n">eventDatabases</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+        <span class="n">h5file</span> <span class="o">=</span> <span class="n">eD</span><span class="o">.</span><span class="n">openFile</span><span class="p">(</span><span class="n">eventDatabases</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_testChimera_nonoise_2events_1levels_wrapper</span><span class="p">(</span><span class="n">h5file</span><span class="p">)</span>
         <span class="n">h5file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">eventDatabases</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         
-        <span class="n">h5file</span> <span class="o">=</span> <span class="n">ed</span><span class="o">.</span><span class="n">openFile</span><span class="p">(</span><span class="n">eventDatabases</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+        <span class="n">h5file</span> <span class="o">=</span> <span class="n">eD</span><span class="o">.</span><span class="n">openFile</span><span class="p">(</span><span class="n">eventDatabases</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_testChimera_nonoise_1Event_2Levels_helper</span><span class="p">(</span><span class="n">h5file</span><span class="p">)</span>
         <span class="n">h5file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">eventDatabases</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
