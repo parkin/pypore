@@ -215,7 +215,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'translocationcode-python', u'translocationcode-python Documentation',
+    ('index', 'pypore', u'pypore Documentation',
      [u'Will Parkin'], 1)
 ]
 
@@ -229,8 +229,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'translocationcode-python', u'translocationcode-python Documentation',
-   u'Will Parkin', 'translocationcode-python', 'One line description of project.',
+  ('index', 'pypore', u'translocationcode-python Documentation',
+   u'Will Parkin', 'pyore', 'One line description of project.',
    'Miscellaneous'),
 ]
 
