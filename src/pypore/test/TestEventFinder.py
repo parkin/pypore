@@ -1,8 +1,8 @@
-'''
-Created on Aug 27, 2013
+"""
+Tests for eventFinder.pyx
 
 @author: `@parkin1`_
-'''
+"""
 import unittest
 from pypore import cythonsetup
 from pypore.eventFinder import findEvents
@@ -228,40 +228,44 @@ class TestEventFinder(unittest.TestCase):
         self.assertEqual(len(lengths2), 1)
         self.assertEqual(lengths2[0], 1000)
         
-    def testChimera_nonoise_2events_1levels(self):
+    def test_chimera_no_noise_2events_1levels(self):
         filename = os.path.dirname(os.path.realpath(__file__))
         filename = os.path.join(filename, 'testDataFiles', 'chimera_nonoise_2events_1levels.log')
-        eventDatabase = findEvents([filename], save_file_name = ['_testChimera_nonoise_2events_1levels_9238.h5'], 
-                                   **self.default_params)[0]
+        event_databases = findEvents([filename], save_file_name=['_testChimera_nonoise_2events_1levels_9238.h5'],
+                                     **self.default_params)
+
+        self.assertEqual(len(event_databases), 1)
+
+        event_database = event_databases[0]
         
-        h5file = eD.openFile(eventDatabase, mode='r')
+        h5file = eD.openFile(event_database, mode='r')
         self._testChimera_nonoise_2events_1levels_wrapper(h5file)
         h5file.close()
         
         # delete the newly created event file
-        os.remove(eventDatabase)
+        os.remove(event_database)
         
-    def testMultipleFiles(self):
+    def test_multiple_files(self):
         filename1 = os.path.dirname(os.path.realpath(__file__))
         filename1 = os.path.join(filename1, 'testDataFiles', 'chimera_nonoise_2events_1levels.log')
         filename2 = os.path.dirname(os.path.realpath(__file__))
         filename2 = os.path.join(filename2, 'testDataFiles', 'chimera_nonoise_1event_2levels.log')
-        filenames = [filename1, filename2]
-        eventDatabases = findEvents(filenames,
-                                    save_file_names = ['_testMultipleFiles_1_9238.h5', '_testMultipleFiles_2_9238.h5'],
-                                    **self.default_params)
+        file_names = [filename1, filename2]
+        event_databases = findEvents(file_names,
+                                     save_file_names=['_testMultipleFiles_1_9238.h5', '_testMultipleFiles_2_9238.h5'],
+                                     **self.default_params)
         
-        self.assertEqual(len(eventDatabases), 2)
+        self.assertEqual(len(event_databases), 2)
         
-        h5file = eD.openFile(eventDatabases[0], mode='r')
+        h5file = eD.openFile(event_databases[0], mode='r')
         self._testChimera_nonoise_2events_1levels_wrapper(h5file)
         h5file.close()
-        os.remove(eventDatabases[0])
+        os.remove(event_databases[0])
         
-        h5file = eD.openFile(eventDatabases[1], mode='r')
+        h5file = eD.openFile(event_databases[1], mode='r')
         self._testChimera_nonoise_1Event_2Levels_helper(h5file)
         h5file.close()
-        os.remove(eventDatabases[1])
+        os.remove(event_databases[1])
         
 if __name__ == "__main__":
     # import sys;sys.argv = ['', 'Test.testName']

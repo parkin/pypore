@@ -7,14 +7,15 @@ import unittest, os
 import numpy as np
 import numpy.testing as npt
 # import pypore.cythonsetup
-import pypore.eventDatabase as ed
+import pypore.eventDatabase as eD
+
 
 class TestEventDatabase(unittest.TestCase):
 
     def setUp(self):
         self.filename = 'testEventDatabase_938247283278128.h5'
         self.maxEventLength = 100
-        self.database = ed.openFile(self.filename, mode='w', maxEventLength = self.maxEventLength)
+        self.database = eD.openFile(self.filename, mode='w', maxEventLength = self.maxEventLength)
 
     def tearDown(self):
         self.database.close()
@@ -246,7 +247,7 @@ class TestEventDatabase(unittest.TestCase):
         """
         self.database.close()
         
-        self.database = ed.openFile(self.filename)
+        self.database = eD.openFile(self.filename)
         
         self._testInitialRoot(self.database)
         
@@ -287,7 +288,7 @@ class TestEventDatabase(unittest.TestCase):
         self.database.close()
         
         # Open the existing file
-        self.database = ed.openFile(self.filename, mode='r')
+        self.database = eD.openFile(self.filename, mode='r')
         
         # Check the rawData matrix
         npt.assert_array_equal(rawData, self.database.root.events.rawData[:])

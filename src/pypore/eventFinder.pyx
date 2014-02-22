@@ -69,9 +69,9 @@ cpdef np.ndarray[DTYPE_t] _getDataRange(dataCache, long i, long n):
     return res
 
 cpdef np.ndarray[DTYPE_t] _getDataRangeTestWrapper(dataCache, long i, long n):
-    '''
+    """
     Just a wrapper so the python unittests can call _getDataRange
-    '''
+    """
     return _getDataRange(dataCache, i, n)
         
 cpdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None, save_file_name=None):
@@ -83,7 +83,7 @@ cpdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None, save_fil
     
     # IMPLEMENT ME pleasE
     f, params = prepareDataFile(filename)
-    
+
     cdef double sample_rate = params['sample_rate']
     cdef double timestep = 1. / sample_rate
     # Min and Max number of points in an event
@@ -524,6 +524,7 @@ def findEvents(filenames, pipe=None, h5file=None, save_file_names = None, **para
         if save_file_names is not None:
             save_file_name = save_file_names[i]
         databaseFilename = _lazyLoadFindEvents(filename, params, pipe, h5file, save_file_name)
+        print databaseFilename
         if databaseFilename is not None:
             eventDatabases.append(databaseFilename)
     return eventDatabases

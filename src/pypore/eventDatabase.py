@@ -6,6 +6,7 @@ Created on Sep 13, 2013
 
 import tables as tb
 
+
 # Description of events table
 class _Event(tb.IsDescription):
     """
@@ -21,9 +22,10 @@ class _Event(tb.IsDescription):
     baseline = tb.FloatCol(pos=5)
     currentBlockage = tb.FloatCol(pos=6)
     area = tb.FloatCol(pos=7)
-    
+
+
 class EventDatabase(tb.file.File):
-    '''
+    """
     PyTables HDF5 database storing events and corresponding data.
     Inherits from tables.file.File, so you can interact with this
     just as you would a PyTables File object. However, this contains
@@ -46,7 +48,7 @@ class EventDatabase(tb.file.File):
     >>> database = ed.openFile('test.h5',mode='w')
     >>> database.close()
     >>> os.remove('test.h5')
-    '''
+    """
     
     DEFAULT_MAX_EVENT_LENGTH = 100
     maxEventLength = DEFAULT_MAX_EVENT_LENGTH
@@ -112,7 +114,7 @@ class EventDatabase(tb.file.File):
         if rawData is not None:
             self.root.events.rawData.append(rawData)
             
-    def cleanDatabase(self):
+    def clean_database(self):
         """
         Removes /events and then reinitializes the /events group. Note
         that any references to any table/matrix in this group will
