@@ -78,11 +78,11 @@
           <div class="body">
             
   <h1>Source code for pypore.test.TestEventFinder</h1><div class="highlight"><pre>
-<span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">Created on Aug 27, 2013</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Tests for eventFinder.pyx</span>
 
 <span class="sd">@author: `@parkin1`_</span>
-<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">unittest</span>
 <span class="kn">from</span> <span class="nn">pypore</span> <span class="kn">import</span> <span class="n">cythonsetup</span>
 <span class="kn">from</span> <span class="nn">pypore.eventFinder</span> <span class="kn">import</span> <span class="n">findEvents</span>
@@ -308,40 +308,44 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lengths2</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">lengths2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1000</span><span class="p">)</span>
         
-<div class="viewcode-block" id="TestEventFinder.testChimera_nonoise_2events_1levels"><a class="viewcode-back" href="../../../autodocs/pypore.test.html#pypore.test.TestEventFinder.TestEventFinder.testChimera_nonoise_2events_1levels">[docs]</a>    <span class="k">def</span> <span class="nf">testChimera_nonoise_2events_1levels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestEventFinder.test_chimera_no_noise_2events_1levels"><a class="viewcode-back" href="../../../autodocs/pypore.test.html#pypore.test.TestEventFinder.TestEventFinder.test_chimera_no_noise_2events_1levels">[docs]</a>    <span class="k">def</span> <span class="nf">test_chimera_no_noise_2events_1levels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;testDataFiles&#39;</span><span class="p">,</span> <span class="s">&#39;chimera_nonoise_2events_1levels.log&#39;</span><span class="p">)</span>
-        <span class="n">eventDatabase</span> <span class="o">=</span> <span class="n">findEvents</span><span class="p">([</span><span class="n">filename</span><span class="p">],</span> <span class="n">save_file_name</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;_testChimera_nonoise_2events_1levels_9238.h5&#39;</span><span class="p">],</span> 
-                                   <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">default_params</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">event_databases</span> <span class="o">=</span> <span class="n">findEvents</span><span class="p">([</span><span class="n">filename</span><span class="p">],</span> <span class="n">save_file_name</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;_testChimera_nonoise_2events_1levels_9238.h5&#39;</span><span class="p">],</span>
+                                     <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">default_params</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">event_databases</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">event_database</span> <span class="o">=</span> <span class="n">event_databases</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         
-        <span class="n">h5file</span> <span class="o">=</span> <span class="n">eD</span><span class="o">.</span><span class="n">openFile</span><span class="p">(</span><span class="n">eventDatabase</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+        <span class="n">h5file</span> <span class="o">=</span> <span class="n">eD</span><span class="o">.</span><span class="n">openFile</span><span class="p">(</span><span class="n">event_database</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_testChimera_nonoise_2events_1levels_wrapper</span><span class="p">(</span><span class="n">h5file</span><span class="p">)</span>
         <span class="n">h5file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         
         <span class="c"># delete the newly created event file</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">eventDatabase</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">event_database</span><span class="p">)</span>
         </div>
-<div class="viewcode-block" id="TestEventFinder.testMultipleFiles"><a class="viewcode-back" href="../../../autodocs/pypore.test.html#pypore.test.TestEventFinder.TestEventFinder.testMultipleFiles">[docs]</a>    <span class="k">def</span> <span class="nf">testMultipleFiles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestEventFinder.test_multiple_files"><a class="viewcode-back" href="../../../autodocs/pypore.test.html#pypore.test.TestEventFinder.TestEventFinder.test_multiple_files">[docs]</a>    <span class="k">def</span> <span class="nf">test_multiple_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">filename1</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
         <span class="n">filename1</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filename1</span><span class="p">,</span> <span class="s">&#39;testDataFiles&#39;</span><span class="p">,</span> <span class="s">&#39;chimera_nonoise_2events_1levels.log&#39;</span><span class="p">)</span>
         <span class="n">filename2</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
         <span class="n">filename2</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filename2</span><span class="p">,</span> <span class="s">&#39;testDataFiles&#39;</span><span class="p">,</span> <span class="s">&#39;chimera_nonoise_1event_2levels.log&#39;</span><span class="p">)</span>
-        <span class="n">filenames</span> <span class="o">=</span> <span class="p">[</span><span class="n">filename1</span><span class="p">,</span> <span class="n">filename2</span><span class="p">]</span>
-        <span class="n">eventDatabases</span> <span class="o">=</span> <span class="n">findEvents</span><span class="p">(</span><span class="n">filenames</span><span class="p">,</span>
-                                    <span class="n">save_file_names</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;_testMultipleFiles_1_9238.h5&#39;</span><span class="p">,</span> <span class="s">&#39;_testMultipleFiles_2_9238.h5&#39;</span><span class="p">],</span>
-                                    <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">default_params</span><span class="p">)</span>
+        <span class="n">file_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">filename1</span><span class="p">,</span> <span class="n">filename2</span><span class="p">]</span>
+        <span class="n">event_databases</span> <span class="o">=</span> <span class="n">findEvents</span><span class="p">(</span><span class="n">file_names</span><span class="p">,</span>
+                                     <span class="n">save_file_names</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;_testMultipleFiles_1_9238.h5&#39;</span><span class="p">,</span> <span class="s">&#39;_testMultipleFiles_2_9238.h5&#39;</span><span class="p">],</span>
+                                     <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">default_params</span><span class="p">)</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">eventDatabases</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">event_databases</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
         
-        <span class="n">h5file</span> <span class="o">=</span> <span class="n">eD</span><span class="o">.</span><span class="n">openFile</span><span class="p">(</span><span class="n">eventDatabases</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+        <span class="n">h5file</span> <span class="o">=</span> <span class="n">eD</span><span class="o">.</span><span class="n">openFile</span><span class="p">(</span><span class="n">event_databases</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_testChimera_nonoise_2events_1levels_wrapper</span><span class="p">(</span><span class="n">h5file</span><span class="p">)</span>
         <span class="n">h5file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">eventDatabases</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">event_databases</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         
-        <span class="n">h5file</span> <span class="o">=</span> <span class="n">eD</span><span class="o">.</span><span class="n">openFile</span><span class="p">(</span><span class="n">eventDatabases</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+        <span class="n">h5file</span> <span class="o">=</span> <span class="n">eD</span><span class="o">.</span><span class="n">openFile</span><span class="p">(</span><span class="n">event_databases</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_testChimera_nonoise_1Event_2Levels_helper</span><span class="p">(</span><span class="n">h5file</span><span class="p">)</span>
         <span class="n">h5file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">eventDatabases</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">event_databases</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         </div></div>
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="c"># import sys;sys.argv = [&#39;&#39;, &#39;Test.testName&#39;]</span>

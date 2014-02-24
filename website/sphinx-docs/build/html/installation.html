@@ -66,15 +66,6 @@
   <ul>
 <li><a class="reference internal" href="#">Installation</a><ul>
 <li><a class="reference internal" href="#basic-installation-steps">Basic Installation Steps</a></li>
-<li><a class="reference internal" href="#windows-installation">Windows Installation</a><ul>
-<li><a class="reference internal" href="#install-python-v2-7">Install Python v2.7</a></li>
-<li><a class="reference internal" href="#install-cython">Install Cython</a></li>
-<li><a class="reference internal" href="#install-numpy">Install NumPy</a></li>
-<li><a class="reference internal" href="#install-scipy">Install SciPy</a></li>
-<li><a class="reference internal" href="#install-pyside">Install PySide</a></li>
-<li><a class="reference internal" href="#install-pyqtgraph">Install PyQtGraph</a></li>
-</ul>
-</li>
 <li><a class="reference internal" href="#get-the-code">Get the Code</a></li>
 </ul>
 </li>
@@ -116,62 +107,34 @@
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="basic-installation-steps">
 <h2>Basic Installation Steps<a class="headerlink" href="#basic-installation-steps" title="Permalink to this headline">¶</a></h2>
-<p>The dependencies of the project are:</p>
+<p>The dependencies of <a class="reference internal" href="autodocs/pypore.html#module-pypore" title="pypore"><tt class="xref py py-mod docutils literal"><span class="pre">pypore</span></tt></a> are:</p>
 <ol class="arabic simple">
-<li>Python v2.7.+</li>
-<li>NumPy</li>
-<li>SciPy</li>
-<li>PySide</li>
-<li>PyQtGraph</li>
-<li>PyTables</li>
+<li><a class="reference external" href="http://www.python.org/">Python v2.7.+</a></li>
+<li><a class="reference external" href="http://cython.org/">Cython</a></li>
+<li><a class="reference external" href="http://www.scipy.org/">SciPy</a></li>
+<li><a class="reference external" href="http://www.numpy.org/">NumPy</a></li>
+<li><a class="reference external" href="http://www.pytables.org/">PyTables</a></li>
 </ol>
-</div>
-<div class="section" id="windows-installation">
-<h2>Windows Installation<a class="headerlink" href="#windows-installation" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="install-python-v2-7">
-<h3>Install Python v2.7<a class="headerlink" href="#install-python-v2-7" title="Permalink to this headline">¶</a></h3>
-<p>The Python v2.7.5 Windows installer can be found <a class="reference external" href="http://www.python.org/download/releases/2.7.5/">here</a>.</p>
-<p>If you right click on My Computer -&gt; Properties -&gt; General:</p>
-<ul class="simple">
-<li>If under &#8216;System:&#8217; it says &#8216;x64&#8217; then you need the 64 bit version: the x86-64 MSI installer.</li>
-<li>If not, you need the 32 bit version: x86  MSI installer.</li>
-</ul>
-</div>
-<div class="section" id="install-cython">
-<h3>Install Cython<a class="headerlink" href="#install-cython" title="Permalink to this headline">¶</a></h3>
-<p>Next, use easy_install to install Cython.  In the command prompt, type:</p>
-<p><tt class="docutils literal"><span class="pre">c:\Python27\Scripts\easy_install</span> <span class="pre">cython</span></tt></p>
-</div>
-<div class="section" id="install-numpy">
-<h3>Install NumPy<a class="headerlink" href="#install-numpy" title="Permalink to this headline">¶</a></h3>
-<p>Next, use easy_install to install numpy.  Open the command prompt (Start-&gt;Run-&gt;type &#8216;cmd&#8217; hit Enter) and type:</p>
-<p><tt class="docutils literal"><span class="pre">c:\Python27\Scripts\easy_install</span> <span class="pre">install</span> <span class="pre">numpy</span></tt></p>
-</div>
-<div class="section" id="install-scipy">
-<h3>Install SciPy<a class="headerlink" href="#install-scipy" title="Permalink to this headline">¶</a></h3>
-<p>Download and execute the latest SciPy installer from <a class="reference external" href="http://sourceforge.net/projects/scipy/">here</a>.</p>
-</div>
-<div class="section" id="install-pyside">
-<h3>Install PySide<a class="headerlink" href="#install-pyside" title="Permalink to this headline">¶</a></h3>
-<p>Next, use easy_install to install PySide.  Open the command prompt (Start-&gt;Run-&gt;type &#8216;cmd&#8217; hit Enter) and type:</p>
-<p><tt class="docutils literal"><span class="pre">c:\Python27\Scripts\easy_install</span> <span class="pre">PySide</span></tt></p>
-<p>You&#8217;ve just installed PySide!</p>
-</div>
-<div class="section" id="install-pyqtgraph">
-<h3>Install PyQtGraph<a class="headerlink" href="#install-pyqtgraph" title="Permalink to this headline">¶</a></h3>
-<p>Use easy_install as before, in a command prompt type:</p>
-<p><tt class="docutils literal"><span class="pre">c:\Python27\Scripts\easy_install</span> <span class="pre">pyqtgraph</span></tt></p>
-<p>You now have all of the dependencies and are ready to <a class="reference internal" href="#get-the-code">Get the Code</a>.</p>
-</div>
+<p>Additionally, the dependencies of <a class="reference internal" href="autodocs/pyporegui.html#module-pyporegui" title="pyporegui"><tt class="xref py py-mod docutils literal"><span class="pre">pyporegui</span></tt></a> are:</p>
+<ol class="arabic simple">
+<li><a class="reference external" href="http://qt-project.org/wiki/PySide">PySide</a></li>
+<li><a class="reference external" href="http://www.pyqtgraph.org/">PyQtGraph</a></li>
+</ol>
+<p>These packages can be installed individually, but it is <strong>strongly</strong> recommended that you use a complete scientific Python distribution, especially on Windows and Mac OS X.</p>
+<p>Recommended distributions are:</p>
+<ol class="arabic simple">
+<li><a class="reference external" href="https://store.continuum.io/cshop/anaconda">Anaconda</a></li>
+<li><a class="reference external" href="http://www.enthought.com/products/epd.php">EPD</a></li>
+<li><a class="reference external" href="http://code.google.com/p/pythonxy/">Python(x,y)</a></li>
+<li><a class="reference external" href="http://code.google.com/p/winpython/">WinPython</a></li>
+</ol>
+<p>These distributions ship with a bunch of widely-used python libraries. When installing one of these distributions, ensure that the above libraries are installed.
+<a class="reference external" href="http://www.pyqtgraph.org/">PyQtGraph</a> is the least likely library to ship with one of the distributions, so after installing a distribution, go to
+<a class="reference external" href="http://www.pyqtgraph.org/">PyQtGraph</a>, which has binary installers.</p>
 </div>
 <div class="section" id="get-the-code">
 <h2>Get the Code<a class="headerlink" href="#get-the-code" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference external" href="https://github.com/parkin1/pypore">Fork me on GitHub!</a>.</p>
-<p>Install Git, see above for instructions.  Sign up for a BitBucket account, see above.  Before cloning the repository, you will need to be added by <strong>wmparkin</strong> with at least read access.</p>
-<p>On Linux, open a terminal.  On Windows, open the &#8216;Git Bash&#8217; program.  <a class="reference external" href="http://linuxcommand.org/lts0020.php">Navigate</a> to where you want the files to be downloaded.</p>
-<p>Type the command</p>
-<p><tt class="docutils literal"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://&lt;user</span> <span class="pre">name&gt;&#64;bitbucket.org/wmparkin/translocationcode-python.git</span></tt></p>
-<p>You now have the code!  To run, navigate to project/src/pyporegui directory, double click eventanalysis.py!</p>
 </div>
 </div>
 

@@ -153,7 +153,7 @@ system, ie MinGW for Windows, gcc for Unix.</p>
 <p>&#64;author: <a class="reference external" href="https://github.com/parkin1">&#64;parkin1</a></p>
 <dl class="class">
 <dt id="pypore.dataFile.DataFile">
-<em class="property">class </em><tt class="descclassname">pypore.dataFile.</tt><tt class="descname">DataFile</tt><big>(</big><em>filename</em>, <em>mode='r'</em>, <em>title=''</em>, <em>rootUEP='/'</em>, <em>filters=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/pypore/dataFile.html#DataFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.dataFile.DataFile" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pypore.dataFile.</tt><tt class="descname">DataFile</tt><big>(</big><em>filename</em>, <em>mode='r'</em>, <em>title=''</em>, <em>root_uep='/'</em>, <em>filters=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/pypore/dataFile.html#DataFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.dataFile.DataFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">tables.file.File</span></tt></p>
 <p>PyTables HDF5 database storing raw data.
 Inherits from tables.file.File, so you can interact with this
@@ -280,7 +280,7 @@ with string description</p>
 <p>&#64;author: <a class="reference external" href="https://github.com/parkin1">&#64;parkin1</a></p>
 <dl class="class">
 <dt id="pypore.eventDatabase.EventDatabase">
-<em class="property">class </em><tt class="descclassname">pypore.eventDatabase.</tt><tt class="descname">EventDatabase</tt><big>(</big><em>filename</em>, <em>mode='r'</em>, <em>title=''</em>, <em>rootUEP='/'</em>, <em>filters=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/pypore/eventDatabase.html#EventDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.eventDatabase.EventDatabase" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">pypore.eventDatabase.</tt><tt class="descname">EventDatabase</tt><big>(</big><em>filename</em>, <em>mode='r'</em>, <em>title=''</em>, <em>root_uep='/'</em>, <em>filters=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/pypore/eventDatabase.html#EventDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.eventDatabase.EventDatabase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">tables.file.File</span></tt></p>
 <p>PyTables HDF5 database storing events and corresponding data.
 Inherits from tables.file.File, so you can interact with this
@@ -352,8 +352,8 @@ levelLengths: Numpy array of the level lengths.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="pypore.eventDatabase.EventDatabase.cleanDatabase">
-<tt class="descname">cleanDatabase</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/eventDatabase.html#EventDatabase.cleanDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.eventDatabase.EventDatabase.cleanDatabase" title="Permalink to this definition">¶</a></dt>
+<dt id="pypore.eventDatabase.EventDatabase.clean_database">
+<tt class="descname">clean_database</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/eventDatabase.html#EventDatabase.clean_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.eventDatabase.EventDatabase.clean_database" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes /events and then reinitializes the /events group. Note
 that any references to any table/matrix in this group will
 be broken and need to be refreshed.</p>
