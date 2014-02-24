@@ -1,79 +1,36 @@
 Installation
 ============
 
-
-
 Basic Installation Steps
 --------------------------
 
-The dependencies of the project are:
+The dependencies of :py:mod:`pypore` are:
 
-#. Python v2.7.+
-#. NumPy
-#. SciPy
-#. PySide
-#. PyQtGraph
-#. PyTables
+#. `Python v2.7.+ <http://www.python.org/>`_
+#. `Cython <http://cython.org/>`_
+#. `SciPy <http://www.scipy.org/>`_
+#. `NumPy <http://www.numpy.org/>`_
+#. `PyTables <http://www.pytables.org/>`_
 
+Additionally, the dependencies of :py:mod:`pyporegui` are:
 
-Windows Installation
-----------------------
+#. `PySide <http://qt-project.org/wiki/PySide>`_
+#. `PyQtGraph <http://www.pyqtgraph.org/>`_
 
-Install Python v2.7
-+++++++++++++++++++++++
+These packages can be installed individually, but it is **strongly** recommended that you use a complete scientific Python distribution, especially on Windows and Mac OS X.
 
-The Python v2.7.5 Windows installer can be found `here <http://www.python.org/download/releases/2.7.5/>`_.
+Recommended distributions are:
 
-If you right click on My Computer -> Properties -> General:
+#. `Anaconda <https://store.continuum.io/cshop/anaconda>`_
+#. `EPD <http://www.enthought.com/products/epd.php>`_
+#. `Python(x,y) <http://code.google.com/p/pythonxy/>`_
+#. `WinPython <http://code.google.com/p/winpython/>`_
 
-* If under 'System:' it says 'x64' then you need the 64 bit version: the x86-64 MSI installer.
-* If not, you need the 32 bit version: x86  MSI installer.
-
-Install Cython
-++++++++++++++++++
-Next, use easy_install to install Cython.  In the command prompt, type:
-
-``c:\Python27\Scripts\easy_install cython``
-
-Install NumPy
-++++++++++++++++
-
-Next, use easy_install to install numpy.  Open the command prompt (Start->Run->type 'cmd' hit Enter) and type:
-
-``c:\Python27\Scripts\easy_install install numpy``
-
-Install SciPy
-+++++++++++++++
-
-Download and execute the latest SciPy installer from `here <http://sourceforge.net/projects/scipy/>`_.
-
-Install PySide
-++++++++++++++++
-
-Next, use easy_install to install PySide.  Open the command prompt (Start->Run->type 'cmd' hit Enter) and type:
-
-``c:\Python27\Scripts\easy_install PySide``
-
-You've just installed PySide!
-
-Install PyQtGraph
-++++++++++++++++++++
-Use easy_install as before, in a command prompt type:
-
-``c:\Python27\Scripts\easy_install pyqtgraph``
-
-You now have all of the dependencies and are ready to `Get the Code`_.
+These distributions ship with a bunch of widely-used python libraries. When installing one of these distributions, ensure that the above libraries are installed. 
+`PyQtGraph <http://www.pyqtgraph.org/>`_ is the least likely library to ship with one of the distributions, so after installing a distribution, go to  
+`PyQtGraph <http://www.pyqtgraph.org/>`_, which has binary installers.
 
 Get the Code
 -----------------
 `Fork me on GitHub! <https://github.com/parkin1/pypore>`_.
 
-Install Git, see above for instructions.  Sign up for a BitBucket account, see above.  Before cloning the repository, you will need to be added by **wmparkin** with at least read access.
-
-On Linux, open a terminal.  On Windows, open the 'Git Bash' program.  `Navigate <http://linuxcommand.org/lts0020.php>`_ to where you want the files to be downloaded.
-
-Type the command
-
-``git clone https://<user name>@bitbucket.org/wmparkin/translocationcode-python.git``
-
-You now have the code!  To run, navigate to project/src/pyporegui directory, double click eventanalysis.py!
