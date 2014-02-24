@@ -87,14 +87,15 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">numpy.testing</span> <span class="kn">as</span> <span class="nn">npt</span>
 <span class="c"># import pypore.cythonsetup</span>
-<span class="kn">import</span> <span class="nn">pypore.eventDatabase</span> <span class="kn">as</span> <span class="nn">ed</span>
+<span class="kn">import</span> <span class="nn">pypore.eventDatabase</span> <span class="kn">as</span> <span class="nn">eD</span>
+
 
 <div class="viewcode-block" id="TestEventDatabase"><a class="viewcode-back" href="../../../autodocs/pypore.test.html#pypore.test.TestEventDatabase.TestEventDatabase">[docs]</a><span class="k">class</span> <span class="nc">TestEventDatabase</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
 
 <div class="viewcode-block" id="TestEventDatabase.setUp"><a class="viewcode-back" href="../../../autodocs/pypore.test.html#pypore.test.TestEventDatabase.TestEventDatabase.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="s">&#39;testEventDatabase_938247283278128.h5&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">maxEventLength</span> <span class="o">=</span> <span class="mi">100</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">ed</span><span class="o">.</span><span class="n">openFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;w&#39;</span><span class="p">,</span> <span class="n">maxEventLength</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxEventLength</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">eD</span><span class="o">.</span><span class="n">openFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;w&#39;</span><span class="p">,</span> <span class="n">maxEventLength</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxEventLength</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="TestEventDatabase.tearDown"><a class="viewcode-back" href="../../../autodocs/pypore.test.html#pypore.test.TestEventDatabase.TestEventDatabase.tearDown">[docs]</a>    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -326,7 +327,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">ed</span><span class="o">.</span><span class="n">openFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">eD</span><span class="o">.</span><span class="n">openFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">_testInitialRoot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="p">)</span>
         
@@ -367,7 +368,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         
         <span class="c"># Open the existing file</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">ed</span><span class="o">.</span><span class="n">openFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">eD</span><span class="o">.</span><span class="n">openFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
         
         <span class="c"># Check the rawData matrix</span>
         <span class="n">npt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">rawData</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">rawData</span><span class="p">[:])</span>

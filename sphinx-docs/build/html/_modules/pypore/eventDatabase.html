@@ -86,6 +86,7 @@
 
 <span class="kn">import</span> <span class="nn">tables</span> <span class="kn">as</span> <span class="nn">tb</span>
 
+
 <span class="c"># Description of events table</span>
 <span class="k">class</span> <span class="nc">_Event</span><span class="p">(</span><span class="n">tb</span><span class="o">.</span><span class="n">IsDescription</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -101,9 +102,10 @@
     <span class="n">baseline</span> <span class="o">=</span> <span class="n">tb</span><span class="o">.</span><span class="n">FloatCol</span><span class="p">(</span><span class="n">pos</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
     <span class="n">currentBlockage</span> <span class="o">=</span> <span class="n">tb</span><span class="o">.</span><span class="n">FloatCol</span><span class="p">(</span><span class="n">pos</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
     <span class="n">area</span> <span class="o">=</span> <span class="n">tb</span><span class="o">.</span><span class="n">FloatCol</span><span class="p">(</span><span class="n">pos</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
-    
+
+
 <div class="viewcode-block" id="EventDatabase"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.eventDatabase.EventDatabase">[docs]</a><span class="k">class</span> <span class="nc">EventDatabase</span><span class="p">(</span><span class="n">tb</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">File</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    PyTables HDF5 database storing events and corresponding data.</span>
 <span class="sd">    Inherits from tables.file.File, so you can interact with this</span>
 <span class="sd">    just as you would a PyTables File object. However, this contains</span>
@@ -126,7 +128,7 @@
 <span class="sd">    &gt;&gt;&gt; database = ed.openFile(&#39;test.h5&#39;,mode=&#39;w&#39;)</span>
 <span class="sd">    &gt;&gt;&gt; database.close()</span>
 <span class="sd">    &gt;&gt;&gt; os.remove(&#39;test.h5&#39;)</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="n">DEFAULT_MAX_EVENT_LENGTH</span> <span class="o">=</span> <span class="mi">100</span>
     <span class="n">maxEventLength</span> <span class="o">=</span> <span class="n">DEFAULT_MAX_EVENT_LENGTH</span>
@@ -192,7 +194,7 @@
         <span class="k">if</span> <span class="n">rawData</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">rawData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rawData</span><span class="p">)</span>
             </div>
-<div class="viewcode-block" id="EventDatabase.cleanDatabase"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.eventDatabase.EventDatabase.cleanDatabase">[docs]</a>    <span class="k">def</span> <span class="nf">cleanDatabase</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EventDatabase.clean_database"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.eventDatabase.EventDatabase.clean_database">[docs]</a>    <span class="k">def</span> <span class="nf">clean_database</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Removes /events and then reinitializes the /events group. Note</span>
 <span class="sd">        that any references to any table/matrix in this group will</span>
