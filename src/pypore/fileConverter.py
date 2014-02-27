@@ -67,5 +67,3 @@ def filter_file(filename, filter_frequency, output_file_name=None):
     save_file.flush()
     save_file.close()
     return output_file_name
-
-filter_file('../data/spheres_20140114_154938.log', 1e5, 'testFilter.h5')
