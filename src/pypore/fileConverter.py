@@ -44,6 +44,9 @@ def convert_file(filename, output_filename=None):
 def filter_file(filename, filter_frequency, output_file_name=None):
     """
     Filters the data.
+    Usage:
+    >>> import pypore.fileConverter as fC
+    >>> fC.filter_file("filename", 1.e4, "output.h5") // filter at 10kHz
     """
     specs = openData(filename)
 
