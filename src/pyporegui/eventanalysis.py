@@ -218,10 +218,10 @@ class MyMainWindow(QtGui.QMainWindow):
         # Analysis options
         self.min_event_length_edit = QtGui.QLineEdit()
         self.min_event_length_edit.setText('10.0')
-        self.min_event_length_edit.setValidator(QtGui.QDoubleValidator(0, 1e12, 5))
+        self.min_event_length_edit.setValidator(QtGui.QDoubleValidator(0, 1e12, 5, self.min_event_length_edit))
         self.max_event_length_edit = QtGui.QLineEdit()
         self.max_event_length_edit.setText('1000.0')
-        self.max_event_length_edit.setValidator(QtGui.QDoubleValidator(0, 1e12, 5))
+        self.max_event_length_edit.setValidator(QtGui.QDoubleValidator(0, 1e12, 5, self.max_event_length_edit))
         fixed_analysis_options = QtGui.QFormLayout()
         fixed_analysis_options.addRow('Data Files:', self.list_widget)
         fixed_analysis_options.addRow('Min Event Length [us]:', self.min_event_length_edit)
@@ -235,7 +235,7 @@ class MyMainWindow(QtGui.QMainWindow):
         
         adaptive_options_layout = QtGui.QFormLayout()
         self.filter_parameter_edit = QtGui.QLineEdit()
-        self.filter_parameter_edit.setValidator(QtGui.QDoubleValidator(0, 10, 5))
+        self.filter_parameter_edit.setValidator(QtGui.QDoubleValidator(0, 10, 5, self.filter_parameter_edit))
         self.filter_parameter_edit.setText('0.93') 
         adaptive_options_layout.addRow('Filter Parameter \'a\':', self.filter_parameter_edit)
         # need to cast to widget to add to QStackedLayout
@@ -247,7 +247,7 @@ class MyMainWindow(QtGui.QMainWindow):
         
         fixed_options_layout = QtGui.QFormLayout()
         self.baseline_current_edit = QtGui.QLineEdit()
-        self.baseline_current_edit.setValidator(QtGui.QDoubleValidator(-9999, 9999, 9))
+        self.baseline_current_edit.setValidator(QtGui.QDoubleValidator(-9999, 9999, 9, self.baseline_current_edit))
         self.baseline_current_edit.setText('0.0')
         fixed_options_layout.addRow(choose_baseline_btn, self.baseline_current_edit)
         fixed_options_widget = QtGui.QWidget()
@@ -275,31 +275,31 @@ class MyMainWindow(QtGui.QMainWindow):
         
         noise_based_options_layout = QtGui.QFormLayout()
         self.threshold_stdev_start = QtGui.QLineEdit()
-        self.threshold_stdev_start.setValidator(QtGui.QDoubleValidator(-9999, 9999, 4))
+        self.threshold_stdev_start.setValidator(QtGui.QDoubleValidator(-9999, 9999, 4, self.threshold_stdev_start))
         self.threshold_stdev_start.setText('5.0')
         noise_based_options_layout.addRow('Start StdDev:', self.threshold_stdev_start)
         self.threshold_stdev_end = QtGui.QLineEdit()
-        self.threshold_stdev_end.setValidator(QtGui.QDoubleValidator(-9999, 9999, 4))
+        self.threshold_stdev_end.setValidator(QtGui.QDoubleValidator(-9999, 9999, 4, self.threshold_stdev_end))
         self.threshold_stdev_end.setText('1.0')
         noise_based_options_layout.addRow('End StdDev:', self.threshold_stdev_end)
         
         absolute_drop_options_layout = QtGui.QFormLayout()
         self.absolute_change_start_edit = QtGui.QLineEdit()
-        self.absolute_change_start_edit.setValidator(QtGui.QDoubleValidator(-9999, 9999, 9))
+        self.absolute_change_start_edit.setValidator(QtGui.QDoubleValidator(-9999, 9999, 9, self.absolute_change_start_edit))
         self.absolute_change_start_edit.setText('0.1')
         absolute_drop_options_layout.addRow('Absolute Change Start [uA]:', self.absolute_change_start_edit)
         self.absolute_change_end_edit = QtGui.QLineEdit()
-        self.absolute_change_end_edit.setValidator(QtGui.QDoubleValidator(-9999, 9999, 9))
+        self.absolute_change_end_edit.setValidator(QtGui.QDoubleValidator(-9999, 9999, 9, self.absolute_change_end_edit))
         self.absolute_change_end_edit.setText('0.0')
         absolute_drop_options_layout.addRow('Absolute Change End [uA]:', self.absolute_change_end_edit)
         
         percentage_change_options_layout = QtGui.QFormLayout()
         self.percentage_change_start_edit = QtGui.QLineEdit()
-        self.percentage_change_start_edit.setValidator(QtGui.QDoubleValidator(0, 9999, 5))
+        self.percentage_change_start_edit.setValidator(QtGui.QDoubleValidator(0, 9999, 5, self.percentage_change_start_edit))
         self.percentage_change_start_edit.setText('10.0')
         percentage_change_options_layout.addRow('Percent Change Start:', self.percentage_change_start_edit)
         self.percentage_change_end_edit = QtGui.QLineEdit()
-        self.percentage_change_end_edit.setValidator(QtGui.QDoubleValidator(0, 9999, 5))
+        self.percentage_change_end_edit.setValidator(QtGui.QDoubleValidator(0, 9999, 5, self.percentage_change_end_edit))
         self.percentage_change_end_edit.setText('0.0')
         percentage_change_options_layout.addRow('Percent Change End:', self.percentage_change_end_edit)
         
@@ -374,7 +374,7 @@ class MyMainWindow(QtGui.QMainWindow):
         h5file.close()
         
         self.eventDisplayedEdit.setMaxLength(int(event_count / 10) + 1)
-        self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(1, event_count))
+        self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(1, event_count, self.eventDisplayedEdit))
         self.eventCountText.setText('/' + str(event_count))
         self.eventDisplayedEdit.setText('')
         self.eventDisplayedEdit.setText('1')
@@ -527,7 +527,7 @@ class MyMainWindow(QtGui.QMainWindow):
         self.eventDisplayedEdit = QtGui.QLineEdit()
         self.eventDisplayedEdit.setText('0')
         self.eventDisplayedEdit.setMaxLength(int(len(self.events) / 10) + 1)
-        self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(0, len(self.events)))
+        self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(0, len(self.events), self.eventDisplayedEdit))
         self.eventDisplayedEdit.textChanged.connect(self._eventDisplayEditOnChange)
         eventSelectToolbar.addWidget(self.eventDisplayedEdit)
         
@@ -1044,7 +1044,7 @@ The current namespace should include:
                 singlePlot = True
             self.events += events
             self.eventDisplayedEdit.setMaxLength(int(len(self.events) / 10) + 1)
-            self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(1, len(self.events)))
+            self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(1, len(self.events), self.eventDisplayedEdit))
             self.eventCountText.setText('/' + str(len(self.events)))
             if self.plot_tool_bar.isPlotDuringChecked():
                 self.plotEventsOnMainPlot(events)
