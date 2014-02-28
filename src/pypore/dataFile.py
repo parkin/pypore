@@ -72,9 +72,8 @@ class DataFile(tb.file.File):
         Initializes the EventDatabase.  Adds a group 'events' with
         table 'eventsTable' and matrices 'rawData', 'levels', and 'levelLengths'.
         
-        Args:
-        Kargs:
-            -maxEventLength: Maximum number of datapoints for an event to be added.
+        :param args: Unused
+        :param kargs: Can pass in 'maxEventLength': Maximum number of datapoints for an event to be added.
         """
 
         filters = tb.Filters(complib='blosc', complevel=4)
