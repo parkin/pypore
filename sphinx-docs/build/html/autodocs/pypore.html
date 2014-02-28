@@ -74,7 +74,7 @@
 <li><a class="reference internal" href="#module-pypore.dataFileOpener">pypore.dataFileOpener module</a></li>
 <li><a class="reference internal" href="#module-pypore.eventDatabase">pypore.eventDatabase module</a></li>
 <li><a class="reference internal" href="#module-pypore.eventFinder">pypore.eventFinder module</a></li>
-<li><a class="reference internal" href="#pypore-fileconverter-module">pypore.fileConverter module</a></li>
+<li><a class="reference internal" href="#module-pypore.fileConverter">pypore.fileConverter module</a></li>
 <li><a class="reference internal" href="#module-pypore">Module contents</a></li>
 </ul>
 </li>
@@ -514,8 +514,25 @@ copying the __dict__ to a new EventDatabase instance.</p>
 <dd></dd></dl>
 
 </div>
-<div class="section" id="pypore-fileconverter-module">
-<h2>pypore.fileConverter module<a class="headerlink" href="#pypore-fileconverter-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pypore.fileConverter">
+<span id="pypore-fileconverter-module"></span><h2>pypore.fileConverter module<a class="headerlink" href="#module-pypore.fileConverter" title="Permalink to this headline">¶</a></h2>
+<p>Created on Jan 28, 2014</p>
+<p>&#64;author: <a class="reference external" href="https://github.com/parkin1">&#64;parkin1</a></p>
+<dl class="function">
+<dt id="pypore.fileConverter.convert_file">
+<tt class="descclassname">pypore.fileConverter.</tt><tt class="descname">convert_file</tt><big>(</big><em>filename</em>, <em>output_filename=None</em><big>)</big><a class="reference internal" href="../_modules/pypore/fileConverter.html#convert_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.fileConverter.convert_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a file to the pypore .h5 file format. Returns the new file&#8217;s name.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pypore.fileConverter.filter_file">
+<tt class="descclassname">pypore.fileConverter.</tt><tt class="descname">filter_file</tt><big>(</big><em>filename</em>, <em>filter_frequency</em>, <em>output_file_name=None</em><big>)</big><a class="reference internal" href="../_modules/pypore/fileConverter.html#filter_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.fileConverter.filter_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filters the data.
+Usage:
+&gt;&gt;&gt; import pypore.fileConverter as fC
+&gt;&gt;&gt; fC.filter_file(&#8220;filename&#8221;, 1.e4, &#8220;output.h5&#8221;) // filter at 10kHz</p>
+</dd></dl>
+
 </div>
 <div class="section" id="module-pypore">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pypore" title="Permalink to this headline">¶</a></h2>

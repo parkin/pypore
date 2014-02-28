@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pypore.fileConverter &mdash; pypore 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/architect.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pypore 0.0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+<link href="https://fonts.googleapis.com/css?family=Architects+Daughter" rel="stylesheet" type="text/css">
+
+  </head>
+  <body>
+<header>
+    <div class="inner">
+        <h1><a href="http://parkin1.github.io/pypore/">Pypore</a></h1>
+
+        <h2></h2>
+        <a href="https://github.com/parkin1/pypore" class="button">
+            <small>View project on</small>
+            GitHub</a>
+    </div>
+</header>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">pypore 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pypore.fileConverter</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Jan 28, 2014</span>
+
+<span class="sd">@author: `@parkin1`_</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">cythonsetup</span>
+<span class="kn">from</span> <span class="nn">dataFileOpener</span> <span class="kn">import</span> <span class="n">prepareDataFile</span><span class="p">,</span> <span class="n">getNextBlocks</span><span class="p">,</span> <span class="n">openData</span>
+<span class="kn">import</span> <span class="nn">dataFile</span> <span class="kn">as</span> <span class="nn">dF</span>
+<span class="kn">import</span> <span class="nn">scipy.signal</span> <span class="kn">as</span> <span class="nn">sig</span>
+
+
+<div class="viewcode-block" id="convert_file"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.fileConverter.convert_file">[docs]</a><span class="k">def</span> <span class="nf">convert_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">output_filename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a file to the pypore .h5 file format. Returns the new file&#39;s name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">f</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">prepareDataFile</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    
+    <span class="n">sample_rate</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s">&#39;sample_rate&#39;</span><span class="p">]</span>
+    <span class="n">n_points</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s">&#39;points_per_channel_total&#39;</span><span class="p">]</span>
+    
+    <span class="k">if</span> <span class="n">output_filename</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">output_filename</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;.h5&#39;</span>
+    
+    <span class="n">save_file</span> <span class="o">=</span> <span class="n">dF</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">output_filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;w&#39;</span><span class="p">,</span> <span class="n">sampleRate</span><span class="o">=</span><span class="n">sample_rate</span><span class="p">,</span> <span class="n">nPoints</span><span class="o">=</span><span class="n">n_points</span><span class="p">)</span>
+    
+    <span class="n">blocks_to_get</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">getNextBlocks</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">blocks_to_get</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="n">n</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">save_file</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">n</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:]</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="n">n</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">getNextBlocks</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">blocks_to_get</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span>
+        
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    
+    <span class="n">save_file</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+    <span class="n">save_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">output_filename</span>
+
+</div>
+<div class="viewcode-block" id="filter_file"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.fileConverter.filter_file">[docs]</a><span class="k">def</span> <span class="nf">filter_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">filter_frequency</span><span class="p">,</span> <span class="n">output_file_name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Filters the data.</span>
+<span class="sd">    Usage:</span>
+<span class="sd">    &gt;&gt;&gt; import pypore.fileConverter as fC</span>
+<span class="sd">    &gt;&gt;&gt; fC.filter_file(&quot;filename&quot;, 1.e4, &quot;output.h5&quot;) // filter at 10kHz</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">specs</span> <span class="o">=</span> <span class="n">openData</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">specs</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="n">sample_rate</span> <span class="o">=</span> <span class="n">specs</span><span class="p">[</span><span class="s">&#39;sample_rate&#39;</span><span class="p">]</span>
+    <span class="n">n_points</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">output_file_name</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">output_file_name</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;.h5&#39;</span>
+    
+    <span class="n">save_file</span> <span class="o">=</span> <span class="n">dF</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">output_file_name</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;w&#39;</span><span class="p">,</span> <span class="n">sampleRate</span><span class="o">=</span><span class="n">sample_rate</span><span class="p">,</span> <span class="n">nPoints</span><span class="o">=</span><span class="n">n_points</span><span class="p">)</span>
+
+    <span class="c"># wn is a fraction of the Nyquist frequency (half the sampling frequency).</span>
+    <span class="n">wn</span> <span class="o">=</span> <span class="n">filter_frequency</span> <span class="o">/</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">sample_rate</span><span class="p">)</span>
+    
+    <span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">butter</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="n">wn</span><span class="p">)</span>
+
+    <span class="n">save_file</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">data</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">filtfilt</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">data</span><span class="p">)[:]</span>
+    
+    <span class="n">save_file</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+    <span class="n">save_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">output_file_name</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">pypore 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Will Parkin.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
+    </div>
+  </body>
+</html>
