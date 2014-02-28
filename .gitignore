@@ -1,22 +1,25 @@
-.project
-.pydevproject
+# directory for local data files
 data/*
-.settings/*
+
+# python compiled byte code
 *.pyc
-src/demos/
-src/demos/*
-META-INF/
-build.properties
-src/profile_dump
-doc/build/doctrees/*
-doc/build/.doctrees/*
+
+# sphinx files generated during build
+website/sphinx-docs/build/doctrees/*
+website/sphinx-docs/build/.doctrees/*
+
+# 
+src/pypore/*.html
+src/pypore/build/*
+
+# any event files generated during testing
 src/pypore/test/testDataFiles/*Events*
+
+# Cython generated files
 *.lprof
 *.so
 *.c
 src/pypore/__pycache__/*
-src/pypore/build/*
-src/pypore/*.html
 src/pypore/.pyxbld/*
 
 # intellij stuff
