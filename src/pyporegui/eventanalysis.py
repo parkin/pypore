@@ -25,7 +25,7 @@ def _long_imports(**kwargs):
     global AnalyzeDataThread, PlotThread, FileListItem, FilterListItem, \
             PlotToolBar, DataFileListItem, MyPlotItem, prepareDataFile, pg, pgc, \
             LayoutWidget, PlotCurveItem, linspace, np, \
-            MySpotItem, MyScatterPlotItem, EventAnalysisWidget, ed
+            MySpotItem, MyScatterPlotItem, EventAnalysisWidget, ed, tabs
         
     update_splash = False
     if 'splash' in kwargs and 'app' in kwargs:
@@ -61,6 +61,7 @@ def _long_imports(**kwargs):
         splash.showMessage("Compiling Cython imports... DataFileOpener", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
     from pypore.dataFileOpener import prepareDataFile
+    import tabs
 
     if update_splash:
         splash.showMessage("Compiling Cython imports... EventFinder", alignment=QtCore.Qt.AlignBottom)
@@ -92,7 +93,7 @@ class PathItem(QtGui.QGraphicsPathItem):
 
 
 class MyMainWindow(QtGui.QMainWindow):
-    
+
     def __init__(self, app, parent=None):
         super(MyMainWindow, self).__init__()
         
@@ -108,41 +109,25 @@ class MyMainWindow(QtGui.QMainWindow):
         self.setWindowTitle('Translocation Event Analysis')
         
         self.create_menu()
-        self.create_main_frame()
+        self._create_main_frame()
         self.create_status_bar()
         
     def open_files(self):
         """
         Opens file dialog box, adds names of files to open to list
         """
+        self.event_finding_tab.open_files(self.open_dir)
 
-        fnames = QtGui.QFileDialog.getOpenFileNames(self,
-                                                    'Open data file',
-                                                    self.open_dir,
-                                                    "All types(*.h5 *.hkd *.log *.mat);;"
-                                                    "Pypore data files *.h5(*.h5);;"
-                                                    "Heka files *.hkd(*.hkd);;"
-                                                    "Chimera files *.log(*.log);;Gabys files *.mat(*.mat)")[0]
-        if len(fnames) > 0:
-            self.list_widget.clear()
-        else:
-            return
-        are_files_opened = False
-        for w in fnames:
-            are_files_opened = True
-            f, params = prepareDataFile(w)
-            if 'error' in params:
-                self.status_text.setText(params['error'])
-            else:
-                f.close()
-                item = DataFileListItem(w, params)
-                self.open_dir = item.getDirectory()
-                self.list_widget.addItem(item)
-            
-        if are_files_opened:
-            self.analyze_button.setEnabled(False)
-            self.main_tabwig.setCurrentIndex(0)
-            
+    def _on_files_opened(self, open_dir=None):
+        """
+        Callback for when files are opened.
+
+        :param str open_dir: Directory where files were opened from.
+        """
+        self.main_tabwig.setCurrentIndex(0)
+        if not open_dir is None:
+            self.open_dir = open_dir
+
     def open_event_database(self):
         """
         Opens file dialog box, add names of event database files to open list
@@ -167,185 +152,24 @@ class MyMainWindow(QtGui.QMainWindow):
             self.btnAddFilter.setEnabled(False)
             if self.main_tabwig.currentIndex() < 1:
                 self.main_tabwig.setCurrentIndex(2)
-            
+
+    def set_status(self, text):
+        """
+        Sets the status text.
+
+        :param StringType text: Text to display in the status bar.
+        """
+        self.status_text.setText(text)
+
     def _on_event_file_selection_changed(self):
         self.btnAddFilter.setEnabled(True)
             
-    def _on_file_item_selection_changed(self):
-        self.analyze_button.setEnabled(True)
-        
-    def _on_file_item_doubleclick(self, item):
-        """
-        Called when filter_parameter file list item is double clicked.
-        Starts the plotting thread, which opens the file, parses data, then passes to plotData
-        """
-        # adding by emitting signal in different thread
-        self.status_text.setText('Plotting...')
-        decimates = self.plot_tool_bar.isDecimateChecked()
-        thread = PlotThread(self.p1, filename=str(item.getFileName()), decimate=decimates)
-        thread.dataReady.connect(self._on_file_item_doubleclick_callback)
-        self.thread_pool.append(thread)
-        self.thread_pool[len(self.thread_pool) - 1].start()
-        
-    def _on_file_item_doubleclick_callback(self, results):
-        if 'plot_options' in results:
-            self.plotData(results['plot_options'])
-        if 'status_text' in results:
-            self.status_text.setText(results['status_text'])
-        if 'thread' in results:
-            self.thread_pool.remove(results['thread'])
-            
-    def _create_event_finding_options(self):
-        scroll_area = QtGui.QScrollArea()
-        scroll_area.setWidgetResizable(True)
-        
-        # Create filter_parameter list for files want to analyze
-        self.list_widget = QtGui.QListWidget()
-        self.list_widget.itemSelectionChanged.connect(self._on_file_item_selection_changed)
-        self.list_widget.itemDoubleClicked.connect(self._on_file_item_doubleclick)
-        self.list_widget.setMaximumHeight(100)
-        
-        # Other GUI controls
-        # 
-        self.analyze_button = QtGui.QPushButton("&Find Events")
-        self.connect(self.analyze_button, QtCore.SIGNAL('clicked()'), self.on_analyze)
-        self.analyze_button.setEnabled(False)
-        
-        self.stop_analyze_button = QtGui.QPushButton("&Stop")
-        self.connect(self.stop_analyze_button, QtCore.SIGNAL('clicked()'), self.on_analyze_stop)
-        self.stop_analyze_button.setEnabled(False)
-        
-        # Analysis options
-        self.min_event_length_edit = QtGui.QLineEdit()
-        self.min_event_length_edit.setText('10.0')
-        self.min_event_length_edit.setValidator(QtGui.QDoubleValidator(0, 1e12, 5, self.min_event_length_edit))
-        self.max_event_length_edit = QtGui.QLineEdit()
-        self.max_event_length_edit.setText('1000.0')
-        self.max_event_length_edit.setValidator(QtGui.QDoubleValidator(0, 1e12, 5, self.max_event_length_edit))
-        fixed_analysis_options = QtGui.QFormLayout()
-        fixed_analysis_options.addRow('Data Files:', self.list_widget)
-        fixed_analysis_options.addRow('Min Event Length [us]:', self.min_event_length_edit)
-        fixed_analysis_options.addRow('Max Event Length [us]:', self.max_event_length_edit)
-        
-        # Baseline options
-        baseline_options = QtGui.QStackedLayout()
-        self.baseline_type_combo = QtGui.QComboBox()
-        self.baseline_type_combo.addItems(('Adaptive', 'Fixed'))
-        self.baseline_type_combo.activated.connect(baseline_options.setCurrentIndex)
-        
-        adaptive_options_layout = QtGui.QFormLayout()
-        self.filter_parameter_edit = QtGui.QLineEdit()
-        self.filter_parameter_edit.setValidator(QtGui.QDoubleValidator(0, 10, 5, self.filter_parameter_edit))
-        self.filter_parameter_edit.setText('0.93') 
-        adaptive_options_layout.addRow('Filter Parameter \'a\':', self.filter_parameter_edit)
-        # need to cast to widget to add to QStackedLayout
-        adaptive_options_widget = QtGui.QWidget()
-        adaptive_options_widget.setLayout(adaptive_options_layout)
-        
-        choose_baseline_btn = QtGui.QPushButton('Baseline:')
-        choose_baseline_btn.setToolTip('Click to choose the baseline from the plot.')
-        
-        fixed_options_layout = QtGui.QFormLayout()
-        self.baseline_current_edit = QtGui.QLineEdit()
-        self.baseline_current_edit.setValidator(QtGui.QDoubleValidator(-9999, 9999, 9, self.baseline_current_edit))
-        self.baseline_current_edit.setText('0.0')
-        fixed_options_layout.addRow(choose_baseline_btn, self.baseline_current_edit)
-        fixed_options_widget = QtGui.QWidget()
-        fixed_options_widget.setLayout(fixed_options_layout)
-        
-        baseline_options.addWidget(adaptive_options_widget)
-        baseline_options.addWidget(fixed_options_widget)
-        
-        baseline_form = QtGui.QFormLayout()
-        baseline_form.addRow('Baseline Type:', self.baseline_type_combo)
-        
-        # Threshold options
-        threshold_options = QtGui.QStackedLayout()
-        self.threshold_type_combo = QtGui.QComboBox()
-        self.threshold_type_combo.addItem('Noise Based')
-        self.threshold_type_combo.addItem('Absolute Change')
-        self.threshold_type_combo.addItem('Percent Change')
-        self.threshold_type_combo.activated.connect(threshold_options.setCurrentIndex)
-        
-        threshold_form = QtGui.QFormLayout()
-        self.threshold_direction_combo = QtGui.QComboBox()
-        self.threshold_direction_combo.addItems(('Both', 'Positive', 'Negative'))
-        threshold_form.addRow('Threshold Direction:', self.threshold_direction_combo)
-        threshold_form.addRow('Threshold Type:', self.threshold_type_combo)
-        
-        noise_based_options_layout = QtGui.QFormLayout()
-        self.threshold_stdev_start = QtGui.QLineEdit()
-        self.threshold_stdev_start.setValidator(QtGui.QDoubleValidator(-9999, 9999, 4, self.threshold_stdev_start))
-        self.threshold_stdev_start.setText('5.0')
-        noise_based_options_layout.addRow('Start StdDev:', self.threshold_stdev_start)
-        self.threshold_stdev_end = QtGui.QLineEdit()
-        self.threshold_stdev_end.setValidator(QtGui.QDoubleValidator(-9999, 9999, 4, self.threshold_stdev_end))
-        self.threshold_stdev_end.setText('1.0')
-        noise_based_options_layout.addRow('End StdDev:', self.threshold_stdev_end)
-        
-        absolute_drop_options_layout = QtGui.QFormLayout()
-        self.absolute_change_start_edit = QtGui.QLineEdit()
-        self.absolute_change_start_edit.setValidator(QtGui.QDoubleValidator(-9999, 9999, 9, self.absolute_change_start_edit))
-        self.absolute_change_start_edit.setText('0.1')
-        absolute_drop_options_layout.addRow('Absolute Change Start [uA]:', self.absolute_change_start_edit)
-        self.absolute_change_end_edit = QtGui.QLineEdit()
-        self.absolute_change_end_edit.setValidator(QtGui.QDoubleValidator(-9999, 9999, 9, self.absolute_change_end_edit))
-        self.absolute_change_end_edit.setText('0.0')
-        absolute_drop_options_layout.addRow('Absolute Change End [uA]:', self.absolute_change_end_edit)
-        
-        percentage_change_options_layout = QtGui.QFormLayout()
-        self.percentage_change_start_edit = QtGui.QLineEdit()
-        self.percentage_change_start_edit.setValidator(QtGui.QDoubleValidator(0, 9999, 5, self.percentage_change_start_edit))
-        self.percentage_change_start_edit.setText('10.0')
-        percentage_change_options_layout.addRow('Percent Change Start:', self.percentage_change_start_edit)
-        self.percentage_change_end_edit = QtGui.QLineEdit()
-        self.percentage_change_end_edit.setValidator(QtGui.QDoubleValidator(0, 9999, 5, self.percentage_change_end_edit))
-        self.percentage_change_end_edit.setText('0.0')
-        percentage_change_options_layout.addRow('Percent Change End:', self.percentage_change_end_edit)
-        
-        noise_based_options = QtGui.QWidget()
-        noise_based_options.setLayout(noise_based_options_layout)
-        
-        absolute_drop_options = QtGui.QWidget()
-        absolute_drop_options.setLayout(absolute_drop_options_layout)
-        
-        percentage_change_options_widget = QtGui.QWidget()
-        percentage_change_options_widget.setLayout(percentage_change_options_layout)
-        
-        threshold_options.addWidget(noise_based_options)
-        threshold_options.addWidget(absolute_drop_options)
-        threshold_options.addWidget(percentage_change_options_widget)
-        
-        hbox = QtGui.QHBoxLayout()
-        
-        for w in [  self.analyze_button, self.stop_analyze_button]:
-            hbox.addWidget(w)
-            hbox.setAlignment(w, QtCore.Qt.AlignVCenter)
-        
-        
-        # Left vertical layout with settings
-        vbox_left = QtGui.QVBoxLayout()
-        vbox_left.addLayout(fixed_analysis_options)
-        vbox_left.addLayout(baseline_form)
-        vbox_left.addLayout(baseline_options)
-        vbox_left.addLayout(threshold_form)
-        vbox_left.addLayout(threshold_options)
-        vbox_left.addLayout(hbox)
-        
-        vbox_left_widget = QtGui.QWidget()
-        vbox_left_widget.setLayout(vbox_left)
-        
-        scroll_area.setWidget(vbox_left_widget)
-        
-        return scroll_area
-    
     def _create_event_viewer_options(self):
         scroll_area = QtGui.QScrollArea()
         scroll_area.setWidgetResizable(True)
         
         # Create filter_parameter list for files want to analyze
         self.eventview_list_widget = QtGui.QListWidget()
-        self.eventview_list_widget.itemSelectionChanged.connect(self._on_file_item_selection_changed)
         self.eventview_list_widget.itemDoubleClicked.connect(self._on_eventview_file_item_doubleclick)
         self.eventview_list_widget.setMaximumHeight(100)
         
@@ -470,25 +294,6 @@ class MyMainWindow(QtGui.QMainWindow):
             self.frm.setStyleSheet("QWidget { background-color: %s }"
                 % col.name())
         
-    def _create_eventfinder_plots_widget(self):
-        wig = pg.GraphicsLayoutWidget()
-
-        # Main plot        
-        self.plotwid = MyPlotItem(title='Current Trace', name='Plot')
-        wig.addItem(self.plotwid)
-        self.plotwid.enableAutoRange('xy', False)
-        self.p1 = self.plotwid.plot()  # create an empty plot curve to be filled later
-        
-        # Tool bar for main plot.  Contains zoom button and different checkboxes
-        self.plot_tool_bar = PlotToolBar(self)
-        self.addToolBar(self.plot_tool_bar)
-        
-        eventfinderplots_layout = LayoutWidget()
-        eventfinderplots_layout.addWidget(self.plot_tool_bar, row=1, col=0, colspan=3)
-        eventfinderplots_layout.addWidget(wig, row=2, col=0, colspan=3)
-        
-        return eventfinderplots_layout
-    
     def _create_eventviewer_plot_widget(self):
         wig = pg.GraphicsLayoutWidget()
         wig2 = pg.GraphicsLayoutWidget()
@@ -598,37 +403,33 @@ class MyMainWindow(QtGui.QMainWindow):
         frame.addWidget(scrollPlots)
         return frame
     
-    def _create_event_finding_tab(self):
+    def _create_data_modification_tab(self):
         frame = QtGui.QSplitter()
-        
-        options = self._create_event_finding_options()
-        plots = self._create_eventfinder_plots_widget()
-        
-        # Put everything in filter_parameter scroll area
-        scrollOptions = QtGui.QScrollArea()
-        scrollPlots = QtGui.QScrollArea()
-        scrollOptions.setWidgetResizable(True)
-        scrollPlots.setWidgetResizable(True)
-        
-        scrollOptions.setWidget(options)
-        scrollPlots.setWidget(plots)
-        
-        frame.addWidget(scrollOptions)
-        frame.addWidget(scrollPlots)
-        
+
+        options = self._create_data_modification_options()
+
         return frame
+
+    def _process_events(self):
+        self.app.processEvents()
         
-    def create_main_frame(self):
-        '''
-        Initializes the main gui frame.
-        '''
-        event_finding = self._create_event_finding_tab()
+    def _create_main_frame(self):
+        """
+        Helper to initialize the main gui frame.
+        """
+        # data_modification = self._create_data_modification_tab()
+        self.event_finding_tab = tabs.EventFindingTab(self)
+        self.event_finding_tab.set_on_files_opened_callback(self._on_files_opened)
+        self.event_finding_tab.set_on_status_update_callback(self.set_status)
+        self.event_finding_tab.set_process_events_callback(self._process_events)
+
         event_viewer = self._create_event_viewer_tab()
         event_analysis = self._create_event_analysis_tab()
         
         # Layout holding everything        
-        self.main_tabwig = QtGui.QTabWidget()  # Splitter allows for drag to resize between children
-        self.main_tabwig.addTab(event_finding, 'Event Finding')
+        self.main_tabwig = QtGui.QTabWidget()
+        # self.main_tabwig.addTab(data_modification, 'Data modification')
+        self.main_tabwig.addTab(self.event_finding_tab, 'Event Finding')
         self.main_tabwig.addTab(event_viewer, 'Event View')
         self.main_tabwig.addTab(event_analysis, 'Event Analysis')
         self.main_tabwig.setMinimumSize(1000, 550)
@@ -649,7 +450,7 @@ The current namespace should include:
     currentPlot -  Top plot in the event finding tab.
 *********************"""
 
-        namespace = {'np': np, 'pg': pg, 'ed': ed, 'currentPlot': self.plotwid}
+        namespace = {'np': np, 'pg': pg, 'ed': ed, 'currentPlot': self.event_finding_tab.plotwid}
         self.console = pgc.ConsoleWidget(namespace=namespace, text=text)
         
         frame = QtGui.QSplitter()
@@ -766,7 +567,7 @@ The current namespace should include:
         plot_range = plot_options['plot_range']
     
         n = len(data)
-#         # If problem with input, just plot all the data
+        # If problem with input, just plot all the data
         if plot_range == 'all' or len(plot_range) != 2 or plot_range[1] <= plot_range[0]:
             plot_range = [0, n]
         else:  # no problems!
@@ -927,43 +728,6 @@ The current namespace should include:
         item.setPen(pg.mkPen('y'))
         self.plotwid.addEventItem(item)
         
-    def on_analyze_stop(self):
-        self.cleanThreads()
-        self.stop_analyze_button.setEnabled(False)
-        self.status_text.setText('Analyze aborted.')
-            
-    def on_analyze(self):
-        '''
-        Searches for events in the file that is currently highlighted in the files list.
-        '''
-        selectedItems = self.list_widget.selectedItems()
-        if len(selectedItems) > 0:
-            currItem = selectedItems[0]
-        else:
-            return
-        
-        parameters = self.get_current_analysis_parameters()
-        if 'error' in parameters:
-            self.status_text.setText(parameters['error'])
-            return
-        
-        # Clear the current events
-        del self.events[:]
-        self.prev_concat_time = 0.
-        
-        filenames = [str(currItem.getFileName())]
-        
-        self.status_text.setText('Event Count: 0 Percent Done: 0')
-        
-        # Start analyzing data in new analyzethread.
-        self.analyzethread = AnalyzeDataThread(filenames, parameters)
-        self.analyzethread.dataReady.connect(self._analyze_data_thread_callback)
-        self.thread_pool.append(self.analyzethread)
-        self.analyzethread.start()
-        
-        self.stop_analyze_button.setEnabled(True)
-        
-        
     def get_current_analysis_parameters(self):
         '''
         Returns filter_parameter dictionary holding the current analysis parameters set by the user.  Returns an entry 'error' if there were
@@ -1031,38 +795,13 @@ The current namespace should include:
         
         return parameters
         
-    def _analyze_data_thread_callback(self, results):
-        if 'status_text' in results:
-            self.status_text.setText(results['status_text'])
-        if 'Events' in results:
-            singlePlot = False
-            events = results['Events']
-            if len(events) < 1:
-                return
-            elif len(self.events) < 1:
-                # if this is our first time plotting events, include the single event plot!
-                singlePlot = True
-            self.events += events
-            self.eventDisplayedEdit.setMaxLength(int(len(self.events) / 10) + 1)
-            self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(1, len(self.events), self.eventDisplayedEdit))
-            self.eventCountText.setText('/' + str(len(self.events)))
-            if self.plot_tool_bar.isPlotDuringChecked():
-                self.plotEventsOnMainPlot(events)
-                self.addEventsToConcatEventPlot(events)
-            if singlePlot:
-                self.eventDisplayedEdit.setText('1')
-            self.app.processEvents()  
-            self.analyzethread.readyForEvents = True
-        if 'done' in results:
-            if results['done']:
-                self.stop_analyze_button.setEnabled(False)
-                
-    def cleanThreads(self):
+    def clean_threads(self):
         for w in self.thread_pool:
             w.cancel()
 #             w.wait()
             self.thread_pool.remove(w)
-        
+
+
 def main():
     
     app = QtGui.QApplication(sys.argv)
@@ -1076,7 +815,7 @@ def main():
     ex.show()
     splash.finish(ex)
     app.exec_()
-    ex.cleanThreads()
+    ex.clean_threads()
 
 if __name__ == '__main__':
     main()
