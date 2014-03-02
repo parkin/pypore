@@ -10,7 +10,7 @@ import os
 
 from PySide import QtCore, QtGui  # Must import PySide stuff before pyqtgraph so pyqtgraph knows
                                 # to use PySide instead of PyQt
-             
+
                                 
 # The rest of the imports can be found below in _longImports
 def _long_imports(**kwargs):
@@ -26,7 +26,7 @@ def _long_imports(**kwargs):
             PlotToolBar, DataFileListItem, MyPlotItem, prepareDataFile, pg, pgc, \
             LayoutWidget, PlotCurveItem, linspace, np, \
             MySpotItem, MyScatterPlotItem, EventAnalysisWidget, ed, tabs
-        
+
     update_splash = False
     if 'splash' in kwargs and 'app' in kwargs:
         update_splash = True
@@ -450,7 +450,7 @@ The current namespace should include:
     currentPlot -  Top plot in the event finding tab.
 *********************"""
 
-        namespace = {'np': np, 'pg': pg, 'ed': ed, 'currentPlot': self.event_finding_tab.plotwid}
+        namespace = {'np': np, 'pg': pg, 'ed': ed, 'currentPlot': self.event_finding_tab.plot_widget}
         self.console = pgc.ConsoleWidget(namespace=namespace, text=text)
         
         frame = QtGui.QSplitter()
