@@ -15,7 +15,7 @@ from MyThreads import PlotThread, AnalyzeDataThread
 
 class EventFindingTab(QtGui.QSplitter):
     """
-
+    A QtGui.QSplitter that contains event finding options on the left and a plot on the right.
     """
 
     def __init__(self, parent=None):
@@ -31,7 +31,7 @@ class EventFindingTab(QtGui.QSplitter):
         self.on_files_opened_callback = None
         self.on_status_update_callback = None
         self.process_events_callback = None
-        self.plotwid = None
+        self.plot_widget = None
         self.p1 = None
         self.plot_tool_bar = None
 
@@ -131,7 +131,7 @@ class EventFindingTab(QtGui.QSplitter):
 
     def open_files(self, open_dir='.'):
         """
-        Opens a QFileDialog so the user can open files. Lists those files in the lsit widget.
+        Opens a QFileDialog so the user can open files. Lists those files in the list widget.
 
         :param str open_dir: The directory that the QFileDialog should start in.
         """
@@ -189,9 +189,9 @@ class EventFindingTab(QtGui.QSplitter):
         times = linspace(ts * plot_range[0], ts * plot_range[1], n)
         y_data = data[plot_range[0]:(plot_range[1] + 1)]
 
-        self.plotwid.clearEventItems()
+        self.plot_widget.clearEventItems()
         self.p1.setData(x=times, y=y_data)
-        self.plotwid.autoRange()
+        self.plot_widget.autoRange()
         if self.process_events_callback is not None:
             self.process_events_callback()
 
@@ -230,16 +230,19 @@ class EventFindingTab(QtGui.QSplitter):
             self.on_status_update_callback(text)
 
     def _analyze_data_thread_callback(self, results):
+        """
+        Callback for updates from the AnalyzeDataThread.
+        """
         if 'status_text' in results:
             self._dispatch_status_update(results['status_text'])
         if 'Events' in results:
-            singlePlot = False
+            single_plot = False
             events = results['Events']
             if len(events) < 1:
                 return
             elif len(self.events) < 1:
                 # if this is our first time plotting events, include the single event plot!
-                singlePlot = True
+                single_plot = True
             self.events += events
             self.eventDisplayedEdit.setMaxLength(int(len(self.events) / 10) + 1)
             self.eventDisplayedEdit.setValidator(QtGui.QIntValidator(1, len(self.events), self.eventDisplayedEdit))
@@ -247,7 +250,7 @@ class EventFindingTab(QtGui.QSplitter):
             if self.plot_tool_bar.isPlotDuringChecked():
                 self.plotEventsOnMainPlot(events)
                 self.addEventsToConcatEventPlot(events)
-            if singlePlot:
+            if single_plot:
                 self.eventDisplayedEdit.setText('1')
             self.app.processEvents()
             self.analyzethread.readyForEvents = True
@@ -274,13 +277,13 @@ class EventFindingTab(QtGui.QSplitter):
         del self.events[:]
         # self.prev_concat_time = 0.
 
-        filenames = [str(curr_item.getFileName())]
+        file_names = [str(curr_item.getFileName())]
 
         if self.on_status_update_callback is not None:
             self.on_status_update_callback("Event Count: 0 Percent Done: 0")
 
         # Start analyzing data in new analyzethread.
-        self.analyzethread = AnalyzeDataThread(filenames, parameters)
+        self.analyzethread = AnalyzeDataThread(file_names, parameters)
         self.analyzethread.dataReady.connect(self._analyze_data_thread_callback)
         self.thread_pool.append(self.analyzethread)
         self.analyzethread.start()
@@ -288,9 +291,21 @@ class EventFindingTab(QtGui.QSplitter):
         self.stop_analyze_button.setEnabled(True)
 
     def _on_analyze_stop(self):
-        self.cleanThreads()
+        """
+        Called when the user clicks the Stop button.
+        """
+        self.clean_threads()
         self.stop_analyze_button.setEnabled(False)
         self._dispatch_status_update("Analyze aborted.")
+
+    def clean_threads(self):
+        """
+        Cancels all of the currently running threads.
+        """
+        for w in self.thread_pool:
+            w.cancel()
+#             w.wait()
+            self.thread_pool.remove(w)
 
     def _on_file_item_doubleclick(self, item):
         """
@@ -321,10 +336,10 @@ class EventFindingTab(QtGui.QSplitter):
         wig = pg.GraphicsLayoutWidget()
 
         # Main plot
-        self.plotwid = MyPlotItem(title='Current Trace', name='Plot')
-        wig.addItem(self.plotwid)
-        self.plotwid.enableAutoRange('xy', False)
-        self.p1 = self.plotwid.plot()  # create an empty plot curve to be filled later
+        self.plot_widget = MyPlotItem(title='Current Trace', name='Plot')
+        wig.addItem(self.plot_widget)
+        self.plot_widget.enableAutoRange('xy', False)
+        self.p1 = self.plot_widget.plot()  # create an empty plot curve to be filled later
 
         # Tool bar for main plot.  Contains zoom button and different checkboxes
         self.plot_tool_bar = PlotToolBar(self)
