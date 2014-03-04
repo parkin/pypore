@@ -130,16 +130,6 @@ class MyMainWindow(QtGui.QMainWindow):
         if len(file_names) > 0:
             self.event_finding_tab.open_files(file_names)
 
-    def _on_files_opened(self, open_dir=None):
-        """
-        Callback for when files are opened.
-
-        :param str open_dir: Directory where files were opened from.
-        """
-        self.main_tabwig.setCurrentIndex(0)
-        if not open_dir is None:
-            self.open_dir = open_dir
-
     def open_event_database(self):
         """
         Opens file dialog box, add names of event database files to open list
