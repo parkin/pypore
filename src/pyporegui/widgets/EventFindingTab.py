@@ -4,12 +4,12 @@ import pyqtgraph as pg
 from pyqtgraph.widgets.LayoutWidget import LayoutWidget
 
 from pypore.dataFileOpener import prepareDataFile
-
 from pyporegui._ThreadManager import _ThreadManager
 from pyporegui.MyThreads import AnalyzeDataThread, PlotThread
 from pyporegui.graphicsItems.MyPlotItem import MyPlotItem
 from pyporegui.FileItems import DataFileListItem
 from pyporegui.widgets.PlotToolBar import PlotToolBar
+
 
 __all__ = ['EventFindingTab']
 
@@ -167,12 +167,12 @@ class EventFindingTab(_ThreadManager, QtGui.QSplitter):
 
     def plot_data(self, plot_options):
         """
-        Plots waveform in datadict
+        Plots waveform in datadict.
         :param DictType plot_options: Dictionary of plot options. Must contain:
-                            - Data at plot_options['datadict']['data'][0]
-                            - sample_rate at plot_options['datadict']['sample_rate']
-                            - plot_range at plot_options['datadict']['plot_range']. This can be [start,stop], or
-                                'all' for 0:n.
+        - Data at plot_options['datadict']['data'][0]
+        - sample_rate at plot_options['datadict']['sample_rate']
+        - plot_range at plot_options['datadict']['plot_range']. This can be [start,stop], or
+        'all' for 0:n.
         """
         # Read the first file, store data in dictionary
         data = plot_options['datadict']['data'][0]

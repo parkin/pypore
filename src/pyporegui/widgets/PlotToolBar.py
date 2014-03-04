@@ -5,6 +5,7 @@ class PlotToolBar(QtGui.QToolBar):
     """
     A toolbar for plots, with a zoom button, check boxes for options.
     """
+
     def __init__(self, parent=None):
         super(PlotToolBar, self).__init__(parent)
 
@@ -36,8 +37,7 @@ class PlotToolBar(QtGui.QToolBar):
 
     def is_plot_during_checked(self):
         """
-        :returns: boolean -- true if the toolbar's plot during checkbox is checked, false
-        otherwise.
+        :returns: boolean -- true if the toolbar's plot during checkbox is checked, false otherwise.
         """
         return self.plot_during_check_box.isChecked()
 

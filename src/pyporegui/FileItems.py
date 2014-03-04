@@ -1,5 +1,5 @@
 """
-@author: `@parkin`_
+@author: `@parkin1`_
 """
 import os.path
 
