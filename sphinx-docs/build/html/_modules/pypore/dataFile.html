@@ -152,9 +152,8 @@
 <span class="sd">        Initializes the EventDatabase.  Adds a group &#39;events&#39; with</span>
 <span class="sd">        table &#39;eventsTable&#39; and matrices &#39;rawData&#39;, &#39;levels&#39;, and &#39;levelLengths&#39;.</span>
 <span class="sd">        </span>
-<span class="sd">        Args:</span>
-<span class="sd">        Kargs:</span>
-<span class="sd">            -maxEventLength: Maximum number of datapoints for an event to be added.</span>
+<span class="sd">        :param args: Unused</span>
+<span class="sd">        :param kargs: Can pass in &#39;maxEventLength&#39;: Maximum number of datapoints for an event to be added.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">filters</span> <span class="o">=</span> <span class="n">tb</span><span class="o">.</span><span class="n">Filters</span><span class="p">(</span><span class="n">complib</span><span class="o">=</span><span class="s">&#39;blosc&#39;</span><span class="p">,</span> <span class="n">complevel</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>

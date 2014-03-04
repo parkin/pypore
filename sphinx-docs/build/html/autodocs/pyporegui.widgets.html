@@ -1,0 +1,436 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyporegui.widgets package &mdash; pypore 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/architect.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pypore 0.0.1 documentation" href="../index.html" />
+    <link rel="up" title="pyporegui package" href="pyporegui.html" />
+    <link rel="prev" title="pyporegui.test.helper package" href="pyporegui.test.helper.html" />
+<link href="https://fonts.googleapis.com/css?family=Architects+Daughter" rel="stylesheet" type="text/css">
+
+  </head>
+  <body>
+<header>
+    <div class="inner">
+        <h1><a href="http://parkin1.github.io/pypore/">Pypore</a></h1>
+
+        <h2></h2>
+        <a href="https://github.com/parkin1/pypore" class="button">
+            <small>View project on</small>
+            GitHub</a>
+    </div>
+</header>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pyporegui.test.helper.html" title="pyporegui.test.helper package"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">pypore 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../api.html" >Code Documentation</a> &raquo;</li>
+          <li><a href="pyporegui.html" accesskey="U">pyporegui package</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">pyporegui.widgets package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-pyporegui.widgets.EventAnalysisPlotWidget">pyporegui.widgets.EventAnalysisPlotWidget module</a></li>
+<li><a class="reference internal" href="#module-pyporegui.widgets.EventAnalysisTab">pyporegui.widgets.EventAnalysisTab module</a></li>
+<li><a class="reference internal" href="#module-pyporegui.widgets.EventFindingTab">pyporegui.widgets.EventFindingTab module</a></li>
+<li><a class="reference internal" href="#module-pyporegui.widgets.EventViewingTab">pyporegui.widgets.EventViewingTab module</a></li>
+<li><a class="reference internal" href="#module-pyporegui.widgets.PlotToolBar">pyporegui.widgets.PlotToolBar module</a></li>
+<li><a class="reference internal" href="#module-pyporegui.widgets">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="pyporegui.test.helper.html"
+                        title="previous chapter">pyporegui.test.helper package</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/autodocs/pyporegui.widgets.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="pyporegui-widgets-package">
+<h1>pyporegui.widgets package<a class="headerlink" href="#pyporegui-widgets-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-pyporegui.widgets.EventAnalysisPlotWidget">
+<span id="pyporegui-widgets-eventanalysisplotwidget-module"></span><h2>pyporegui.widgets.EventAnalysisPlotWidget module<a class="headerlink" href="#module-pyporegui.widgets.EventAnalysisPlotWidget" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pyporegui.widgets.EventAnalysisPlotWidget.EventAnalysisPlotWidget">
+<em class="property">class </em><tt class="descclassname">pyporegui.widgets.EventAnalysisPlotWidget.</tt><tt class="descname">EventAnalysisPlotWidget</tt><a class="reference internal" href="../_modules/pyporegui/widgets/EventAnalysisPlotWidget.html#EventAnalysisPlotWidget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.EventAnalysisPlotWidget.EventAnalysisPlotWidget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">pyqtgraph.widgets.GraphicsLayoutWidget.GraphicsLayoutWidget</span></tt></p>
+<dl class="method">
+<dt id="pyporegui.widgets.EventAnalysisPlotWidget.EventAnalysisPlotWidget.add_selections">
+<tt class="descname">add_selections</tt><big>(</big><em>file_names</em>, <em>params</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/EventAnalysisPlotWidget.html#EventAnalysisPlotWidget.add_selections"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.EventAnalysisPlotWidget.EventAnalysisPlotWidget.add_selections" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots event statistics.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.widgets.EventAnalysisPlotWidget.EventAnalysisPlotWidget.onScatterPointsClicked">
+<tt class="descname">onScatterPointsClicked</tt><big>(</big><em>plot</em>, <em>points</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/EventAnalysisPlotWidget.html#EventAnalysisPlotWidget.onScatterPointsClicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.EventAnalysisPlotWidget.EventAnalysisPlotWidget.onScatterPointsClicked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback for when a scatter plot points are clicked.
+Highlights the points and unhighlights previously selected points.</p>
+<p>plot should be a MyScatterPlotItem
+points should be a MySpotItem</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.widgets.EventAnalysisPlotWidget.EventAnalysisPlotWidget.removeFilter">
+<tt class="descname">removeFilter</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/EventAnalysisPlotWidget.html#EventAnalysisPlotWidget.removeFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.EventAnalysisPlotWidget.EventAnalysisPlotWidget.removeFilter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pyporegui.widgets.EventAnalysisPlotWidget.EventAnalysisPlotWidget.staticMetaObject">
+<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x63e4320&gt;</em><a class="headerlink" href="#pyporegui.widgets.EventAnalysisPlotWidget.EventAnalysisPlotWidget.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyporegui.widgets.EventAnalysisTab">
+<span id="pyporegui-widgets-eventanalysistab-module"></span><h2>pyporegui.widgets.EventAnalysisTab module<a class="headerlink" href="#module-pyporegui.widgets.EventAnalysisTab" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pyporegui.widgets.EventAnalysisTab.EventAnalysisTab">
+<em class="property">class </em><tt class="descclassname">pyporegui.widgets.EventAnalysisTab.</tt><tt class="descname">EventAnalysisTab</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/EventAnalysisTab.html#EventAnalysisTab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.EventAnalysisTab.EventAnalysisTab" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">pyporegui._ThreadManager._ThreadManager</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtGui.QSplitter</span></tt></p>
+<dl class="method">
+<dt id="pyporegui.widgets.EventAnalysisTab.EventAnalysisTab.add_filter_clicked">
+<tt class="descname">add_filter_clicked</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/EventAnalysisTab.html#EventAnalysisTab.add_filter_clicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.EventAnalysisTab.EventAnalysisTab.add_filter_clicked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.widgets.EventAnalysisTab.EventAnalysisTab.color_picker_btn_clicked">
+<tt class="descname">color_picker_btn_clicked</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/EventAnalysisTab.html#EventAnalysisTab.color_picker_btn_clicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.EventAnalysisTab.EventAnalysisTab.color_picker_btn_clicked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.widgets.EventAnalysisTab.EventAnalysisTab.open_event_database">
+<tt class="descname">open_event_database</tt><big>(</big><em>file_names=None</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/EventAnalysisTab.html#EventAnalysisTab.open_event_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.EventAnalysisTab.EventAnalysisTab.open_event_database" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds the files to the list widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_names</strong> (<em>ListType&lt;StringType&gt;</em>) &#8211; (Optional) List of file names to be added to the list widget. If not
+included, then a QtGui.QFileDialog will be opened to select files.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.widgets.EventAnalysisTab.EventAnalysisTab.remove_filter_clicked">
+<tt class="descname">remove_filter_clicked</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/EventAnalysisTab.html#EventAnalysisTab.remove_filter_clicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.EventAnalysisTab.EventAnalysisTab.remove_filter_clicked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pyporegui.widgets.EventAnalysisTab.EventAnalysisTab.staticMetaObject">
+<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x63eeea8&gt;</em><a class="headerlink" href="#pyporegui.widgets.EventAnalysisTab.EventAnalysisTab.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyporegui.widgets.EventFindingTab">
+<span id="pyporegui-widgets-eventfindingtab-module"></span><h2>pyporegui.widgets.EventFindingTab module<a class="headerlink" href="#module-pyporegui.widgets.EventFindingTab" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pyporegui.widgets.EventFindingTab.EventFindingTab">
+<em class="property">class </em><tt class="descclassname">pyporegui.widgets.EventFindingTab.</tt><tt class="descname">EventFindingTab</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/EventFindingTab.html#EventFindingTab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.EventFindingTab.EventFindingTab" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">pyporegui._ThreadManager._ThreadManager</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtGui.QSplitter</span></tt></p>
+<p>A QtGui.QSplitter that contains event finding options on the left and a plot on the right.</p>
+<dl class="method">
+<dt id="pyporegui.widgets.EventFindingTab.EventFindingTab.get_current_analysis_parameters">
+<tt class="descname">get_current_analysis_parameters</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/EventFindingTab.html#EventFindingTab.get_current_analysis_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.EventFindingTab.EventFindingTab.get_current_analysis_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the current analysis parameters from the gui and returns the results in a dictionary. Returns
+dictionary entry &#8216;error&#8217; with text of the error if one exists.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">DictType &#8211; the event analysis parameters. These include:
+&#8211; &#8216;error&#8217; - Text if there was an error
+OR
+&#8211; &#8216;min_event_length&#8217;
+&#8211; &#8216;max_event_length&#8217;
+&#8211; &#8216;baseline_type&#8217;
+&#8211; &#8216;filter_parameter&#8217;
+&#8211; &#8216;baseline_current&#8217;
+etc...</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.widgets.EventFindingTab.EventFindingTab.open_files">
+<tt class="descname">open_files</tt><big>(</big><em>file_names=None</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/EventFindingTab.html#EventFindingTab.open_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.EventFindingTab.EventFindingTab.open_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Analyzes the files for correctness, then adds them to the list widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_names</strong> (<em>ListType&lt;StringType&gt;</em>) &#8211; The file names to be included in the list widget. If not included,
+this function will use a QtGui.QFileDialog.getOpenFileNames to open
+files.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.widgets.EventFindingTab.EventFindingTab.plot_data">
+<tt class="descname">plot_data</tt><big>(</big><em>plot_options</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/EventFindingTab.html#EventFindingTab.plot_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.EventFindingTab.EventFindingTab.plot_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots waveform in datadict.
+:param DictType plot_options: Dictionary of plot options. Must contain:
+- Data at plot_options[&#8216;datadict&#8217;][&#8216;data&#8217;][0]
+- sample_rate at plot_options[&#8216;datadict&#8217;][&#8216;sample_rate&#8217;]
+- plot_range at plot_options[&#8216;datadict&#8217;][&#8216;plot_range&#8217;]. This can be [start,stop], or
+&#8216;all&#8217; for 0:n.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.widgets.EventFindingTab.EventFindingTab.set_on_status_update_callback">
+<tt class="descname">set_on_status_update_callback</tt><big>(</big><em>callback</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/EventFindingTab.html#EventFindingTab.set_on_status_update_callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.EventFindingTab.EventFindingTab.set_on_status_update_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets a callback for when the EventFinderTab&#8217;s status is updated. The status is a String of information
+about the current state of the EventFinderTab.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>callback</strong> (<em>MethodType</em>) &#8211; Callback method for when the EventFinderTab&#8217;s status is updated.
+This callback must accept one string parameter.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.widgets.EventFindingTab.EventFindingTab.set_process_events_callback">
+<tt class="descname">set_process_events_callback</tt><big>(</big><em>callback</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/EventFindingTab.html#EventFindingTab.set_process_events_callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.EventFindingTab.EventFindingTab.set_process_events_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets a callback for when the EventFindingTab requests app.processEvents</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>callback</strong> (<em>MethodType</em>) &#8211; </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pyporegui.widgets.EventFindingTab.EventFindingTab.staticMetaObject">
+<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x63f37a0&gt;</em><a class="headerlink" href="#pyporegui.widgets.EventFindingTab.EventFindingTab.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyporegui.widgets.EventViewingTab">
+<span id="pyporegui-widgets-eventviewingtab-module"></span><h2>pyporegui.widgets.EventViewingTab module<a class="headerlink" href="#module-pyporegui.widgets.EventViewingTab" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pyporegui.widgets.EventViewingTab.EventViewingTab">
+<em class="property">class </em><tt class="descclassname">pyporegui.widgets.EventViewingTab.</tt><tt class="descname">EventViewingTab</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/EventViewingTab.html#EventViewingTab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.EventViewingTab.EventViewingTab" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">pyporegui._ThreadManager._ThreadManager</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtGui.QSplitter</span></tt></p>
+<p>A QtGui.Splitter that contains a file opener list on the left and plots on the right.</p>
+<dl class="method">
+<dt id="pyporegui.widgets.EventViewingTab.EventViewingTab.moveEventDisplayBy">
+<tt class="descname">moveEventDisplayBy</tt><big>(</big><em>count</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/EventViewingTab.html#EventViewingTab.moveEventDisplayBy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.EventViewingTab.EventViewingTab.moveEventDisplayBy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Changes the event displayed on the event display plot to
+current value + count</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.widgets.EventViewingTab.EventViewingTab.next_clicked">
+<tt class="descname">next_clicked</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/EventViewingTab.html#EventViewingTab.next_clicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.EventViewingTab.EventViewingTab.next_clicked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.widgets.EventViewingTab.EventViewingTab.open_event_database">
+<tt class="descname">open_event_database</tt><big>(</big><em>file_names=None</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/EventViewingTab.html#EventViewingTab.open_event_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.EventViewingTab.EventViewingTab.open_event_database" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds the files to the list widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_names</strong> (<em>ListType&lt;StringType&gt;</em>) &#8211; (Optional) List of file names to be added to the list widget. If not
+included, then a QtGui.QFileDialog will be opened to select files.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.widgets.EventViewingTab.EventViewingTab.plotSingleEvent">
+<tt class="descname">plotSingleEvent</tt><big>(</big><em>h5file</em>, <em>position</em>, <em>plot</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/EventViewingTab.html#EventViewingTab.plotSingleEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.EventViewingTab.EventViewingTab.plotSingleEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.widgets.EventViewingTab.EventViewingTab.plotSingleEvents">
+<tt class="descname">plotSingleEvents</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/EventViewingTab.html#EventViewingTab.plotSingleEvents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.EventViewingTab.EventViewingTab.plotSingleEvents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the event on the plot with</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.widgets.EventViewingTab.EventViewingTab.previous_clicked">
+<tt class="descname">previous_clicked</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/EventViewingTab.html#EventViewingTab.previous_clicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.EventViewingTab.EventViewingTab.previous_clicked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pyporegui.widgets.EventViewingTab.EventViewingTab.staticMetaObject">
+<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x63ee9e0&gt;</em><a class="headerlink" href="#pyporegui.widgets.EventViewingTab.EventViewingTab.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyporegui.widgets.PlotToolBar">
+<span id="pyporegui-widgets-plottoolbar-module"></span><h2>pyporegui.widgets.PlotToolBar module<a class="headerlink" href="#module-pyporegui.widgets.PlotToolBar" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pyporegui.widgets.PlotToolBar.PlotToolBar">
+<em class="property">class </em><tt class="descclassname">pyporegui.widgets.PlotToolBar.</tt><tt class="descname">PlotToolBar</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/PlotToolBar.html#PlotToolBar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.PlotToolBar.PlotToolBar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtGui.QToolBar</span></tt></p>
+<p>A toolbar for plots, with a zoom button, check boxes for options.</p>
+<dl class="method">
+<dt id="pyporegui.widgets.PlotToolBar.PlotToolBar.addWidget">
+<tt class="descname">addWidget</tt><big>(</big><em>widget</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/PlotToolBar.html#PlotToolBar.addWidget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.PlotToolBar.PlotToolBar.addWidget" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.widgets.PlotToolBar.PlotToolBar.get_widget_list">
+<tt class="descname">get_widget_list</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/PlotToolBar.html#PlotToolBar.get_widget_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.PlotToolBar.PlotToolBar.get_widget_list" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">ListType&lt;QtGui.QWidget&gt; &#8211; Returns a list of the widgets contained in the PlotToolBar.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.widgets.PlotToolBar.PlotToolBar.is_decimate_checked">
+<tt class="descname">is_decimate_checked</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/PlotToolBar.html#PlotToolBar.is_decimate_checked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.PlotToolBar.PlotToolBar.is_decimate_checked" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">boolean &#8211; true if the toolbar&#8217;s decimate checkbox is checked, false
+otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.widgets.PlotToolBar.PlotToolBar.is_plot_during_checked">
+<tt class="descname">is_plot_during_checked</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/PlotToolBar.html#PlotToolBar.is_plot_during_checked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.PlotToolBar.PlotToolBar.is_plot_during_checked" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">boolean &#8211; true if the toolbar&#8217;s plot during checkbox is checked, false otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pyporegui.widgets.PlotToolBar.PlotToolBar.staticMetaObject">
+<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x63e4488&gt;</em><a class="headerlink" href="#pyporegui.widgets.PlotToolBar.PlotToolBar.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyporegui.widgets">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyporegui.widgets" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pyporegui.test.helper.html" title="pyporegui.test.helper package"
+             >previous</a> |</li>
+        <li><a href="../index.html">pypore 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../api.html" >Code Documentation</a> &raquo;</li>
+          <li><a href="pyporegui.html" >pyporegui package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Will Parkin.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
+    </div>
+  </body>
+</html>

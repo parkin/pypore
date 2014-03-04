@@ -204,10 +204,18 @@ Note this will flush the table so the data is correct.</p>
 <tt class="descname">initializeDatabase</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/pypore/dataFile.html#DataFile.initializeDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.dataFile.DataFile.initializeDatabase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initializes the EventDatabase.  Adds a group &#8216;events&#8217; with
 table &#8216;eventsTable&#8217; and matrices &#8216;rawData&#8217;, &#8216;levels&#8217;, and &#8216;levelLengths&#8217;.</p>
-<p>Args:
-Kargs:</p>
-<blockquote>
-<div>-maxEventLength: Maximum number of datapoints for an event to be added.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> &#8211; Unused</li>
+<li><strong>kargs</strong> &#8211; Can pass in &#8216;maxEventLength&#8217;: Maximum number of datapoints for an event to be added.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -313,24 +321,28 @@ and matrices
 <tt class="descname">appendEvent</tt><big>(</big><em>arrayRow</em>, <em>eventStart</em>, <em>eventLength</em>, <em>nLevels</em>, <em>rawPointsPerSide</em>, <em>baseline</em>, <em>currentBlockage</em>, <em>area</em>, <em>rawData=None</em>, <em>levels=None</em>, <em>levelLengths=None</em><big>)</big><a class="reference internal" href="../_modules/pypore/eventDatabase.html#EventDatabase.appendEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.eventDatabase.EventDatabase.appendEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Appends an event with the specified values to the eventsTable.  If rawData, levels, or levelLengths
 are included, they are added to the corresponding matrices.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first docutils">
-<dt>arrayRow: The row in the rawData, levels, and levelLengths array that corresponds</dt>
-<dd>to this event.</dd>
-</dl>
-<p class="last">eventStart: The starting index of this event in the data.
-eventLength: Number of data points in the event.
-nLevels: Number of levels in the event.
-rawPointsPerSide: Number of extra points kept on either side of the event in rawData.
-baseline: Open-pore current at the time of the event.
-currentBlockage: The mean current blockage of the event.
-area: The area of the event.
-rawData: Numpy array of the raw data.
-levels: Numpy array of the levels.
-levelLengths: Numpy array of the level lengths.</p>
-</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>arrayRow</strong> (<em>Int</em>) &#8211; The row in the rawData, levels, and levelLengths array that corresponds
+to this event.</li>
+<li><strong>eventStart</strong> &#8211; The starting index of this event in the data.</li>
+<li><strong>eventLength</strong> &#8211; Number of data points in the event.</li>
+<li><strong>nLevels</strong> &#8211; Number of levels in the event.</li>
+<li><strong>rawPointsPerSide</strong> &#8211; Number of extra points kept on either side of the event in rawData.</li>
+<li><strong>baseline</strong> &#8211; Open-pore current at the time of the event.</li>
+<li><strong>currentBlockage</strong> &#8211; The mean current blockage of the event.</li>
+<li><strong>area</strong> &#8211; The area of the event.</li>
+<li><strong>rawData</strong> &#8211; Numpy array of the raw data.</li>
+<li><strong>levels</strong> &#8211; Numpy array of the levels.</li>
+<li><strong>levelLengths</strong> &#8211; Numpy array of the level lengths.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -450,10 +462,15 @@ in row &#8216;i&#8217; of eventTable.</p>
 <tt class="descname">initializeDatabase</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/pypore/eventDatabase.html#EventDatabase.initializeDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.eventDatabase.EventDatabase.initializeDatabase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initializes the EventDatabase.  Adds a group &#8216;events&#8217; with
 table &#8216;eventsTable&#8217; and matrices &#8216;rawData&#8217;, &#8216;levels&#8217;, and &#8216;levelLengths&#8217;.</p>
-<p>Args:
-Kargs:</p>
-<blockquote>
-<div>-maxEventLength: Maximum number of datapoints for an event to be added.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>kargs</strong> &#8211; Dictionary - includes:
+-maxEventLength: Maximum number of datapoints for an event to be added.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">

@@ -26,7 +26,7 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="pypore 0.0.1 documentation" href="../index.html" />
     <link rel="up" title="Code Documentation" href="../api.html" />
-    <link rel="next" title="pyporegui.test package" href="pyporegui.test.html" />
+    <link rel="next" title="pyporegui.graphicsItems package" href="pyporegui.graphicsItems.html" />
     <link rel="prev" title="pypore.test package" href="pypore.test.html" />
 <link href="https://fonts.googleapis.com/css?family=Architects+Daughter" rel="stylesheet" type="text/css">
 
@@ -53,7 +53,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="pyporegui.test.html" title="pyporegui.test package"
+          <a href="pyporegui.graphicsItems.html" title="pyporegui.graphicsItems package"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="pypore.test.html" title="pypore.test package"
@@ -69,9 +69,9 @@
 <li><a class="reference internal" href="#">pyporegui package</a><ul>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-pyporegui.FileItems">pyporegui.FileItems module</a></li>
 <li><a class="reference internal" href="#module-pyporegui.MyThreads">pyporegui.MyThreads module</a></li>
 <li><a class="reference internal" href="#module-pyporegui.eventanalysis">pyporegui.eventanalysis module</a></li>
-<li><a class="reference internal" href="#module-pyporegui.views">pyporegui.views module</a></li>
 <li><a class="reference internal" href="#module-pyporegui">Module contents</a></li>
 </ul>
 </li>
@@ -81,8 +81,8 @@
   <p class="topless"><a href="pypore.test.html"
                         title="previous chapter">pypore.test package</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="pyporegui.test.html"
-                        title="next chapter">pyporegui.test package</a></p>
+  <p class="topless"><a href="pyporegui.graphicsItems.html"
+                        title="next chapter">pyporegui.graphicsItems package</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/autodocs/pyporegui.txt"
@@ -115,6 +115,15 @@
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="pyporegui.graphicsItems.html">pyporegui.graphicsItems package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyporegui.graphicsItems.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyporegui.graphicsItems.html#module-pyporegui.graphicsItems.HistogramItem">pyporegui.graphicsItems.HistogramItem module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyporegui.graphicsItems.html#module-pyporegui.graphicsItems.MyPlotItem">pyporegui.graphicsItems.MyPlotItem module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyporegui.graphicsItems.html#module-pyporegui.graphicsItems.ScatterPlotItem">pyporegui.graphicsItems.ScatterPlotItem module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyporegui.graphicsItems.html#module-pyporegui.graphicsItems.SpotItem">pyporegui.graphicsItems.SpotItem module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyporegui.graphicsItems.html#module-pyporegui.graphicsItems">Module contents</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="pyporegui.test.html">pyporegui.test package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="pyporegui.test.html#subpackages">Subpackages</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="pyporegui.test.helper.html">pyporegui.test.helper package</a><ul>
@@ -129,11 +138,184 @@
 <li class="toctree-l2"><a class="reference internal" href="pyporegui.test.html#module-pyporegui.test">Module contents</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="pyporegui.widgets.html">pyporegui.widgets package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyporegui.widgets.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyporegui.widgets.html#module-pyporegui.widgets.EventAnalysisPlotWidget">pyporegui.widgets.EventAnalysisPlotWidget module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyporegui.widgets.html#module-pyporegui.widgets.EventAnalysisTab">pyporegui.widgets.EventAnalysisTab module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyporegui.widgets.html#module-pyporegui.widgets.EventFindingTab">pyporegui.widgets.EventFindingTab module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyporegui.widgets.html#module-pyporegui.widgets.EventViewingTab">pyporegui.widgets.EventViewingTab module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyporegui.widgets.html#module-pyporegui.widgets.PlotToolBar">pyporegui.widgets.PlotToolBar module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyporegui.widgets.html#module-pyporegui.widgets">Module contents</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-pyporegui.FileItems">
+<span id="pyporegui-fileitems-module"></span><h2>pyporegui.FileItems module<a class="headerlink" href="#module-pyporegui.FileItems" title="Permalink to this headline">¶</a></h2>
+<p>&#64;author: <a class="reference external" href="https://github.com/parkin1">&#64;parkin1</a></p>
+<dl class="class">
+<dt id="pyporegui.FileItems.DataFileListItem">
+<em class="property">class </em><tt class="descclassname">pyporegui.FileItems.</tt><tt class="descname">DataFileListItem</tt><big>(</big><em>filename</em>, <em>params</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/FileItems.html#DataFileListItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.FileItems.DataFileListItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyporegui.FileItems.FileListItem" title="pyporegui.FileItems.FileListItem"><tt class="xref py py-class docutils literal"><span class="pre">pyporegui.FileItems.FileListItem</span></tt></a></p>
+<p>Is a FileListItem with a parameter.</p>
+<dl class="method">
+<dt id="pyporegui.FileItems.DataFileListItem.get_param">
+<tt class="descname">get_param</tt><big>(</big><em>param</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/FileItems.html#DataFileListItem.get_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.FileItems.DataFileListItem.get_param" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>param</strong> &#8211; Key in the parameter dictionary, whose value should be returned.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Parameter value specified by the key &#8216;param&#8217;.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.FileItems.DataFileListItem.get_params">
+<tt class="descname">get_params</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/FileItems.html#DataFileListItem.get_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.FileItems.DataFileListItem.get_params" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">DictType &#8211; Dictionary of the item&#8217;s parameters.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pyporegui.FileItems.FileListItem">
+<em class="property">class </em><tt class="descclassname">pyporegui.FileItems.</tt><tt class="descname">FileListItem</tt><big>(</big><em>filename</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/FileItems.html#FileListItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.FileItems.FileListItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtGui.QListWidgetItem</span></tt></p>
+<p>Subclass of QListWidgetItem to handle file names with long file paths.</p>
+<dl class="method">
+<dt id="pyporegui.FileItems.FileListItem.get_directory">
+<tt class="descname">get_directory</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/FileItems.html#FileListItem.get_directory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.FileItems.FileListItem.get_directory" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">StringType &#8211; the directory containing the file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.FileItems.FileListItem.get_file_name">
+<tt class="descname">get_file_name</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/FileItems.html#FileListItem.get_file_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.FileItems.FileListItem.get_file_name" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">StringType &#8211; the file names with the file path included.
+ex /home/user/.../filename</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.FileItems.FileListItem.get_simple_name">
+<tt class="descname">get_simple_name</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/FileItems.html#FileListItem.get_simple_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.FileItems.FileListItem.get_simple_name" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">StringType &#8211; the file name without the file path included.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pyporegui.FileItems.FilterListItem">
+<em class="property">class </em><tt class="descclassname">pyporegui.FileItems.</tt><tt class="descname">FilterListItem</tt><big>(</big><em>file_names</em>, <em>**params</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/FileItems.html#FilterListItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.FileItems.FilterListItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtGui.QListWidgetItem</span></tt></p>
+<p>Subclass of QListWidgetItem to handle filter list items.</p>
+<p>self.params contain the filter parameters specified by the user.</p>
+<dl class="method">
+<dt id="pyporegui.FileItems.FilterListItem.get_file_name_at">
+<tt class="descname">get_file_name_at</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/FileItems.html#FilterListItem.get_file_name_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.FileItems.FilterListItem.get_file_name_at" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> (<em>IntType</em>) &#8211; Position of the item.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">String &#8211; Full filename (including path) of the file at index.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.FileItems.FilterListItem.get_file_names">
+<tt class="descname">get_file_names</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/FileItems.html#FilterListItem.get_file_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.FileItems.FilterListItem.get_file_names" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List &#8211; list of the full file names of the files that make up this Item.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.FileItems.FilterListItem.get_params">
+<tt class="descname">get_params</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/FileItems.html#FilterListItem.get_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.FileItems.FilterListItem.get_params" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Dict &#8211; dictionary of the parameters of this Item.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.FileItems.FilterListItem.get_simple_name_at">
+<tt class="descname">get_simple_name_at</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/FileItems.html#FilterListItem.get_simple_name_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.FileItems.FilterListItem.get_simple_name_at" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> (<em>IntType</em>) &#8211; Index of the list item to get the simple name of.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">String &#8211; Simple name (i.e. no path/directory) of the file at index.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.FileItems.FilterListItem.get_simple_names">
+<tt class="descname">get_simple_names</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/FileItems.html#FilterListItem.get_simple_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.FileItems.FilterListItem.get_simple_names" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List &#8211; list of the simple names (no path/directory) of the files that make up this Item.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-pyporegui.MyThreads">
 <span id="pyporegui-mythreads-module"></span><h2>pyporegui.MyThreads module<a class="headerlink" href="#module-pyporegui.MyThreads" title="Permalink to this headline">¶</a></h2>
@@ -156,7 +338,7 @@
 
 <dl class="attribute">
 <dt id="pyporegui.MyThreads.AnalyzeDataThread.dataReady">
-<tt class="descname">dataReady</tt><em class="property"> = &lt;PySide.QtCore.Signal object at 0x49f45a8&gt;</em><a class="headerlink" href="#pyporegui.MyThreads.AnalyzeDataThread.dataReady" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">dataReady</tt><em class="property"> = &lt;PySide.QtCore.Signal object at 0x5ef8618&gt;</em><a class="headerlink" href="#pyporegui.MyThreads.AnalyzeDataThread.dataReady" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -176,7 +358,7 @@
 
 <dl class="attribute">
 <dt id="pyporegui.MyThreads.AnalyzeDataThread.staticMetaObject">
-<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x49f6f38&gt;</em><a class="headerlink" href="#pyporegui.MyThreads.AnalyzeDataThread.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x5fef440&gt;</em><a class="headerlink" href="#pyporegui.MyThreads.AnalyzeDataThread.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -197,7 +379,7 @@
 
 <dl class="attribute">
 <dt id="pyporegui.MyThreads.PlotThread.dataReady">
-<tt class="descname">dataReady</tt><em class="property"> = &lt;PySide.QtCore.Signal object at 0x3ec5730&gt;</em><a class="headerlink" href="#pyporegui.MyThreads.PlotThread.dataReady" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">dataReady</tt><em class="property"> = &lt;PySide.QtCore.Signal object at 0x4fff998&gt;</em><a class="headerlink" href="#pyporegui.MyThreads.PlotThread.dataReady" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -207,7 +389,7 @@
 
 <dl class="attribute">
 <dt id="pyporegui.MyThreads.PlotThread.staticMetaObject">
-<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x49f6fc8&gt;</em><a class="headerlink" href="#pyporegui.MyThreads.PlotThread.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x5fef9e0&gt;</em><a class="headerlink" href="#pyporegui.MyThreads.PlotThread.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -231,30 +413,14 @@
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="pyporegui.eventanalysis.MyMainWindow.add_filter_clicked">
-<tt class="descname">add_filter_clicked</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.add_filter_clicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.add_filter_clicked" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.eventanalysis.MyMainWindow.cleanThreads">
-<tt class="descname">cleanThreads</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.cleanThreads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.cleanThreads" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.eventanalysis.MyMainWindow.color_picker_btn_clicked">
-<tt class="descname">color_picker_btn_clicked</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.color_picker_btn_clicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.color_picker_btn_clicked" title="Permalink to this definition">¶</a></dt>
+<dt id="pyporegui.eventanalysis.MyMainWindow.clean_threads">
+<tt class="descname">clean_threads</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.clean_threads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.clean_threads" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="pyporegui.eventanalysis.MyMainWindow.create_action">
 <tt class="descname">create_action</tt><big>(</big><em>text</em>, <em>slot=None</em>, <em>shortcut=None</em>, <em>icon=None</em>, <em>tip=None</em>, <em>checkable=False</em>, <em>signal='triggered()'</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.create_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.create_action" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.eventanalysis.MyMainWindow.create_main_frame">
-<tt class="descname">create_main_frame</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.create_main_frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.create_main_frame" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initializes the main gui frame.</p>
-</dd></dl>
 
 <dl class="method">
 <dt id="pyporegui.eventanalysis.MyMainWindow.create_menu">
@@ -279,29 +445,6 @@
 <dd><p>Returns filter_parameter dictionary holding the current analysis parameters set by the user.  Returns an entry &#8216;error&#8217; if there were
 invalid inputs.</p>
 </dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.eventanalysis.MyMainWindow.moveEventDisplayBy">
-<tt class="descname">moveEventDisplayBy</tt><big>(</big><em>count</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.moveEventDisplayBy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.moveEventDisplayBy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Changes the event displayed on the event display plot to
-current value + count</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.eventanalysis.MyMainWindow.nextClicked">
-<tt class="descname">nextClicked</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.nextClicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.nextClicked" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.eventanalysis.MyMainWindow.on_analyze">
-<tt class="descname">on_analyze</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.on_analyze"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.on_analyze" title="Permalink to this definition">¶</a></dt>
-<dd><p>Searches for events in the file that is currently highlighted in the files list.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.eventanalysis.MyMainWindow.on_analyze_stop">
-<tt class="descname">on_analyze_stop</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.on_analyze_stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.on_analyze_stop" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="method">
 <dt id="pyporegui.eventanalysis.MyMainWindow.open_event_database">
@@ -330,29 +473,22 @@ Can pass in range as [start,stop], or &#8216;all&#8217; for 0:n</p>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="pyporegui.eventanalysis.MyMainWindow.plotSingleEvent">
-<tt class="descname">plotSingleEvent</tt><big>(</big><em>h5file</em>, <em>position</em>, <em>plot</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.plotSingleEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.plotSingleEvent" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.eventanalysis.MyMainWindow.plotSingleEvents">
-<tt class="descname">plotSingleEvents</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.plotSingleEvents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.plotSingleEvents" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plots the event on the plot with</p>
+<dt id="pyporegui.eventanalysis.MyMainWindow.set_status">
+<tt class="descname">set_status</tt><big>(</big><em>text</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.set_status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.set_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the status text.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>text</strong> (<em>StringType</em>) &#8211; Text to display in the status bar.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.eventanalysis.MyMainWindow.previousClicked">
-<tt class="descname">previousClicked</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.previousClicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.previousClicked" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.eventanalysis.MyMainWindow.remove_filter_clicked">
-<tt class="descname">remove_filter_clicked</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#MyMainWindow.remove_filter_clicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.remove_filter_clicked" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="pyporegui.eventanalysis.MyMainWindow.staticMetaObject">
-<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x43e8c20&gt;</em><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x63f3638&gt;</em><a class="headerlink" href="#pyporegui.eventanalysis.MyMainWindow.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -372,255 +508,6 @@ Can pass in range as [start,stop], or &#8216;all&#8217; for 0:n</p>
 <dt id="pyporegui.eventanalysis.main">
 <tt class="descclassname">pyporegui.eventanalysis.</tt><tt class="descname">main</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/eventanalysis.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.eventanalysis.main" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-</div>
-<div class="section" id="module-pyporegui.views">
-<span id="pyporegui-views-module"></span><h2>pyporegui.views module<a class="headerlink" href="#module-pyporegui.views" title="Permalink to this headline">¶</a></h2>
-<p>Created on Aug 6, 2013</p>
-<p>&#64;author: parkin</p>
-<dl class="class">
-<dt id="pyporegui.views.DataFileListItem">
-<em class="property">class </em><tt class="descclassname">pyporegui.views.</tt><tt class="descname">DataFileListItem</tt><big>(</big><em>filename</em>, <em>params</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#DataFileListItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.DataFileListItem" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pyporegui.views.FileListItem" title="pyporegui.views.FileListItem"><tt class="xref py py-class docutils literal"><span class="pre">pyporegui.views.FileListItem</span></tt></a></p>
-<p>Is a FileListItem with a parameter.</p>
-<dl class="method">
-<dt id="pyporegui.views.DataFileListItem.getParam">
-<tt class="descname">getParam</tt><big>(</big><em>param</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#DataFileListItem.getParam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.DataFileListItem.getParam" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.views.DataFileListItem.getParams">
-<tt class="descname">getParams</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#DataFileListItem.getParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.DataFileListItem.getParams" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="pyporegui.views.EventAnalysisWidget">
-<em class="property">class </em><tt class="descclassname">pyporegui.views.</tt><tt class="descname">EventAnalysisWidget</tt><a class="reference internal" href="../_modules/pyporegui/views.html#EventAnalysisWidget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.EventAnalysisWidget" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">pyqtgraph.widgets.GraphicsLayoutWidget.GraphicsLayoutWidget</span></tt></p>
-<dl class="method">
-<dt id="pyporegui.views.EventAnalysisWidget.addSelections">
-<tt class="descname">addSelections</tt><big>(</big><em>filenames</em>, <em>params</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#EventAnalysisWidget.addSelections"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.EventAnalysisWidget.addSelections" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plots event statistics.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.views.EventAnalysisWidget.onScatterPointsClicked">
-<tt class="descname">onScatterPointsClicked</tt><big>(</big><em>plot</em>, <em>points</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#EventAnalysisWidget.onScatterPointsClicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.EventAnalysisWidget.onScatterPointsClicked" title="Permalink to this definition">¶</a></dt>
-<dd><p>Callback for when a scatter plot points are clicked.
-Highlights the points and unhighlights previously selected points.</p>
-<p>plot should be a MyScatterPlotItem
-points should be a MySpotItem</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.views.EventAnalysisWidget.removeFilter">
-<tt class="descname">removeFilter</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#EventAnalysisWidget.removeFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.EventAnalysisWidget.removeFilter" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="pyporegui.views.EventAnalysisWidget.staticMetaObject">
-<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x43dc998&gt;</em><a class="headerlink" href="#pyporegui.views.EventAnalysisWidget.staticMetaObject" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="pyporegui.views.FileListItem">
-<em class="property">class </em><tt class="descclassname">pyporegui.views.</tt><tt class="descname">FileListItem</tt><big>(</big><em>filename</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#FileListItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.FileListItem" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtGui.QListWidgetItem</span></tt></p>
-<p>Subclass of QListWidgetItem to handle filenames with long file paths.</p>
-<dl class="method">
-<dt id="pyporegui.views.FileListItem.getDirectory">
-<tt class="descname">getDirectory</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#FileListItem.getDirectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.FileListItem.getDirectory" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.views.FileListItem.getFileName">
-<tt class="descname">getFileName</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#FileListItem.getFileName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.FileListItem.getFileName" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the filenames with the file path included.
-ex /home/user/.../filenames</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.views.FileListItem.getSimpleName">
-<tt class="descname">getSimpleName</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#FileListItem.getSimpleName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.FileListItem.getSimpleName" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the filenames without the file path included.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="pyporegui.views.FilterListItem">
-<em class="property">class </em><tt class="descclassname">pyporegui.views.</tt><tt class="descname">FilterListItem</tt><big>(</big><em>filenames</em>, <em>**params</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#FilterListItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.FilterListItem" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtGui.QListWidgetItem</span></tt></p>
-<p>Subclass of QListWidgetItem to handle filter list items.</p>
-<p>self.params contain the filter parameters specified by the user.</p>
-<dl class="method">
-<dt id="pyporegui.views.FilterListItem.getFileNameAt">
-<tt class="descname">getFileNameAt</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#FilterListItem.getFileNameAt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.FilterListItem.getFileNameAt" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.views.FilterListItem.getFileNames">
-<tt class="descname">getFileNames</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#FilterListItem.getFileNames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.FilterListItem.getFileNames" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.views.FilterListItem.getParams">
-<tt class="descname">getParams</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#FilterListItem.getParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.FilterListItem.getParams" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.views.FilterListItem.getSimpleNameAt">
-<tt class="descname">getSimpleNameAt</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#FilterListItem.getSimpleNameAt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.FilterListItem.getSimpleNameAt" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.views.FilterListItem.getSimpleNames">
-<tt class="descname">getSimpleNames</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#FilterListItem.getSimpleNames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.FilterListItem.getSimpleNames" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="pyporegui.views.MyHistogramItem">
-<em class="property">class </em><tt class="descclassname">pyporegui.views.</tt><tt class="descname">MyHistogramItem</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#MyHistogramItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.MyHistogramItem" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">pyqtgraph.graphicsItems.PlotItem.PlotItem.PlotItem</span></tt></p>
-<dl class="method">
-<dt id="pyporegui.views.MyHistogramItem.addHistogram">
-<tt class="descname">addHistogram</tt><big>(</big><em>data</em>, <em>nbins=None</em>, <em>color=None</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#MyHistogramItem.addHistogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.MyHistogramItem.addHistogram" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds a histogram to the plot.</p>
-<p>data should be 1D numpy array</p>
-<dl class="docutils">
-<dt>nbins = number of bins for numpy.histogram()</dt>
-<dd>default is nbins = sqrt(data.size)</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.views.MyHistogramItem.plotHistogram">
-<tt class="descname">plotHistogram</tt><big>(</big><em>data</em>, <em>color=None</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#MyHistogramItem.plotHistogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.MyHistogramItem.plotHistogram" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.views.MyHistogramItem.reHistogram">
-<tt class="descname">reHistogram</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#MyHistogramItem.reHistogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.MyHistogramItem.reHistogram" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.views.MyHistogramItem.removeItemAt">
-<tt class="descname">removeItemAt</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#MyHistogramItem.removeItemAt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.MyHistogramItem.removeItemAt" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="pyporegui.views.MyHistogramItem.staticMetaObject">
-<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x402acb0&gt;</em><a class="headerlink" href="#pyporegui.views.MyHistogramItem.staticMetaObject" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="pyporegui.views.MyPlotItem">
-<em class="property">class </em><tt class="descclassname">pyporegui.views.</tt><tt class="descname">MyPlotItem</tt><big>(</big><em>parent=None</em>, <em>title=None</em>, <em>name=None</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#MyPlotItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.MyPlotItem" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">pyqtgraph.graphicsItems.PlotItem.PlotItem.PlotItem</span></tt></p>
-<dl class="method">
-<dt id="pyporegui.views.MyPlotItem.addEventItem">
-<tt class="descname">addEventItem</tt><big>(</big><em>item</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#MyPlotItem.addEventItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.MyPlotItem.addEventItem" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.views.MyPlotItem.addItem">
-<tt class="descname">addItem</tt><big>(</big><em>item</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#MyPlotItem.addItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.MyPlotItem.addItem" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.views.MyPlotItem.clear">
-<tt class="descname">clear</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#MyPlotItem.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.MyPlotItem.clear" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.views.MyPlotItem.clearEventItems">
-<tt class="descname">clearEventItems</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#MyPlotItem.clearEventItems"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.MyPlotItem.clearEventItems" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="pyporegui.views.MyPlotItem.staticMetaObject">
-<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x43dc710&gt;</em><a class="headerlink" href="#pyporegui.views.MyPlotItem.staticMetaObject" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="pyporegui.views.MyScatterPlotItem">
-<em class="property">class </em><tt class="descclassname">pyporegui.views.</tt><tt class="descname">MyScatterPlotItem</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#MyScatterPlotItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.MyScatterPlotItem" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">pyqtgraph.graphicsItems.ScatterPlotItem.ScatterPlotItem</span></tt></p>
-<dl class="method">
-<dt id="pyporegui.views.MyScatterPlotItem.getFileNameFromPosition">
-<tt class="descname">getFileNameFromPosition</tt><big>(</big><em>position</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#MyScatterPlotItem.getFileNameFromPosition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.MyScatterPlotItem.getFileNameFromPosition" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns filename, eventNumber for the 
-SpotItem position.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.views.MyScatterPlotItem.points">
-<tt class="descname">points</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#MyScatterPlotItem.points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.MyScatterPlotItem.points" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="pyporegui.views.MyScatterPlotItem.staticMetaObject">
-<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x43dc758&gt;</em><a class="headerlink" href="#pyporegui.views.MyScatterPlotItem.staticMetaObject" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="pyporegui.views.MySpotItem">
-<em class="property">class </em><tt class="descclassname">pyporegui.views.</tt><tt class="descname">MySpotItem</tt><big>(</big><em>data</em>, <em>plot</em>, <em>position</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#MySpotItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.MySpotItem" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">pyqtgraph.graphicsItems.ScatterPlotItem.SpotItem</span></tt></p>
-<dl class="attribute">
-<dt id="pyporegui.views.MySpotItem.eventPosition">
-<tt class="descname">eventPosition</tt><em class="property"> = 0</em><a class="headerlink" href="#pyporegui.views.MySpotItem.eventPosition" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="pyporegui.views.PlotToolBar">
-<em class="property">class </em><tt class="descclassname">pyporegui.views.</tt><tt class="descname">PlotToolBar</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#PlotToolBar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.PlotToolBar" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtGui.QToolBar</span></tt></p>
-<p>A toolbar for plots, with a zoom button, check boxes for options.</p>
-<dl class="method">
-<dt id="pyporegui.views.PlotToolBar.addWidget">
-<tt class="descname">addWidget</tt><big>(</big><em>widget</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#PlotToolBar.addWidget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.PlotToolBar.addWidget" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.views.PlotToolBar.getWidgetList">
-<tt class="descname">getWidgetList</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#PlotToolBar.getWidgetList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.PlotToolBar.getWidgetList" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.views.PlotToolBar.isDecimateChecked">
-<tt class="descname">isDecimateChecked</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#PlotToolBar.isDecimateChecked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.PlotToolBar.isDecimateChecked" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns true if the toolbar&#8217;s decimate checkbox is checked, false
-otherwise.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.views.PlotToolBar.isPlotDuringChecked">
-<tt class="descname">isPlotDuringChecked</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/views.html#PlotToolBar.isPlotDuringChecked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.views.PlotToolBar.isPlotDuringChecked" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns true if the toolbar&#8217;s plot during checkbox is checked, false
-otherwise.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pyporegui.views.PlotToolBar.staticMetaObject">
-<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x43dc5f0&gt;</em><a class="headerlink" href="#pyporegui.views.PlotToolBar.staticMetaObject" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
 
 </div>
 <div class="section" id="module-pyporegui">
@@ -644,7 +531,7 @@ otherwise.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="pyporegui.test.html" title="pyporegui.test package"
+          <a href="pyporegui.graphicsItems.html" title="pyporegui.graphicsItems package"
              >next</a> |</li>
         <li class="right" >
           <a href="pypore.test.html" title="pypore.test package"
