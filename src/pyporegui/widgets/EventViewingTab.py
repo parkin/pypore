@@ -5,7 +5,7 @@ from pyqtgraph.widgets.LayoutWidget import LayoutWidget
 from pypore import eventDatabase as eD
 from pyporegui._ThreadManager import _ThreadManager
 from pyporegui.graphicsItems.MyPlotItem import MyPlotItem
-from pyporegui.views import FileListItem
+from pyporegui.FileItems import FileListItem
 
 __all__ = ['EventViewingTab']
 
@@ -85,7 +85,7 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
         """
         self.event_view_item = item
 
-        h5file = eD.openFile(item.getFileName())
+        h5file = eD.openFile(item.get_file_name())
 
         event_count = h5file.getEventCount()
 
@@ -101,7 +101,7 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
         '''
         Plots the event on the plot with
         '''
-        h5file = eD.openFile(self.event_view_item.getFileName(), mode='r')
+        h5file = eD.openFile(self.event_view_item.get_file_name(), mode='r')
 
         eventCount = h5file.getEventCount()
 
@@ -176,7 +176,7 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
         '''
         h5eventCount = 0
         try:
-            h5file = eD.openFile(self.event_view_item.getFileName())
+            h5file = eD.openFile(self.event_view_item.get_file_name())
             h5eventCount = h5file.getEventCount()
             h5file.close()
         except:

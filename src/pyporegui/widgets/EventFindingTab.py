@@ -8,7 +8,7 @@ from pypore.dataFileOpener import prepareDataFile
 from pyporegui._ThreadManager import _ThreadManager
 from pyporegui.MyThreads import AnalyzeDataThread, PlotThread
 from pyporegui.graphicsItems.MyPlotItem import MyPlotItem
-from pyporegui.views import DataFileListItem
+from pyporegui.FileItems import DataFileListItem
 from pyporegui.widgets.PlotToolBar import PlotToolBar
 
 __all__ = ['EventFindingTab']
@@ -159,7 +159,7 @@ class EventFindingTab(_ThreadManager, QtGui.QSplitter):
                 are_files_opened = True
                 f.close()
                 item = DataFileListItem(w, params)
-                open_dir = item.getDirectory()
+                open_dir = item.get_directory()
                 self.list_widget.addItem(item)
 
         if are_files_opened:
@@ -270,7 +270,7 @@ class EventFindingTab(_ThreadManager, QtGui.QSplitter):
         del self.events[:]
         # self.prev_concat_time = 0.
 
-        file_names = [str(curr_item.getFileName())]
+        file_names = [str(curr_item.get_file_name())]
 
         if self.on_status_update_callback is not None:
             self.on_status_update_callback("Event Count: 0 Percent Done: 0")
@@ -300,7 +300,7 @@ class EventFindingTab(_ThreadManager, QtGui.QSplitter):
         if self.on_status_update_callback is not None:
             self.on_status_update_callback('Plotting...')
         decimates = self.plot_tool_bar.is_decimate_checked()
-        thread = PlotThread(self.p1, filename=str(item.getFileName()), decimate=decimates)
+        thread = PlotThread(self.p1, filename=str(item.get_file_name()), decimate=decimates)
         thread.dataReady.connect(self._on_file_item_doubleclick_callback)
         self.add_thread(thread)
         thread.start()

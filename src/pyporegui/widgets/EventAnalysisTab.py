@@ -1,6 +1,6 @@
 from PySide import QtGui
 from pyporegui._ThreadManager import _ThreadManager
-from pyporegui.views import FilterListItem, FileListItem
+from pyporegui.FileItems import FilterListItem, FileListItem
 from pyporegui.widgets.EventAnalysisPlotWidget import EventAnalysisPlotWidget
 
 __all__ = ['EventAnalysisTab']
@@ -50,7 +50,7 @@ class EventAnalysisTab(_ThreadManager, QtGui.QSplitter):
         file_names = []
 
         for item in items:
-            file_names.append(item.getFileName())
+            file_names.append(item.get_file_name())
 
         item = FilterListItem(file_names, **params)
         self.listFilterWidget.addItem(item)
