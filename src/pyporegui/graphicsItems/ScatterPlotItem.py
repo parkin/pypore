@@ -1,5 +1,5 @@
 from pyqtgraph.graphicsItems.ScatterPlotItem import ScatterPlotItem
-from pyporegui.views import MySpotItem
+from pyporegui.graphicsItems.SpotItem import SpotItem
 
 
 class ScatterPlotItem(ScatterPlotItem):
@@ -12,7 +12,7 @@ class ScatterPlotItem(ScatterPlotItem):
     def points(self):
         for i, rec in enumerate(self.data):
             if rec['item'] is None:
-                rec['item'] = MySpotItem(rec, self, i)
+                rec['item'] = SpotItem(rec, self, i)
         return self.data['item']
 
     def get_file_name_from_position(self, position):

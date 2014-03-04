@@ -5,16 +5,6 @@ import os.path
 
 from PySide import QtGui
 from pyqtgraph.graphicsItems.PlotItem.PlotItem import PlotItem
-from pyqtgraph.graphicsItems.ScatterPlotItem import SpotItem
-
-
-class MySpotItem(SpotItem):
-    
-    eventPosition = 0
-    
-    def __init__(self, data, plot, position):
-        super(MySpotItem, self).__init__(data, plot)
-        self.eventPosition = position
 
 
 class MyPlotItem(PlotItem):
