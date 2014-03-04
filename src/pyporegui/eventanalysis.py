@@ -148,13 +148,6 @@ class MyMainWindow(QtGui.QMainWindow):
         """
         self.status_text.setText(text)
 
-    def _create_data_modification_tab(self):
-        frame = QtGui.QSplitter()
-
-        options = self._create_data_modification_options()
-
-        return frame
-
     def _process_events(self):
         self.app.processEvents()
         
@@ -162,7 +155,6 @@ class MyMainWindow(QtGui.QMainWindow):
         """
         Helper to initialize the main gui frame.
         """
-        # data_modification = self._create_data_modification_tab()
         self.event_finding_tab = EventFindingTab(self)
         self.event_finding_tab.set_on_status_update_callback(self.set_status)
         self.event_finding_tab.set_process_events_callback(self._process_events)
@@ -173,7 +165,6 @@ class MyMainWindow(QtGui.QMainWindow):
         
         # Layout holding everything        
         self.main_tabwig = QtGui.QTabWidget()
-        # self.main_tabwig.addTab(data_modification, 'Data modification')
         self.main_tabwig.addTab(self.event_finding_tab, 'Event Finding')
         self.main_tabwig.addTab(self.event_viewer_tab, 'Event View')
         self.main_tabwig.addTab(self.event_analysis_tab, 'Event Analysis')
@@ -206,16 +197,16 @@ The current namespace should include:
         self.setCentralWidget(frame)
         
     def create_status_bar(self):
-        '''
+        """
         Creates filter_parameter status bar with filter_parameter text widget.
-        '''
+        """
         self.status_text = QtGui.QLabel("")
         self.statusBar().addWidget(self.status_text, 1)
     
     def create_menu(self):
-        '''
+        """
         Creates File menu with Open
-        '''
+        """
         self.file_menu = self.menuBar().addMenu("&File")
         
         load_data_file_action = self.create_action("&Open Data File",
