@@ -1,4 +1,5 @@
 """
+Not a very useful class, basically just a list with less methods.
 @author: `@parkin1`_
 """
 
