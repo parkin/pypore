@@ -9,13 +9,13 @@ import os
 from PySide.QtGui import QColor, QCheckBox
 # from PySide.QtTest import QTest
 from pyporegui.graphicsItems.MyPlotItem import MyPlotItem
-from pyporegui.views import FilterListItem, FileListItem, DataFileListItem,\
-    PlotToolBar
+from pyporegui.views import FilterListItem, FileListItem, DataFileListItem
 from pyqtgraph.graphicsItems.PlotCurveItem import PlotCurveItem
 from pyporegui.eventanalysis import PathItem
 import numpy as np
-    
-    
+from pyporegui.widgets.PlotToolBar import PlotToolBar
+
+
 class TestMyPlotItem(unittest.TestCase):
     
     def testMyPlotItemAddItem(self):
@@ -117,24 +117,24 @@ class TestPlotToolBar(unittest.TestCase):
     
     def testPlotToolBarInitialState(self):
         toolbar = PlotToolBar()
-        self.assertTrue(toolbar.isDecimateChecked())
-        self.assertTrue(toolbar.isPlotDuringChecked())
-        wiglist = toolbar.getWidgetList()
+        self.assertTrue(toolbar.is_decimate_checked())
+        self.assertTrue(toolbar.is_plot_during_checked())
+        wiglist = toolbar.get_widget_list()
         self.assertEqual(len(wiglist), 3)
         
     def testPlotToolBarWidgetList(self):
         toolbar = PlotToolBar()
-        wiglist = toolbar.getWidgetList()
+        wiglist = toolbar.get_widget_list()
         self.assertEqual(len(wiglist), 3)
         
         # test for immutability
         wiglist.append(QCheckBox())
-        self.assertEqual(len(toolbar.getWidgetList()), 3)
+        self.assertEqual(len(toolbar.get_widget_list()), 3)
         
         # test adding widget
         checkbox = QCheckBox()
         toolbar.addWidget(checkbox)
-        self.assertEqual(len(toolbar.getWidgetList()), 4)
+        self.assertEqual(len(toolbar.get_widget_list()), 4)
         
 class TestFileListItem(unittest.TestCase):
     

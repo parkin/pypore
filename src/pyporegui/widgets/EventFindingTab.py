@@ -8,7 +8,8 @@ from pypore.dataFileOpener import prepareDataFile
 from pyporegui._ThreadManager import _ThreadManager
 from pyporegui.MyThreads import AnalyzeDataThread, PlotThread
 from pyporegui.graphicsItems.MyPlotItem import MyPlotItem
-from pyporegui.views import DataFileListItem, PlotToolBar
+from pyporegui.views import DataFileListItem
+from pyporegui.widgets.PlotToolBar import PlotToolBar
 
 __all__ = ['EventFindingTab']
 
@@ -239,7 +240,7 @@ class EventFindingTab(_ThreadManager, QtGui.QSplitter):
             self.event_display_edit.setMaxLength(int(len(self.events) / 10) + 1)
             self.event_display_edit.setValidator(QtGui.QIntValidator(1, len(self.events), self.event_display_edit))
             self.eventCountText.setText('/' + str(len(self.events)))
-            if self.plot_tool_bar.isPlotDuringChecked():
+            if self.plot_tool_bar.is_plot_during_checked():
                 self.plotEventsOnMainPlot(events)
                 self.addEventsToConcatEventPlot(events)
             if single_plot:
@@ -298,7 +299,7 @@ class EventFindingTab(_ThreadManager, QtGui.QSplitter):
         # adding by emitting signal in different thread
         if self.on_status_update_callback is not None:
             self.on_status_update_callback('Plotting...')
-        decimates = self.plot_tool_bar.isDecimateChecked()
+        decimates = self.plot_tool_bar.is_decimate_checked()
         thread = PlotThread(self.p1, filename=str(item.getFileName()), decimate=decimates)
         thread.dataReady.connect(self._on_file_item_doubleclick_callback)
         self.add_thread(thread)

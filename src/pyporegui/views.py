@@ -6,56 +6,6 @@ import os.path
 from PySide import QtGui
 
 
-class PlotToolBar(QtGui.QToolBar):
-    '''
-    A toolbar for plots, with a zoom button, check boxes for options.
-    '''
-    def __init__(self, parent=None):
-        super(PlotToolBar, self).__init__(parent)
-        
-        self.widgetList = []
-        
-        self.decimateCheckBox = QtGui.QCheckBox()
-        self.decimateCheckBox.setChecked(True)
-        self.decimateCheckBox.setText('Decimate')
-        self.addWidget(self.decimateCheckBox)
-        
-        self.plotDuringCheckBox = QtGui.QCheckBox()
-        self.plotDuringCheckBox.setChecked(True)
-        self.plotDuringCheckBox.setText('Plot Events')
-        self.plotDuringCheckBox.setToolTip('Select to have events plotted during event finding.')
-        self.addWidget(self.plotDuringCheckBox)
-        
-        self.filterData = QtGui.QCheckBox()
-        self.filterData.setChecked(True)
-        self.filterData.setText('Show filtered')
-        self.filterData.setToolTip('Select to have events plotted during event finding.')
-        self.addWidget(self.filterData)
-        
-    def isDecimateChecked(self):
-        '''
-        Returns true if the toolbar's decimate checkbox is checked, false
-        otherwise.
-        '''
-        return self.decimateCheckBox.isChecked()
-    
-    def isPlotDuringChecked(self):
-        '''
-        Returns true if the toolbar's plot during checkbox is checked, false
-        otherwise.
-        '''
-        return self.plotDuringCheckBox.isChecked()
-
-    
-    def getWidgetList(self):
-        return list(self.widgetList)
-    
-    def addWidget(self, widget, *args, **kwargs):
-        self.widgetList.append(widget)
-        return super(PlotToolBar, self).addWidget(widget, *args, **kwargs)
-    
-
-
 class FileListItem(QtGui.QListWidgetItem):
     '''
     Subclass of QListWidgetItem to handle filenames with long file paths.

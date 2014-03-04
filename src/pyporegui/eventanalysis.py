@@ -18,6 +18,7 @@ from pyporegui.graphicsItems.MyPlotItem import MyPlotItem
 from pyporegui.graphicsItems.ScatterPlotItem import ScatterPlotItem
 from pyporegui.graphicsItems.SpotItem import SpotItem
 from pyporegui.widgets.EventAnalysisPlotWidget import EventAnalysisPlotWidget
+from pyporegui.widgets.PlotToolBar import PlotToolBar
 
 
 def _long_imports(**kwargs):
@@ -77,7 +78,7 @@ def _long_imports(**kwargs):
         splash.showMessage("Compiling Cython imports... EventFinder", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
     from MyThreads import AnalyzeDataThread, PlotThread
-    from views import FileListItem, FilterListItem, PlotToolBar, DataFileListItem
+    from views import FileListItem, FilterListItem, DataFileListItem
 
     if update_splash:
         splash.showMessage("Importing EventDatabase", alignment=QtCore.Qt.AlignBottom)
