@@ -8,8 +8,9 @@ from helper import UsesQApplication
 import os
 from PySide.QtGui import QColor, QCheckBox
 # from PySide.QtTest import QTest
+from pyporegui.graphicsItems.MyPlotItem import MyPlotItem
 from pyporegui.views import FilterListItem, FileListItem, DataFileListItem,\
-    PlotToolBar, MyPlotItem
+    PlotToolBar
 from pyqtgraph.graphicsItems.PlotCurveItem import PlotCurveItem
 from pyporegui.eventanalysis import PathItem
 import numpy as np
@@ -36,13 +37,13 @@ class TestMyPlotItem(unittest.TestCase):
         x = [1]
         y = [1]
         plot = PlotCurveItem(x,y)
-        plotitem.addEventItem(plot)
+        plotitem.add_event_item(plot)
         
         self.assertEqual(len(plotitem._myEventItemList), 1)
         
         x=y=np.zeros(2)
         plot2 = PathItem(x,y)
-        plotitem.addEventItem(plot2)
+        plotitem.add_event_item(plot2)
         self.assertEqual(len(plotitem._myEventItemList), 2)
         
     def testClearEventItems(self):
@@ -53,12 +54,12 @@ class TestMyPlotItem(unittest.TestCase):
         plotitem.addItem(plot)
         
         plot2 = PlotCurveItem(y,x)
-        plotitem.addEventItem(plot2)
+        plotitem.add_event_item(plot2)
         
         self.assertEqual(len(plotitem._myEventItemList), 1)
         self.assertEqual(len(plotitem.listDataItems()), 2)
         
-        plotitem.clearEventItems()
+        plotitem.clear_event_items()
         self.assertEqual(len(plotitem._myEventItemList), 0)
         
         self.assertEqual(len(plotitem.listDataItems()), 1)
@@ -71,11 +72,11 @@ class TestMyPlotItem(unittest.TestCase):
         plotitem.addItem(plot)
         
         plot2 = PlotCurveItem(y,x)
-        plotitem.addEventItem(plot2)
+        plotitem.add_event_item(plot2)
         
         x=y=np.zeros(2)
         plot3 = PathItem(x,y)
-        plotitem.addEventItem(plot3)
+        plotitem.add_event_item(plot3)
         
         plotitem.clear()
         self.assertEqual(len(plotitem.listDataItems()), 0)
@@ -92,14 +93,14 @@ class TestMyPlotItem(unittest.TestCase):
         plotitem.addItem(plot)
         
         plot2 = PlotCurveItem(y,x)
-        plotitem.addEventItem(plot2)
+        plotitem.add_event_item(plot2)
         
         plot5 = PlotCurveItem(y,x)
         plotitem.addItem(plot5)
         
         x=y=np.zeros(2)
         plot3 = PathItem(x,y)
-        plotitem.addEventItem(plot3)
+        plotitem.add_event_item(plot3)
         
         plot4 = plotitem.plot(clear=True)
         

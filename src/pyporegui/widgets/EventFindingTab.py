@@ -7,7 +7,8 @@ from pypore.dataFileOpener import prepareDataFile
 
 from pyporegui._ThreadManager import _ThreadManager
 from pyporegui.MyThreads import AnalyzeDataThread, PlotThread
-from pyporegui.views import DataFileListItem, MyPlotItem, PlotToolBar
+from pyporegui.graphicsItems.MyPlotItem import MyPlotItem
+from pyporegui.views import DataFileListItem, PlotToolBar
 
 __all__ = ['EventFindingTab']
 
@@ -189,7 +190,7 @@ class EventFindingTab(_ThreadManager, QtGui.QSplitter):
         times = linspace(ts * plot_range[0], ts * plot_range[1], n)
         y_data = data[plot_range[0]:(plot_range[1] + 1)]
 
-        self.plot_widget.clearEventItems()
+        self.plot_widget.clear_event_items()
         self.p1.setData(x=times, y=y_data)
         self.plot_widget.autoRange()
         if self.process_events_callback is not None:

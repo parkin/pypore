@@ -4,7 +4,8 @@ import pyqtgraph as pg
 from pyqtgraph.widgets.LayoutWidget import LayoutWidget
 from pypore import eventDatabase as eD
 from pyporegui._ThreadManager import _ThreadManager
-from pyporegui.views import FileListItem, MyPlotItem
+from pyporegui.graphicsItems.MyPlotItem import MyPlotItem
+from pyporegui.views import FileListItem
 
 __all__ = ['EventViewingTab']
 

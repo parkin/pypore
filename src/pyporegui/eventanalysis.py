@@ -14,6 +14,7 @@ from PySide import QtCore, QtGui  # Must import PySide stuff before pyqtgraph so
 
 
 # The rest of the imports can be found below in _longImports
+from pyporegui.graphicsItems.MyPlotItem import MyPlotItem
 from pyporegui.graphicsItems.ScatterPlotItem import ScatterPlotItem
 from pyporegui.graphicsItems.SpotItem import SpotItem
 from pyporegui.widgets.EventAnalysisPlotWidget import EventAnalysisPlotWidget
@@ -76,7 +77,7 @@ def _long_imports(**kwargs):
         splash.showMessage("Compiling Cython imports... EventFinder", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
     from MyThreads import AnalyzeDataThread, PlotThread
-    from views import FileListItem, FilterListItem, PlotToolBar, DataFileListItem, MyPlotItem
+    from views import FileListItem, FilterListItem, PlotToolBar, DataFileListItem
 
     if update_splash:
         splash.showMessage("Importing EventDatabase", alignment=QtCore.Qt.AlignBottom)
@@ -283,7 +284,7 @@ The current namespace should include:
         times = linspace(Ts * plot_range[0], Ts * plot_range[1], n)
         yData = data[plot_range[0]:(plot_range[1] + 1)]
 
-        self.plotwid.clearEventItems()
+        self.plotwid.clear_event_items()
         self.p1.setData(x=times, y=yData)
         self.plotwid.autoRange()
         self.app.processEvents()
@@ -366,7 +367,7 @@ The current namespace should include:
 
         item = PathItem(times, data, conn)
         item.setPen(pg.mkPen('y'))
-        self.plotwid.addEventItem(item)
+        self.plotwid.add_event_item(item)
 
     def get_current_analysis_parameters(self):
         '''

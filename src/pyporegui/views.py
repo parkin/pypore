@@ -4,34 +4,8 @@
 import os.path
 
 from PySide import QtGui
-from pyqtgraph.graphicsItems.PlotItem.PlotItem import PlotItem
 
 
-class MyPlotItem(PlotItem):
-    def __init__(self, parent=None, title=None, name=None):
-        super(MyPlotItem, self).__init__(parent=parent, title=title, name=name)
-        self._myItemList = []
-        self._myEventItemList = []
-         
-    def addItem(self, item, *args, **kwargs):
-        super(MyPlotItem, self).addItem(item, *args, **kwargs)
-        self._myItemList.append(item)
-        
-    def addEventItem(self, item, *args, **kwargs):
-        super(MyPlotItem, self).addItem(item, *args, **kwargs)
-        self._myEventItemList.append(item)
-        
-    def clearEventItems(self):
-        for item in self._myEventItemList:
-            self.removeItem(item)
-        del self._myEventItemList[:]
-        
-    def clear(self):
-        super(MyPlotItem, self).clear()
-        del self._myEventItemList[:]
-        del self._myItemList[:]
-
-        
 class PlotToolBar(QtGui.QToolBar):
     '''
     A toolbar for plots, with a zoom button, check boxes for options.
