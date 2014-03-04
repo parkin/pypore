@@ -9,9 +9,10 @@ import numpy as np
 from numpy import linspace
 
 from views import MyPlotItem, PlotToolBar, DataFileListItem, FileListItem
+from views import FilterListItem, EventAnalysisWidget
 from MyThreads import PlotThread, AnalyzeDataThread
 from pypore.dataFileOpener import prepareDataFile
-import pypore.eventDatabase as ed
+import pypore.eventDatabase as eD
 
 
 class _ThreadManager(object):
@@ -38,6 +39,149 @@ class _ThreadManager(object):
         Removes the thread from the threadPool.
         """
         self.thread_pool.remove(thread)
+
+
+class EventAnalysisTab(_ThreadManager, QtGui.QSplitter):
+    """
+    """
+
+    def __init__(self, parent=None):
+        """
+        :param PySide.QtGui.QMainWindow parent: Parent window of this tab (optional).
+        """
+        super(EventAnalysisTab, self).__init__(parent)
+        self._parent = parent
+
+        options = self._create_event_analysis_options()
+        self.eventAnalysisWidget = EventAnalysisWidget()
+
+        # Put everything in filter_parameter scroll area
+        scroll_options = QtGui.QScrollArea()
+        scroll_plots = QtGui.QScrollArea()
+        scroll_options.setWidgetResizable(True)
+        scroll_plots.setWidgetResizable(True)
+
+        scroll_options.setWidget(options)
+        scroll_plots.setWidget(self.eventAnalysisWidget)
+
+        self.addWidget(scroll_options)
+        self.addWidget(scroll_plots)
+
+    def color_picker_btn_clicked(self):
+        col = QtGui.QColorDialog.getColor(initial=self.event_color)
+
+        if col.isValid():
+            self.event_color = col
+            self.frm.setStyleSheet("QWidget { background-color: %s }"
+                                   % col.name())
+
+    def add_filter_clicked(self):
+        items = self.list_event_widget.selectedItems()
+        if items is None or len(items) < 1:
+            return
+
+        params = self._get_current_event_analysis_params()
+
+        file_names = []
+
+        for item in items:
+            file_names.append(item.getFileName())
+
+        item = FilterListItem(file_names, **params)
+        self.listFilterWidget.addItem(item)
+
+        self.eventAnalysisWidget.addSelections(file_names, params)
+
+    def _get_current_event_analysis_params(self):
+        params = {'color': self.event_color}
+        return params
+
+    def open_event_database(self, file_names=None):
+        """
+        Adds the files to the list widget.
+
+        :param ListType<StringType> file_names: (Optional) List of file names to be added to the list widget. If not
+                                                included, then a QtGui.QFileDialog will be opened to select files.
+        """
+        if file_names is None:
+            file_names = QtGui.QFileDialog.getOpenFileNames(self, 'Open event database', '.', '*.h5')[0]
+
+        if len(file_names) > 0:
+            self.list_event_widget.clear()
+        else:
+            return
+        for w in file_names:
+            item = FileListItem(w)
+            self.list_event_widget.addItem(item)
+
+    def remove_filter_clicked(self):
+        items = self.listFilterWidget.selectedItems()
+        for item in items:
+            index = self.listFilterWidget.indexFromItem(item).row()
+            self.eventAnalysisWidget.removeFilter(index)
+            self.listFilterWidget.takeItem(index)
+
+    def _on_event_file_selection_changed(self):
+        """
+        Called when the user clicks a new file in the file list.
+        """
+        self.btnAddFilter.setEnabled(True)
+
+    def _create_event_analysis_options(self):
+        """
+        Initializes the analysis options on the left side of the tab.
+        """
+        scroll_area = QtGui.QScrollArea()
+        scroll_area.setWidgetResizable(True)
+
+        # Create filter_parameter list for files want to analyze
+        self.list_event_widget = QtGui.QListWidget()
+        #         self.listEventWidget.itemDoubleClicked.connect(self._on_file_item_doubleclick)
+        self.list_event_widget.setMaximumHeight(100)
+        self.list_event_widget.itemSelectionChanged.connect(self._on_event_file_selection_changed)
+        self.list_event_widget.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
+
+        files_options = QtGui.QFormLayout()
+        files_options.addRow('Event Databases:', self.list_event_widget)
+
+        # # Color Picker
+        self.event_color = QtGui.QColor('blue')
+        pick_color_btn = QtGui.QPushButton()
+        pick_color_btn.setText('Choose a Color')
+        pick_color_btn.clicked.connect(self.color_picker_btn_clicked)
+
+        self.frm = QtGui.QFrame()
+        self.frm.setStyleSheet("QWidget { background-color: %s }"
+                               % self.event_color.name())
+        self.frm.setMinimumSize(15, 15)
+        self.frm.setMaximumSize(30, 30)
+
+        files_options.addRow(pick_color_btn, self.frm)
+
+        # # List of filters created
+        self.btnAddFilter = QtGui.QPushButton('Add selections as filter')
+        self.btnAddFilter.clicked.connect(self.add_filter_clicked)
+        self.btnAddFilter.setEnabled(False)
+        formFilter = QtGui.QFormLayout()
+        formFilter.addRow('Filters:', self.btnAddFilter)
+        self.listFilterWidget = QtGui.QListWidget()
+        vbox = QtGui.QVBoxLayout()
+        vbox.addLayout(formFilter)
+        vbox.addWidget(self.listFilterWidget)
+        btn_remove_filter = QtGui.QPushButton('Remove selected filters')
+        btn_remove_filter.clicked.connect(self.remove_filter_clicked)
+        vbox.addWidget(btn_remove_filter)
+
+        vbox_left = QtGui.QVBoxLayout()
+        vbox_left.addLayout(files_options)
+        vbox_left.addLayout(vbox)
+
+        vbox_left_widget = QtGui.QWidget()
+        vbox_left_widget.setLayout(vbox_left)
+
+        scroll_area.setWidget(vbox_left_widget)
+
+        return scroll_area
 
 
 class EventViewingTab(_ThreadManager, QtGui.QSplitter):
@@ -70,40 +214,23 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
         self.addWidget(scroll_options)
         self.addWidget(scroll_plots)
 
-    def open_event_database(self, open_dir='.'):
+    def open_event_database(self, file_names=None):
         """
-        Opens file dialog box, add names of event database files to open list
+        Adds the files to the list widget.
+
+        :param ListType<StringType> file_names: (Optional) List of file names to be added to the list widget. If not
+                                                included, then a QtGui.QFileDialog will be opened to select files.
         """
-        fnames = QtGui.QFileDialog.getOpenFileNames(self, 'Open event database', open_dir, '*.h5')[0]
-        if len(fnames) > 0:
+        if file_names is None:
+            file_names = QtGui.QFileDialog.getOpenFileNames(self, 'Open event database', '.', '*.h5')[0]
+
+        if len(file_names) > 0:
             self.eventview_list_widget.clear()
         else:
             return
-        are_files_opened = False
-        opened_dir = open_dir
-        for w in fnames:
-            are_files_opened = True
+        for w in file_names:
             item = FileListItem(w)
             self.eventview_list_widget.addItem(item)
-            opened_dir = item.getDirectory()
-
-        if are_files_opened:
-            self._dispatch_open_directory_changed(opened_dir)
-
-    def set_open_directory_changed_callback(self, callback):
-        """
-        Sets a callback for when an event database is opened by the user. The callback should accept
-        a string argument that is the directory containing the opened files.
-
-        :param MethodType callback:
-        """
-        self.open_directory_changed_callback = callback
-
-    def _dispatch_open_directory_changed(self, open_dir):
-        """
-        """
-        if self.open_directory_changed_callback is not None:
-            self.open_directory_changed_callback(open_dir)
 
     def _create_event_viewer_options(self):
         scroll_area = QtGui.QScrollArea()
@@ -132,7 +259,7 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
         """
         self.event_view_item = item
 
-        h5file = ed.openFile(item.getFileName())
+        h5file = eD.openFile(item.getFileName())
 
         event_count = h5file.getEventCount()
 
@@ -148,7 +275,7 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
         '''
         Plots the event on the plot with
         '''
-        h5file = ed.openFile(self.event_view_item.getFileName(), mode='r')
+        h5file = eD.openFile(self.event_view_item.getFileName(), mode='r')
 
         eventCount = h5file.getEventCount()
 
@@ -181,7 +308,7 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
         plot.plot(times, rawData)
         # plot the event points in yellow
         plot.plot(times[rawPointsPerSide:rawPointsPerSide + eventLength], \
-                                     rawData[rawPointsPerSide:rawPointsPerSide + eventLength], pen='y')
+                  rawData[rawPointsPerSide:rawPointsPerSide + eventLength], pen='y')
 
         # Plot the cusum levels
         nLevels = row['nLevels']
@@ -223,7 +350,7 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
         '''
         h5eventCount = 0
         try:
-            h5file = ed.openFile(self.event_view_item.getFileName())
+            h5file = eD.openFile(self.event_view_item.getFileName())
             h5eventCount = h5file.getEventCount()
             h5file.close()
         except:
@@ -269,8 +396,8 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
                 self.eventviewer_plots.append(plot)
 
                 # Tool bar for main plot.  Contains zoom button and different checkboxes
-            #         self.plotToolBar = PlotToolBar(self)
-            #         self.addToolBar(self.plotToolBar)
+                #         self.plotToolBar = PlotToolBar(self)
+                #         self.addToolBar(self.plotToolBar)
 
         event_select_toolbar = QtGui.QToolBar(self)
         if self._parent is not None:
@@ -325,7 +452,6 @@ class EventFindingTab(_ThreadManager, QtGui.QSplitter):
         # Define the instance elements
         self.events = []  # holds the events from the most recent analysis run
 
-        self.on_files_opened_callback = None
         self.on_status_update_callback = None
         self.process_events_callback = None
         self.plot_widget = None
@@ -426,19 +552,22 @@ class EventFindingTab(_ThreadManager, QtGui.QSplitter):
 
         return parameters
 
-    def open_files(self, open_dir='.'):
+    def open_files(self, file_names=None):
         """
-        Opens a QFileDialog so the user can open files. Lists those files in the list widget.
+        Analyzes the files for correctness, then adds them to the list widget.
 
-        :param str open_dir: The directory that the QFileDialog should start in.
+        :param ListType<StringType> file_names: The file names to be included in the list widget. If not included,
+                                                this function will use a QtGui.QFileDialog.getOpenFileNames to open
+                                                files.
         """
-        file_names = QtGui.QFileDialog.getOpenFileNames(self,
-                                                        'Open data file',
-                                                        open_dir,
-                                                        "All types(*.h5 *.hkd *.log *.mat);;"
-                                                        "Pypore data files *.h5(*.h5);;"
-                                                        "Heka files *.hkd(*.hkd);;"
-                                                        "Chimera files *.log(*.log);;Gabys files *.mat(*.mat)")[0]
+        if file_names is None:
+            file_names = QtGui.QFileDialog.getOpenFileNames(self,
+                                                            'Open data file',
+                                                            '.',
+                                                            "All types(*.h5 *.hkd *.log *.mat);;"
+                                                            "Pypore data files *.h5(*.h5);;"
+                                                            "Heka files *.hkd(*.hkd);;"
+                                                            "Chimera files *.log(*.log);;Gabys files *.mat(*.mat)")[0]
         if len(file_names) > 0:
             self.list_widget.clear()
         else:
@@ -456,9 +585,8 @@ class EventFindingTab(_ThreadManager, QtGui.QSplitter):
                 open_dir = item.getDirectory()
                 self.list_widget.addItem(item)
 
-        if are_files_opened and self.on_files_opened_callback is not None:
+        if are_files_opened:
             self.analyze_button.setEnabled(False)
-            self.on_files_opened_callback(open_dir)
 
     def plot_data(self, plot_options):
         """
@@ -499,15 +627,6 @@ class EventFindingTab(_ThreadManager, QtGui.QSplitter):
         :param MethodType callback:
         """
         self.process_events_callback = callback
-
-    def set_on_files_opened_callback(self, callback):
-        """
-        Sets a callback for when the EventFindingTab opens files.
-
-        :param MethodType callback: Callback method which must accept a string parameter containing the directory
-                                    where files were opened.
-        """
-        self.on_files_opened_callback = callback
 
     def set_on_status_update_callback(self, callback):
         """

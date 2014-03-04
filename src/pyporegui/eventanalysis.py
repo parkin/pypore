@@ -116,7 +116,16 @@ class MyMainWindow(QtGui.QMainWindow):
         """
         Opens file dialog box, adds names of files to open to list
         """
-        self.event_finding_tab.open_files(self.open_dir)
+        file_names = QtGui.QFileDialog.getOpenFileNames(self,
+                                                        'Open data file',
+                                                        self.open_dir,
+                                                        "All types(*.h5 *.hkd *.log *.mat);;"
+                                                        "Pypore data files *.h5(*.h5);;"
+                                                        "Heka files *.hkd(*.hkd);;"
+                                                        "Chimera files *.log(*.log);;"
+                                                        "Gabys files *.mat(*.mat)")[0]
+        if len(file_names) > 0:
+            self.event_finding_tab.open_files(file_names)
 
     def _on_files_opened(self, open_dir=None):
         """
@@ -132,8 +141,11 @@ class MyMainWindow(QtGui.QMainWindow):
         """
         Opens file dialog box, add names of event database files to open list
         """
-        self.event_viewer_tab.open_event_database(self.open_dir)
-        # TODO call the event_analysis opener as well
+        file_names = QtGui.QFileDialog.getOpenFileNames(self, 'Open event database', self.open_dir, '*.h5')[0]
+
+        if len(file_names) > 0:
+            self.event_viewer_tab.open_event_database(file_names)
+            self.event_analysis_tab.open_event_database(file_names)
 
     def set_status(self, text):
         """
@@ -143,127 +155,6 @@ class MyMainWindow(QtGui.QMainWindow):
         """
         self.status_text.setText(text)
 
-    def _on_event_file_selection_changed(self):
-        self.btnAddFilter.setEnabled(True)
-            
-    def _create_event_analysis_options(self):
-        scroll_area = QtGui.QScrollArea()
-        scroll_area.setWidgetResizable(True)
-        
-        # Create filter_parameter list for files want to analyze
-        self.list_event_widget = QtGui.QListWidget()
-#         self.listEventWidget.itemSelectionChanged.connect(self._on_file_item_selection_changed)
-#         self.listEventWidget.itemDoubleClicked.connect(self._on_file_item_doubleclick)
-        self.list_event_widget.setMaximumHeight(100)
-        self.list_event_widget.itemSelectionChanged.connect(self._on_event_file_selection_changed)
-        self.list_event_widget.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
-        
-        files_options = QtGui.QFormLayout()
-        files_options.addRow('Event Databases:', self.list_event_widget)
-        
-        # # Color Picker
-        self.event_color = QtGui.QColor('blue')
-        pick_color_btn = QtGui.QPushButton()
-        pick_color_btn.setText('Choose a Color')
-        pick_color_btn.clicked.connect(self.color_picker_btn_clicked)
-        
-        self.frm = QtGui.QFrame()
-        self.frm.setStyleSheet("QWidget { background-color: %s }" 
-            % self.event_color.name())
-        self.frm.setMinimumSize(15, 15)
-        self.frm.setMaximumSize(30, 30)
-        
-        files_options.addRow(pick_color_btn, self.frm)
-        
-        # # List of filters created
-        self.btnAddFilter = QtGui.QPushButton('Add selections as filter')
-        self.btnAddFilter.clicked.connect(self.add_filter_clicked)
-        self.btnAddFilter.setEnabled(False)
-        formFilter = QtGui.QFormLayout()
-        formFilter.addRow('Filters:', self.btnAddFilter)
-        self.listFilterWidget = QtGui.QListWidget()
-        vbox = QtGui.QVBoxLayout()
-        vbox.addLayout(formFilter)
-        vbox.addWidget(self.listFilterWidget)
-        btn_remove_filter = QtGui.QPushButton('Remove selected filters')
-        btn_remove_filter.clicked.connect(self.remove_filter_clicked)
-        vbox.addWidget(btn_remove_filter)
-        
-        vbox_left = QtGui.QVBoxLayout()
-        vbox_left.addLayout(files_options)
-        vbox_left.addLayout(vbox)
-        
-        vbox_left_widget = QtGui.QWidget()
-        vbox_left_widget.setLayout(vbox_left)
-        
-        scroll_area.setWidget(vbox_left_widget)
-        
-        return scroll_area
-    
-    def add_filter_clicked(self):
-        items = self.list_event_widget.selectedItems()
-        if items is None or len(items) < 1:
-            return
-        
-        params = self._get_current_event_analysis_params()
-        
-        filenames = []
-        
-        for item in items:
-            filenames.append(item.getFileName())
-        
-        item = FilterListItem(filenames, **params)
-        self.listFilterWidget.addItem(item)
-        
-        self.eventAnalysisWidget.addSelections(filenames, params)
-        
-    def remove_filter_clicked(self):
-        items = self.listFilterWidget.selectedItems()
-        for item in items:
-            index = self.listFilterWidget.indexFromItem(item).row()
-            self.eventAnalysisWidget.removeFilter(index)
-            self.listFilterWidget.takeItem(index)
-        
-    def _get_current_event_analysis_params(self):
-        params = {}
-        params['color'] = self.event_color
-        return params
-    
-    def color_picker_btn_clicked(self):
-        col = QtGui.QColorDialog.getColor(initial=self.event_color)
-        
-        if col.isValid():
-            self.event_color = col
-            self.frm.setStyleSheet("QWidget { background-color: %s }"
-                % col.name())
-        
-    def _create_eventanalysis_plot_widget(self):
-        # Tab widget for event stuff
-        
-        self.eventAnalysisWidget = EventAnalysisWidget()
-        
-        return self.eventAnalysisWidget
-    
-    def _create_event_analysis_tab(self):
-        frame = QtGui.QSplitter()
-        
-        options = self._create_event_analysis_options()
-        plots = self._create_eventanalysis_plot_widget()
-        
-        # Put everything in filter_parameter scroll area
-        scrollOptions = QtGui.QScrollArea()
-        scrollPlots = QtGui.QScrollArea()
-        scrollOptions.setWidgetResizable(True)
-        scrollPlots.setWidgetResizable(True)
-        
-        scrollOptions.setWidget(options)
-        scrollPlots.setWidget(plots)
-        
-        frame.addWidget(scrollOptions)
-        frame.addWidget(scrollPlots)
-        
-        return frame
-    
     def _create_data_modification_tab(self):
         frame = QtGui.QSplitter()
 
@@ -280,20 +171,19 @@ class MyMainWindow(QtGui.QMainWindow):
         """
         # data_modification = self._create_data_modification_tab()
         self.event_finding_tab = tabs.EventFindingTab(self)
-        self.event_finding_tab.set_on_files_opened_callback(self._on_files_opened)
         self.event_finding_tab.set_on_status_update_callback(self.set_status)
         self.event_finding_tab.set_process_events_callback(self._process_events)
 
         self.event_viewer_tab = tabs.EventViewingTab(self)
-        self.event_viewer_tab.set_open_directory_changed_callback(self._on_files_opened)
-        event_analysis = self._create_event_analysis_tab()
+
+        self.event_analysis_tab = tabs.EventAnalysisTab(self)
         
         # Layout holding everything        
         self.main_tabwig = QtGui.QTabWidget()
         # self.main_tabwig.addTab(data_modification, 'Data modification')
         self.main_tabwig.addTab(self.event_finding_tab, 'Event Finding')
         self.main_tabwig.addTab(self.event_viewer_tab, 'Event View')
-        self.main_tabwig.addTab(event_analysis, 'Event Analysis')
+        self.main_tabwig.addTab(self.event_analysis_tab, 'Event Analysis')
         self.main_tabwig.setMinimumSize(1000, 550)
 
         text = """*********************
