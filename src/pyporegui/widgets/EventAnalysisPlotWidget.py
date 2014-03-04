@@ -2,7 +2,8 @@ from PySide import QtGui
 import numpy as np
 from pyqtgraph import GraphicsLayoutWidget, mkPen
 from pypore import eventDatabase as eD
-from pyporegui.views import MyHistogramItem, MyScatterPlotItem
+from pyporegui.graphicsItems.HistogramItem import HistogramItem
+from pyporegui.views import MyScatterPlotItem
 
 __all__ = ['EventAnalysisPlotWidget']
 
@@ -12,7 +13,7 @@ class EventAnalysisPlotWidget(GraphicsLayoutWidget):
     def __init__(self):
         super(EventAnalysisPlotWidget, self).__init__()
 
-        self.plot_eventdepth = MyHistogramItem(title='Event Depth', rotate=True)
+        self.plot_eventdepth = HistogramItem(title='Event Depth', rotate=True)
         self.addItem(self.plot_eventdepth)
         self.plot_eventdepth.setMouseEnabled(x=False, y=True)
         self.plot_eventdur_eventdepth = self.addPlot(name='Depth vs. Duration', title='Depth vs. Duration')
@@ -22,7 +23,7 @@ class EventAnalysisPlotWidget(GraphicsLayoutWidget):
 
         self.plot_scatterselect = self.addPlot(title='Single Event')
 
-        self.plot_eventdur = MyHistogramItem(title='Event Duration')
+        self.plot_eventdur = HistogramItem(title='Event Duration')
         self.addItem(self.plot_eventdur)
         self.plot_eventdur.setXLink('Depth vs. Duration')
         self.plot_eventdur.setMouseEnabled(x=True, y=False)
@@ -60,9 +61,9 @@ class EventAnalysisPlotWidget(GraphicsLayoutWidget):
         color = params['color']
         newcolor = QtGui.QColor(color.red(), color.green(), color.blue(), 128)
 
-        self.plot_eventdur.addHistogram(dwellTimes, color=newcolor)
+        self.plot_eventdur.add_histogram(dwellTimes, color=newcolor)
 
-        self.plot_eventdepth.addHistogram(currentBlockade, color=newcolor)
+        self.plot_eventdepth.add_histogram(currentBlockade, color=newcolor)
 
         scatterItem = MyScatterPlotItem(size=10, pen=mkPen(None), brush=newcolor, files=file_names, counts=counts)
         scatterItem.setData(dwellTimes, currentBlockade)
@@ -75,8 +76,8 @@ class EventAnalysisPlotWidget(GraphicsLayoutWidget):
         return
 
     def removeFilter(self, index):
-        self.plot_eventdur.removeItemAt(index)
-        self.plot_eventdepth.removeItemAt(index)
+        self.plot_eventdur.remove_item_at(index)
+        self.plot_eventdepth.remove_item_at(index)
         self.plot_eventdur_eventdepth.removeItem(self.plot_eventdur_eventdepth.listDataItems()[index])
 
     def onScatterPointsClicked(self, plot, points):

@@ -1,138 +1,11 @@
-'''
-Created on Aug 6, 2013
-
-@author: parkin
-'''
+"""
+@author: `@parkin`_
+"""
 import os.path
 
 from PySide import QtGui
-import numpy as np
 from pyqtgraph.graphicsItems.PlotItem.PlotItem import PlotItem
 from pyqtgraph.graphicsItems.ScatterPlotItem import ScatterPlotItem, SpotItem
-from pyqtgraph.graphicsItems.PlotCurveItem import PlotCurveItem
-
-
-class MyHistogramItem(PlotItem):
-    
-    def __init__(self, *args, **kargs):
-        self.rotate = False
-        if 'rotate' in kargs:
-            self.rotate = kargs['rotate']
-            del kargs['rotate']  # if you dont delete, MyHistogramItem will start with
-                                # a PlotDataItem for some reason
-        
-        super(MyHistogramItem, self).__init__(*args, **kargs)
-            
-        self.dataArray = []
-        self.bins = np.zeros(1)
-        self.nbins = 0
-        self.minimum = 0.
-        self.maximum = 0.
-        
-        self.minimumArray = []
-        self.maximumArray = []
-        self.nbinsArray = []
-            
-    def addHistogram(self, data, nbins=None, color=None):
-        """
-        Adds a histogram to the plot.
-        
-        data should be 1D numpy array
-        
-        nbins = number of bins for numpy.histogram()
-               default is nbins = sqrt(data.size)
-        """
-        if nbins == None:
-            nbins = data.size ** 0.5
-            
-        minimum = data.min()
-        maximum = data.max()
-        
-        self.minimumArray.append(minimum)
-        self.maximumArray.append(maximum)
-        self.nbinsArray.append(nbins)
-        
-        # if this is the first histogram plotted,
-        # initialize settings
-        if len(self.dataArray) < 1:
-            self.minimum = minimum
-            self.maximum = maximum
-            self.nbins = nbins
-            self.bins = np.linspace(self.minimum, self.maximum, self.nbins + 1)
-        
-        # replot the other histograms with this new
-        # binning if needed
-        rehist = False
-        if minimum < self.minimum:
-            self.minimum = minimum
-            rehist = True
-        if maximum > self.maximum:
-            self.maximum = maximum
-            rehist = True
-        if nbins > self.nbins:
-            self.nbins = nbins
-            rehist = True
-            
-        if rehist:
-            self.reHistogram()
-            
-        self.plotHistogram(data, color)
-        
-    def plotHistogram(self, data, color=None):
-        if color == None:
-            color = QtGui.QColor(0, 0, 255, 128)
-            
-        y, x = np.histogram(data, bins=self.bins)
-        
-        if self.rotate:
-            x = -1. * x
-        curve = PlotCurveItem(x, y, stepMode=True, fillLevel=0, brush=color)
-        if self.rotate:
-            curve.rotate(-90)
-        self.addItem(curve)
-        
-        self.dataArray.append(data)
-        
-    def reHistogram(self):
-        self.bins = np.linspace(self.minimum, self.maximum, self.nbins + 1)
-        items = self.listDataItems()
-        for i, item in enumerate(items):
-            y, x = np.histogram(self.dataArray[i], bins=self.bins)
-            if self.rotate:
-                x = -1. * x
-            item.setData(x, y)
-            
-    def removeItemAt(self, index):
-        if len(self.dataArray) < 1:
-            return
-        
-        self.removeItem(self.listDataItems()[index])
-        del self.dataArray[index]
-        del self.minimumArray[index]
-        del self.maximumArray[index]
-        del self.nbinsArray[index]
-        
-        # return if no more histograms to display
-        if len(self.dataArray) < 1:
-            return
-        
-        reHist = False
-        # do we need to replot?
-        maxi = max(self.maximumArray)
-        if maxi < self.maximum:
-            reHist = True
-            self.maximum = maxi
-        mini = min(self.minimumArray)
-        if mini > self.minimum:
-            reHist = True
-            self.minimum = mini
-        nb = max(self.nbinsArray)
-        if nb < self.nbins:
-            reHist = True
-            self.nbins = nb
-            
-        if reHist:
-            self.reHistogram()
 
 
 class MySpotItem(SpotItem):
@@ -242,7 +115,7 @@ class PlotToolBar(QtGui.QToolBar):
         self.widgetList.append(widget)
         return super(PlotToolBar, self).addWidget(widget, *args, **kwargs)
     
-    
+
 
 class FileListItem(QtGui.QListWidgetItem):
     '''
