@@ -9,9 +9,10 @@ import sys
 import os
 
 from PySide import QtCore, QtGui  # Must import PySide stuff before pyqtgraph so pyqtgraph knows
-                                # to use PySide instead of PyQt
 
-                                
+# to use PySide instead of PyQt
+
+
 # The rest of the imports can be found below in _longImports
 def _long_imports(**kwargs):
     """
@@ -21,19 +22,19 @@ def _long_imports(**kwargs):
     src_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     if not src_dir in sys.path:
         sys.path.append(src_dir)
-    
+
     global AnalyzeDataThread, PlotThread, FileListItem, FilterListItem, \
-            PlotToolBar, DataFileListItem, MyPlotItem, prepareDataFile, pg, pgc, \
-            LayoutWidget, PlotCurveItem, linspace, np, \
-            MySpotItem, MyScatterPlotItem, EventAnalysisWidget, ed, \
-            EventFindingTab, EventViewingTab, EventAnalysisTab
+        PlotToolBar, DataFileListItem, MyPlotItem, prepareDataFile, pg, pgc, \
+        LayoutWidget, PlotCurveItem, linspace, np, \
+        MySpotItem, MyScatterPlotItem, EventAnalysisWidget, ed, \
+        EventFindingTab, EventViewingTab, EventAnalysisTab
 
     update_splash = False
     if 'splash' in kwargs and 'app' in kwargs:
         update_splash = True
         splash = kwargs['splash']
         app = kwargs['app']
-       
+
     if update_splash:
         splash.showMessage("Importing PyQtGraph...", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
@@ -41,23 +42,23 @@ def _long_imports(**kwargs):
     import pyqtgraph.console as pgc
     from pyqtgraph.widgets.LayoutWidget import LayoutWidget
     from pyqtgraph.graphicsItems.PlotCurveItem import PlotCurveItem
-    
+
     if update_splash:
         splash.showMessage("Importing SciPy...", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
     from scipy import linspace
-    
+
     if update_splash:
         splash.showMessage("Importing NumPy...", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
     import numpy as np
-            
+
     # My stuff
     if update_splash:
         splash.showMessage("Setting up Cython imports...", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
     from pypore import cythonsetup
-    
+
     if update_splash:
         splash.showMessage("Compiling Cython imports... DataFileOpener", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
@@ -72,49 +73,48 @@ def _long_imports(**kwargs):
     from MyThreads import AnalyzeDataThread, PlotThread
     from views import FileListItem, FilterListItem, PlotToolBar, DataFileListItem, MyPlotItem
     from views import MySpotItem, MyScatterPlotItem, EventAnalysisWidget
-    
+
     if update_splash:
         splash.showMessage("Importing EventDatabase", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
     import pypore.eventDatabase as ed
-    
+
 # If we are running from a test, name != main, and we'll need to import the above on our own
 if not __name__ == '__main__':
     _long_imports()
 
 
 class PathItem(QtGui.QGraphicsPathItem):
-        def __init__(self, x, y, conn='all'):
-            xr = x.min(), x.max()
-            yr = y.min(), y.max()
-            self._bounds = QtCore.QRectF(xr[0], yr[0], xr[1] - xr[0], yr[1] - yr[0])
-            self.path = pg.arrayToQPath(x, y, conn)
-            QtGui.QGraphicsPathItem.__init__(self, self.path)
-            
-        def boundingRect(self):
-            return self._bounds
+    def __init__(self, x, y, conn='all'):
+        xr = x.min(), x.max()
+        yr = y.min(), y.max()
+        self._bounds = QtCore.QRectF(xr[0], yr[0], xr[1] - xr[0], yr[1] - yr[0])
+        self.path = pg.arrayToQPath(x, y, conn)
+        QtGui.QGraphicsPathItem.__init__(self, self.path)
+
+    def boundingRect(self):
+        return self._bounds
 
 
 class MyMainWindow(QtGui.QMainWindow):
-
     def __init__(self, app, parent=None):
         super(MyMainWindow, self).__init__()
-        
+
         self.events = []  # holds the events from the most recent analysis run
         self.app = app
-        
+
         pg.setConfigOption('leftButtonPan', False)
-        
+
         self.open_dir = '../../data'
-        
+
         self.thread_pool = []
-        
+
         self.setWindowTitle('Translocation Event Analysis')
-        
+
         self.create_menu()
         self._create_main_frame()
         self.create_status_bar()
-        
+
     def open_files(self):
         """
         Opens file dialog box, adds names of files to open to list
@@ -150,7 +150,7 @@ class MyMainWindow(QtGui.QMainWindow):
 
     def _process_events(self):
         self.app.processEvents()
-        
+
     def _create_main_frame(self):
         """
         Helper to initialize the main gui frame.
@@ -162,7 +162,7 @@ class MyMainWindow(QtGui.QMainWindow):
         self.event_viewer_tab = EventViewingTab(self)
 
         self.event_analysis_tab = EventAnalysisTab(self)
-        
+
         # Layout holding everything        
         self.main_tabwig = QtGui.QTabWidget()
         self.main_tabwig.addTab(self.event_finding_tab, 'Event Finding')
@@ -188,45 +188,45 @@ The current namespace should include:
 
         namespace = {'np': np, 'pg': pg, 'ed': ed, 'currentPlot': self.event_finding_tab.plot_widget}
         self.console = pgc.ConsoleWidget(namespace=namespace, text=text)
-        
+
         frame = QtGui.QSplitter()
         frame.setOrientation(QtCore.Qt.Vertical)
         frame.addWidget(self.main_tabwig)
         frame.addWidget(self.console)
-        
+
         self.setCentralWidget(frame)
-        
+
     def create_status_bar(self):
         """
         Creates filter_parameter status bar with filter_parameter text widget.
         """
         self.status_text = QtGui.QLabel("")
         self.statusBar().addWidget(self.status_text, 1)
-    
+
     def create_menu(self):
         """
         Creates File menu with Open
         """
         self.file_menu = self.menuBar().addMenu("&File")
-        
+
         load_data_file_action = self.create_action("&Open Data File",
-            shortcut="Ctrl+O", slot=self.open_files,
-            tip="Open data Files")
+                                                   shortcut="Ctrl+O", slot=self.open_files,
+                                                   tip="Open data Files")
         load_events_database_action = self.create_action("&Open Events Database",
-            shortcut="Ctrl+E", slot=self.open_event_database,
-            tip="Open Events Database")
+                                                         shortcut="Ctrl+E", slot=self.open_event_database,
+                                                         tip="Open Events Database")
         quit_action = self.create_action("&Quit", slot=self.close,
-            shortcut="Ctrl+Q", tip="Close the application")
-        
+                                         shortcut="Ctrl+Q", tip="Close the application")
+
         self.add_actions(self.file_menu,
-            (load_data_file_action, load_events_database_action, None, quit_action))
-        
-#         self.help_menu = self.menuBar().addMenu("&Help")
-#         about_action = self.create_action("&About", 
-#             shortcut='F1', slot=self.on_about, 
-#             tip='About the demo')
-#         
-#         self.add_actions(self.help_menu, (about_action,))
+                         (load_data_file_action, load_events_database_action, None, quit_action))
+
+    #         self.help_menu = self.menuBar().addMenu("&Help")
+    #         about_action = self.create_action("&About",
+    #             shortcut='F1', slot=self.on_about,
+    #             tip='About the demo')
+    #
+    #         self.add_actions(self.help_menu, (about_action,))
 
     def add_actions(self, target, actions):
         for action in actions:
@@ -234,10 +234,10 @@ The current namespace should include:
                 target.addSeparator()
             else:
                 target.addAction(action)
-                
+
     def create_action(self, text, slot=None, shortcut=None,
-                        icon=None, tip=None, checkable=False,
-                        signal="triggered()"):
+                      icon=None, tip=None, checkable=False,
+                      signal="triggered()"):
         action = QtGui.QAction(text, self)
         if icon is not None:
             action.setIcon(QtGui.QIcon(":/%s.png" % icon))
@@ -251,7 +251,7 @@ The current namespace should include:
         if checkable:
             action.setCheckable(True)
         return action
-    
+
     def plotData(self, plot_options):
         '''
         Plots waveform in datadict
@@ -266,24 +266,24 @@ The current namespace should include:
         data = plot_options['datadict']['data'][0]
         sample_rate = plot_options['datadict']['sample_rate']
         plot_range = plot_options['plot_range']
-    
+
         n = len(data)
         # If problem with input, just plot all the data
         if plot_range == 'all' or len(plot_range) != 2 or plot_range[1] <= plot_range[0]:
             plot_range = [0, n]
         else:  # no problems!
             n = plot_range[1] - plot_range[0] + 1
-    
+
         Ts = 1 / sample_rate
-        
+
         times = linspace(Ts * plot_range[0], Ts * plot_range[1], n)
         yData = data[plot_range[0]:(plot_range[1] + 1)]
-        
+
         self.plotwid.clearEventItems()
         self.p1.setData(x=times, y=yData)
         self.plotwid.autoRange()
         self.app.processEvents()
-        
+
     def addEventsToConcatEventPlot(self, events):
         if len(events) < 1:
             return
@@ -301,11 +301,11 @@ The current namespace should include:
             baseline = event['baseline']
             data[index:index + d] = (event['raw_data'] - baseline)
             index += d
-            
+
         item = PathItem(times, data)
         item.setPen(pg.mkPen('w'))
         self.plot_concatevents.addItem(item)
-        
+
     def getEventAndLevelsData(self, event):
         data = event['raw_data']
         levels_index = event['cusum_indexes']
@@ -315,18 +315,18 @@ The current namespace should include:
         event_end = event['event_end']
         baseline = event['baseline']
         raw_points_per_side = event['raw_points_per_side']
-        
+
         Ts = 1 / sample_rate
-        
+
         n = data.size
-        
+
         times = linspace(Ts * (event_start - raw_points_per_side), Ts * (event_start - raw_points_per_side + n - 1), n)
         times2 = [(event_start - raw_points_per_side) * Ts, (event_start - 1) * Ts]
         levels2 = [baseline, baseline]
         for i, level_value in enumerate(levels_values):
             times2.append(levels_index[i] * Ts)
             levels2.append(level_value)
-            if i < len(levels_values) - 1 :
+            if i < len(levels_values) - 1:
                 times2.append((levels_index[i + 1] - 1) * Ts)
                 levels2.append(level_value)
         times2.append(event_end * Ts)
@@ -336,7 +336,7 @@ The current namespace should include:
         times2.append((event_end + raw_points_per_side) * Ts)
         levels2.append(baseline)
         return times, data, times2, levels2
-        
+
     def plotEventsOnMainPlot(self, events):
         if len(events) < 1:
             return
@@ -354,15 +354,16 @@ The current namespace should include:
             event_start = event['event_start']
             event_data = event['raw_data']
             d = event_data.size
-            times[index:index + d] = linspace(ts * (event_start - raw_points_per_side), ts * (event_start - raw_points_per_side + d - 1), d)
+            times[index:index + d] = linspace(ts * (event_start - raw_points_per_side),
+                                              ts * (event_start - raw_points_per_side + d - 1), d)
             data[index:index + d] = event_data
             conn[index - 1] = False  # disconnect separate events
             index += d
-            
+
         item = PathItem(times, data, conn)
         item.setPen(pg.mkPen('y'))
         self.plotwid.addEventItem(item)
-        
+
     def get_current_analysis_parameters(self):
         '''
         Returns filter_parameter dictionary holding the current analysis parameters set by the user.  Returns an entry 'error' if there were
@@ -384,7 +385,7 @@ The current namespace should include:
         if parameters['min_event_length'] >= parameters['max_event_length']:
             parameters['max_event_length'] = 'Min Event Length is greater than Max Event Length.  Please fix.'
             return parameters
-        
+
         parameters['baseline_type'] = str(self.baseline_type_combo.currentText())
         if parameters['baseline_type'] == 'Adaptive':
             try:
@@ -397,8 +398,8 @@ The current namespace should include:
                 parameters['baseline_current'] = float(self.baseline_current_edit.text())
             except ValueError:
                 parameters['error'] = 'Could not read float from Baseline Current text box.  Please fix.'
-               
-        parameters['threshold_direction'] = str(self.threshold_direction_combo.currentText()) 
+
+        parameters['threshold_direction'] = str(self.threshold_direction_combo.currentText())
         parameters['threshold_type'] = str(self.threshold_type_combo.currentText())
         if parameters['threshold_type'] == 'Noise Based':
             try:
@@ -427,18 +428,17 @@ The current namespace should include:
                 parameters['percent_change_end'] = float(self.percentage_change_end_edit.text())
             except ValueError:
                 parameters['error'] = 'Could not read float from Percent Change End text box.  Please fix.'
-        
+
         return parameters
-        
+
     def clean_threads(self):
         for w in self.thread_pool:
             w.cancel()
-#             w.wait()
+            #             w.wait()
             self.thread_pool.remove(w)
 
 
 def main():
-    
     app = QtGui.QApplication(sys.argv)
     pixmap = QtGui.QPixmap('splash.png')
     splash = QtGui.QSplashScreen(pixmap, QtCore.Qt.WindowStaysOnTopHint)
@@ -451,6 +451,7 @@ def main():
     splash.finish(ex)
     app.exec_()
     ex.clean_threads()
+
 
 if __name__ == '__main__':
     main()
