@@ -25,7 +25,8 @@ def _long_imports(**kwargs):
     global AnalyzeDataThread, PlotThread, FileListItem, FilterListItem, \
             PlotToolBar, DataFileListItem, MyPlotItem, prepareDataFile, pg, pgc, \
             LayoutWidget, PlotCurveItem, linspace, np, \
-            MySpotItem, MyScatterPlotItem, EventAnalysisWidget, ed, tabs
+            MySpotItem, MyScatterPlotItem, EventAnalysisWidget, ed, \
+            EventFindingTab, EventViewingTab, EventAnalysisTab
 
     update_splash = False
     if 'splash' in kwargs and 'app' in kwargs:
@@ -61,7 +62,9 @@ def _long_imports(**kwargs):
         splash.showMessage("Compiling Cython imports... DataFileOpener", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
     from pypore.dataFileOpener import prepareDataFile
-    import tabs
+    from widgets.EventViewingTab import EventViewingTab
+    from widgets.EventAnalysisTab import EventAnalysisTab
+    from widgets.EventFindingTab import EventFindingTab
 
     if update_splash:
         splash.showMessage("Compiling Cython imports... EventFinder", alignment=QtCore.Qt.AlignBottom)
@@ -170,13 +173,13 @@ class MyMainWindow(QtGui.QMainWindow):
         Helper to initialize the main gui frame.
         """
         # data_modification = self._create_data_modification_tab()
-        self.event_finding_tab = tabs.EventFindingTab(self)
+        self.event_finding_tab = EventFindingTab(self)
         self.event_finding_tab.set_on_status_update_callback(self.set_status)
         self.event_finding_tab.set_process_events_callback(self._process_events)
 
-        self.event_viewer_tab = tabs.EventViewingTab(self)
+        self.event_viewer_tab = EventViewingTab(self)
 
-        self.event_analysis_tab = tabs.EventAnalysisTab(self)
+        self.event_analysis_tab = EventAnalysisTab(self)
         
         # Layout holding everything        
         self.main_tabwig = QtGui.QTabWidget()
