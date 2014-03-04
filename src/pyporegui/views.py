@@ -5,7 +5,7 @@ import os.path
 
 from PySide import QtGui
 from pyqtgraph.graphicsItems.PlotItem.PlotItem import PlotItem
-from pyqtgraph.graphicsItems.ScatterPlotItem import ScatterPlotItem, SpotItem
+from pyqtgraph.graphicsItems.ScatterPlotItem import SpotItem
 
 
 class MySpotItem(SpotItem):
@@ -15,31 +15,6 @@ class MySpotItem(SpotItem):
     def __init__(self, data, plot, position):
         super(MySpotItem, self).__init__(data, plot)
         self.eventPosition = position
-
-        
-class MyScatterPlotItem(ScatterPlotItem):
-    
-    def __init__(self, *args, **kargs):
-        super(MyScatterPlotItem, self).__init__(*args, **kargs)
-        self.files = kargs['files']
-        self.counts = kargs['counts']  # number of events in each file
-        
-    def points(self):
-        for i, rec in enumerate(self.data):
-            if rec['item'] is None:
-                rec['item'] = MySpotItem(rec, self, i)
-        return self.data['item']
-    
-    def getFileNameFromPosition(self, position):
-        """
-        Returns filename, eventNumber for the 
-        SpotItem position.
-        """
-        for i, j in enumerate(self.counts):
-            if position < j:
-                return self.files[i], position
-            position -= j
-        return None
 
 
 class MyPlotItem(PlotItem):

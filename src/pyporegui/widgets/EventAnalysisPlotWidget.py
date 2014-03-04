@@ -3,7 +3,7 @@ import numpy as np
 from pyqtgraph import GraphicsLayoutWidget, mkPen
 from pypore import eventDatabase as eD
 from pyporegui.graphicsItems.HistogramItem import HistogramItem
-from pyporegui.views import MyScatterPlotItem
+from pyporegui.graphicsItems.ScatterPlotItem import ScatterPlotItem
 
 __all__ = ['EventAnalysisPlotWidget']
 
@@ -65,7 +65,7 @@ class EventAnalysisPlotWidget(GraphicsLayoutWidget):
 
         self.plot_eventdepth.add_histogram(currentBlockade, color=newcolor)
 
-        scatterItem = MyScatterPlotItem(size=10, pen=mkPen(None), brush=newcolor, files=file_names, counts=counts)
+        scatterItem = ScatterPlotItem(size=10, pen=mkPen(None), brush=newcolor, files=file_names, counts=counts)
         scatterItem.setData(dwellTimes, currentBlockade)
         self.plot_eventdur_eventdepth.addItem(scatterItem)
         scatterItem.sigClicked.connect(self.onScatterPointsClicked)
@@ -101,7 +101,7 @@ class EventAnalysisPlotWidget(GraphicsLayoutWidget):
             break  # only take first point
 
         # Plot the new point clicked on the single event display
-        filename, position = plot.getFileNameFromPosition(self.lastScatterClicked[0].eventPosition)
+        filename, position = plot.get_file_name_from_position(self.lastScatterClicked[0].eventPosition)
 
         h5file = eD.openFile(filename, mode='r')
 
