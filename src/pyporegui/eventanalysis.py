@@ -14,6 +14,9 @@ from PySide import QtCore, QtGui  # Must import PySide stuff before pyqtgraph so
 
 
 # The rest of the imports can be found below in _longImports
+from pyporegui.widgets.EventAnalysisPlotWidget import EventAnalysisPlotWidget
+
+
 def _long_imports(**kwargs):
     """
     Loads imports and updates the splash screen with information.
@@ -72,7 +75,7 @@ def _long_imports(**kwargs):
         app.processEvents()
     from MyThreads import AnalyzeDataThread, PlotThread
     from views import FileListItem, FilterListItem, PlotToolBar, DataFileListItem, MyPlotItem
-    from views import MySpotItem, MyScatterPlotItem, EventAnalysisWidget
+    from views import MySpotItem, MyScatterPlotItem
 
     if update_splash:
         splash.showMessage("Importing EventDatabase", alignment=QtCore.Qt.AlignBottom)

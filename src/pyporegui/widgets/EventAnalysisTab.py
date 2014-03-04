@@ -1,6 +1,7 @@
 from PySide import QtGui
 from pyporegui._ThreadManager import _ThreadManager
-from pyporegui.views import EventAnalysisWidget, FilterListItem, FileListItem
+from pyporegui.views import FilterListItem, FileListItem
+from pyporegui.widgets.EventAnalysisPlotWidget import EventAnalysisPlotWidget
 
 __all__ = ['EventAnalysisTab']
 
@@ -17,7 +18,7 @@ class EventAnalysisTab(_ThreadManager, QtGui.QSplitter):
         self._parent = parent
 
         options = self._create_event_analysis_options()
-        self.eventAnalysisWidget = EventAnalysisWidget()
+        self.eventAnalysisWidget = EventAnalysisPlotWidget()
 
         # Put everything in filter_parameter scroll area
         scroll_options = QtGui.QScrollArea()
@@ -54,7 +55,7 @@ class EventAnalysisTab(_ThreadManager, QtGui.QSplitter):
         item = FilterListItem(file_names, **params)
         self.listFilterWidget.addItem(item)
 
-        self.eventAnalysisWidget.addSelections(file_names, params)
+        self.eventAnalysisWidget.add_selections(file_names, params)
 
     def _get_current_event_analysis_params(self):
         params = {'color': self.event_color}
