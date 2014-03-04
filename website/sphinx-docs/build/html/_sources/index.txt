@@ -13,9 +13,7 @@ Contents:
 
    introduction
    installation
-   pypore
-   pyporegui
-   code documentation <api>
+   API Documentation <api>
 
 
 Indices and tables
