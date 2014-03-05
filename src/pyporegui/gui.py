@@ -73,10 +73,6 @@ def _long_imports(**kwargs):
         app.processEvents()
     import pypore.eventDatabase as ed
 
-# If we are running from a tests, name != main, and we'll need to import the above on our own
-if not __name__ == '__main__':
-    _long_imports()
-
 
 class MyMainWindow(QtGui.QMainWindow):
     def __init__(self, app, parent=None):
@@ -437,4 +433,8 @@ def main():
 
 if __name__ == '__main__':
     main()
+else:
+    # If we are running from a tests, name != main, and we'll need to import the long imports now.
+    _long_imports()
+
 
