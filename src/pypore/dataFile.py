@@ -92,13 +92,11 @@ def open_file(*args, **kargs):
     """
     Opens a :py:class:`DataFile`, which is a subclass of :py:class:`tables.file.File` and can be treated as such.
 
-    Kargs:
-        nPoints: Number of points that should be in the array.
-        sampleRate: sample rate of the data.
     :param args: Arguments that get passed to :py:func:`tables.openFile`.
-    :param kargs: Arguments that get passed to :py:func:`tables.openFile`. Should additionally include
+    :param kargs: Arguments that get passed to :py:func:`tables.openFile`. Should additionally include:
     -- nPoints: Number of points that should be in the array.
     -- sampleRate: Sample rate of the data.
+
     :returns: :py:class:`DataFile` -- an open :py:class:`DataFile`.
 
     >>> import pypore.dataFile as dF
