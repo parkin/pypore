@@ -11,13 +11,7 @@ import os
 from PySide import QtCore, QtGui  # Must import PySide stuff before pyqtgraph so pyqtgraph knows
                                     # to use PySide instead of PyQt
 
-
 # The rest of the imports can be found below in _longImports
-from gui.graphicsItems.MyPlotItem import MyPlotItem
-from gui.graphicsItems.ScatterPlotItem import ScatterPlotItem
-from gui.graphicsItems.SpotItem import SpotItem
-from gui.widgets.EventAnalysisPlotWidget import EventAnalysisPlotWidget
-from gui.widgets.PlotToolBar import PlotToolBar
 
 
 def _long_imports(**kwargs):
@@ -29,8 +23,8 @@ def _long_imports(**kwargs):
     if not src_dir in sys.path:
         sys.path.append(src_dir)
 
-    global AnalyzeDataThread, PlotThread, FileListItem, FilterListItem, \
-        PlotToolBar, DataFileListItem, MyPlotItem, pg, pgc, \
+    global AnalyzeDataThread, PlotThread, \
+        pg, pgc, \
         LayoutWidget, PlotCurveItem, linspace, np, \
         MySpotItem, MyScatterPlotItem, EventAnalysisWidget, ed, \
         EventFindingTab, EventViewingTab, EventAnalysisTab
@@ -86,18 +80,6 @@ def _long_imports(**kwargs):
 # If we are running from a tests, name != main, and we'll need to import the above on our own
 if not __name__ == '__main__':
     _long_imports()
-
-
-class PathItem(QtGui.QGraphicsPathItem):
-    def __init__(self, x, y, conn='all'):
-        xr = x.min(), x.max()
-        yr = y.min(), y.max()
-        self._bounds = QtCore.QRectF(xr[0], yr[0], xr[1] - xr[0], yr[1] - yr[0])
-        self.path = pg.arrayToQPath(x, y, conn)
-        QtGui.QGraphicsPathItem.__init__(self, self.path)
-
-    def boundingRect(self):
-        return self._bounds
 
 
 class MyMainWindow(QtGui.QMainWindow):
@@ -288,27 +270,27 @@ The current namespace should include:
         self.plotwid.autoRange()
         self.app.processEvents()
 
-    def addEventsToConcatEventPlot(self, events):
-        if len(events) < 1:
-            return
-        size = 0
-        for event in events:
-            size += event['raw_data'].size
-        data = np.empty(size)
-        sample_rate = events[0]['sample_rate']
-        ts = 1 / sample_rate
-        times = np.linspace(0., (size - 1) * ts, size) + self.prev_concat_time
-        self.prev_concat_time += size * ts
-        index = 0
-        for event in events:
-            d = event['raw_data'].size
-            baseline = event['baseline']
-            data[index:index + d] = (event['raw_data'] - baseline)
-            index += d
-
-        item = PathItem(times, data)
-        item.setPen(pg.mkPen('w'))
-        self.plot_concatevents.addItem(item)
+    # def addEventsToConcatEventPlot(self, events):
+    #     if len(events) < 1:
+    #         return
+    #     size = 0
+    #     for event in events:
+    #         size += event['raw_data'].size
+    #     data = np.empty(size)
+    #     sample_rate = events[0]['sample_rate']
+    #     ts = 1 / sample_rate
+    #     times = np.linspace(0., (size - 1) * ts, size) + self.prev_concat_time
+    #     self.prev_concat_time += size * ts
+    #     index = 0
+    #     for event in events:
+    #         d = event['raw_data'].size
+    #         baseline = event['baseline']
+    #         data[index:index + d] = (event['raw_data'] - baseline)
+    #         index += d
+    #
+    #     item = PathItem(times, data)
+    #     item.setPen(pg.mkPen('w'))
+    #     self.plot_concatevents.addItem(item)
 
     def getEventAndLevelsData(self, event):
         data = event['raw_data']
@@ -341,32 +323,32 @@ The current namespace should include:
         levels2.append(baseline)
         return times, data, times2, levels2
 
-    def plotEventsOnMainPlot(self, events):
-        if len(events) < 1:
-            return
-        size = 0
-        for event in events:
-            size += event['raw_data'].size
-        data = np.empty(size)
-        sample_rate = events[0]['sample_rate']
-        raw_points_per_side = events[0]['raw_points_per_side']
-        ts = 1 / sample_rate
-        times = np.empty(size)
-        conn = np.ones(size)
-        index = 0
-        for event in events:
-            event_start = event['event_start']
-            event_data = event['raw_data']
-            d = event_data.size
-            times[index:index + d] = linspace(ts * (event_start - raw_points_per_side),
-                                              ts * (event_start - raw_points_per_side + d - 1), d)
-            data[index:index + d] = event_data
-            conn[index - 1] = False  # disconnect separate events
-            index += d
-
-        item = PathItem(times, data, conn)
-        item.setPen(pg.mkPen('y'))
-        self.plotwid.add_event_item(item)
+    # def plotEventsOnMainPlot(self, events):
+    #     if len(events) < 1:
+    #         return
+    #     size = 0
+    #     for event in events:
+    #         size += event['raw_data'].size
+    #     data = np.empty(size)
+    #     sample_rate = events[0]['sample_rate']
+    #     raw_points_per_side = events[0]['raw_points_per_side']
+    #     ts = 1 / sample_rate
+    #     times = np.empty(size)
+    #     conn = np.ones(size)
+    #     index = 0
+    #     for event in events:
+    #         event_start = event['event_start']
+    #         event_data = event['raw_data']
+    #         d = event_data.size
+    #         times[index:index + d] = linspace(ts * (event_start - raw_points_per_side),
+    #                                           ts * (event_start - raw_points_per_side + d - 1), d)
+    #         data[index:index + d] = event_data
+    #         conn[index - 1] = False  # disconnect separate events
+    #         index += d
+    #
+    #     item = PathItem(times, data, conn)
+    #     item.setPen(pg.mkPen('y'))
+    #     self.plotwid.add_event_item(item)
 
     def get_current_analysis_parameters(self):
         '''

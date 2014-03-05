@@ -24,12 +24,12 @@ class DataFile(tb.file.File):
     Must be instantiated by calling :py:func:`pypore.dataFile.open_file`
     
     >>> import pypore.dataFile as dF
-    >>> database = dF.open_file('test.h5',mode='w')
+    >>> database = dF.open_file(tests,mode='w')
     >>> # Now do stuff with the DataFile
     >>> # ...
     >>> # Close and remove the DataFile
     >>> database.close()
-    >>> os.remove('test.h5')
+    >>> os.remove(tests)
     """
 
     def clean_database(self):
@@ -38,7 +38,7 @@ class DataFile(tb.file.File):
         that any references to any table/matrix in this group will
         be broken and need to be refreshed.
         
-        >>> h5 = open_file('test.h5',mode='a')
+        >>> h5 = open_file(tests,mode='a')
         >>> table = h5.get_event_table()
         >>> h5.clean_database() // table is now refers to deleted table
         >>> table = h5.get_event_table() // table now refers to live table
@@ -102,7 +102,7 @@ def open_file(*args, **kargs):
     :returns: :py:class:`DataFile` -- an open :py:class:`DataFile`.
 
     >>> import pypore.dataFile as dF
-    >>> dF.open_file('test.h5', mode='w')
+    >>> dF.open_file(tests', mode='w')
     """
     f = tb.openFile(*args, **kargs)
     DataFile._convert_to_event_database(f)

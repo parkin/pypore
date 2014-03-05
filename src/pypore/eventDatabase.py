@@ -45,9 +45,9 @@ class EventDatabase(tb.file.File):
     Must be instantiated by calling eventDatabase's
     
     >>> import pypore.eventDatabase as ed
-    >>> database = ed.open_file('test.h5',mode='w')
+    >>> database = ed.open_file(tests',mode='w')
     >>> database.close()
-    >>> os.remove('test.h5')
+    >>> os.removetests5')
     """
 
     DEFAULT_MAX_EVENT_LENGTH = 100
@@ -118,7 +118,7 @@ class EventDatabase(tb.file.File):
         that any references to any table/matrix in this group will
         be broken and need to be refreshed.
         
-        >>> h5 = open_file('test.h5',mode='a')
+        >>> h5 = open_file('tests.h5',mode='a')
         >>> table = h5.get_event_table()
         >>> h5.clean_database() // table is now refers to deleted table
         >>> table = h5.get_event_table() // table now refers to live table
