@@ -1,6 +1,13 @@
 pyporegui.graphicsItems package
 ===============================
 
+Subpackages
+-----------
+
+.. toctree::
+
+    pyporegui.graphicsItems.tests
+
 Submodules
 ----------
 
@@ -32,6 +39,14 @@ pyporegui.graphicsItems.SpotItem module
 ---------------------------------------
 
 .. automodule:: pyporegui.graphicsItems.SpotItem
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyporegui.graphicsItems.path_item module
+----------------------------------------
+
+.. automodule:: pyporegui.graphicsItems.path_item
     :members:
     :undoc-members:
     :show-inheritance:

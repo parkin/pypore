@@ -6,7 +6,7 @@ Subpackages
 
 .. toctree::
 
-    pypore.test
+    pypore.tests
 
 Submodules
 ----------

@@ -83,7 +83,7 @@
 <span class="kn">import</span> <span class="nn">pyqtgraph</span> <span class="kn">as</span> <span class="nn">pg</span>
 <span class="kn">from</span> <span class="nn">pyqtgraph.widgets.LayoutWidget</span> <span class="kn">import</span> <span class="n">LayoutWidget</span>
 
-<span class="kn">from</span> <span class="nn">pypore.dataFileOpener</span> <span class="kn">import</span> <span class="n">prepareDataFile</span>
+<span class="kn">from</span> <span class="nn">pypore.dataFileOpener</span> <span class="kn">import</span> <span class="n">prepare_data_file</span>
 <span class="kn">from</span> <span class="nn">pyporegui._ThreadManager</span> <span class="kn">import</span> <span class="n">_ThreadManager</span>
 <span class="kn">from</span> <span class="nn">pyporegui.MyThreads</span> <span class="kn">import</span> <span class="n">AnalyzeDataThread</span><span class="p">,</span> <span class="n">PlotThread</span>
 <span class="kn">from</span> <span class="nn">pyporegui.graphicsItems.MyPlotItem</span> <span class="kn">import</span> <span class="n">MyPlotItem</span>
@@ -232,7 +232,7 @@
         <span class="n">are_files_opened</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="n">open_dir</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">file_names</span><span class="p">:</span>
-            <span class="n">f</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">prepareDataFile</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+            <span class="n">f</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">prepare_data_file</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
             <span class="k">if</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">status_text</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
@@ -587,7 +587,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2014, Will Parkin.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>
