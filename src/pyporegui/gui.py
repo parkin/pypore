@@ -9,7 +9,7 @@ import sys
 import os
 
 from PySide import QtCore, QtGui  # Must import PySide stuff before pyqtgraph so pyqtgraph knows
-                                    # to use PySide instead of PyQt
+# to use PySide instead of PyQt
 
 # The rest of the imports can be found below in _longImports
 
@@ -23,11 +23,8 @@ def _long_imports(**kwargs):
     if not src_dir in sys.path:
         sys.path.append(src_dir)
 
-    global AnalyzeDataThread, PlotThread, \
-        pg, pgc, \
-        LayoutWidget, PlotCurveItem, linspace, np, \
-        MySpotItem, MyScatterPlotItem, EventAnalysisWidget, ed, \
-        EventFindingTab, EventViewingTab, EventAnalysisTab
+    global AnalyzeDataThread, PlotThread, pg, pgc, LayoutWidget, linspace, np, \
+            EventAnalysisWidget, ed, EventFindingTab, EventViewingTab, EventAnalysisTab
 
     update_splash = False
     if 'splash' in kwargs and 'app' in kwargs:
@@ -41,7 +38,6 @@ def _long_imports(**kwargs):
     import pyqtgraph as pg
     import pyqtgraph.console as pgc
     from pyqtgraph.widgets.LayoutWidget import LayoutWidget
-    from pyqtgraph.graphicsItems.PlotCurveItem import PlotCurveItem
 
     if update_splash:
         splash.showMessage("Importing SciPy...", alignment=QtCore.Qt.AlignBottom)
