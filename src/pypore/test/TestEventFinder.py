@@ -100,7 +100,7 @@ class TestEventFinder(unittest.TestCase):
         
         self.assertTrue(os.path.isfile(event_database))
         
-        h5file = eD.openFile(event_database, mode='r')
+        h5file = eD.open_file(event_database, mode='r')
         
         self.assertTrue(h5file.isopen)
         
@@ -115,7 +115,7 @@ class TestEventFinder(unittest.TestCase):
         event_database = findEvents([filename], save_file_name = ['_testChimera_nonoise_1Event_9238.h5'],
                                    **self.default_params)[0]
         
-        h5file = eD.openFile(event_database, mode='r')
+        h5file = eD.open_file(event_database, mode='r')
         
         events = h5file.root.events
 
@@ -170,7 +170,7 @@ class TestEventFinder(unittest.TestCase):
         
         levelsMatrix = events.levelLengths
         self.assertEqual(levelsMatrix.nrows, 1)
-        levels = h5file.getLevelLengthsAt(0)
+        levels = h5file.get_level_lengths_at(0)
         self.assertEqual(len(levels), 2)
         self.assertEqual(levels[0], 750)
         self.assertEqual(levels[1], 750)
@@ -181,7 +181,7 @@ class TestEventFinder(unittest.TestCase):
         eventDatabase = findEvents([filename], save_file_name = ['_testChimera_nonoise_1Event_2Levels_9238.h5'],
                                    **self.default_params)[0]
         
-        h5file = eD.openFile(eventDatabase, mode='r')
+        h5file = eD.open_file(eventDatabase, mode='r')
         self._testChimera_nonoise_1Event_2Levels_helper(h5file)
         h5file.close()
         
@@ -220,11 +220,11 @@ class TestEventFinder(unittest.TestCase):
         # Check 2 events with 1 level -> 1 lengths
         lengthsMatrix = events.levelLengths
         self.assertEqual(lengthsMatrix.nrows, 2)
-        lengths1 = h5file.getLevelLengthsAt(0)
+        lengths1 = h5file.get_level_lengths_at(0)
         self.assertEqual(len(lengths1), 1)
         self.assertEqual(lengths1[0], 1000)
         # event
-        lengths2 = h5file.getLevelLengthsAt(1)
+        lengths2 = h5file.get_level_lengths_at(1)
         self.assertEqual(len(lengths2), 1)
         self.assertEqual(lengths2[0], 1000)
         
@@ -238,7 +238,7 @@ class TestEventFinder(unittest.TestCase):
 
         event_database = event_databases[0]
         
-        h5file = eD.openFile(event_database, mode='r')
+        h5file = eD.open_file(event_database, mode='r')
         self._testChimera_nonoise_2events_1levels_wrapper(h5file)
         h5file.close()
         
@@ -257,12 +257,12 @@ class TestEventFinder(unittest.TestCase):
         
         self.assertEqual(len(event_databases), 2)
         
-        h5file = eD.openFile(event_databases[0], mode='r')
+        h5file = eD.open_file(event_databases[0], mode='r')
         self._testChimera_nonoise_2events_1levels_wrapper(h5file)
         h5file.close()
         os.remove(event_databases[0])
         
-        h5file = eD.openFile(event_databases[1], mode='r')
+        h5file = eD.open_file(event_databases[1], mode='r')
         self._testChimera_nonoise_1Event_2Levels_helper(h5file)
         h5file.close()
         os.remove(event_databases[1])

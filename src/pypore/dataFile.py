@@ -21,29 +21,32 @@ class DataFile(tb.file.File):
     Automatically adds matrix
     /data
     
-    Must be instantiated by calling dataFile's
+    Must be instantiated by calling :py:func:`pypore.dataFile.open_file`
     
     >>> import pypore.dataFile as dF
     >>> database = dF.open_file('test.h5',mode='w')
+    >>> # Now do stuff with the DataFile
+    >>> # ...
+    >>> # Close and remove the DataFile
     >>> database.close()
     >>> os.remove('test.h5')
     """
 
     def clean_database(self):
         """
-        Removes /events and then reinitializes the /events group. Note
+        Removes /events and then re-initializes the /events group. Note
         that any references to any table/matrix in this group will
         be broken and need to be refreshed.
         
         >>> h5 = open_file('test.h5',mode='a')
-        >>> table = h5.getEventTable()
+        >>> table = h5.get_event_table()
         >>> h5.clean_database() // table is now refers to deleted table
-        >>> table = h5.getEventTable() // table now refers to live table
+        >>> table = h5.get_event_table() // table now refers to live table
         """
         # remove the events group
         self.root._f_remove(recursive=True)
 
-        self.initializeDatabase()
+        self.initialize_database()
 
     @classmethod
     def _convert_to_event_database(cls, tables_object):
@@ -55,25 +58,24 @@ class DataFile(tb.file.File):
 
     def get_data_length(self):
         """
-        Returns the number of rows in the data matrix.
         Note this will flush the table so the data is correct.
+        :returns: The number of rows in the data matrix.
         """
         self.root.data.flush()
         return self.root.data.nrows
 
-    def getSampleRate(self):
+    def get_sample_rate(self):
         """
-        Gets the sample rate at root.events.eventTable.attrs.sampleRate
+        :returns: The sample rate at root.events.eventTable.attrs.sampleRate
         """
         return self.root.attrs.sampleRate
 
-    def initializeDatabase(self, *args, **kargs):
+    def initialize_database(self, **kargs):
         """
         Initializes the EventDatabase.  Adds a group 'events' with
         table 'eventsTable' and matrices 'rawData', 'levels', and 'levelLengths'.
         
-        :param args: Unused
-        :param kargs: Can pass in 'maxEventLength': Maximum number of datapoints for an event to be added.
+        :param kargs: Can pass in 'maxEventLength': Maximum number of data points for an event to be added.
         """
 
         filters = tb.Filters(complib='blosc', complevel=4)
@@ -88,17 +90,24 @@ class DataFile(tb.file.File):
 
 def open_file(*args, **kargs):
     """
-    Opens an EventDatabase by calling tables.openFile and then
-    copying the __dict__ to a new EventDatabase instance.
-    
+    Opens a :py:class:`DataFile`, which is a subclass of :py:class:`tables.file.File` and can be treated as such.
+
     Kargs:
         nPoints: Number of points that should be in the array.
         sampleRate: sample rate of the data.
+    :param args: Arguments that get passed to :py:func:`tables.openFile`.
+    :param kargs: Arguments that get passed to :py:func:`tables.openFile`. Should additionally include
+    -- nPoints: Number of points that should be in the array.
+    -- sampleRate: Sample rate of the data.
+    :returns: :py:class:`DataFile` -- an open :py:class:`DataFile`.
+
+    >>> import pypore.dataFile as dF
+    >>> dF.open_file('test.h5', mode='w')
     """
     f = tb.openFile(*args, **kargs)
     DataFile._convert_to_event_database(f)
     if 'mode' in kargs:
         mode = kargs['mode']
         if 'w' in mode or 'a' in mode:
-            f.initializeDatabase(*args, **kargs)
+            f.initialize_database(**kargs)
     return f

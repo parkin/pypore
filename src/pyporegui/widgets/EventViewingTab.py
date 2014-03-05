@@ -85,9 +85,9 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
         """
         self.event_view_item = item
 
-        h5file = eD.openFile(item.get_file_name())
+        h5file = eD.open_file(item.get_file_name())
 
-        event_count = h5file.getEventCount()
+        event_count = h5file.get_event_count()
 
         h5file.close()
 
@@ -101,9 +101,9 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
         '''
         Plots the event on the plot with
         '''
-        h5file = eD.openFile(self.event_view_item.get_file_name(), mode='r')
+        h5file = eD.open_file(self.event_view_item.get_file_name(), mode='r')
 
-        eventCount = h5file.getEventCount()
+        eventCount = h5file.get_event_count()
 
         for i in xrange(3):
             for j in xrange(3):
@@ -118,13 +118,13 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
         h5file.close()
 
     def plotSingleEvent(self, h5file, position, plot):
-        sampleRate = h5file.getSampleRate()
-        row = h5file.getEventRow(position)
+        sampleRate = h5file.get_sample_rate()
+        row = h5file.get_event_row(position)
         arrayRow = row['arrayRow']
         eventLength = row['eventLength']
         rawPointsPerSide = row['rawPointsPerSide']
 
-        rawData = h5file.getRawDataAt(arrayRow)
+        rawData = h5file.get_raw_data_at(arrayRow)
 
         n = len(rawData)
 
@@ -140,8 +140,8 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
         nLevels = row['nLevels']
         baseline = row['baseline']
         # left, start-1, start,
-        levels = h5file.getLevelsAt(arrayRow)
-        indices = h5file.getLevelLengthsAt(arrayRow)
+        levels = h5file.get_levels_at(arrayRow)
+        indices = h5file.get_level_lengths_at(arrayRow)
 
         levelTimes = np.zeros(2 * nLevels + 4)
         levelValues = np.zeros(2 * nLevels + 4)
@@ -176,8 +176,8 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
         '''
         h5eventCount = 0
         try:
-            h5file = eD.openFile(self.event_view_item.get_file_name())
-            h5eventCount = h5file.getEventCount()
+            h5file = eD.open_file(self.event_view_item.get_file_name())
+            h5eventCount = h5file.get_event_count()
             h5file.close()
         except:
             return

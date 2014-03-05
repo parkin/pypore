@@ -132,7 +132,7 @@ cpdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None, save_fil
     
     # Open the event database
     if h5file == None:
-        h5file = ed.openFile(save_file_name, maxEventLength = maxPoints, mode='w')
+        h5file = ed.open_file(save_file_name, maxEventLength = maxPoints, mode='w')
     rawData = h5file.root.events.rawData
     levelsMatrix = h5file.root.events.levels
     lengthsMatrix = h5file.root.events.levelLengths
@@ -402,7 +402,7 @@ cpdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None, save_fil
                     currentBlockage = currentBlockage / (event_end - event_start) - local_mean
                     
                 # end CUSUM, save events to file/cache
-                h5file.appendEvent(event_count, event_start + placeInData, event_end - event_start,\
+                h5file.append_event(event_count, event_start + placeInData, event_end - event_start,\
                                    n_levels, raw_points_per_side, local_mean, currentBlockage,\
                                    event_area - local_mean)
                 

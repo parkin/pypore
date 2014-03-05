@@ -41,9 +41,9 @@ class EventAnalysisPlotWidget(GraphicsLayoutWidget):
         counts = []
         eventCount = 0
         for filename in file_names:
-            h5file = eD.openFile(filename, mode='r')
+            h5file = eD.open_file(filename, mode='r')
             files.append(h5file)
-            count = h5file.getEventCount()
+            count = h5file.get_event_count()
             eventCount += count
             counts.append(count)
 
@@ -51,8 +51,8 @@ class EventAnalysisPlotWidget(GraphicsLayoutWidget):
         dwellTimes = np.empty(eventCount)
         count = 0
         for j, filex in enumerate(files):
-            eventTable = filex.getEventTable()
-            sample_rate = filex.getSampleRate()
+            eventTable = filex.get_event_table()
+            sample_rate = filex.get_sample_rate()
             for i, row in enumerate(eventTable):
                 currentBlockade[count + i] = row['currentBlockage']
                 dwellTimes[count + i] = row['eventLength'] / sample_rate
@@ -103,16 +103,16 @@ class EventAnalysisPlotWidget(GraphicsLayoutWidget):
         # Plot the new point clicked on the single event display
         filename, position = plot.get_file_name_from_position(self.lastScatterClicked[0].eventPosition)
 
-        h5file = eD.openFile(filename, mode='r')
+        h5file = eD.open_file(filename, mode='r')
 
         table = h5file.root.events.eventTable
-        row = h5file.getEventRow(position)
+        row = h5file.get_event_row(position)
         arrayRow = row['arrayRow']
-        sampleRate = h5file.getSampleRate()
+        sampleRate = h5file.get_sample_rate()
         eventLength = row['eventLength']
         rawPointsPerSide = row['rawPointsPerSide']
 
-        rawData = h5file.getRawDataAt(arrayRow)
+        rawData = h5file.get_raw_data_at(arrayRow)
 
         n = len(rawData)
 
@@ -128,8 +128,8 @@ class EventAnalysisPlotWidget(GraphicsLayoutWidget):
         nLevels = row['nLevels']
         baseline = row['baseline']
         # left, start-1, start,
-        levels = h5file.getLevelsAt(arrayRow)
-        indices = h5file.getLevelLengthsAt(arrayRow)
+        levels = h5file.get_levels_at(arrayRow)
+        indices = h5file.get_level_lengths_at(arrayRow)
 
         levelTimes = np.zeros(2 * nLevels + 4)
         levelValues = np.zeros(2 * nLevels + 4)

@@ -45,16 +45,16 @@ class EventDatabase(tb.file.File):
     Must be instantiated by calling eventDatabase's
     
     >>> import pypore.eventDatabase as ed
-    >>> database = ed.openFile('test.h5',mode='w')
+    >>> database = ed.open_file('test.h5',mode='w')
     >>> database.close()
     >>> os.remove('test.h5')
     """
 
     DEFAULT_MAX_EVENT_LENGTH = 100
-    maxEventLength = DEFAULT_MAX_EVENT_LENGTH
-    eventRow = None
+    max_event_length = DEFAULT_MAX_EVENT_LENGTH
+    event_row = None
 
-    def appendEvent(self, arrayRow, eventStart, eventLength, nLevels, rawPointsPerSide, baseline, currentBlockage, area,
+    def append_event(self, arrayRow, eventStart, eventLength, nLevels, rawPointsPerSide, baseline, currentBlockage, area,
                     rawData=None, levels=None, levelLengths=None):
         """
         Appends an event with the specified values to the eventsTable.  If rawData, levels, or levelLengths
@@ -73,7 +73,7 @@ class EventDatabase(tb.file.File):
         :param levels: Numpy array of the levels.
         :param levelLengths: Numpy array of the level lengths.
         """
-        row = self.getEventTableRow()
+        row = self.get_event_table_row()
         row['arrayRow'] = arrayRow
         row['eventStart'] = eventStart
         row['eventLength'] = eventLength
@@ -85,27 +85,27 @@ class EventDatabase(tb.file.File):
         row.append()
 
         if rawData is not None:
-            self.appendRawData(rawData)
+            self.append_raw_data(rawData)
         if levels is not None:
-            self.appendLevels(levels)
+            self.append_levels(levels)
         if levelLengths is not None:
-            self.appendLevelLengths(levelLengths)
+            self.append_level_lengths(levelLengths)
 
-    def appendLevelLengths(self, levelLengths):
+    def append_level_lengths(self, levelLengths):
         """
         Appends a numpy matrix levelLengths to root.events.levelLengths
         """
         if levelLengths is not None:
             self.root.events.levelLengths.append(levelLengths)
 
-    def appendLevels(self, levels):
+    def append_levels(self, levels):
         """
         Appends a numpy matrix levels to root.events.levels
         """
         if levels is not None:
             self.root.events.levels.append(levels)
 
-    def appendRawData(self, rawData):
+    def append_raw_data(self, rawData):
         """
         Appends a numpy matrix rawData to root.events.rawData
         """
@@ -114,116 +114,116 @@ class EventDatabase(tb.file.File):
 
     def clean_database(self):
         """
-        Removes /events and then reinitializes the /events group. Note
+        Removes /events and then re-initializes the /events group. Note
         that any references to any table/matrix in this group will
         be broken and need to be refreshed.
         
-        >>> h5 = openFile('test.h5',mode='a')
-        >>> table = h5.getEventTable()
+        >>> h5 = open_file('test.h5',mode='a')
+        >>> table = h5.get_event_table()
         >>> h5.clean_database() // table is now refers to deleted table
-        >>> table = h5.getEventTable() // table now refers to live table
+        >>> table = h5.get_event_table() // table now refers to live table
         """
         # remove the events group
         self.root.events._f_remove(recursive=True)
 
-        self.initializeDatabase()
+        self.initialize_database()
 
     @classmethod
-    def convertToEventDatabase(cls, tablesObject):
+    def _convert_to_event_database(cls, tables_object):
         """
         Converts a PyTables object's __class__ field to EventDatabase so
         you can use the object as an EventDatabase object.
         """
-        tablesObject.__class__ = EventDatabase
+        tables_object.__class__ = EventDatabase
 
-    def getEventCount(self):
+    def get_event_count(self):
         """
         Returns the number of rows in the /events/eventTable table.
         Note this will flush the table so the data is correct.
         """
-        self.getEventTable().flush()
-        return self.getEventTable().nrows
+        self.get_event_table().flush()
+        return self.get_event_table().nrows
 
-    def getEventDataAt(self, i):
+    def get_event_data_at(self, i):
         """
         Returns the event data portion of rawData[i], ie excluding the
         raw buffer points kept on each side of an event.
         """
-        row = self.getEventRow(i)
-        arrayRow = row['arrayRow']
-        eventLength = row['eventLength']
-        rawPointsPerSide = row['rawPointsPerSide']
-        return self.root.events.rawData[arrayRow][rawPointsPerSide:eventLength + rawPointsPerSide]
+        row = self.get_event_row(i)
+        array_row = row['arrayRow']
+        event_length = row['eventLength']
+        raw_points_per_side = row['rawPointsPerSide']
+        return self.root.events.rawData[array_row][raw_points_per_side:event_length + raw_points_per_side]
 
-    def getEventRow(self, i):
+    def get_event_row(self, i):
         """
-        Returns the i'th row in /events/eventTable. Throws IndexOutOfBounds
+        Returns the ith row in /events/eventTable. Throws IndexOutOfBounds
         or similar error if i out of bounds. Note this flushes the
         eventTable before returning.
         """
         self.root.events.eventTable.flush()
         return self.root.events.eventTable[i]
 
-    def getEventsGroup(self):
+    def get_events_group(self):
         """
         Returns the events group in the PyTables HDF5 file.
         """
         return self.root.events
 
-    def getEventTable(self):
+    def get_event_table(self):
         """
         returns /events/eventTable
         """
         return self.root.events.eventTable
 
-    def getEventTableRow(self):
+    def get_event_table_row(self):
         """
         Gets the PyTables Row object of the eventTable.
         root.events.eventTable.row
         
         If you need a specific row in eventTable, use getEventRow(i)
         """
-        if self.eventRow == None:
-            self.eventRow = self.root.events.eventTable.row
-        return self.eventRow
+        if self.event_row is None:
+            self.event_row = self.root.events.eventTable.row
+        return self.event_row
 
-    def getLevelLengthsAt(self, i):
+    def get_level_lengths_at(self, i):
         """
         Returns a numpy array of the levelLengths corresponding to the event
         in row 'i' of eventTable.
         """
-        row = self.getEventRow(i)
-        arrayRow = row['arrayRow']
-        nLevels = row['nLevels']
-        return self.root.events.levelLengths[arrayRow][:nLevels]
+        row = self.get_event_row(i)
+        array_row = row['arrayRow']
+        n_levels = row['nLevels']
+        return self.root.events.levelLengths[array_row][:n_levels]
 
-    def getLevelsAt(self, i):
+    def get_levels_at(self, i):
         """
         Returns a numpy array of the levels corresponding to the event
         in row 'i' of eventTable.
         """
-        row = self.getEventRow(i)
-        arrayRow = row['arrayRow']
-        nLevels = row['nLevels']
-        return self.root.events.levels[arrayRow][:nLevels]
+        row = self.get_event_row(i)
+        array_row = row['arrayRow']
+        n_levels = row['nLevels']
+        return self.root.events.levels[array_row][:n_levels]
 
-    def getRawDataAt(self, i):
+    def get_raw_data_at(self, i):
         """
         Returns the rawData numpy matrix associated with event 'i'.
         """
-        row = self.getEventRow(i)
-        arrayRow = row['arrayRow']
-        eventLength = row['eventLength']
-        rawPointsPerSide = row['rawPointsPerSide']
-        return self.root.events.rawData[arrayRow][:eventLength + 2 * rawPointsPerSide]
+        row = self.get_event_row(i)
+        array_row = row['arrayRow']
+        event_length = row['eventLength']
+        raw_points_per_side = row['rawPointsPerSide']
+        return self.root.events.rawData[array_row][:event_length + 2 * raw_points_per_side]
 
-    def getSampleRate(self):
+    def get_sample_rate(self):
         """
         Gets the sample rate at root.events.eventTable.attrs.sampleRate
         """
         return self.root.events.eventTable.attrs.sampleRate
 
-    def initializeDatabase(self, *args, **kargs):
+    def initialize_database(self, **kargs):
         """
         Initializes the EventDatabase.  Adds a group 'events' with
         table 'eventsTable' and matrices 'rawData', 'levels', and 'levelLengths'.
@@ -232,17 +232,17 @@ class EventDatabase(tb.file.File):
                         -maxEventLength: Maximum number of datapoints for an event to be added.
         """
         if 'maxEventLength' in kargs:
-            if kargs['maxEventLength'] > self.maxEventLength:
-                self.maxEventLength = kargs['maxEventLength']
+            if kargs['maxEventLength'] > self.max_event_length:
+                self.max_event_length = kargs['maxEventLength']
         if 'events' not in self.root:
             self.createGroup(self.root, 'events', 'Events')
 
         if not 'eventTable' in self.root.events:
             self.createTable(self.root.events, 'eventTable', _Event, 'Event parameters')
-            self.eventRow = None
+            self.event_row = None
 
         filters = tb.Filters(complib='blosc', complevel=4)
-        shape = (0, self.maxEventLength)
+        shape = (0, self.max_event_length)
         a = tb.FloatAtom()
         b = tb.IntAtom()
 
@@ -264,16 +264,16 @@ class EventDatabase(tb.file.File):
                               title="Lengths of the cusum levels",
                               filters=filters)
 
-    def removeEvent(self, i):
+    def remove_event(self, i):
         """
         Deletes event i from /events/eventTable. Does nothing if
         i < 0 or i >= eventCount. Note the table will be flushed.
         Note that deleting a row in a table of length 1 is not
         currently supported.
         """
-        self.removeEvents(i, i + 1)
+        self.remove_events(i, i + 1)
 
-    def removeEvents(self, i, j):
+    def remove_events(self, i, j):
         """
         Deletes events [i,j) from /events/eventTable. Does nothing
         if deleting out of range events is requested. Note the table
@@ -287,18 +287,18 @@ class EventDatabase(tb.file.File):
             j - 1 past last entry to delete.  Must be within range
                 i < j <= eventCount
         """
-        eventCount = self.getEventCount()
+        event_count = self.get_event_count()
 
-        if i >= 0 and i < eventCount and j > i and j <= eventCount:
+        if 0 <= i < event_count and i < j <= event_count:
             # Currently cannot delete EVERY row in a table.
-            if j - i < eventCount:
-                self.getEventTable().removeRows(i, j)
+            if j - i < event_count:
+                self.get_event_table().removeRows(i, j)
             else:
                 print "removeEvents FAILED: Removing all rows in table not currently supported."
-        self.getEventTable().flush()
+        self.get_event_table().flush()
 
 
-def openFile(*args, **kargs):
+def open_file(*args, **kargs):
     """
     Opens an EventDatabase by calling tables.openFile and then
     copying the __dict__ to a new EventDatabase instance.
@@ -307,9 +307,9 @@ def openFile(*args, **kargs):
         maxEventLength: Maximum length of an event for the table. Default is 100.
     """
     f = tb.openFile(*args, **kargs)
-    EventDatabase.convertToEventDatabase(f)
+    EventDatabase._convert_to_event_database(f)
     if 'mode' in kargs:
         mode = kargs['mode']
         if 'w' in mode or 'a' in mode:
-            f.initializeDatabase(*args, **kargs)
+            f.initialize_database(**kargs)
     return f
