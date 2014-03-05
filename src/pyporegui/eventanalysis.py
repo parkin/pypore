@@ -31,7 +31,7 @@ def _long_imports(**kwargs):
         sys.path.append(src_dir)
 
     global AnalyzeDataThread, PlotThread, FileListItem, FilterListItem, \
-        PlotToolBar, DataFileListItem, MyPlotItem, prepareDataFile, pg, pgc, \
+        PlotToolBar, DataFileListItem, MyPlotItem, pg, pgc, \
         LayoutWidget, PlotCurveItem, linspace, np, \
         MySpotItem, MyScatterPlotItem, EventAnalysisWidget, ed, \
         EventFindingTab, EventViewingTab, EventAnalysisTab
@@ -69,7 +69,6 @@ def _long_imports(**kwargs):
     if update_splash:
         splash.showMessage("Compiling Cython imports... DataFileOpener", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
-    from pypore.dataFileOpener import prepareDataFile
     from widgets.EventViewingTab import EventViewingTab
     from widgets.EventAnalysisTab import EventAnalysisTab
     from widgets.EventFindingTab import EventFindingTab

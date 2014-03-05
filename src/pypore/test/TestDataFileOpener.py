@@ -6,7 +6,7 @@ Created on Aug 19, 2013
 import unittest
 import os.path
 from pypore import cythonsetup
-from pypore.dataFileOpener import openData, prepareDataFile
+from pypore.dataFileOpener import open_data, prepare_data_file
 
 class TestDataFileOpener(unittest.TestCase):
 
@@ -21,13 +21,13 @@ class TestDataFileOpener(unittest.TestCase):
 
     def testBadFileExtensionOpenData(self):
         for extension in self.randomUnallowedExtensions:
-            x = openData(extension)
+            x = open_data(extension)
             self.assertIn('error', x, 'Error not returned when extension bad. Extension: ' + str(extension))
             self.assertTrue('File not specified' in x['error'], 'Wrong error message for bad filetype: ' + str(extension))
     
     def testBadFileExtensionPrepareFile(self):
         for extension in self.randomUnallowedExtensions:
-            y, x = prepareDataFile(extension)
+            y, x = prepare_data_file(extension)
             self.assertIn('error', x, 'Error not returned when extension bad. Extension: ' + str(extension))
             self.assertTrue('File not specified' in x['error'], 'Wrong error message for bad filetype: ' + str(extension))
             self.assertEqual(y, 0, 'prepareChimera did not return 0 when error raised')
@@ -35,11 +35,11 @@ class TestDataFileOpener(unittest.TestCase):
     def testNoChimeraMatSpec(self):
         testNoMatChimeraFiles = ['testDataFiles/empty.log']
         for filename in testNoMatChimeraFiles:
-            x = openData(filename)
+            x = open_data(filename)
             self.assertIn('error', x, 'Error not returned when opening chimera file without .mat spec file.')
             self.assertTrue('.mat' in x['error'], 'Incorrect error returned for chimera file without .mat spec file')
             
-            y,x = prepareDataFile(filename) 
+            y,x = prepare_data_file(filename)
             self.assertIn('error', x, 'Error not returned when opening chimera file without .mat spec file.')
             self.assertTrue('.mat' in x['error'], 'Incorrect error returned for chimera file without .mat spec file')
             self.assertEqual(y, 0, 'prepareChimera did not return 0 when error raised')
@@ -48,11 +48,11 @@ class TestDataFileOpener(unittest.TestCase):
         # Make sure path to chimera file is correct.
         directory = os.path.dirname(os.path.abspath(__file__))
         filename = os.path.join(os.path.join(directory,'testDataFiles'),'smallChimera.log')
-        specs = openData(filename, False)
+        specs = open_data(filename, False)
         self._testSmallChimeraFileHelp(specs)
         
     def _testSmallChimeraFileHelp(self, specs):
-        self.assertIn('data', specs, 'No data returned from openData.')
+        self.assertIn('data', specs, 'No data returned from open_data.')
         datas = specs['data']
         self.assertEqual(len(datas), 1, 'Too many data channels returned.')
         data = datas[0]
@@ -64,7 +64,7 @@ class TestDataFileOpener(unittest.TestCase):
         # Make sure path to chimera file is correct.
         directory = os.path.dirname(os.path.abspath(__file__))
         filename = os.path.join(os.path.join(directory,'testDataFiles'),'smallChimera.log')
-        specs = openData(filename, False)
+        specs = open_data(filename, False)
         self._testSmallChimeraFileHelp(specs)
         
 

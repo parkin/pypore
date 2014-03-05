@@ -4,7 +4,7 @@ Created on Jan 28, 2014
 @author: `@parkin1`_
 """
 import cythonsetup
-from dataFileOpener import prepareDataFile, getNextBlocks, openData
+from dataFileOpener import prepare_data_file, get_next_blocks, open_data
 import dataFile as dF
 import scipy.signal as sig
 
@@ -13,7 +13,7 @@ def convert_file(filename, output_filename=None):
     """
     Convert a file to the pypore .h5 file format. Returns the new file's name.
     """
-    f, params = prepareDataFile(filename)
+    f, params = prepare_data_file(filename)
     
     sample_rate = params['sample_rate']
     n_points = params['points_per_channel_total']
@@ -24,14 +24,14 @@ def convert_file(filename, output_filename=None):
     save_file = dF.open_file(output_filename, mode='w', sampleRate=sample_rate, nPoints=n_points)
     
     blocks_to_get = 1
-    data = getNextBlocks(f, params, blocks_to_get)[0]
+    data = get_next_blocks(f, params, blocks_to_get)[0]
     
     n = data.size
     i = 0
     while n > 0:
         save_file.root.data[i:n + i] = data[:]
         i += n
-        data = getNextBlocks(f, params, blocks_to_get)[0]
+        data = get_next_blocks(f, params, blocks_to_get)[0]
         n = data.size
         
     f.close()
@@ -48,7 +48,7 @@ def filter_file(filename, filter_frequency, output_file_name=None):
     >>> import pypore.fileConverter as fC
     >>> fC.filter_file("filename", 1.e4, "output.h5") // filter at 10kHz
     """
-    specs = openData(filename)
+    specs = open_data(filename)
 
     data = specs['data'][0]
     

@@ -9,7 +9,7 @@ Created on Jul 23, 2013
 from PySide import QtCore
 import time
 from multiprocessing import Process, Pipe
-from pypore.dataFileOpener import openData, prepareDataFile, getNextBlocks
+from pypore.dataFileOpener import open_data, prepare_data_file
 from pypore.eventFinder import findEvents
 
 
@@ -40,7 +40,7 @@ class PlotThread(QtCore.QThread):
     
     def run(self):
         if not self.filename == '' or self.plot_options['datadict'] == '':
-            self.plot_options['datadict'] = openData(self.filename, self.decimate)
+            self.plot_options['datadict'] = open_data(self.filename, self.decimate)
 #         self.emit(QtCore.SIGNAL('plotData(PyQt_PyObject)'), {'plot_options': self.plot_options, 'status_text': ''})
         if self.cancelled:
             return

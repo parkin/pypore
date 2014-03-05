@@ -10,7 +10,7 @@ import time, datetime
 import numpy as np
 cimport numpy as np
 import pypore.eventDatabase as ed
-from pypore.dataFileOpener import prepareDataFile, getNextBlocks
+from pypore.dataFileOpener import prepare_data_file, get_next_blocks
 from itertools import chain
 import sys
 from libc.math cimport sqrt, pow, fmax, fmin, abs
@@ -82,7 +82,7 @@ cpdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None, save_fil
     cdef unsigned int raw_points_per_side = 50
     
     # IMPLEMENT ME pleasE
-    f, params = prepareDataFile(filename)
+    f, params = prepare_data_file(filename)
 
     cdef double sample_rate = params['sample_rate']
     cdef double timestep = 1. / sample_rate
@@ -103,7 +103,7 @@ cpdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None, save_fil
         directionPositive = True
         
     # allocate memory for data
-    datax = getNextBlocks(f, params, get_blocks)
+    datax = get_next_blocks(f, params, get_blocks)
     cdef np.ndarray[DTYPE_t] data = datax[0]  # only get channel 1
     del datax
     
@@ -305,7 +305,7 @@ cpdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None, save_fil
                 if event_i >= cacheSize:  # We may need new data
                     # we need new data if we've run out
                     cache_index += 1
-                    datas = getNextBlocks(f, params, get_blocks)
+                    datas = get_next_blocks(f, params, get_blocks)
                     datas = datas[0]
                     n = datas.size
                     cacheSize += n
@@ -437,7 +437,7 @@ cpdef _lazyLoadFindEvents(filename, parameters, pipe=None, h5file=None, save_fil
             # for old data, then we need new data.
             if len(dataCache) < 2:
                 cache_refreshes += 1
-                datanext = getNextBlocks(f, params, get_blocks)
+                datanext = get_next_blocks(f, params, get_blocks)
                 dataCache.append(datanext[0])
             if len(dataCache) > 1:
                 currData = dataCache[1]

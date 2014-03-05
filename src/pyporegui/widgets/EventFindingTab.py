@@ -3,7 +3,7 @@ from numpy import linspace
 import pyqtgraph as pg
 from pyqtgraph.widgets.LayoutWidget import LayoutWidget
 
-from pypore.dataFileOpener import prepareDataFile
+from pypore.dataFileOpener import prepare_data_file
 from pyporegui._ThreadManager import _ThreadManager
 from pyporegui.MyThreads import AnalyzeDataThread, PlotThread
 from pyporegui.graphicsItems.MyPlotItem import MyPlotItem
@@ -152,7 +152,7 @@ class EventFindingTab(_ThreadManager, QtGui.QSplitter):
         are_files_opened = False
         open_dir = None
         for w in file_names:
-            f, params = prepareDataFile(w)
+            f, params = prepare_data_file(w)
             if 'error' in params:
                 self.status_text.setText(params['error'])
             else:

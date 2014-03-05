@@ -10,7 +10,7 @@ import numpy as np
 cimport numpy as np
 import os
 import tables as tb
-import dataFile as df
+import dataFile as dF
 
 DTYPE = np.float
 ctypedef np.float_t DTYPE_t
@@ -24,85 +24,91 @@ encodings = [np.dtype('>u1'), np.dtype('>u2'), np.dtype('>u4'),
              np.dtype('>f4'), np.dtype('>f8'), np.dtype('>S64'),
              np.dtype('>S512'), np.dtype('<u2')]
 
-cpdef openData(filename, decimate=False):
-    '''
+cpdef open_data(filename, decimate=False):
+    """
     Opens a datafile and returns a dictionary with the data in 'data'.
     If unable to return, will return an error message.
-    
-    Assumes '.log' extension is Chimera data.  Chimera data requires a '.mat'
+
+    :param StringType filename: Filename to open.
+    -- Assumes '.h5' extension is Pypore HDF5 format.
+    -- Assumes '.log' extension is Chimera data.  Chimera data requires a '.mat'
      file with the same name to be in the same folder.
-     
-    Assumes '.hkd' extension is Heka data.
-    
-    Assumes '.mat' extension is Gaby's format.
-    '''
+    -- Assumes '.hkd' extension is Heka data.
+    -- Assumes '.mat' extension is Gaby's format.
+    :param BooleanType decimate: Whether or not to decimate the data. Default is False.
+    :returns: DictType -- dictionary with data in the 'data' key. If there is an error, it will return a
+                            dictionary with 'error' key containing a String error message.
+    """
     if '.h5' in filename:
-        return openPyporeFile(filename, decimate)
+        return open_pypore_file(filename, decimate)
     if '.log' in filename:
-        return openChimeraFile(filename, decimate)
+        return open_chimera_file(filename, decimate)
     elif '.hkd' in filename:
-        return openHekaFile(filename, decimate)
+        return open_heka_file(filename, decimate)
     elif '.mat' in filename:
-        return openGabysFile(filename, decimate)
+        return open_gabys_file(filename, decimate)
         
     return {'error': 'File not specified with correct extension. Possibilities are: \'.log\', \'.hkd\''}
     
-cpdef prepareDataFile(filename):
-    '''
-    Opens a data file, reads relevant parameters, and 
-    
-    Assumes '.log' extension is Chimera data.  Chimera data requires a '.mat'
+cpdef prepare_data_file(filename):
+    """
+    Opens a data file, reads relevant parameters, and returns then open file and parameters.
+
+    :param StringType filename:
+    -- Assumes '.h5' extension is Pypore HDF5 format.
+    -- Assumes '.log' extension is Chimera data.  Chimera data requires a '.mat'
      file with the same name to be in the same folder. - not yet implemented
-     
-    Assumes '.hkd' extension is Heka data.
+    -- Assumes '.hkd' extension is Heka data.
+    -- Assumes '.mat' extension is Gaby's format.
     
-    Assumes '.mat' extension is Gaby's format.
-    
-    Returns
-    datafile, params
-    
+    :returns: 2 things:
+    datafile -- opened `DataFile`_
+    params -- parameters of the file.
     If there was an error opening the files, params will have 'error' key
     with string description
-    '''
+    """
     if '.h5' in filename:
-        return preparePyporeFile(filename)
+        return prepare_pypore_file(filename)
     if '.log' in filename:
-        return prepareChimeraFile(filename)
+        return prepare_chimera_file(filename)
     if '.hkd' in filename:
-        return prepareHekaFile(filename)
+        return prepare_heka_file(filename)
     if '.mat' in filename:
-        return prepareGabysFile(filename)
+        return prepare_gabys_file(filename)
         
     return 0, {'error': 'File not specified with correct extension. Possibilities are: \'.log\', \'.hkd\', \'.mat\''}
 
-cpdef getNextBlocks(datafile, params, int n=1):
-    '''
-    Gets the next n blocks (~5000 datapoints) of data from filename
+cpdef get_next_blocks(datafile, params, int n=1):
+    """
+    Gets the next n blocks (~5000 data points) of data from filename
     
     Pass in an open datafile,
-    params - 
-    n - number of blocks to read and return.
-    
-    Assumes '.log' extension is Chimera data.  Chimera data requires a '.mat'
+    :param :py:class:`pypore.dataFile.DataFile` datafile: An open :py:class:`pypore.dataFile.DataFile`.
+    :param DictType params: Parameters returned from
+    -- Assumes '.h5' extension is Pypore HDF5 format.
+    -- Assumes '.log' extension is Chimera data.  Chimera data requires a '.mat'
      file with the same name to be in the same folder. - not yet implemented
-     
-    Assumes '.hkd' extension is Heka data.
-    
-    Assumes '.mat' extension is Gaby's format.
-    '''
+    -- Assumes '.hkd' extension is Heka data.
+    -- Assumes '.mat' extension is Gaby's format.
+    :param IntType n: Number of blocks to read and return.
+    :returns: ListType<np.array> -- List of numpy arrays, one for each channel of the data.
+    """
     if '.h5' in params['filename']:
-        return getNextPyporeBlocks(datafile, params, n)
+        return get_next_pypore_blocks(datafile, params, n)
     if '.log' in params['filename']:
-        return getNextChimeraBlocks(datafile, params, n)
+        return get_next_chimera_blocks(datafile, params, n)
     if '.hkd' in params['filename']:
-        return getNextHekaBlocks(datafile, params, n)
+        return get_next_heka_blocks(datafile, params, n)
     if '.mat' in params['filename']:
-        return getNextGabysBlocks(datafile, params, n)
+        return get_next_gabys_blocks(datafile, params, n)
         
     return 'File not specified with correct extension. Possibilities are: \'.log\', \'.hkd\''
 
-cdef preparePyporeFile(filename):
-    datafile = df.open_file(filename, mode='r')
+cdef prepare_pypore_file(filename):
+    """
+    Implementation of :py:func:`prepare_data_file` for Pypore HDF5 files.
+    """
+    datafile = dF.open_file(filename, mode='r')
     
     cdef int points_per_channel_per_block = 5000
     
@@ -113,24 +119,24 @@ cdef preparePyporeFile(filename):
          'nextToSend': 0}
     return datafile, p
 
-cdef getNextPyporeBlocks(datafile, params, int n):
+cdef get_next_pypore_blocks(datafile, params, int n):
 
     data = datafile.root.data
     
-    cdef long nextToSend = params['nextToSend']
+    cdef long next_to_send = params['nextToSend']
     cdef long points_per_block = params['points_per_channel_per_block']
     cdef totalPoints = params['points_per_channel_total']
     
-    if nextToSend >= totalPoints:
-        return [data[nextToSend:].astype(DTYPE)]
+    if next_to_send >= totalPoints:
+        return [data[next_to_send:].astype(DTYPE)]
     else:
         params['nextToSend'] += points_per_block
-        print "nextToSend:", nextToSend, "data[nTS]:", data[nextToSend]
-        return [data[nextToSend:nextToSend + points_per_block].astype(DTYPE)]
+        print "nextToSend:", next_to_send, "data[nTS]:", data[next_to_send]
+        return [data[next_to_send:next_to_send + points_per_block].astype(DTYPE)]
     
-cdef openPyporeFile(filename, decimate=False):
+cdef open_pypore_file(filename, decimate=False):
     
-    f, p = preparePyporeFile(filename)
+    f, p = prepare_pypore_file(filename)
     
     arr = f.root.data
     
@@ -140,20 +146,20 @@ cdef openPyporeFile(filename, decimate=False):
     
     if decimate:
         data = arr[::5000]
-        sample_rate = sample_rate / 5000.
+        sample_rate /= 5000.
     else:
         data = arr[:]
         
-    specsfile = {'data': [data], 'sample_rate': sample_rate}
+    specs_file = {'data': [data], 'sample_rate': sample_rate}
     f.close()
-    return specsfile
+    return specs_file
 
-cdef prepareGabysFile(filename):
-    '''
-    Opens a file created by Gaby.  The file is a Matlab > 7.3 file, which is
+cdef prepare_gabys_file(filename):
+    """
+    Implementation of :py:func:`prepare_data_file` for Gaby's .mat files.
+    The file is a Matlab > 7.3 file, which is
     an HDF file and can be opened with pytables.
-    
-    '''
+    """
     datafile = tb.openFile(filename, mode='r')
     
     group = datafile.getNode('/#refs#').b
@@ -168,9 +174,9 @@ cdef prepareGabysFile(filename):
         'points_per_channel_total': group.Raw[0].size}
     return datafile, p
 
-cdef openGabysFile(filename, decimate=False):
+cdef open_gabys_file(filename, decimate=False):
     
-    f, p = prepareGabysFile(filename)
+    f, p = prepare_gabys_file(filename)
     group = p['dataGroup']
     
     cdef np.ndarray data2
@@ -179,62 +185,62 @@ cdef openGabysFile(filename, decimate=False):
     
     if decimate:
         data2 = group.Raw[0][::5000]
-        sample_rate = sample_rate / 5000.
+        sample_rate /= 5000.
     else:
         data2 = group.Raw[0]
     
-    specsfile = {'data': [data2], 'sample_rate': sample_rate}
+    specs_file = {'data': [data2], 'sample_rate': sample_rate}
     f.close()
-    return specsfile
+    return specs_file
 
-cdef getNextGabysBlocks(datafile, params, int n):
+cdef get_next_gabys_blocks(datafile, params, int n):
 
     group = datafile.getNode('/#refs#').b
     
-    cdef long nextToSend2 = params['nextToSend']
+    cdef long next_to_send_2 = params['nextToSend']
     cdef long points_per_block2 = params['points_per_channel_per_block']
-    cdef totalPoints2 = params['points_per_channel_total']
+    cdef total_points_2 = params['points_per_channel_total']
     
-    if nextToSend2 >= totalPoints2:
-        return [group.Raw[0][nextToSend2:].astype(DTYPE)]
+    if next_to_send_2 >= total_points_2:
+        return [group.Raw[0][next_to_send_2:].astype(DTYPE)]
     else:
         params['nextToSend'] += points_per_block2
-        return [group.Raw[0][nextToSend2:nextToSend2 + points_per_block2].astype(DTYPE)]
+        return [group.Raw[0][next_to_send_2:next_to_send_2 + points_per_block2].astype(DTYPE)]
 
-cdef openChimeraFile(filename, decimate=False):
-    '''
+cdef open_chimera_file(filename, decimate=False):
+    """
     Reads files created by the Chimera acquisition software.  It requires a
     filename.log file with the data, and a filename.mat file containing the
     parameters of the run.
     
     Returns a dictionary with the keys / values in the filename.mat file
     as well as 'data', a numpy array of the current values
-    '''
+    """
     # remove 'log' append 'mat'
-    datafile, p = prepareChimeraFile(filename)
+    datafile, p = prepare_chimera_file(filename)
     
     if 'error' in p:
         return p
     
-    cdef long ADCBITS = p['ADCBITS']
-    cdef double ADCvref = p['ADCvref']
-    datatype = p['datatype']
+    cdef long adc_bits = p['ADCBITS']
+    cdef double adc_v_ref = p['ADCvref']
+    data_type = p['datatype']
 #     ctypedef datatype datatype_t
-    specsfile = p['specsfile']
+    specs_file = p['specsfile']
     
 
-    cdef long bitmask = (2 ** 16) - 1 - (2 ** (16 - ADCBITS) - 1)
+    cdef long bitmask = (2 ** 16) - 1 - (2 ** (16 - adc_bits) - 1)
     cdef long num_points = 0
     cdef int block_size = 0
     cdef long decimated_size = 0
     cdef long i = 0
     cdef np.ndarray[DTYPE_t] logdata, readvalues
     cdef np.ndarray rawvalues
-    cdef double sample_rate = specsfile['SETUP_ADCSAMPLERATE'][0][0]
+    cdef double sample_rate = specs_file['SETUP_ADCSAMPLERATE'][0][0]
     if decimate:
         # Calculate number of points in the dataset
         filesize = os.path.getsize(filename)
-        num_points = filesize / datatype.itemsize
+        num_points = filesize / data_type.itemsize
         # use 5000 for plot decimation
         block_size = 5000
         decimated_size = int(2 * num_points / block_size)
@@ -243,10 +249,10 @@ cdef openChimeraFile(filename, decimate=False):
         logdata = np.empty(decimated_size)
         i = 0
         while True:
-            rawvalues = np.fromfile(datafile, datatype, block_size)
+            rawvalues = np.fromfile(datafile, data_type, block_size)
             if rawvalues.size < 1:
                 break
-            readvalues = -ADCvref + (2 * ADCvref) * (rawvalues & bitmask) / (2 ** 16)
+            readvalues = -adc_v_ref + (2 * adc_v_ref) * (rawvalues & bitmask) / (2 ** 16)
             logdata[i] = np.max(readvalues)
             logdata[i + 1] = np.min(readvalues)
             i += 2
@@ -254,14 +260,17 @@ cdef openChimeraFile(filename, decimate=False):
         # Change the sample rate
         sample_rate = sample_rate * 2.0 / block_size
     else:
-        rawvalues = np.fromfile(datafile, datatype)
+        rawvalues = np.fromfile(datafile, data_type)
         rawvalues = rawvalues & bitmask
-        logdata = -ADCvref + (2 * ADCvref) * rawvalues / (2 ** 16);
+        logdata = -adc_v_ref + (2 * adc_v_ref) * rawvalues / (2 ** 16);
         
     datafile.close()
     return {'data': [logdata], 'sample_rate': sample_rate}
 
-cdef prepareChimeraFile(filename):
+cdef prepare_chimera_file(filename):
+    """
+    Implementation of :py:func:`prepare_data_file` for Chimera ".log" files with the associated ".mat" file.
+    """
     # remove 'log' append 'mat'
     s = list(filename)
     s.pop()
@@ -299,9 +308,9 @@ cdef prepareChimeraFile(filename):
     
     return datafile, p
 
-cdef getNextChimeraBlocks(datafile, params, int n):
-    '''
-    '''
+cdef get_next_chimera_blocks(datafile, params, int n):
+    """
+    """
     cdef int block_size = params['points_per_channel_per_block']
     
     datatype = params['datatype']
@@ -314,7 +323,10 @@ cdef getNextChimeraBlocks(datafile, params, int n):
 
     return [logdata]
         
-cdef prepareHekaFile(filename):
+cdef prepare_heka_file(filename):
+    """
+    Implementation of :py:func:`prepare_data_file` for Heka ".hkd" files.
+    """
     f = open(filename, 'rb')
     # Check that the first line is as expected
     line = f.readline()
@@ -330,20 +342,20 @@ cdef prepareHekaFile(filename):
     # So now f should be at the binary data.
     
     # # Read binary header parameter lists
-    per_file_param_list = _readHekaHeaderParamList(f, np.dtype('>S64'), encodings)
-    per_block_param_list = _readHekaHeaderParamList(f, np.dtype('>S64'), encodings)
-    per_channel_param_list = _readHekaHeaderParamList(f, np.dtype('>S64'), encodings)
-    channel_list = _readHekaHeaderParamList(f, np.dtype('>S512'), encodings)
+    per_file_param_list = _read_heka_header_param_list(f, np.dtype('>S64'), encodings)
+    per_block_param_list = _read_heka_header_param_list(f, np.dtype('>S64'), encodings)
+    per_channel_param_list = _read_heka_header_param_list(f, np.dtype('>S64'), encodings)
+    channel_list = _read_heka_header_param_list(f, np.dtype('>S512'), encodings)
     
     # # Read per_file parameters
-    per_file_params = _readHekaHeaderParams(f, per_file_param_list)
+    per_file_params = _read_heka_header_params(f, per_file_param_list)
     
     # # Calculate sizes of blocks, channels, etc
     cdef long per_file_header_length = f.tell()
     
     # Calculate the block lengths
-    cdef long per_channel_per_block_length = _getParamListByteLength(per_channel_param_list)
-    cdef long per_block_length = _getParamListByteLength(per_block_param_list)
+    cdef long per_channel_per_block_length = _get_param_list_byte_length(per_channel_param_list)
+    cdef long per_block_length = _get_param_list_byte_length(per_block_param_list)
     
     cdef int channel_list_number = len(channel_list)
     
@@ -379,8 +391,8 @@ cdef prepareHekaFile(filename):
     return f, p
 
 
-cdef openHekaFile(filename, decimate=False):
-    '''
+cdef open_heka_file(filename, decimate=False):
+    """
     Gets data from a file generated by Ken's LabView code v2.0 for HEKA acquisition.
     Visit https://drndiclab-bkup.physics.upenn.edu/wiki/index.php/HKD_File_I/O_SubVIs
         for a description of the heka file format.
@@ -390,9 +402,9 @@ cdef openHekaFile(filename, decimate=False):
         -'SETUP_ADCSAMPLERATE'
         
     Currently only works with one channel measurements
-    '''
+    """
     # Open the file and read all of the header parameters
-    f, p = prepareHekaFile(filename)
+    f, p = prepare_heka_file(filename)
     
     per_file_params = p['per_file_params']
     channel_list = p['channel_list']
@@ -411,7 +423,7 @@ cdef openHekaFile(filename, decimate=False):
             data.append(np.empty(points_per_channel_total))  # initialize array
         
     for i in xrange(0, num_blocks_in_file):
-        block = _readHekaNextBlock(f, per_file_params, per_block_param_list, per_channel_param_list, channel_list, points_per_channel_per_block)
+        block = _read_heka_next_block(f, per_file_params, per_block_param_list, per_channel_param_list, channel_list, points_per_channel_per_block)
         for j in xrange(len(block)):
             if decimate:  # if decimating data, only keep max and min of each block
                 data[j][2 * i] = np.max(block[j])
@@ -428,7 +440,7 @@ cdef openHekaFile(filename, decimate=False):
     
     return specsfile
 
-cdef getNextHekaBlocks(datafile, params, int n):
+cdef get_next_heka_blocks(datafile, params, int n):
     per_file_params = params['per_file_params']
     per_block_param_list = params['per_block_param_list']
     per_channel_param_list = params['per_channel_param_list']
@@ -440,7 +452,7 @@ cdef getNextHekaBlocks(datafile, params, int n):
     cdef long size = 0
     done = False
     for i in xrange(0, n):
-        block = _readHekaNextBlock(datafile, per_file_params,
+        block = _read_heka_next_block(datafile, per_file_params,
                                    per_block_param_list, per_channel_param_list,
                                    channel_list, points_per_channel_per_block)
         if block[0].size == 0:
@@ -464,14 +476,14 @@ cdef getNextHekaBlocks(datafile, params, int n):
             
     return data
 
-cdef _readHekaNextBlock(f, per_file_params, per_block_param_list, per_channel_param_list, channel_list, long points_per_channel_per_block):
-    '''
+cdef _read_heka_next_block(f, per_file_params, per_block_param_list, per_channel_param_list, channel_list, long points_per_channel_per_block):
+    """
     Reads the next block of heka data.
     Returns a dictionary with 'data', 'per_block_params', and 'per_channel_params'.
-    '''
+    """
     
     # Read block header
-    per_block_params = _readHekaHeaderParams(f, per_block_param_list)
+    per_block_params = _read_heka_header_params(f, per_block_param_list)
     if per_block_params == None:
         return [np.empty(0)]
     
@@ -496,17 +508,17 @@ cdef _readHekaNextBlock(f, per_file_params, per_block_param_list, per_channel_pa
         
     return data
     
-cdef long _getParamListByteLength(param_list):
-    '''
+cdef long _get_param_list_byte_length(param_list):
+    """
     Returns the length in bytes of the sum of all the parameters in the list.
     Here, list[i][0] = param, list[i][1] = np.dtype
-    '''
+    """
     cdef long sizee = 0
     for i in param_list:
         sizee = sizee + i[1].itemsize
     return sizee
     
-cdef _readHekaHeaderParams(f, param_list):
+cdef _read_heka_header_params(f, param_list):
     
     params = {}
     # pair[0] = name, pair[1] = np.datatype
@@ -519,8 +531,8 @@ cdef _readHekaHeaderParams(f, param_list):
             return None
     return params
         
-cdef _readHekaHeaderParamList(f, datatype, encodings):
-    '''
+cdef _read_heka_header_param_list(f, datatype, encodings):
+    """
     Reads the binary parameter list of the following format:
         3 null bytes
         1 byte uint8 - how many params following
@@ -529,7 +541,7 @@ cdef _readHekaHeaderParamList(f, datatype, encodings):
     Returns a list of parameters, with
         item[0] = name
         item[1] = numpy datatype
-    '''
+    """
     param_list = []
     f.read(3)  # read null characters?
     dt = np.dtype('>u1')
