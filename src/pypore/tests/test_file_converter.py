@@ -40,7 +40,7 @@ class TestFileConverter(unittest.TestCase):
         """
         Test that the original/converted matrices and sample rates are the same for one-channel data.
         """
-        # TODO add test for multichannel data.
+        # TODO add tests for multichannel data.
         filename = os.path.dirname(os.path.realpath(__file__))
         filename = os.path.join(filename, 'testDataFiles', 'chimera_1event.log')
 

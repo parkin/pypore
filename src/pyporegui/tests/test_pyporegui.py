@@ -5,7 +5,7 @@ Created on Aug 27, 2013
 '''
 import unittest
 from helper import UsesQApplication
-from pyporegui.eventanalysis import PathItem, MyMainWindow
+from pyporegui.gui import PathItem, MyMainWindow
 import numpy as np
 import os
 

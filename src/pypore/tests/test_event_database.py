@@ -317,7 +317,7 @@ class TestEventDatabase(unittest.TestCase):
         raw = np.ones((1, self.max_event_length))
         self.database.append_raw_data(raw)
 
-        # test to see if error thrown
+        # tests to see if error thrown
         self.database.initialize_database()
 
         # check that rawData is still the same

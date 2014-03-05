@@ -9,16 +9,15 @@ import sys
 import os
 
 from PySide import QtCore, QtGui  # Must import PySide stuff before pyqtgraph so pyqtgraph knows
-
-# to use PySide instead of PyQt
+                                    # to use PySide instead of PyQt
 
 
 # The rest of the imports can be found below in _longImports
-from pyporegui.graphicsItems.MyPlotItem import MyPlotItem
-from pyporegui.graphicsItems.ScatterPlotItem import ScatterPlotItem
-from pyporegui.graphicsItems.SpotItem import SpotItem
-from pyporegui.widgets.EventAnalysisPlotWidget import EventAnalysisPlotWidget
-from pyporegui.widgets.PlotToolBar import PlotToolBar
+from gui.graphicsItems.MyPlotItem import MyPlotItem
+from gui.graphicsItems.ScatterPlotItem import ScatterPlotItem
+from gui.graphicsItems.SpotItem import SpotItem
+from gui.widgets.EventAnalysisPlotWidget import EventAnalysisPlotWidget
+from gui.widgets.PlotToolBar import PlotToolBar
 
 
 def _long_imports(**kwargs):
@@ -84,7 +83,7 @@ def _long_imports(**kwargs):
         app.processEvents()
     import pypore.eventDatabase as ed
 
-# If we are running from a test, name != main, and we'll need to import the above on our own
+# If we are running from a tests, name != main, and we'll need to import the above on our own
 if not __name__ == '__main__':
     _long_imports()
 
