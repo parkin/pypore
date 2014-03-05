@@ -66,7 +66,6 @@ def _long_imports(**kwargs):
         splash.showMessage("Compiling Cython imports... EventFinder", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
     from MyThreads import AnalyzeDataThread, PlotThread
-    from FileItems import FileListItem, FilterListItem, DataFileListItem
 
     if update_splash:
         splash.showMessage("Importing EventDatabase", alignment=QtCore.Qt.AlignBottom)
