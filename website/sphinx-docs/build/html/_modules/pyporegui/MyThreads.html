@@ -89,7 +89,7 @@
 <span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtCore</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span><span class="p">,</span> <span class="n">Pipe</span>
-<span class="kn">from</span> <span class="nn">pypore.dataFileOpener</span> <span class="kn">import</span> <span class="n">openData</span><span class="p">,</span> <span class="n">prepareDataFile</span><span class="p">,</span> <span class="n">getNextBlocks</span>
+<span class="kn">from</span> <span class="nn">pypore.dataFileOpener</span> <span class="kn">import</span> <span class="n">open_data</span><span class="p">,</span> <span class="n">prepare_data_file</span>
 <span class="kn">from</span> <span class="nn">pypore.eventFinder</span> <span class="kn">import</span> <span class="n">findEvents</span>
 
 
@@ -120,7 +120,7 @@
     
 <div class="viewcode-block" id="PlotThread.run"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.MyThreads.PlotThread.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">==</span> <span class="s">&#39;&#39;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_options</span><span class="p">[</span><span class="s">&#39;datadict&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">plot_options</span><span class="p">[</span><span class="s">&#39;datadict&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">openData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">decimate</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_options</span><span class="p">[</span><span class="s">&#39;datadict&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">open_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">decimate</span><span class="p">)</span>
 <span class="c">#         self.emit(QtCore.SIGNAL(&#39;plotData(PyQt_PyObject)&#39;), {&#39;plot_options&#39;: self.plot_options, &#39;status_text&#39;: &#39;&#39;})</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cancelled</span><span class="p">:</span>
             <span class="k">return</span>
@@ -233,7 +233,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2014, Will Parkin.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

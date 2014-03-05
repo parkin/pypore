@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyporegui.test.TestEventanalysis &mdash; pypore 0.0.1 documentation</title>
+    <title>pyporegui.tests.test_pyporegui &mdash; pypore 0.0.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/architect.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -77,21 +77,27 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <h1>Source code for pyporegui.test.TestEventanalysis</h1><div class="highlight"><pre>
-<span class="sd">&#39;&#39;&#39;</span>
+  <h1>Source code for pyporegui.tests.test_pyporegui</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Created on Aug 27, 2013</span>
 
 <span class="sd">@author: parkin</span>
-<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">unittest</span>
-<span class="kn">from</span> <span class="nn">helper</span> <span class="kn">import</span> <span class="n">UsesQApplication</span>
-<span class="kn">from</span> <span class="nn">pyporegui.eventanalysis</span> <span class="kn">import</span> <span class="n">PathItem</span><span class="p">,</span> <span class="n">MyMainWindow</span>
+<span class="kn">from</span> <span class="nn">pyporegui.graphicsItems.path_item</span> <span class="kn">import</span> <span class="n">PathItem</span>
+<span class="kn">from</span> <span class="nn">pyporegui.gui</span> <span class="kn">import</span> <span class="n">MyMainWindow</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtGui</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
-<div class="viewcode-block" id="TestPathItem"><a class="viewcode-back" href="../../../autodocs/pyporegui.test.html#pyporegui.test.TestEventanalysis.TestPathItem">[docs]</a><span class="k">class</span> <span class="nc">TestPathItem</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<span class="c"># This test class needs a QApplication instance</span>
+<span class="k">if</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">qApp</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="n">QtGui</span><span class="o">.</span><span class="n">QApplication</span><span class="p">([])</span>
+
+
+<div class="viewcode-block" id="TestPathItem"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.html#pyporegui.tests.test_pyporegui.TestPathItem">[docs]</a><span class="k">class</span> <span class="nc">TestPathItem</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
     
-<div class="viewcode-block" id="TestPathItem.testBoundingRect"><a class="viewcode-back" href="../../../autodocs/pyporegui.test.html#pyporegui.test.TestEventanalysis.TestPathItem.testBoundingRect">[docs]</a>    <span class="k">def</span> <span class="nf">testBoundingRect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestPathItem.testBoundingRect"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.html#pyporegui.tests.test_pyporegui.TestPathItem.testBoundingRect">[docs]</a>    <span class="k">def</span> <span class="nf">testBoundingRect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
         
@@ -111,7 +117,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">wid</span><span class="p">,</span> <span class="n">xmax</span><span class="o">-</span><span class="n">xmin</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">hei</span><span class="p">,</span> <span class="n">ymax</span><span class="o">-</span><span class="n">ymin</span><span class="p">)</span>
         </div>
-<div class="viewcode-block" id="TestPathItem.testBoundingRectSmallVales"><a class="viewcode-back" href="../../../autodocs/pyporegui.test.html#pyporegui.test.TestEventanalysis.TestPathItem.testBoundingRectSmallVales">[docs]</a>    <span class="k">def</span> <span class="nf">testBoundingRectSmallVales</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestPathItem.testBoundingRectSmallVales"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.html#pyporegui.tests.test_pyporegui.TestPathItem.testBoundingRectSmallVales">[docs]</a>    <span class="k">def</span> <span class="nf">testBoundingRectSmallVales</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">1.e-9</span><span class="p">,</span><span class="mf">1.e-9</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">1.e-9</span><span class="p">,</span><span class="mf">1.e-9</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
         
@@ -130,17 +136,18 @@
         <span class="n">hei</span> <span class="o">=</span> <span class="n">rect</span><span class="o">.</span><span class="n">height</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">wid</span><span class="p">,</span> <span class="n">xmax</span><span class="o">-</span><span class="n">xmin</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">hei</span><span class="p">,</span> <span class="n">ymax</span><span class="o">-</span><span class="n">ymin</span><span class="p">)</span>
-</div></div>
-<div class="viewcode-block" id="TestEventAnalysis"><a class="viewcode-back" href="../../../autodocs/pyporegui.test.html#pyporegui.test.TestEventanalysis.TestEventAnalysis">[docs]</a><span class="k">class</span> <span class="nc">TestEventAnalysis</span><span class="p">(</span><span class="n">UsesQApplication</span><span class="p">):</span>
 
-<div class="viewcode-block" id="TestEventAnalysis.setUp"><a class="viewcode-back" href="../../../autodocs/pyporegui.test.html#pyporegui.test.TestEventanalysis.TestEventAnalysis.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">TestEventAnalysis</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">setUp</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">window</span> <span class="o">=</span> <span class="n">MyMainWindow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qapplication</span><span class="p">,</span> <span class="p">)</span>
-        </div>
-<div class="viewcode-block" id="TestEventAnalysis.tearDown"><a class="viewcode-back" href="../../../autodocs/pyporegui.test.html#pyporegui.test.TestEventanalysis.TestEventAnalysis.tearDown">[docs]</a>    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">TestEventAnalysis</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">tearDown</span><span class="p">()</span>
-        </div>
-<div class="viewcode-block" id="TestEventAnalysis.testName"><a class="viewcode-back" href="../../../autodocs/pyporegui.test.html#pyporegui.test.TestEventanalysis.TestEventAnalysis.testName">[docs]</a>    <span class="k">def</span> <span class="nf">testName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</div></div>
+<div class="viewcode-block" id="TestEventAnalysis"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.html#pyporegui.tests.test_pyporegui.TestEventAnalysis">[docs]</a><span class="k">class</span> <span class="nc">TestEventAnalysis</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TestEventAnalysis.setUp"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.html#pyporegui.tests.test_pyporegui.TestEventAnalysis.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="TestEventAnalysis.tearDown"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.html#pyporegui.tests.test_pyporegui.TestEventAnalysis.tearDown">[docs]</a>    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="TestEventAnalysis.testName"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.html#pyporegui.tests.test_pyporegui.TestEventAnalysis.testName">[docs]</a>    <span class="k">def</span> <span class="nf">testName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># TODO write tests!</span>
         <span class="k">pass</span>
 </div></div>
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
@@ -168,7 +175,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2014, Will Parkin.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

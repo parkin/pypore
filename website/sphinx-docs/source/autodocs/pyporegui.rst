@@ -7,7 +7,7 @@ Subpackages
 .. toctree::
 
     pyporegui.graphicsItems
-    pyporegui.test
+    pyporegui.tests
     pyporegui.widgets
 
 Submodules
@@ -29,10 +29,10 @@ pyporegui.MyThreads module
     :undoc-members:
     :show-inheritance:
 
-pyporegui.eventanalysis module
-------------------------------
+pyporegui.gui module
+--------------------
 
-.. automodule:: pyporegui.eventanalysis
+.. automodule:: pyporegui.gui
     :members:
     :undoc-members:
     :show-inheritance:

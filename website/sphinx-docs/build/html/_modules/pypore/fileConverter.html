@@ -84,7 +84,7 @@
 <span class="sd">@author: `@parkin1`_</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">cythonsetup</span>
-<span class="kn">from</span> <span class="nn">dataFileOpener</span> <span class="kn">import</span> <span class="n">prepareDataFile</span><span class="p">,</span> <span class="n">getNextBlocks</span><span class="p">,</span> <span class="n">openData</span>
+<span class="kn">from</span> <span class="nn">dataFileOpener</span> <span class="kn">import</span> <span class="n">prepare_data_file</span><span class="p">,</span> <span class="n">get_next_blocks</span><span class="p">,</span> <span class="n">open_data</span>
 <span class="kn">import</span> <span class="nn">dataFile</span> <span class="kn">as</span> <span class="nn">dF</span>
 <span class="kn">import</span> <span class="nn">scipy.signal</span> <span class="kn">as</span> <span class="nn">sig</span>
 
@@ -93,7 +93,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert a file to the pypore .h5 file format. Returns the new file&#39;s name.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">f</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">prepareDataFile</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">f</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">prepare_data_file</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
     
     <span class="n">sample_rate</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s">&#39;sample_rate&#39;</span><span class="p">]</span>
     <span class="n">n_points</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s">&#39;points_per_channel_total&#39;</span><span class="p">]</span>
@@ -104,14 +104,14 @@
     <span class="n">save_file</span> <span class="o">=</span> <span class="n">dF</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">output_filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;w&#39;</span><span class="p">,</span> <span class="n">sampleRate</span><span class="o">=</span><span class="n">sample_rate</span><span class="p">,</span> <span class="n">nPoints</span><span class="o">=</span><span class="n">n_points</span><span class="p">)</span>
     
     <span class="n">blocks_to_get</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">getNextBlocks</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">blocks_to_get</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">get_next_blocks</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">blocks_to_get</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     
     <span class="n">n</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span>
     <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">while</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">save_file</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">n</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:]</span>
         <span class="n">i</span> <span class="o">+=</span> <span class="n">n</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">getNextBlocks</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">blocks_to_get</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">get_next_blocks</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">blocks_to_get</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">n</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span>
         
     <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -128,7 +128,7 @@
 <span class="sd">    &gt;&gt;&gt; import pypore.fileConverter as fC</span>
 <span class="sd">    &gt;&gt;&gt; fC.filter_file(&quot;filename&quot;, 1.e4, &quot;output.h5&quot;) // filter at 10kHz</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">specs</span> <span class="o">=</span> <span class="n">openData</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">specs</span> <span class="o">=</span> <span class="n">open_data</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 
     <span class="n">data</span> <span class="o">=</span> <span class="n">specs</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
     
@@ -172,7 +172,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2014, Will Parkin.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>
