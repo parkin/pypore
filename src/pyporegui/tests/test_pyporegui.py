@@ -1,13 +1,19 @@
-'''
+"""
 Created on Aug 27, 2013
 
 @author: parkin
-'''
+"""
 import unittest
-from helper import UsesQApplication
-from pyporegui.gui import PathItem, MyMainWindow
+from pyporegui.graphicsItems.path_item import PathItem
+from pyporegui.gui import MyMainWindow
 import numpy as np
+from PySide import QtGui
 import os
+
+# This test class needs a QApplication instance
+if QtGui.qApp is None:
+    QtGui.QApplication([])
+
 
 class TestPathItem(unittest.TestCase):
     
@@ -51,16 +57,17 @@ class TestPathItem(unittest.TestCase):
         self.assertAlmostEqual(wid, xmax-xmin, 12)
         self.assertAlmostEqual(hei, ymax-ymin)
 
-class TestEventAnalysis(UsesQApplication):
+
+class TestEventAnalysis(unittest.TestCase):
 
     def setUp(self):
-        super(TestEventAnalysis, self).setUp()
-        self.window = MyMainWindow(self.qapplication, )
-        
+        pass
+
     def tearDown(self):
-        super(TestEventAnalysis, self).tearDown()
-        
+        pass
+
     def testName(self):
+        # TODO write tests!
         pass
 
 if __name__ == "__main__":

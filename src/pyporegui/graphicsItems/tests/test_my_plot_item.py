@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 from pyqtgraph.graphicsItems.PlotCurveItem import PlotCurveItem
 from pyporegui.graphicsItems.MyPlotItem import MyPlotItem
-from pyporegui.gui import PathItem
+from pyporegui.graphicsItems.path_item import PathItem
 
 
 class TestMyPlotItem(unittest.TestCase):

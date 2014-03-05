@@ -3,13 +3,15 @@ Created on Aug 20, 2013
 
 @author: `@parkin1`_
 """
+from PySide import QtGui
 import unittest
 import os
 
 from PySide.QtGui import QColor
 
-from helper import UsesQApplication
-
+# This class needs a QApplication instance
+if QtGui.qApp is None:
+    QtGui.QApplication([])
 
 # from PySide.QtTest import QTest
 from pyporegui.FileItems import FilterListItem, FileListItem, DataFileListItem
@@ -68,14 +70,14 @@ class TestDataFileListItem(TestFileListItem):
 _instance = None
     
     
-class TestFilterListItem(UsesQApplication):
+class TestFilterListItem(unittest.TestCase):
     
     def setUp(self):
-        super(TestFilterListItem, self).setUp()
+        pass
 
     def tearDown(self):
-        super(TestFilterListItem, self).tearDown()
-    
+        pass
+
     def test_filter_list_item_simple_name(self):
         file_names = [os.path.abspath('hi.txt')]
         item = FilterListItem(file_names)
