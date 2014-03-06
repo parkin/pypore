@@ -68,9 +68,9 @@ def _long_imports(**kwargs):
     from MyThreads import AnalyzeDataThread, PlotThread
 
     if update_splash:
-        splash.showMessage("Importing EventDatabase", alignment=QtCore.Qt.AlignBottom)
+        splash.showMessage("Importing Event Database", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()
-    import pypore.eventDatabase as ed
+    import pypore.filetypes.event_database as ed
 
 
 class MyMainWindow(QtGui.QMainWindow):

@@ -4,7 +4,7 @@
 
 import unittest
 import os
-from pypore.dataFile import DataFile
+from pypore.filetypes.data_file import DataFile
 from pypore.dataFileOpener import open_data
 
 from pypore.fileConverter import convert_file

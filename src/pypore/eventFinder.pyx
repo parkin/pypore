@@ -9,7 +9,7 @@ import os
 import time, datetime
 import numpy as np
 cimport numpy as np
-import pypore.eventDatabase as ed
+import filetypes.event_database as ed
 from pypore.dataFileOpener import prepare_data_file, get_next_blocks
 from itertools import chain
 import sys

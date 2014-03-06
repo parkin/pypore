@@ -2,7 +2,7 @@ from PySide import QtGui, QtCore
 import numpy as np
 import pyqtgraph as pg
 from pyqtgraph.widgets.LayoutWidget import LayoutWidget
-from pypore import eventDatabase as eD
+from pypore.filetypes import event_database as eD
 from pyporegui._ThreadManager import _ThreadManager
 from pyporegui.graphicsItems.MyPlotItem import MyPlotItem
 from pyporegui.FileItems import FileListItem

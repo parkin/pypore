@@ -10,7 +10,7 @@ import numpy as np
 cimport numpy as np
 import os
 import tables as tb
-import dataFile as dF
+import filetypes.data_file as dF
 
 DTYPE = np.float
 ctypedef np.float_t DTYPE_t

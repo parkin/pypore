@@ -5,7 +5,7 @@ Created on Jan 28, 2014
 """
 import cythonsetup
 from dataFileOpener import prepare_data_file, get_next_blocks, open_data
-import dataFile as dF
+import filetypes.data_file as dF
 import scipy.signal as sig
 
 

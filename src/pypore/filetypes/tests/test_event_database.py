@@ -1,15 +1,15 @@
-'''
+"""
 Created on Sep 13, 2013
 
-@author: parkin
-'''
+@author: `@parkin1`_
+"""
 import unittest
 import os
 
 import numpy as np
 import numpy.testing as npt
 
-import pypore.eventDatabase as eD
+import pypore.filetypes.event_database as eD
 
 
 class TestEventDatabase(unittest.TestCase):

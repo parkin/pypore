@@ -9,7 +9,7 @@ from pypore.eventFinder import findEvents
 from pypore.eventFinder import _getDataRangeTestWrapper
 import numpy as np
 import os
-import pypore.eventDatabase as eD
+import pypore.filetypes.event_database as eD
 
 
 class TestEventFinder(unittest.TestCase):
