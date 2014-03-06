@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from pyqtgraph.graphicsItems.PlotCurveItem import PlotCurveItem
-from pyporegui.graphicsItems.MyPlotItem import MyPlotItem
+from pyporegui.graphicsItems.my_plot_item import MyPlotItem
 from pyporegui.graphicsItems.path_item import PathItem
 
 

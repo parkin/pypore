@@ -4,7 +4,7 @@ Created on Jan 28, 2014
 @author: `@parkin1`_
 """
 import cythonsetup
-from dataFileOpener import prepare_data_file, get_next_blocks, open_data
+from data_file_opener import prepare_data_file, get_next_blocks, open_data
 from filetypes import data_file
 import scipy.signal as sig
 
@@ -45,7 +45,7 @@ def filter_file(filename, filter_frequency, output_file_name=None):
     """
     Filters the data.
     Usage:
-    >>> import pypore.fileConverter as fC
+    >>> import pypore.file_converter as fC
     >>> fC.filter_file("filename", 1.e4, "output.h5") // filter at 10kHz
     """
     specs = open_data(filename)

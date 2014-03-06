@@ -44,15 +44,15 @@ elif os.name == 'posix':
     else:
         os.environ['CFLAGS'] = ' -I' + numpy.get_include()
 
-dirname = os.path.dirname(os.path.realpath(__file__))
+dir_name = os.path.dirname(os.path.realpath(__file__))
     
 pyximport.install(setup_args=mingw_setup_args,
-                      build_dir= os.path.join(dirname, '.pyxbld'))
+                      build_dir= os.path.join(dir_name, '.pyxbld'))
 
-packagepath = os.path.dirname(dirname)
+package_path = os.path.dirname(dir_name)
 
 # append directory that contains pypore and pyporegui to 
 # PYTHONPATH
-if not packagepath in sys.path:
-    sys.path.append(packagepath)
+if not package_path in sys.path:
+    sys.path.append(package_path)
 

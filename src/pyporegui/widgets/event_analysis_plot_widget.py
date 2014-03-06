@@ -2,8 +2,8 @@ from PySide import QtGui
 import numpy as np
 from pyqtgraph import GraphicsLayoutWidget, mkPen
 from pypore.filetypes import event_database as eD
-from pyporegui.graphicsItems.HistogramItem import HistogramItem
-from pyporegui.graphicsItems.ScatterPlotItem import ScatterPlotItem
+from pyporegui.graphicsItems.histogram_item import HistogramItem
+from pyporegui.graphicsItems.scatter_plot_item import ScatterPlotItem
 
 __all__ = ['EventAnalysisPlotWidget']
 

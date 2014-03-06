@@ -3,12 +3,12 @@ from numpy import linspace
 import pyqtgraph as pg
 from pyqtgraph.widgets.LayoutWidget import LayoutWidget
 
-from pypore.dataFileOpener import prepare_data_file
-from pyporegui._ThreadManager import _ThreadManager
-from pyporegui.MyThreads import AnalyzeDataThread, PlotThread
-from pyporegui.graphicsItems.MyPlotItem import MyPlotItem
-from pyporegui.FileItems import DataFileListItem
-from pyporegui.widgets.PlotToolBar import PlotToolBar
+from pypore.data_file_opener import prepare_data_file
+from pyporegui._thread_manager import _ThreadManager
+from pyporegui.my_threads import AnalyzeDataThread, PlotThread
+from pyporegui.graphicsItems.my_plot_item import MyPlotItem
+from pyporegui.file_items import DataFileListItem
+from pyporegui.widgets.plot_tool_bar import PlotToolBar
 
 
 __all__ = ['EventFindingTab']

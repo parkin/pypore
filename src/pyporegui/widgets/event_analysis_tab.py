@@ -1,7 +1,7 @@
 from PySide import QtGui
-from pyporegui._ThreadManager import _ThreadManager
-from pyporegui.FileItems import FilterListItem, FileListItem
-from pyporegui.widgets.EventAnalysisPlotWidget import EventAnalysisPlotWidget
+from pyporegui._thread_manager import _ThreadManager
+from pyporegui.file_items import FilterListItem, FileListItem
+from pyporegui.widgets.event_analysis_plot_widget import EventAnalysisPlotWidget
 
 __all__ = ['EventAnalysisTab']
 

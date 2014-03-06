@@ -1,7 +1,7 @@
 import unittest
 from PySide import QtGui
 from PySide.QtGui import QCheckBox
-from pyporegui.widgets.PlotToolBar import PlotToolBar
+from pyporegui.widgets.plot_tool_bar import PlotToolBar
 
 # This class needs a QApplication instance
 if QtGui.qApp is None:

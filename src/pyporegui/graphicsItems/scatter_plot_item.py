@@ -1,5 +1,5 @@
 from pyqtgraph.graphicsItems.ScatterPlotItem import ScatterPlotItem
-from pyporegui.graphicsItems.SpotItem import SpotItem
+from pyporegui.graphicsItems.spot_item import SpotItem
 
 
 class ScatterPlotItem(ScatterPlotItem):

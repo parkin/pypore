@@ -14,7 +14,7 @@ if QtGui.qApp is None:
     QtGui.QApplication([])
 
 # from PySide.QtTest import QTest
-from pyporegui.FileItems import FilterListItem, FileListItem, DataFileListItem
+from pyporegui.file_items import FilterListItem, FileListItem, DataFileListItem
 
 
 class TestFileListItem(unittest.TestCase):

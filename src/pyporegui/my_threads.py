@@ -9,8 +9,8 @@ Created on Jul 23, 2013
 from PySide import QtCore
 import time
 from multiprocessing import Process, Pipe
-from pypore.dataFileOpener import open_data, prepare_data_file
-from pypore.eventFinder import findEvents
+from pypore.data_file_opener import open_data, prepare_data_file
+from pypore.event_finder import find_events
 
 
 class PlotThread(QtCore.QThread):
@@ -32,10 +32,10 @@ class PlotThread(QtCore.QThread):
         self.decimate = decimate
     
     def __del__(self):
-        '''
+        """
         If the object instantiating this thread gets deleted, the thread will be deleted, causing
         filter_parameter segfault, unless we implement this destructor.
-        '''
+        """
         self.wait()
     
     def run(self):
@@ -46,46 +46,46 @@ class PlotThread(QtCore.QThread):
             return
         self.dataReady.emit({'plot_options': self.plot_options, 'status_text': '', 'thread': self})
 
+
 class AnalyzeDataThread(QtCore.QThread):
-    '''
+    """
     Class for searching for events in filter_parameter separate thread.  
-    '''
+    """
     dataReady = QtCore.Signal(object)
     
     cancelled = False
     
     readyForEvents = True
     
-    def __init__(self, filenames, parameters):
+    def __init__(self, file_names, parameters):
 #     def __init__(self, axes, filename='', threshold_type='adaptive', filter_parameter=0.93,
 #                  threshold_direction='negative', min_event_length=10., max_event_length=1000.):
         QtCore.QThread.__init__(self)
         self.parameters = parameters
         
-        self.filenames = filenames
+        self.file_names = file_names
         
         self.event_count = 0
         self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.periodicCall)
+        self.timer.timeout.connect(self.periodic_call)
         self.timer.setSingleShot(True)
         
-        self.nextEventToSend = 0
+        self.next_event_to_send = 0
         
         self.events = []
         self.status_text = ''
         
-        self.periodicCall()
+        self.periodic_call()
         
-    
     def __del__(self):
-        '''
+        """
         If the object instantiating this thread gets deleted, the thread will be deleted, causing
         filter_parameter segfault, unless we implement this destructor.
-        '''
+        """
         self.wait()
         
-    def periodicCall(self):
-        self.updateGui()
+    def periodic_call(self):
+        self.update_gui()
         if self.cancelled:
             self.dataReady.emit({'done': True})
             self.p.terminate()
@@ -93,29 +93,28 @@ class AnalyzeDataThread(QtCore.QThread):
             return
         self.timer.start(500)
         
-    def updateGui(self):
+    def update_gui(self):
 #         self.dataReady.emit({'event': event})
-        doSend = False
+        do_send = False
         send = {}
         if len(self.status_text) > 0:
             send['status_text'] = self.status_text
             self.status_text = ''
-            doSend = True
+            do_send = True
         if len(self.events) > 0:
             send['Events'] = self.events
             self.events = []
-            doSend = True
-        if doSend:
+            do_send = True
+        if do_send:
             self.dataReady.emit(send)
             
     def cancel(self):
         self.cancelled = True
-        
-    
+
     def run(self):
         self.time1 = time.time()
         self._pipe, child_conn = Pipe()
-        self.p = Process(target = findEvents, args=(self.filenames, child_conn,), kwargs=self.parameters)
+        self.p = Process(target = find_events, args=(self.file_names, child_conn,), kwargs=self.parameters)
         self.p.start()
         # child_conn needs to be closed in all processes before EOFError is thrown (on Linux)
         # So close it here immediately
