@@ -5,7 +5,7 @@ Created on Jan 28, 2014
 """
 import cythonsetup
 from dataFileOpener import prepare_data_file, get_next_blocks, open_data
-import filetypes.data_file as dF
+from filetypes import data_file
 import scipy.signal as sig
 
 
@@ -21,7 +21,7 @@ def convert_file(filename, output_filename=None):
     if output_filename is None:
         output_filename = filename.split('.')[0] + '.h5'
     
-    save_file = dF.open_file(output_filename, mode='w', sampleRate=sample_rate, nPoints=n_points)
+    save_file = data_file.open_file(output_filename, mode='w', sampleRate=sample_rate, nPoints=n_points)
     
     blocks_to_get = 1
     data = get_next_blocks(f, params, blocks_to_get)[0]
@@ -58,7 +58,7 @@ def filter_file(filename, filter_frequency, output_file_name=None):
     if output_file_name is None:
         output_file_name = filename.split('.')[0] + '.h5'
     
-    save_file = dF.open_file(output_file_name, mode='w', sampleRate=sample_rate, nPoints=n_points)
+    save_file = data_file.open_file(output_file_name, mode='w', sampleRate=sample_rate, nPoints=n_points)
 
     # wn is a fraction of the Nyquist frequency (half the sampling frequency).
     wn = filter_frequency / (0.5 * sample_rate)
