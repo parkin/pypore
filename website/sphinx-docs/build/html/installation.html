@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="pypore 0.0.1 documentation" href="index.html" />
-    <link rel="next" title="Code Documentation" href="api.html" />
+    <link rel="next" title="src" href="autodocs/modules.html" />
     <link rel="prev" title="Introduction" href="introduction.html" />
 <link href="https://fonts.googleapis.com/css?family=Architects+Daughter" rel="stylesheet" type="text/css">
 
@@ -52,7 +52,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="api.html" title="Code Documentation"
+          <a href="autodocs/modules.html" title="src"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="introduction.html" title="Introduction"
@@ -66,6 +66,7 @@
   <ul>
 <li><a class="reference internal" href="#">Installation</a><ul>
 <li><a class="reference internal" href="#basic-installation-steps">Basic Installation Steps</a></li>
+<li><a class="reference internal" href="#c-compiler">C Compiler</a></li>
 <li><a class="reference internal" href="#get-the-code">Get the Code</a></li>
 </ul>
 </li>
@@ -75,8 +76,8 @@
   <p class="topless"><a href="introduction.html"
                         title="previous chapter">Introduction</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="api.html"
-                        title="next chapter">Code Documentation</a></p>
+  <p class="topless"><a href="autodocs/modules.html"
+                        title="next chapter">src</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/installation.txt"
@@ -114,13 +115,15 @@
 <li><a class="reference external" href="http://www.scipy.org/">SciPy</a></li>
 <li><a class="reference external" href="http://www.numpy.org/">NumPy</a></li>
 <li><a class="reference external" href="http://www.pytables.org/">PyTables</a></li>
+<li><a class="reference internal" href="#c-compiler">C Compiler</a></li>
 </ol>
-<p>Additionally, the dependencies of <a class="reference internal" href="autodocs/pyporegui.html#module-pyporegui" title="pyporegui"><tt class="xref py py-mod docutils literal"><span class="pre">pyporegui</span></tt></a> are:</p>
+<p><a class="reference internal" href="autodocs/pyporegui.html#module-pyporegui" title="pyporegui"><tt class="xref py py-mod docutils literal"><span class="pre">pyporegui</span></tt></a> depends on all of <a class="reference internal" href="autodocs/pypore.html#module-pypore" title="pypore"><tt class="xref py py-mod docutils literal"><span class="pre">pypore</span></tt></a>&#8216;s above dependencies, along with the following:</p>
 <ol class="arabic simple">
 <li><a class="reference external" href="http://qt-project.org/wiki/PySide">PySide</a></li>
 <li><a class="reference external" href="http://www.pyqtgraph.org/">PyQtGraph</a></li>
 </ol>
-<p>These packages can be installed individually, but it is <strong>strongly</strong> recommended that you use a complete scientific Python distribution, especially on Windows and Mac OS X.</p>
+<p>These packages can be installed individually, but it is <strong>strongly</strong> recommended that you use a complete scientific
+Python distribution, especially on Windows and Mac OS X.</p>
 <p>Recommended distributions are:</p>
 <ol class="arabic simple">
 <li><a class="reference external" href="https://store.continuum.io/cshop/anaconda">Anaconda</a></li>
@@ -128,13 +131,36 @@
 <li><a class="reference external" href="http://code.google.com/p/pythonxy/">Python(x,y)</a></li>
 <li><a class="reference external" href="http://code.google.com/p/winpython/">WinPython</a></li>
 </ol>
-<p>These distributions ship with a bunch of widely-used python libraries. When installing one of these distributions, ensure that the above libraries are installed.
-<a class="reference external" href="http://www.pyqtgraph.org/">PyQtGraph</a> is the least likely library to ship with one of the distributions, so after installing a distribution, go to
+<p>These distributions ship with a bunch of widely-used python libraries. When installing one of these distributions,
+ensure that the above libraries are installed.
+<a class="reference external" href="http://www.pyqtgraph.org/">PyQtGraph</a> is the least likely library to ship with one of the distributions,
+so after installing a distribution, go to
 <a class="reference external" href="http://www.pyqtgraph.org/">PyQtGraph</a>, which has binary installers.</p>
+</div>
+<div class="section" id="c-compiler">
+<h2>C Compiler<a class="headerlink" href="#c-compiler" title="Permalink to this headline">¶</a></h2>
+<p>In order to compile and use the modules written in <a class="reference external" href="http://cython.org/">Cython</a>, you will need a C compiler.
+The <a class="reference internal" href="autodocs/pypore.html#module-pypore.cythonsetup" title="pypore.cythonsetup"><tt class="xref py py-mod docutils literal"><span class="pre">pypore.cythonsetup</span></tt></a> module sets up the compiler based on the detected OS.</p>
+<p>For Linux and Mac, <tt class="docutils literal"><span class="pre">gcc</span></tt> is used.</p>
+<p>Fow Windows, <a class="reference external" href="http://www.mingw.org/">MinGW</a> is used.</p>
+<blockquote>
+<div><ul>
+<li><dl class="first docutils">
+<dt>MinGW is packaged and can be installed during the <a class="reference external" href="http://code.google.com/p/pythonxy/">Python(x,y)</a></dt>
+<dd><p class="first last">installation process. Make sure to check it during installation.</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">Hopefully this is true of the other distributions.</p>
+</li>
+</ul>
+</div></blockquote>
 </div>
 <div class="section" id="get-the-code">
 <h2>Get the Code<a class="headerlink" href="#get-the-code" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference external" href="https://github.com/parkin1/pypore">Fork me on GitHub!</a>.</p>
+<p><a class="reference external" href="https://github.com/parkin1/pypore/zipball/master">Download .zip file</a>.</p>
+<p><a class="reference external" href="https://github.com/parkin1/pypore/tarball/master">Download .tar.gz file</a>.</p>
 </div>
 </div>
 
@@ -154,7 +180,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="api.html" title="Code Documentation"
+          <a href="autodocs/modules.html" title="src"
              >next</a> |</li>
         <li class="right" >
           <a href="introduction.html" title="Introduction"

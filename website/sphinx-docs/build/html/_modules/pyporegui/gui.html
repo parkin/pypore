@@ -104,7 +104,7 @@
         <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">src_dir</span><span class="p">)</span>
 
     <span class="k">global</span> <span class="n">AnalyzeDataThread</span><span class="p">,</span> <span class="n">PlotThread</span><span class="p">,</span> <span class="n">pg</span><span class="p">,</span> <span class="n">pgc</span><span class="p">,</span> <span class="n">LayoutWidget</span><span class="p">,</span> <span class="n">linspace</span><span class="p">,</span> <span class="n">np</span><span class="p">,</span> \
-            <span class="n">EventAnalysisWidget</span><span class="p">,</span> <span class="n">ed</span><span class="p">,</span> <span class="n">EventFindingTab</span><span class="p">,</span> <span class="n">EventViewingTab</span><span class="p">,</span> <span class="n">EventAnalysisTab</span>
+        <span class="n">EventAnalysisWidget</span><span class="p">,</span> <span class="n">ed</span><span class="p">,</span> <span class="n">EventFindingTab</span><span class="p">,</span> <span class="n">EventViewingTab</span><span class="p">,</span> <span class="n">EventAnalysisTab</span>
 
     <span class="n">update_splash</span> <span class="o">=</span> <span class="bp">False</span>
     <span class="k">if</span> <span class="s">&#39;splash&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="s">&#39;app&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
@@ -138,19 +138,19 @@
     <span class="k">if</span> <span class="n">update_splash</span><span class="p">:</span>
         <span class="n">splash</span><span class="o">.</span><span class="n">showMessage</span><span class="p">(</span><span class="s">&quot;Compiling Cython imports... DataFileOpener&quot;</span><span class="p">,</span> <span class="n">alignment</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignBottom</span><span class="p">)</span>
         <span class="n">app</span><span class="o">.</span><span class="n">processEvents</span><span class="p">()</span>
-    <span class="kn">from</span> <span class="nn">widgets.EventViewingTab</span> <span class="kn">import</span> <span class="n">EventViewingTab</span>
-    <span class="kn">from</span> <span class="nn">widgets.EventAnalysisTab</span> <span class="kn">import</span> <span class="n">EventAnalysisTab</span>
-    <span class="kn">from</span> <span class="nn">widgets.EventFindingTab</span> <span class="kn">import</span> <span class="n">EventFindingTab</span>
+    <span class="kn">from</span> <span class="nn">widgets.event_viewing_tab</span> <span class="kn">import</span> <span class="n">EventViewingTab</span>
+    <span class="kn">from</span> <span class="nn">widgets.event_analysis_tab</span> <span class="kn">import</span> <span class="n">EventAnalysisTab</span>
+    <span class="kn">from</span> <span class="nn">widgets.event_finding_tab</span> <span class="kn">import</span> <span class="n">EventFindingTab</span>
 
     <span class="k">if</span> <span class="n">update_splash</span><span class="p">:</span>
         <span class="n">splash</span><span class="o">.</span><span class="n">showMessage</span><span class="p">(</span><span class="s">&quot;Compiling Cython imports... EventFinder&quot;</span><span class="p">,</span> <span class="n">alignment</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignBottom</span><span class="p">)</span>
         <span class="n">app</span><span class="o">.</span><span class="n">processEvents</span><span class="p">()</span>
-    <span class="kn">from</span> <span class="nn">MyThreads</span> <span class="kn">import</span> <span class="n">AnalyzeDataThread</span><span class="p">,</span> <span class="n">PlotThread</span>
+    <span class="kn">from</span> <span class="nn">my_threads</span> <span class="kn">import</span> <span class="n">AnalyzeDataThread</span><span class="p">,</span> <span class="n">PlotThread</span>
 
     <span class="k">if</span> <span class="n">update_splash</span><span class="p">:</span>
-        <span class="n">splash</span><span class="o">.</span><span class="n">showMessage</span><span class="p">(</span><span class="s">&quot;Importing EventDatabase&quot;</span><span class="p">,</span> <span class="n">alignment</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignBottom</span><span class="p">)</span>
+        <span class="n">splash</span><span class="o">.</span><span class="n">showMessage</span><span class="p">(</span><span class="s">&quot;Importing Event Database&quot;</span><span class="p">,</span> <span class="n">alignment</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignBottom</span><span class="p">)</span>
         <span class="n">app</span><span class="o">.</span><span class="n">processEvents</span><span class="p">()</span>
-    <span class="kn">import</span> <span class="nn">pypore.eventDatabase</span> <span class="kn">as</span> <span class="nn">ed</span>
+    <span class="kn">import</span> <span class="nn">pypore.filetypes.event_database</span> <span class="kn">as</span> <span class="nn">ed</span>
 
 
 <div class="viewcode-block" id="MyMainWindow"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.gui.MyMainWindow">[docs]</a><span class="k">class</span> <span class="nc">MyMainWindow</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMainWindow</span><span class="p">):</span>
@@ -168,9 +168,9 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s">&#39;Translocation Event Analysis&#39;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">create_menu</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_menu</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_create_main_frame</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">create_status_bar</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_status_bar</span><span class="p">()</span>
 
 <div class="viewcode-block" id="MyMainWindow.open_files"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.gui.MyMainWindow.open_files">[docs]</a>    <span class="k">def</span> <span class="nf">open_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -253,14 +253,14 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">setCentralWidget</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
 
-<div class="viewcode-block" id="MyMainWindow.create_status_bar"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.gui.MyMainWindow.create_status_bar">[docs]</a>    <span class="k">def</span> <span class="nf">create_status_bar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_create_status_bar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates filter_parameter status bar with filter_parameter text widget.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">status_text</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">statusBar</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status_text</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="MyMainWindow.create_menu"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.gui.MyMainWindow.create_menu">[docs]</a>    <span class="k">def</span> <span class="nf">create_menu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">_create_menu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates File menu with Open</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -284,8 +284,9 @@
     <span class="c">#             tip=&#39;About the demo&#39;)</span>
     <span class="c">#</span>
     <span class="c">#         self.add_actions(self.help_menu, (about_action,))</span>
-</div>
-<div class="viewcode-block" id="MyMainWindow.add_actions"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.gui.MyMainWindow.add_actions">[docs]</a>    <span class="k">def</span> <span class="nf">add_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">actions</span><span class="p">):</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="MyMainWindow.add_actions"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.gui.MyMainWindow.add_actions">[docs]</a>    <span class="k">def</span> <span class="nf">add_actions</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">actions</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">actions</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">action</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="n">target</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
@@ -295,6 +296,10 @@
 <div class="viewcode-block" id="MyMainWindow.create_action"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.gui.MyMainWindow.create_action">[docs]</a>    <span class="k">def</span> <span class="nf">create_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">slot</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">shortcut</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                       <span class="n">icon</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">tip</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">checkable</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
                       <span class="n">signal</span><span class="o">=</span><span class="s">&quot;triggered()&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a :py:class:`QtGui.QAction`.</span>
+<span class="sd">        :param text: Text to show in the file menu</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">action</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">icon</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">action</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s">&quot;:/</span><span class="si">%s</span><span class="s">.png&quot;</span> <span class="o">%</span> <span class="n">icon</span><span class="p">))</span>
@@ -309,185 +314,6 @@
             <span class="n">action</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">action</span>
 </div>
-<div class="viewcode-block" id="MyMainWindow.plotData"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.gui.MyMainWindow.plotData">[docs]</a>    <span class="k">def</span> <span class="nf">plotData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot_options</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Plots waveform in datadict</span>
-<span class="sd">        Pass in plot_options, filter_parameter dictionary with &#39;plot_range&#39;, &#39;axes&#39;, and &#39;datadict&#39;</span>
-<span class="sd">        pass in Data dictionary, with data at &#39;data&#39; and sample rate at &#39;SETUP_ADCSAMPLERATE&#39;</span>
-<span class="sd">        Can pass in range as [start,stop], or &#39;all&#39; for 0:n</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">axes</span> <span class="o">=</span> <span class="n">plot_options</span><span class="p">[</span><span class="s">&#39;axes&#39;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">axes</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">axes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot</span>
-        <span class="c"># Read the first file, store data in dictionary</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">plot_options</span><span class="p">[</span><span class="s">&#39;datadict&#39;</span><span class="p">][</span><span class="s">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">sample_rate</span> <span class="o">=</span> <span class="n">plot_options</span><span class="p">[</span><span class="s">&#39;datadict&#39;</span><span class="p">][</span><span class="s">&#39;sample_rate&#39;</span><span class="p">]</span>
-        <span class="n">plot_range</span> <span class="o">=</span> <span class="n">plot_options</span><span class="p">[</span><span class="s">&#39;plot_range&#39;</span><span class="p">]</span>
-
-        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="c"># If problem with input, just plot all the data</span>
-        <span class="k">if</span> <span class="n">plot_range</span> <span class="o">==</span> <span class="s">&#39;all&#39;</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">plot_range</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">plot_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">plot_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-            <span class="n">plot_range</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>  <span class="c"># no problems!</span>
-            <span class="n">n</span> <span class="o">=</span> <span class="n">plot_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">plot_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
-
-        <span class="n">Ts</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">sample_rate</span>
-
-        <span class="n">times</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="n">Ts</span> <span class="o">*</span> <span class="n">plot_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Ts</span> <span class="o">*</span> <span class="n">plot_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">n</span><span class="p">)</span>
-        <span class="n">yData</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">plot_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]:(</span><span class="n">plot_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">plotwid</span><span class="o">.</span><span class="n">clear_event_items</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">p1</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">times</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">yData</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plotwid</span><span class="o">.</span><span class="n">autoRange</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">processEvents</span><span class="p">()</span>
-
-    <span class="c"># def addEventsToConcatEventPlot(self, events):</span>
-    <span class="c">#     if len(events) &lt; 1:</span>
-    <span class="c">#         return</span>
-    <span class="c">#     size = 0</span>
-    <span class="c">#     for event in events:</span>
-    <span class="c">#         size += event[&#39;raw_data&#39;].size</span>
-    <span class="c">#     data = np.empty(size)</span>
-    <span class="c">#     sample_rate = events[0][&#39;sample_rate&#39;]</span>
-    <span class="c">#     ts = 1 / sample_rate</span>
-    <span class="c">#     times = np.linspace(0., (size - 1) * ts, size) + self.prev_concat_time</span>
-    <span class="c">#     self.prev_concat_time += size * ts</span>
-    <span class="c">#     index = 0</span>
-    <span class="c">#     for event in events:</span>
-    <span class="c">#         d = event[&#39;raw_data&#39;].size</span>
-    <span class="c">#         baseline = event[&#39;baseline&#39;]</span>
-    <span class="c">#         data[index:index + d] = (event[&#39;raw_data&#39;] - baseline)</span>
-    <span class="c">#         index += d</span>
-    <span class="c">#</span>
-    <span class="c">#     item = PathItem(times, data)</span>
-    <span class="c">#     item.setPen(pg.mkPen(&#39;w&#39;))</span>
-    <span class="c">#     self.plot_concatevents.addItem(item)</span>
-</div>
-<div class="viewcode-block" id="MyMainWindow.getEventAndLevelsData"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.gui.MyMainWindow.getEventAndLevelsData">[docs]</a>    <span class="k">def</span> <span class="nf">getEventAndLevelsData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;raw_data&#39;</span><span class="p">]</span>
-        <span class="n">levels_index</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;cusum_indexes&#39;</span><span class="p">]</span>
-        <span class="n">levels_values</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;cusum_values&#39;</span><span class="p">]</span>
-        <span class="n">sample_rate</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;sample_rate&#39;</span><span class="p">]</span>
-        <span class="n">event_start</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;event_start&#39;</span><span class="p">]</span>
-        <span class="n">event_end</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;event_end&#39;</span><span class="p">]</span>
-        <span class="n">baseline</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;baseline&#39;</span><span class="p">]</span>
-        <span class="n">raw_points_per_side</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s">&#39;raw_points_per_side&#39;</span><span class="p">]</span>
-
-        <span class="n">Ts</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">sample_rate</span>
-
-        <span class="n">n</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span>
-
-        <span class="n">times</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="n">Ts</span> <span class="o">*</span> <span class="p">(</span><span class="n">event_start</span> <span class="o">-</span> <span class="n">raw_points_per_side</span><span class="p">),</span> <span class="n">Ts</span> <span class="o">*</span> <span class="p">(</span><span class="n">event_start</span> <span class="o">-</span> <span class="n">raw_points_per_side</span> <span class="o">+</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">n</span><span class="p">)</span>
-        <span class="n">times2</span> <span class="o">=</span> <span class="p">[(</span><span class="n">event_start</span> <span class="o">-</span> <span class="n">raw_points_per_side</span><span class="p">)</span> <span class="o">*</span> <span class="n">Ts</span><span class="p">,</span> <span class="p">(</span><span class="n">event_start</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">Ts</span><span class="p">]</span>
-        <span class="n">levels2</span> <span class="o">=</span> <span class="p">[</span><span class="n">baseline</span><span class="p">,</span> <span class="n">baseline</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">level_value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">levels_values</span><span class="p">):</span>
-            <span class="n">times2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">levels_index</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">Ts</span><span class="p">)</span>
-            <span class="n">levels2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">level_value</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">levels_values</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">times2</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">levels_index</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">Ts</span><span class="p">)</span>
-                <span class="n">levels2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">level_value</span><span class="p">)</span>
-        <span class="n">times2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">event_end</span> <span class="o">*</span> <span class="n">Ts</span><span class="p">)</span>
-        <span class="n">levels2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">levels_values</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">levels_values</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
-        <span class="n">times2</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">event_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">Ts</span><span class="p">)</span>
-        <span class="n">levels2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">baseline</span><span class="p">)</span>
-        <span class="n">times2</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">event_end</span> <span class="o">+</span> <span class="n">raw_points_per_side</span><span class="p">)</span> <span class="o">*</span> <span class="n">Ts</span><span class="p">)</span>
-        <span class="n">levels2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">baseline</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">times</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">times2</span><span class="p">,</span> <span class="n">levels2</span>
-
-    <span class="c"># def plotEventsOnMainPlot(self, events):</span>
-    <span class="c">#     if len(events) &lt; 1:</span>
-    <span class="c">#         return</span>
-    <span class="c">#     size = 0</span>
-    <span class="c">#     for event in events:</span>
-    <span class="c">#         size += event[&#39;raw_data&#39;].size</span>
-    <span class="c">#     data = np.empty(size)</span>
-    <span class="c">#     sample_rate = events[0][&#39;sample_rate&#39;]</span>
-    <span class="c">#     raw_points_per_side = events[0][&#39;raw_points_per_side&#39;]</span>
-    <span class="c">#     ts = 1 / sample_rate</span>
-    <span class="c">#     times = np.empty(size)</span>
-    <span class="c">#     conn = np.ones(size)</span>
-    <span class="c">#     index = 0</span>
-    <span class="c">#     for event in events:</span>
-    <span class="c">#         event_start = event[&#39;event_start&#39;]</span>
-    <span class="c">#         event_data = event[&#39;raw_data&#39;]</span>
-    <span class="c">#         d = event_data.size</span>
-    <span class="c">#         times[index:index + d] = linspace(ts * (event_start - raw_points_per_side),</span>
-    <span class="c">#                                           ts * (event_start - raw_points_per_side + d - 1), d)</span>
-    <span class="c">#         data[index:index + d] = event_data</span>
-    <span class="c">#         conn[index - 1] = False  # disconnect separate events</span>
-    <span class="c">#         index += d</span>
-    <span class="c">#</span>
-    <span class="c">#     item = PathItem(times, data, conn)</span>
-    <span class="c">#     item.setPen(pg.mkPen(&#39;y&#39;))</span>
-    <span class="c">#     self.plotwid.add_event_item(item)</span>
-</div>
-<div class="viewcode-block" id="MyMainWindow.get_current_analysis_parameters"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.gui.MyMainWindow.get_current_analysis_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">get_current_analysis_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Returns filter_parameter dictionary holding the current analysis parameters set by the user.  Returns an entry &#39;error&#39; if there were</span>
-<span class="sd">        invalid inputs.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">parameters</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="c"># Get Min_event length in microseconds</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;min_event_length&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_event_length_edit</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
-        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Could not read float from Min Event Length text box.  Please fix.&#39;</span>
-            <span class="k">return</span> <span class="n">parameters</span>
-        <span class="c"># Get Max Event Length in microseconds</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;max_event_length&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_event_length_edit</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
-        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Could not read float from Max Event Length text box.  Please fix.&#39;</span>
-            <span class="k">return</span> <span class="n">parameters</span>
-        <span class="k">if</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;min_event_length&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;max_event_length&#39;</span><span class="p">]:</span>
-            <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;max_event_length&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Min Event Length is greater than Max Event Length.  Please fix.&#39;</span>
-            <span class="k">return</span> <span class="n">parameters</span>
-
-        <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;baseline_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">baseline_type_combo</span><span class="o">.</span><span class="n">currentText</span><span class="p">())</span>
-        <span class="k">if</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;baseline_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Adaptive&#39;</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;filter_parameter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_parameter_edit</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
-            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Could not read float from Filter Parameter text box.  Please fix.&#39;</span>
-                <span class="k">return</span>
-        <span class="k">elif</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;baseline_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Fixed&#39;</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;baseline_current&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">baseline_current_edit</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
-            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Could not read float from Baseline Current text box.  Please fix.&#39;</span>
-
-        <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;threshold_direction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">threshold_direction_combo</span><span class="o">.</span><span class="n">currentText</span><span class="p">())</span>
-        <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;threshold_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">threshold_type_combo</span><span class="o">.</span><span class="n">currentText</span><span class="p">())</span>
-        <span class="k">if</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;threshold_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Noise Based&#39;</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;start_stddev&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">threshold_stdev_start</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
-            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Could not read float from Start StdDev text box.  Please fix.&#39;</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;end_stddev&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">threshold_stdev_end</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
-            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Could not read float from End StdDev text box.  Please fix.&#39;</span>
-        <span class="k">elif</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;threshold_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Absolute Change&#39;</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;absolute_change_start&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">absolute_change_start_edit</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
-            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Could not read float from Absolute Change Start.  Please fix.&#39;</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;absolute_change_end&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">absolute_change_end_edit</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
-            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Could not read float from Absolute Change End.  Please fix.&#39;</span>
-        <span class="k">elif</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;threshold_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Percent Change&#39;</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;percent_change_start&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">percentage_change_start_edit</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
-            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Could not read float from Percent Change Start text box.  Please fix.&#39;</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;percent_change_end&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">percentage_change_end_edit</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
-            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                <span class="n">parameters</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Could not read float from Percent Change End text box.  Please fix.&#39;</span>
-
-        <span class="k">return</span> <span class="n">parameters</span>
-</div>
 <div class="viewcode-block" id="MyMainWindow.clean_threads"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.gui.MyMainWindow.clean_threads">[docs]</a>    <span class="k">def</span> <span class="nf">clean_threads</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">thread_pool</span><span class="p">:</span>
             <span class="n">w</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
@@ -497,8 +323,8 @@
 </div></div>
 <div class="viewcode-block" id="main"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.gui.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
     <span class="n">app</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
-    <span class="n">pixmap</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="s">&#39;splash.png&#39;</span><span class="p">)</span>
-    <span class="n">splash</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QSplashScreen</span><span class="p">(</span><span class="n">pixmap</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WindowStaysOnTopHint</span><span class="p">)</span>
+    <span class="n">pix_map</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="s">&#39;splash.png&#39;</span><span class="p">)</span>
+    <span class="n">splash</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QSplashScreen</span><span class="p">(</span><span class="n">pix_map</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WindowStaysOnTopHint</span><span class="p">)</span>
     <span class="n">splash</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
     <span class="n">_long_imports</span><span class="p">(</span><span class="n">splash</span><span class="o">=</span><span class="n">splash</span><span class="p">,</span> <span class="n">app</span><span class="o">=</span><span class="n">app</span><span class="p">)</span>
     <span class="n">splash</span><span class="o">.</span><span class="n">showMessage</span><span class="p">(</span><span class="s">&quot;Creating main window...&quot;</span><span class="p">,</span> <span class="n">alignment</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignBottom</span><span class="p">)</span>

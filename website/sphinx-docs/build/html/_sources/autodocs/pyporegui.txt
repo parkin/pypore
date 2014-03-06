@@ -13,18 +13,10 @@ Subpackages
 Submodules
 ----------
 
-pyporegui.FileItems module
---------------------------
+pyporegui.file_items module
+---------------------------
 
-.. automodule:: pyporegui.FileItems
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pyporegui.MyThreads module
---------------------------
-
-.. automodule:: pyporegui.MyThreads
+.. automodule:: pyporegui.file_items
     :members:
     :undoc-members:
     :show-inheritance:
@@ -33,6 +25,14 @@ pyporegui.gui module
 --------------------
 
 .. automodule:: pyporegui.gui
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyporegui.my_threads module
+---------------------------
+
+.. automodule:: pyporegui.my_threads
     :members:
     :undoc-members:
     :show-inheritance:

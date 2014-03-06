@@ -6,6 +6,7 @@ Subpackages
 
 .. toctree::
 
+    pypore.filetypes
     pypore.tests
 
 Submodules
@@ -19,42 +20,26 @@ pypore.cythonsetup module
     :undoc-members:
     :show-inheritance:
 
-pypore.dataFile module
-----------------------
+pypore.data_file_opener module
+------------------------------
 
-.. automodule:: pypore.dataFile
+.. automodule:: pypore.data_file_opener
     :members:
     :undoc-members:
     :show-inheritance:
 
-pypore.dataFileOpener module
+pypore.event_finder module
+--------------------------
+
+.. automodule:: pypore.event_finder
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pypore.file_converter module
 ----------------------------
 
-.. automodule:: pypore.dataFileOpener
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pypore.eventDatabase module
----------------------------
-
-.. automodule:: pypore.eventDatabase
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pypore.eventFinder module
--------------------------
-
-.. automodule:: pypore.eventFinder
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pypore.fileConverter module
----------------------------
-
-.. automodule:: pypore.fileConverter
+.. automodule:: pypore.file_converter
     :members:
     :undoc-members:
     :show-inheritance:

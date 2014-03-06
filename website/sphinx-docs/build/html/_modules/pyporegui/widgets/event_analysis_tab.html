@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyporegui.widgets.EventAnalysisTab &mdash; pypore 0.0.1 documentation</title>
+    <title>pyporegui.widgets.event_analysis_tab &mdash; pypore 0.0.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/architect.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -77,16 +77,16 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <h1>Source code for pyporegui.widgets.EventAnalysisTab</h1><div class="highlight"><pre>
+  <h1>Source code for pyporegui.widgets.event_analysis_tab</h1><div class="highlight"><pre>
 <span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtGui</span>
-<span class="kn">from</span> <span class="nn">pyporegui._ThreadManager</span> <span class="kn">import</span> <span class="n">_ThreadManager</span>
-<span class="kn">from</span> <span class="nn">pyporegui.FileItems</span> <span class="kn">import</span> <span class="n">FilterListItem</span><span class="p">,</span> <span class="n">FileListItem</span>
-<span class="kn">from</span> <span class="nn">pyporegui.widgets.EventAnalysisPlotWidget</span> <span class="kn">import</span> <span class="n">EventAnalysisPlotWidget</span>
+<span class="kn">from</span> <span class="nn">pyporegui._thread_manager</span> <span class="kn">import</span> <span class="n">_ThreadManager</span>
+<span class="kn">from</span> <span class="nn">pyporegui.file_items</span> <span class="kn">import</span> <span class="n">FilterListItem</span><span class="p">,</span> <span class="n">FileListItem</span>
+<span class="kn">from</span> <span class="nn">pyporegui.widgets.event_analysis_plot_widget</span> <span class="kn">import</span> <span class="n">EventAnalysisPlotWidget</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;EventAnalysisTab&#39;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="EventAnalysisTab"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.EventAnalysisTab.EventAnalysisTab">[docs]</a><span class="k">class</span> <span class="nc">EventAnalysisTab</span><span class="p">(</span><span class="n">_ThreadManager</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QSplitter</span><span class="p">):</span>
+<div class="viewcode-block" id="EventAnalysisTab"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.event_analysis_tab.EventAnalysisTab">[docs]</a><span class="k">class</span> <span class="nc">EventAnalysisTab</span><span class="p">(</span><span class="n">_ThreadManager</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QSplitter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -112,7 +112,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">scroll_options</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">scroll_plots</span><span class="p">)</span>
 
-<div class="viewcode-block" id="EventAnalysisTab.color_picker_btn_clicked"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.EventAnalysisTab.EventAnalysisTab.color_picker_btn_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">color_picker_btn_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EventAnalysisTab.color_picker_btn_clicked"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.event_analysis_tab.EventAnalysisTab.color_picker_btn_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">color_picker_btn_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">col</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColorDialog</span><span class="o">.</span><span class="n">getColor</span><span class="p">(</span><span class="n">initial</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event_color</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
@@ -120,7 +120,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">frm</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="s">&quot;QWidget { background-color: </span><span class="si">%s</span><span class="s"> }&quot;</span>
                                    <span class="o">%</span> <span class="n">col</span><span class="o">.</span><span class="n">name</span><span class="p">())</span>
 </div>
-<div class="viewcode-block" id="EventAnalysisTab.add_filter_clicked"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.EventAnalysisTab.EventAnalysisTab.add_filter_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">add_filter_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EventAnalysisTab.add_filter_clicked"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.event_analysis_tab.EventAnalysisTab.add_filter_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">add_filter_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_event_widget</span><span class="o">.</span><span class="n">selectedItems</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">items</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span>
@@ -141,7 +141,7 @@
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;color&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_color</span><span class="p">}</span>
         <span class="k">return</span> <span class="n">params</span>
 
-<div class="viewcode-block" id="EventAnalysisTab.open_event_database"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.EventAnalysisTab.EventAnalysisTab.open_event_database">[docs]</a>    <span class="k">def</span> <span class="nf">open_event_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_names</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="EventAnalysisTab.open_event_database"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.event_analysis_tab.EventAnalysisTab.open_event_database">[docs]</a>    <span class="k">def</span> <span class="nf">open_event_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_names</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adds the files to the list widget.</span>
 
@@ -159,7 +159,7 @@
             <span class="n">item</span> <span class="o">=</span> <span class="n">FileListItem</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">list_event_widget</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="EventAnalysisTab.remove_filter_clicked"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.EventAnalysisTab.EventAnalysisTab.remove_filter_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">remove_filter_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EventAnalysisTab.remove_filter_clicked"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.event_analysis_tab.EventAnalysisTab.remove_filter_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">remove_filter_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">listFilterWidget</span><span class="o">.</span><span class="n">selectedItems</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
             <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">listFilterWidget</span><span class="o">.</span><span class="n">indexFromItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">row</span><span class="p">()</span>

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyporegui.widgets.PlotToolBar &mdash; pypore 0.0.1 documentation</title>
+    <title>pyporegui.widgets.plot_tool_bar &mdash; pypore 0.0.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/architect.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -77,11 +77,11 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <h1>Source code for pyporegui.widgets.PlotToolBar</h1><div class="highlight"><pre>
+  <h1>Source code for pyporegui.widgets.plot_tool_bar</h1><div class="highlight"><pre>
 <span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtGui</span>
 
 
-<div class="viewcode-block" id="PlotToolBar"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.PlotToolBar.PlotToolBar">[docs]</a><span class="k">class</span> <span class="nc">PlotToolBar</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QToolBar</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotToolBar"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.plot_tool_bar.PlotToolBar">[docs]</a><span class="k">class</span> <span class="nc">PlotToolBar</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QToolBar</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A toolbar for plots, with a zoom button, check boxes for options.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -108,26 +108,26 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">filter_data</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="s">&#39;Select to have events plotted during event finding.&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_data</span><span class="p">)</span>
 
-<div class="viewcode-block" id="PlotToolBar.is_decimate_checked"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.PlotToolBar.PlotToolBar.is_decimate_checked">[docs]</a>    <span class="k">def</span> <span class="nf">is_decimate_checked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotToolBar.is_decimate_checked"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.plot_tool_bar.PlotToolBar.is_decimate_checked">[docs]</a>    <span class="k">def</span> <span class="nf">is_decimate_checked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :returns: boolean -- true if the toolbar&#39;s decimate checkbox is checked, false</span>
 <span class="sd">                    otherwise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">decimate_check_box</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="PlotToolBar.is_plot_during_checked"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.PlotToolBar.PlotToolBar.is_plot_during_checked">[docs]</a>    <span class="k">def</span> <span class="nf">is_plot_during_checked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotToolBar.is_plot_during_checked"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.plot_tool_bar.PlotToolBar.is_plot_during_checked">[docs]</a>    <span class="k">def</span> <span class="nf">is_plot_during_checked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :returns: boolean -- true if the toolbar&#39;s plot during checkbox is checked, false otherwise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_during_check_box</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="PlotToolBar.get_widget_list"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.PlotToolBar.PlotToolBar.get_widget_list">[docs]</a>    <span class="k">def</span> <span class="nf">get_widget_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotToolBar.get_widget_list"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.plot_tool_bar.PlotToolBar.get_widget_list">[docs]</a>    <span class="k">def</span> <span class="nf">get_widget_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :returns: ListType&lt;QtGui.QWidget&gt; -- Returns a list of the widgets contained in the PlotToolBar.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget_list</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="PlotToolBar.addWidget"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.PlotToolBar.PlotToolBar.addWidget">[docs]</a>    <span class="k">def</span> <span class="nf">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotToolBar.addWidget"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.plot_tool_bar.PlotToolBar.addWidget">[docs]</a>    <span class="k">def</span> <span class="nf">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">PlotToolBar</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 </pre></div>

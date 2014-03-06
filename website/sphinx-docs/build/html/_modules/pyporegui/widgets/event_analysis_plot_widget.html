@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyporegui.widgets.EventAnalysisPlotWidget &mdash; pypore 0.0.1 documentation</title>
+    <title>pyporegui.widgets.event_analysis_plot_widget &mdash; pypore 0.0.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/architect.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -77,18 +77,18 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <h1>Source code for pyporegui.widgets.EventAnalysisPlotWidget</h1><div class="highlight"><pre>
+  <h1>Source code for pyporegui.widgets.event_analysis_plot_widget</h1><div class="highlight"><pre>
 <span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtGui</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">pyqtgraph</span> <span class="kn">import</span> <span class="n">GraphicsLayoutWidget</span><span class="p">,</span> <span class="n">mkPen</span>
-<span class="kn">from</span> <span class="nn">pypore</span> <span class="kn">import</span> <span class="n">eventDatabase</span> <span class="k">as</span> <span class="n">eD</span>
-<span class="kn">from</span> <span class="nn">pyporegui.graphicsItems.HistogramItem</span> <span class="kn">import</span> <span class="n">HistogramItem</span>
-<span class="kn">from</span> <span class="nn">pyporegui.graphicsItems.ScatterPlotItem</span> <span class="kn">import</span> <span class="n">ScatterPlotItem</span>
+<span class="kn">from</span> <span class="nn">pypore.filetypes</span> <span class="kn">import</span> <span class="n">event_database</span> <span class="k">as</span> <span class="n">eD</span>
+<span class="kn">from</span> <span class="nn">pyporegui.graphicsItems.histogram_item</span> <span class="kn">import</span> <span class="n">HistogramItem</span>
+<span class="kn">from</span> <span class="nn">pyporegui.graphicsItems.scatter_plot_item</span> <span class="kn">import</span> <span class="n">ScatterPlotItem</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;EventAnalysisPlotWidget&#39;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="EventAnalysisPlotWidget"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.EventAnalysisPlotWidget.EventAnalysisPlotWidget">[docs]</a><span class="k">class</span> <span class="nc">EventAnalysisPlotWidget</span><span class="p">(</span><span class="n">GraphicsLayoutWidget</span><span class="p">):</span>
+<div class="viewcode-block" id="EventAnalysisPlotWidget"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.event_analysis_plot_widget.EventAnalysisPlotWidget">[docs]</a><span class="k">class</span> <span class="nc">EventAnalysisPlotWidget</span><span class="p">(</span><span class="n">GraphicsLayoutWidget</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">EventAnalysisPlotWidget</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
@@ -113,7 +113,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">nbins</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
-<div class="viewcode-block" id="EventAnalysisPlotWidget.add_selections"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.EventAnalysisPlotWidget.EventAnalysisPlotWidget.add_selections">[docs]</a>    <span class="k">def</span> <span class="nf">add_selections</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_names</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<div class="viewcode-block" id="EventAnalysisPlotWidget.add_selections"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.event_analysis_plot_widget.EventAnalysisPlotWidget.add_selections">[docs]</a>    <span class="k">def</span> <span class="nf">add_selections</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_names</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Plots event statistics.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -155,12 +155,12 @@
 
         <span class="k">return</span>
 </div>
-<div class="viewcode-block" id="EventAnalysisPlotWidget.removeFilter"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.EventAnalysisPlotWidget.EventAnalysisPlotWidget.removeFilter">[docs]</a>    <span class="k">def</span> <span class="nf">removeFilter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="EventAnalysisPlotWidget.removeFilter"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.event_analysis_plot_widget.EventAnalysisPlotWidget.removeFilter">[docs]</a>    <span class="k">def</span> <span class="nf">removeFilter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plot_eventdur</span><span class="o">.</span><span class="n">remove_item_at</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plot_eventdepth</span><span class="o">.</span><span class="n">remove_item_at</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plot_eventdur_eventdepth</span><span class="o">.</span><span class="n">removeItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_eventdur_eventdepth</span><span class="o">.</span><span class="n">listDataItems</span><span class="p">()[</span><span class="n">index</span><span class="p">])</span>
 </div>
-<div class="viewcode-block" id="EventAnalysisPlotWidget.onScatterPointsClicked"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.EventAnalysisPlotWidget.EventAnalysisPlotWidget.onScatterPointsClicked">[docs]</a>    <span class="k">def</span> <span class="nf">onScatterPointsClicked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
+<div class="viewcode-block" id="EventAnalysisPlotWidget.onScatterPointsClicked"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.event_analysis_plot_widget.EventAnalysisPlotWidget.onScatterPointsClicked">[docs]</a>    <span class="k">def</span> <span class="nf">onScatterPointsClicked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Callback for when a scatter plot points are clicked.</span>
 <span class="sd">        Highlights the points and unhighlights previously selected points.</span>

@@ -12,14 +12,6 @@ pypore.tests.test_data_file_opener module
     :undoc-members:
     :show-inheritance:
 
-pypore.tests.test_event_database module
----------------------------------------
-
-.. automodule:: pypore.tests.test_event_database
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 pypore.tests.test_event_finder module
 -------------------------------------
 
