@@ -6,26 +6,26 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pypore.eventDatabase &mdash; pypore 0.0.1 documentation</title>
+    <title>pypore.filetypes.event_database &mdash; pypore 0.0.1 documentation</title>
     
-    <link rel="stylesheet" href="../../_static/architect.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/architect.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
+        URL_ROOT:    '../../../',
         VERSION:     '0.0.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pypore 0.0.1 documentation" href="../../index.html" />
-    <link rel="up" title="Module code" href="../index.html" />
+    <link rel="top" title="pypore 0.0.1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
 <link href="https://fonts.googleapis.com/css?family=Architects+Daughter" rel="stylesheet" type="text/css">
 
   </head>
@@ -45,20 +45,20 @@
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="../../genindex.html" title="General Index"
+          <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
+          <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">pypore 0.0.1 documentation</a> &raquo;</li>
-          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li><a href="../../../index.html">pypore 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
-    <form class="search" action="../../search.html" method="get">
+    <form class="search" action="../../../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
@@ -77,7 +77,7 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <h1>Source code for pypore.eventDatabase</h1><div class="highlight"><pre>
+  <h1>Source code for pypore.filetypes.event_database</h1><div class="highlight"><pre>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Created on Sep 13, 2013</span>
 
@@ -104,7 +104,7 @@
     <span class="n">area</span> <span class="o">=</span> <span class="n">tb</span><span class="o">.</span><span class="n">FloatCol</span><span class="p">(</span><span class="n">pos</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="EventDatabase"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.eventDatabase.EventDatabase">[docs]</a><span class="k">class</span> <span class="nc">EventDatabase</span><span class="p">(</span><span class="n">tb</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">File</span><span class="p">):</span>
+<div class="viewcode-block" id="EventDatabase"><a class="viewcode-back" href="../../../autodocs/pypore.filetypes.html#pypore.filetypes.event_database.EventDatabase">[docs]</a><span class="k">class</span> <span class="nc">EventDatabase</span><span class="p">(</span><span class="n">tb</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">File</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    PyTables HDF5 database storing events and corresponding data.</span>
 <span class="sd">    Inherits from tables.file.File, so you can interact with this</span>
@@ -134,7 +134,7 @@
     <span class="n">max_event_length</span> <span class="o">=</span> <span class="n">DEFAULT_MAX_EVENT_LENGTH</span>
     <span class="n">event_row</span> <span class="o">=</span> <span class="bp">None</span>
 
-<div class="viewcode-block" id="EventDatabase.append_event"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.eventDatabase.EventDatabase.append_event">[docs]</a>    <span class="k">def</span> <span class="nf">append_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arrayRow</span><span class="p">,</span> <span class="n">eventStart</span><span class="p">,</span> <span class="n">eventLength</span><span class="p">,</span> <span class="n">nLevels</span><span class="p">,</span> <span class="n">rawPointsPerSide</span><span class="p">,</span> <span class="n">baseline</span><span class="p">,</span> <span class="n">currentBlockage</span><span class="p">,</span> <span class="n">area</span><span class="p">,</span>
+<div class="viewcode-block" id="EventDatabase.append_event"><a class="viewcode-back" href="../../../autodocs/pypore.filetypes.html#pypore.filetypes.event_database.EventDatabase.append_event">[docs]</a>    <span class="k">def</span> <span class="nf">append_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arrayRow</span><span class="p">,</span> <span class="n">eventStart</span><span class="p">,</span> <span class="n">eventLength</span><span class="p">,</span> <span class="n">nLevels</span><span class="p">,</span> <span class="n">rawPointsPerSide</span><span class="p">,</span> <span class="n">baseline</span><span class="p">,</span> <span class="n">currentBlockage</span><span class="p">,</span> <span class="n">area</span><span class="p">,</span>
                     <span class="n">rawData</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">levelLengths</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Appends an event with the specified values to the eventsTable.  If rawData, levels, or levelLengths</span>
@@ -171,28 +171,28 @@
         <span class="k">if</span> <span class="n">levelLengths</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">append_level_lengths</span><span class="p">(</span><span class="n">levelLengths</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="EventDatabase.append_level_lengths"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.eventDatabase.EventDatabase.append_level_lengths">[docs]</a>    <span class="k">def</span> <span class="nf">append_level_lengths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">levelLengths</span><span class="p">):</span>
+<div class="viewcode-block" id="EventDatabase.append_level_lengths"><a class="viewcode-back" href="../../../autodocs/pypore.filetypes.html#pypore.filetypes.event_database.EventDatabase.append_level_lengths">[docs]</a>    <span class="k">def</span> <span class="nf">append_level_lengths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">levelLengths</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Appends a numpy matrix levelLengths to root.events.levelLengths</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">levelLengths</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">levelLengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">levelLengths</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="EventDatabase.append_levels"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.eventDatabase.EventDatabase.append_levels">[docs]</a>    <span class="k">def</span> <span class="nf">append_levels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">levels</span><span class="p">):</span>
+<div class="viewcode-block" id="EventDatabase.append_levels"><a class="viewcode-back" href="../../../autodocs/pypore.filetypes.html#pypore.filetypes.event_database.EventDatabase.append_levels">[docs]</a>    <span class="k">def</span> <span class="nf">append_levels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">levels</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Appends a numpy matrix levels to root.events.levels</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">levels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">levels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">levels</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="EventDatabase.append_raw_data"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.eventDatabase.EventDatabase.append_raw_data">[docs]</a>    <span class="k">def</span> <span class="nf">append_raw_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rawData</span><span class="p">):</span>
+<div class="viewcode-block" id="EventDatabase.append_raw_data"><a class="viewcode-back" href="../../../autodocs/pypore.filetypes.html#pypore.filetypes.event_database.EventDatabase.append_raw_data">[docs]</a>    <span class="k">def</span> <span class="nf">append_raw_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rawData</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Appends a numpy matrix rawData to root.events.rawData</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">rawData</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">rawData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rawData</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="EventDatabase.clean_database"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.eventDatabase.EventDatabase.clean_database">[docs]</a>    <span class="k">def</span> <span class="nf">clean_database</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EventDatabase.clean_database"><a class="viewcode-back" href="../../../autodocs/pypore.filetypes.html#pypore.filetypes.event_database.EventDatabase.clean_database">[docs]</a>    <span class="k">def</span> <span class="nf">clean_database</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Removes /events and then re-initializes the /events group. Note</span>
 <span class="sd">        that any references to any table/matrix in this group will</span>
@@ -216,7 +216,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tables_object</span><span class="o">.</span><span class="n">__class__</span> <span class="o">=</span> <span class="n">EventDatabase</span>
 
-<div class="viewcode-block" id="EventDatabase.get_event_count"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.eventDatabase.EventDatabase.get_event_count">[docs]</a>    <span class="k">def</span> <span class="nf">get_event_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EventDatabase.get_event_count"><a class="viewcode-back" href="../../../autodocs/pypore.filetypes.html#pypore.filetypes.event_database.EventDatabase.get_event_count">[docs]</a>    <span class="k">def</span> <span class="nf">get_event_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the number of rows in the /events/eventTable table.</span>
 <span class="sd">        Note this will flush the table so the data is correct.</span>
@@ -224,7 +224,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">get_event_table</span><span class="p">()</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_event_table</span><span class="p">()</span><span class="o">.</span><span class="n">nrows</span>
 </div>
-<div class="viewcode-block" id="EventDatabase.get_event_data_at"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.eventDatabase.EventDatabase.get_event_data_at">[docs]</a>    <span class="k">def</span> <span class="nf">get_event_data_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+<div class="viewcode-block" id="EventDatabase.get_event_data_at"><a class="viewcode-back" href="../../../autodocs/pypore.filetypes.html#pypore.filetypes.event_database.EventDatabase.get_event_data_at">[docs]</a>    <span class="k">def</span> <span class="nf">get_event_data_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the event data portion of rawData[i], ie excluding the</span>
 <span class="sd">        raw buffer points kept on each side of an event.</span>
@@ -235,7 +235,7 @@
         <span class="n">raw_points_per_side</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;rawPointsPerSide&#39;</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">rawData</span><span class="p">[</span><span class="n">array_row</span><span class="p">][</span><span class="n">raw_points_per_side</span><span class="p">:</span><span class="n">event_length</span> <span class="o">+</span> <span class="n">raw_points_per_side</span><span class="p">]</span>
 </div>
-<div class="viewcode-block" id="EventDatabase.get_event_row"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.eventDatabase.EventDatabase.get_event_row">[docs]</a>    <span class="k">def</span> <span class="nf">get_event_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+<div class="viewcode-block" id="EventDatabase.get_event_row"><a class="viewcode-back" href="../../../autodocs/pypore.filetypes.html#pypore.filetypes.event_database.EventDatabase.get_event_row">[docs]</a>    <span class="k">def</span> <span class="nf">get_event_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the ith row in /events/eventTable. Throws IndexOutOfBounds</span>
 <span class="sd">        or similar error if i out of bounds. Note this flushes the</span>
@@ -244,19 +244,19 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">eventTable</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">eventTable</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 </div>
-<div class="viewcode-block" id="EventDatabase.get_events_group"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.eventDatabase.EventDatabase.get_events_group">[docs]</a>    <span class="k">def</span> <span class="nf">get_events_group</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EventDatabase.get_events_group"><a class="viewcode-back" href="../../../autodocs/pypore.filetypes.html#pypore.filetypes.event_database.EventDatabase.get_events_group">[docs]</a>    <span class="k">def</span> <span class="nf">get_events_group</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the events group in the PyTables HDF5 file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">events</span>
 </div>
-<div class="viewcode-block" id="EventDatabase.get_event_table"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.eventDatabase.EventDatabase.get_event_table">[docs]</a>    <span class="k">def</span> <span class="nf">get_event_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EventDatabase.get_event_table"><a class="viewcode-back" href="../../../autodocs/pypore.filetypes.html#pypore.filetypes.event_database.EventDatabase.get_event_table">[docs]</a>    <span class="k">def</span> <span class="nf">get_event_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        returns /events/eventTable</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">eventTable</span>
 </div>
-<div class="viewcode-block" id="EventDatabase.get_event_table_row"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.eventDatabase.EventDatabase.get_event_table_row">[docs]</a>    <span class="k">def</span> <span class="nf">get_event_table_row</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EventDatabase.get_event_table_row"><a class="viewcode-back" href="../../../autodocs/pypore.filetypes.html#pypore.filetypes.event_database.EventDatabase.get_event_table_row">[docs]</a>    <span class="k">def</span> <span class="nf">get_event_table_row</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the PyTables Row object of the eventTable.</span>
 <span class="sd">        root.events.eventTable.row</span>
@@ -267,7 +267,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">event_row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">eventTable</span><span class="o">.</span><span class="n">row</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_row</span>
 </div>
-<div class="viewcode-block" id="EventDatabase.get_level_lengths_at"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.eventDatabase.EventDatabase.get_level_lengths_at">[docs]</a>    <span class="k">def</span> <span class="nf">get_level_lengths_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+<div class="viewcode-block" id="EventDatabase.get_level_lengths_at"><a class="viewcode-back" href="../../../autodocs/pypore.filetypes.html#pypore.filetypes.event_database.EventDatabase.get_level_lengths_at">[docs]</a>    <span class="k">def</span> <span class="nf">get_level_lengths_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a numpy array of the levelLengths corresponding to the event</span>
 <span class="sd">        in row &#39;i&#39; of eventTable.</span>
@@ -277,7 +277,7 @@
         <span class="n">n_levels</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;nLevels&#39;</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">levelLengths</span><span class="p">[</span><span class="n">array_row</span><span class="p">][:</span><span class="n">n_levels</span><span class="p">]</span>
 </div>
-<div class="viewcode-block" id="EventDatabase.get_levels_at"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.eventDatabase.EventDatabase.get_levels_at">[docs]</a>    <span class="k">def</span> <span class="nf">get_levels_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+<div class="viewcode-block" id="EventDatabase.get_levels_at"><a class="viewcode-back" href="../../../autodocs/pypore.filetypes.html#pypore.filetypes.event_database.EventDatabase.get_levels_at">[docs]</a>    <span class="k">def</span> <span class="nf">get_levels_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a numpy array of the levels corresponding to the event</span>
 <span class="sd">        in row &#39;i&#39; of eventTable.</span>
@@ -287,7 +287,7 @@
         <span class="n">n_levels</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;nLevels&#39;</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">levels</span><span class="p">[</span><span class="n">array_row</span><span class="p">][:</span><span class="n">n_levels</span><span class="p">]</span>
 </div>
-<div class="viewcode-block" id="EventDatabase.get_raw_data_at"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.eventDatabase.EventDatabase.get_raw_data_at">[docs]</a>    <span class="k">def</span> <span class="nf">get_raw_data_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+<div class="viewcode-block" id="EventDatabase.get_raw_data_at"><a class="viewcode-back" href="../../../autodocs/pypore.filetypes.html#pypore.filetypes.event_database.EventDatabase.get_raw_data_at">[docs]</a>    <span class="k">def</span> <span class="nf">get_raw_data_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the rawData numpy matrix associated with event &#39;i&#39;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -297,13 +297,13 @@
         <span class="n">raw_points_per_side</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;rawPointsPerSide&#39;</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">rawData</span><span class="p">[</span><span class="n">array_row</span><span class="p">][:</span><span class="n">event_length</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">raw_points_per_side</span><span class="p">]</span>
 </div>
-<div class="viewcode-block" id="EventDatabase.get_sample_rate"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.eventDatabase.EventDatabase.get_sample_rate">[docs]</a>    <span class="k">def</span> <span class="nf">get_sample_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EventDatabase.get_sample_rate"><a class="viewcode-back" href="../../../autodocs/pypore.filetypes.html#pypore.filetypes.event_database.EventDatabase.get_sample_rate">[docs]</a>    <span class="k">def</span> <span class="nf">get_sample_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the sample rate at root.events.eventTable.attrs.sampleRate</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">eventTable</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">sampleRate</span>
 </div>
-<div class="viewcode-block" id="EventDatabase.initialize_database"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.eventDatabase.EventDatabase.initialize_database">[docs]</a>    <span class="k">def</span> <span class="nf">initialize_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="EventDatabase.initialize_database"><a class="viewcode-back" href="../../../autodocs/pypore.filetypes.html#pypore.filetypes.event_database.EventDatabase.initialize_database">[docs]</a>    <span class="k">def</span> <span class="nf">initialize_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initializes the EventDatabase.  Adds a group &#39;events&#39; with</span>
 <span class="sd">        table &#39;eventsTable&#39; and matrices &#39;rawData&#39;, &#39;levels&#39;, and &#39;levelLengths&#39;.</span>
@@ -344,7 +344,7 @@
                               <span class="n">title</span><span class="o">=</span><span class="s">&quot;Lengths of the cusum levels&quot;</span><span class="p">,</span>
                               <span class="n">filters</span><span class="o">=</span><span class="n">filters</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="EventDatabase.remove_event"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.eventDatabase.EventDatabase.remove_event">[docs]</a>    <span class="k">def</span> <span class="nf">remove_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+<div class="viewcode-block" id="EventDatabase.remove_event"><a class="viewcode-back" href="../../../autodocs/pypore.filetypes.html#pypore.filetypes.event_database.EventDatabase.remove_event">[docs]</a>    <span class="k">def</span> <span class="nf">remove_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Deletes event i from /events/eventTable. Does nothing if</span>
 <span class="sd">        i &lt; 0 or i &gt;= eventCount. Note the table will be flushed.</span>
@@ -353,7 +353,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">remove_events</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="EventDatabase.remove_events"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.eventDatabase.EventDatabase.remove_events">[docs]</a>    <span class="k">def</span> <span class="nf">remove_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span>
+<div class="viewcode-block" id="EventDatabase.remove_events"><a class="viewcode-back" href="../../../autodocs/pypore.filetypes.html#pypore.filetypes.event_database.EventDatabase.remove_events">[docs]</a>    <span class="k">def</span> <span class="nf">remove_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Deletes events [i,j) from /events/eventTable. Does nothing</span>
 <span class="sd">        if deleting out of range events is requested. Note the table</span>
@@ -378,7 +378,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">get_event_table</span><span class="p">()</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
 
 </div></div>
-<div class="viewcode-block" id="open_file"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.eventDatabase.open_file">[docs]</a><span class="k">def</span> <span class="nf">open_file</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="open_file"><a class="viewcode-back" href="../../../autodocs/pypore.filetypes.html#pypore.filetypes.event_database.open_file">[docs]</a><span class="k">def</span> <span class="nf">open_file</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Opens an EventDatabase by calling tables.openFile and then</span>
 <span class="sd">    copying the __dict__ to a new EventDatabase instance.</span>
@@ -404,13 +404,13 @@
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="../../genindex.html" title="General Index"
+          <a href="../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
+          <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">pypore 0.0.1 documentation</a> &raquo;</li>
-          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+        <li><a href="../../../index.html">pypore 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

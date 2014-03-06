@@ -11,42 +11,42 @@ Subpackages
 Submodules
 ----------
 
-pyporegui.widgets.EventAnalysisPlotWidget module
-------------------------------------------------
+pyporegui.widgets.event_analysis_plot_widget module
+---------------------------------------------------
 
-.. automodule:: pyporegui.widgets.EventAnalysisPlotWidget
+.. automodule:: pyporegui.widgets.event_analysis_plot_widget
     :members:
     :undoc-members:
     :show-inheritance:
 
-pyporegui.widgets.EventAnalysisTab module
------------------------------------------
+pyporegui.widgets.event_analysis_tab module
+-------------------------------------------
 
-.. automodule:: pyporegui.widgets.EventAnalysisTab
+.. automodule:: pyporegui.widgets.event_analysis_tab
     :members:
     :undoc-members:
     :show-inheritance:
 
-pyporegui.widgets.EventFindingTab module
-----------------------------------------
+pyporegui.widgets.event_finding_tab module
+------------------------------------------
 
-.. automodule:: pyporegui.widgets.EventFindingTab
+.. automodule:: pyporegui.widgets.event_finding_tab
     :members:
     :undoc-members:
     :show-inheritance:
 
-pyporegui.widgets.EventViewingTab module
-----------------------------------------
+pyporegui.widgets.event_viewing_tab module
+------------------------------------------
 
-.. automodule:: pyporegui.widgets.EventViewingTab
+.. automodule:: pyporegui.widgets.event_viewing_tab
     :members:
     :undoc-members:
     :show-inheritance:
 
-pyporegui.widgets.PlotToolBar module
-------------------------------------
+pyporegui.widgets.plot_tool_bar module
+--------------------------------------
 
-.. automodule:: pyporegui.widgets.PlotToolBar
+.. automodule:: pyporegui.widgets.plot_tool_bar
     :members:
     :undoc-members:
     :show-inheritance:

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyporegui.FileItems &mdash; pypore 0.0.1 documentation</title>
+    <title>pyporegui.file_items &mdash; pypore 0.0.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/architect.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -77,7 +77,7 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <h1>Source code for pyporegui.FileItems</h1><div class="highlight"><pre>
+  <h1>Source code for pyporegui.file_items</h1><div class="highlight"><pre>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">@author: `@parkin1`_</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -86,7 +86,7 @@
 <span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtGui</span>
 
 
-<div class="viewcode-block" id="FileListItem"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.FileItems.FileListItem">[docs]</a><span class="k">class</span> <span class="nc">FileListItem</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QListWidgetItem</span><span class="p">):</span>
+<div class="viewcode-block" id="FileListItem"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.file_items.FileListItem">[docs]</a><span class="k">class</span> <span class="nc">FileListItem</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QListWidgetItem</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Subclass of QListWidgetItem to handle file names with long file paths.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -98,27 +98,27 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">filename</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">=</span> <span class="n">words</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         
-<div class="viewcode-block" id="FileListItem.get_file_name"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.FileItems.FileListItem.get_file_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_file_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="FileListItem.get_file_name"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.file_items.FileListItem.get_file_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_file_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :returns: StringType -- the file names with the file path included.</span>
 <span class="sd">                    ex /home/user/.../filename</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span>
     </div>
-<div class="viewcode-block" id="FileListItem.get_simple_name"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.FileItems.FileListItem.get_simple_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_simple_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="FileListItem.get_simple_name"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.file_items.FileListItem.get_simple_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_simple_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :returns: StringType -- the file name without the file path included.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">simple_name</span>
     </div>
-<div class="viewcode-block" id="FileListItem.get_directory"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.FileItems.FileListItem.get_directory">[docs]</a>    <span class="k">def</span> <span class="nf">get_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="FileListItem.get_directory"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.file_items.FileListItem.get_directory">[docs]</a>    <span class="k">def</span> <span class="nf">get_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :returns: StringType -- the directory containing the file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">directory</span>
 
     </div></div>
-<div class="viewcode-block" id="DataFileListItem"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.FileItems.DataFileListItem">[docs]</a><span class="k">class</span> <span class="nc">DataFileListItem</span><span class="p">(</span><span class="n">FileListItem</span><span class="p">):</span>
+<div class="viewcode-block" id="DataFileListItem"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.file_items.DataFileListItem">[docs]</a><span class="k">class</span> <span class="nc">DataFileListItem</span><span class="p">(</span><span class="n">FileListItem</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Is a FileListItem with a parameter.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -127,13 +127,13 @@
         <span class="n">FileListItem</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
         
-<div class="viewcode-block" id="DataFileListItem.get_params"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.FileItems.DataFileListItem.get_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DataFileListItem.get_params"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.file_items.DataFileListItem.get_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :returns: DictType -- Dictionary of the item&#39;s parameters.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="DataFileListItem.get_param"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.FileItems.DataFileListItem.get_param">[docs]</a>    <span class="k">def</span> <span class="nf">get_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+<div class="viewcode-block" id="DataFileListItem.get_param"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.file_items.DataFileListItem.get_param">[docs]</a>    <span class="k">def</span> <span class="nf">get_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param param: Key in the parameter dictionary, whose value should be returned.</span>
 <span class="sd">        :returns: Parameter value specified by the key &#39;param&#39;.</span>
@@ -144,7 +144,7 @@
             <span class="k">return</span> <span class="bp">None</span>
 
 </div></div>
-<div class="viewcode-block" id="FilterListItem"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.FileItems.FilterListItem">[docs]</a><span class="k">class</span> <span class="nc">FilterListItem</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QListWidgetItem</span><span class="p">):</span>
+<div class="viewcode-block" id="FilterListItem"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.file_items.FilterListItem">[docs]</a><span class="k">class</span> <span class="nc">FilterListItem</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QListWidgetItem</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Subclass of QListWidgetItem to handle filter list items.</span>
 <span class="sd">    </span>
@@ -181,19 +181,19 @@
         <span class="n">pix_map</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;color&#39;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="n">pix_map</span><span class="p">))</span>
         
-<div class="viewcode-block" id="FilterListItem.get_params"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.FileItems.FilterListItem.get_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="FilterListItem.get_params"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.file_items.FilterListItem.get_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :returns: Dict -- dictionary of the parameters of this Item.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="FilterListItem.get_file_names"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.FileItems.FilterListItem.get_file_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_file_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="FilterListItem.get_file_names"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.file_items.FilterListItem.get_file_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_file_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :returns: List -- list of the full file names of the files that make up this Item.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_names</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="FilterListItem.get_file_name_at"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.FileItems.FilterListItem.get_file_name_at">[docs]</a>    <span class="k">def</span> <span class="nf">get_file_name_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="FilterListItem.get_file_name_at"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.file_items.FilterListItem.get_file_name_at">[docs]</a>    <span class="k">def</span> <span class="nf">get_file_name_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param IntType index: Position of the item.</span>
 <span class="sd">        :returns: String -- Full filename (including path) of the file at index.</span>
@@ -203,13 +203,13 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">None</span>
     </div>
-<div class="viewcode-block" id="FilterListItem.get_simple_names"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.FileItems.FilterListItem.get_simple_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_simple_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="FilterListItem.get_simple_names"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.file_items.FilterListItem.get_simple_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_simple_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :returns: List -- list of the simple names (no path/directory) of the files that make up this Item.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">simple_names</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="FilterListItem.get_simple_name_at"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.FileItems.FilterListItem.get_simple_name_at">[docs]</a>    <span class="k">def</span> <span class="nf">get_simple_name_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="FilterListItem.get_simple_name_at"><a class="viewcode-back" href="../../autodocs/pyporegui.html#pyporegui.file_items.FilterListItem.get_simple_name_at">[docs]</a>    <span class="k">def</span> <span class="nf">get_simple_name_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param IntType index: Index of the list item to get the simple name of.</span>
 <span class="sd">        :returns: String -- Simple name (i.e. no path/directory) of the file at index.</span>

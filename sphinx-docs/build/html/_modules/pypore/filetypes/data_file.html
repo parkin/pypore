@@ -6,26 +6,26 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pypore.dataFile &mdash; pypore 0.0.1 documentation</title>
+    <title>pypore.filetypes.data_file &mdash; pypore 0.0.1 documentation</title>
     
-    <link rel="stylesheet" href="../../_static/architect.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/architect.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
+        URL_ROOT:    '../../../',
         VERSION:     '0.0.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pypore 0.0.1 documentation" href="../../index.html" />
-    <link rel="up" title="Module code" href="../index.html" />
+    <link rel="top" title="pypore 0.0.1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
 <link href="https://fonts.googleapis.com/css?family=Architects+Daughter" rel="stylesheet" type="text/css">
 
   </head>
@@ -45,20 +45,20 @@
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="../../genindex.html" title="General Index"
+          <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
+          <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">pypore 0.0.1 documentation</a> &raquo;</li>
-          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li><a href="../../../index.html">pypore 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
-    <form class="search" action="../../search.html" method="get">
+    <form class="search" action="../../../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
@@ -77,7 +77,7 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <h1>Source code for pypore.dataFile</h1><div class="highlight"><pre>
+  <h1>Source code for pypore.filetypes.data_file</h1><div class="highlight"><pre>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Created on Jan 28, 2014</span>
 
@@ -87,7 +87,7 @@
 <span class="kn">import</span> <span class="nn">tables</span> <span class="kn">as</span> <span class="nn">tb</span>
 
 
-<div class="viewcode-block" id="DataFile"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.dataFile.DataFile">[docs]</a><span class="k">class</span> <span class="nc">DataFile</span><span class="p">(</span><span class="n">tb</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">File</span><span class="p">):</span>
+<div class="viewcode-block" id="DataFile"><a class="viewcode-back" href="../../../autodocs/pypore.filetypes.html#pypore.filetypes.data_file.DataFile">[docs]</a><span class="k">class</span> <span class="nc">DataFile</span><span class="p">(</span><span class="n">tb</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">File</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    PyTables HDF5 database storing raw data.</span>
 <span class="sd">    Inherits from tables.file.File, so you can interact with this</span>
@@ -112,7 +112,7 @@
 <span class="sd">    &gt;&gt;&gt; os.remove(tests)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="DataFile.clean_database"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.dataFile.DataFile.clean_database">[docs]</a>    <span class="k">def</span> <span class="nf">clean_database</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DataFile.clean_database"><a class="viewcode-back" href="../../../autodocs/pypore.filetypes.html#pypore.filetypes.data_file.DataFile.clean_database">[docs]</a>    <span class="k">def</span> <span class="nf">clean_database</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Removes /events and then re-initializes the /events group. Note</span>
 <span class="sd">        that any references to any table/matrix in this group will</span>
@@ -136,7 +136,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tables_object</span><span class="o">.</span><span class="n">__class__</span> <span class="o">=</span> <span class="n">DataFile</span>
 
-<div class="viewcode-block" id="DataFile.get_data_length"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.dataFile.DataFile.get_data_length">[docs]</a>    <span class="k">def</span> <span class="nf">get_data_length</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DataFile.get_data_length"><a class="viewcode-back" href="../../../autodocs/pypore.filetypes.html#pypore.filetypes.data_file.DataFile.get_data_length">[docs]</a>    <span class="k">def</span> <span class="nf">get_data_length</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Note this will flush the table so the data is correct.</span>
 <span class="sd">        :returns: The number of rows in the data matrix.</span>
@@ -144,13 +144,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">nrows</span>
 </div>
-<div class="viewcode-block" id="DataFile.get_sample_rate"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.dataFile.DataFile.get_sample_rate">[docs]</a>    <span class="k">def</span> <span class="nf">get_sample_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DataFile.get_sample_rate"><a class="viewcode-back" href="../../../autodocs/pypore.filetypes.html#pypore.filetypes.data_file.DataFile.get_sample_rate">[docs]</a>    <span class="k">def</span> <span class="nf">get_sample_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :returns: The sample rate at root.events.eventTable.attrs.sampleRate</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">sampleRate</span>
 </div>
-<div class="viewcode-block" id="DataFile.initialize_database"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.dataFile.DataFile.initialize_database">[docs]</a>    <span class="k">def</span> <span class="nf">initialize_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="DataFile.initialize_database"><a class="viewcode-back" href="../../../autodocs/pypore.filetypes.html#pypore.filetypes.data_file.DataFile.initialize_database">[docs]</a>    <span class="k">def</span> <span class="nf">initialize_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initializes the EventDatabase.  Adds a group &#39;events&#39; with</span>
 <span class="sd">        table &#39;eventsTable&#39; and matrices &#39;rawData&#39;, &#39;levels&#39;, and &#39;levelLengths&#39;.</span>
@@ -168,16 +168,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">sampleRate</span> <span class="o">=</span> <span class="n">kargs</span><span class="p">[</span><span class="s">&#39;sampleRate&#39;</span><span class="p">]</span>
 
 </div></div>
-<div class="viewcode-block" id="open_file"><a class="viewcode-back" href="../../autodocs/pypore.html#pypore.dataFile.open_file">[docs]</a><span class="k">def</span> <span class="nf">open_file</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="open_file"><a class="viewcode-back" href="../../../autodocs/pypore.filetypes.html#pypore.filetypes.data_file.open_file">[docs]</a><span class="k">def</span> <span class="nf">open_file</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Opens a :py:class:`DataFile`, which is a subclass of :py:class:`tables.file.File` and can be treated as such.</span>
 
 <span class="sd">    :param args: Arguments that get passed to :py:func:`tables.openFile`.</span>
 <span class="sd">    :param kargs: Arguments that get passed to :py:func:`tables.openFile`. Should additionally include:</span>
-<span class="sd">    -- nPoints: Number of points that should be in the array.</span>
-<span class="sd">    -- sampleRate: Sample rate of the data.</span>
 
-<span class="sd">    :returns: :py:class:`DataFile` -- an open :py:class:`DataFile`.</span>
+<span class="sd">        - nPoints: Number of points that should be in the array.</span>
+<span class="sd">        - sampleRate: Sample rate of the data.</span>
+
+<span class="sd">    :returns: :py:class:`pypore.filetypes.data_file.DataFile` -- an already opened</span>
+<span class="sd">        :py:class:`pypore.filetypes.data_file.DataFile`.</span>
 
 <span class="sd">    &gt;&gt;&gt; import pypore.dataFile as dF</span>
 <span class="sd">    &gt;&gt;&gt; dF.open_file(tests&#39;, mode=&#39;w&#39;)</span>
@@ -200,13 +202,13 @@
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="../../genindex.html" title="General Index"
+          <a href="../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
+          <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">pypore 0.0.1 documentation</a> &raquo;</li>
-          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+        <li><a href="../../../index.html">pypore 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

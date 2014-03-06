@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyporegui.graphicsItems.HistogramItem &mdash; pypore 0.0.1 documentation</title>
+    <title>pyporegui.graphicsItems.histogram_item &mdash; pypore 0.0.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/architect.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -77,14 +77,14 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <h1>Source code for pyporegui.graphicsItems.HistogramItem</h1><div class="highlight"><pre>
+  <h1>Source code for pyporegui.graphicsItems.histogram_item</h1><div class="highlight"><pre>
 <span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtGui</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">pyqtgraph</span> <span class="kn">import</span> <span class="n">PlotItem</span>
 <span class="kn">from</span> <span class="nn">pyqtgraph.graphicsItems.PlotCurveItem</span> <span class="kn">import</span> <span class="n">PlotCurveItem</span>
 
 
-<div class="viewcode-block" id="HistogramItem"><a class="viewcode-back" href="../../../autodocs/pyporegui.graphicsItems.html#pyporegui.graphicsItems.HistogramItem.HistogramItem">[docs]</a><span class="k">class</span> <span class="nc">HistogramItem</span><span class="p">(</span><span class="n">PlotItem</span><span class="p">):</span>
+<div class="viewcode-block" id="HistogramItem"><a class="viewcode-back" href="../../../autodocs/pyporegui.graphicsItems.html#pyporegui.graphicsItems.histogram_item.HistogramItem">[docs]</a><span class="k">class</span> <span class="nc">HistogramItem</span><span class="p">(</span><span class="n">PlotItem</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rotate</span> <span class="o">=</span> <span class="bp">False</span>
@@ -105,7 +105,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">maximum_array</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_bins_array</span> <span class="o">=</span> <span class="p">[]</span>
 
-<div class="viewcode-block" id="HistogramItem.add_histogram"><a class="viewcode-back" href="../../../autodocs/pyporegui.graphicsItems.html#pyporegui.graphicsItems.HistogramItem.HistogramItem.add_histogram">[docs]</a>    <span class="k">def</span> <span class="nf">add_histogram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">n_bins</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="HistogramItem.add_histogram"><a class="viewcode-back" href="../../../autodocs/pyporegui.graphicsItems.html#pyporegui.graphicsItems.histogram_item.HistogramItem.add_histogram">[docs]</a>    <span class="k">def</span> <span class="nf">add_histogram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">n_bins</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adds a histogram to the plot.</span>
 
@@ -173,7 +173,7 @@
                 <span class="n">x</span> <span class="o">*=</span> <span class="o">-</span><span class="mf">1.</span>
             <span class="n">item</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 
-<div class="viewcode-block" id="HistogramItem.remove_item_at"><a class="viewcode-back" href="../../../autodocs/pyporegui.graphicsItems.html#pyporegui.graphicsItems.HistogramItem.HistogramItem.remove_item_at">[docs]</a>    <span class="k">def</span> <span class="nf">remove_item_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="HistogramItem.remove_item_at"><a class="viewcode-back" href="../../../autodocs/pyporegui.graphicsItems.html#pyporegui.graphicsItems.histogram_item.HistogramItem.remove_item_at">[docs]</a>    <span class="k">def</span> <span class="nf">remove_item_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Removes the histogram item at index.</span>
 

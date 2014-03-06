@@ -13,7 +13,7 @@ Contents:
 
    introduction
    installation
-   API Documentation <api>
+   API Documentation <autodocs/modules>
 
 
 Indices and tables

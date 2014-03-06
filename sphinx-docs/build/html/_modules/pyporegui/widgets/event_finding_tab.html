@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyporegui.widgets.EventFindingTab &mdash; pypore 0.0.1 documentation</title>
+    <title>pyporegui.widgets.event_finding_tab &mdash; pypore 0.0.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/architect.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -77,25 +77,25 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <h1>Source code for pyporegui.widgets.EventFindingTab</h1><div class="highlight"><pre>
+  <h1>Source code for pyporegui.widgets.event_finding_tab</h1><div class="highlight"><pre>
 <span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span>
 <span class="kn">import</span> <span class="nn">pyqtgraph</span> <span class="kn">as</span> <span class="nn">pg</span>
 <span class="kn">from</span> <span class="nn">pyqtgraph.widgets.LayoutWidget</span> <span class="kn">import</span> <span class="n">LayoutWidget</span>
 
-<span class="kn">from</span> <span class="nn">pypore.dataFileOpener</span> <span class="kn">import</span> <span class="n">prepare_data_file</span>
-<span class="kn">from</span> <span class="nn">pyporegui._ThreadManager</span> <span class="kn">import</span> <span class="n">_ThreadManager</span>
-<span class="kn">from</span> <span class="nn">pyporegui.MyThreads</span> <span class="kn">import</span> <span class="n">AnalyzeDataThread</span><span class="p">,</span> <span class="n">PlotThread</span>
-<span class="kn">from</span> <span class="nn">pyporegui.graphicsItems.MyPlotItem</span> <span class="kn">import</span> <span class="n">MyPlotItem</span>
-<span class="kn">from</span> <span class="nn">pyporegui.FileItems</span> <span class="kn">import</span> <span class="n">DataFileListItem</span>
-<span class="kn">from</span> <span class="nn">pyporegui.widgets.PlotToolBar</span> <span class="kn">import</span> <span class="n">PlotToolBar</span>
+<span class="kn">from</span> <span class="nn">pypore.data_file_opener</span> <span class="kn">import</span> <span class="n">prepare_data_file</span>
+<span class="kn">from</span> <span class="nn">pyporegui._thread_manager</span> <span class="kn">import</span> <span class="n">_ThreadManager</span>
+<span class="kn">from</span> <span class="nn">pyporegui.my_threads</span> <span class="kn">import</span> <span class="n">AnalyzeDataThread</span><span class="p">,</span> <span class="n">PlotThread</span>
+<span class="kn">from</span> <span class="nn">pyporegui.graphicsItems.my_plot_item</span> <span class="kn">import</span> <span class="n">MyPlotItem</span>
+<span class="kn">from</span> <span class="nn">pyporegui.file_items</span> <span class="kn">import</span> <span class="n">DataFileListItem</span>
+<span class="kn">from</span> <span class="nn">pyporegui.widgets.plot_tool_bar</span> <span class="kn">import</span> <span class="n">PlotToolBar</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;EventFindingTab&#39;</span><span class="p">]</span>
 
 
 <span class="c"># Note _ThreadManager must go first, otherwise its __init__ is never called</span>
-<div class="viewcode-block" id="EventFindingTab"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.EventFindingTab.EventFindingTab">[docs]</a><span class="k">class</span> <span class="nc">EventFindingTab</span><span class="p">(</span><span class="n">_ThreadManager</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QSplitter</span><span class="p">):</span>
+<div class="viewcode-block" id="EventFindingTab"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.event_finding_tab.EventFindingTab">[docs]</a><span class="k">class</span> <span class="nc">EventFindingTab</span><span class="p">(</span><span class="n">_ThreadManager</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QSplitter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A QtGui.QSplitter that contains event finding options on the left and a plot on the right.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -132,20 +132,24 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">scroll_options</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">scroll_plots</span><span class="p">)</span>
 
-<div class="viewcode-block" id="EventFindingTab.get_current_analysis_parameters"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.EventFindingTab.EventFindingTab.get_current_analysis_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">get_current_analysis_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EventFindingTab.get_current_analysis_parameters"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.event_finding_tab.EventFindingTab.get_current_analysis_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">get_current_analysis_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reads the current analysis parameters from the gui and returns the results in a dictionary. Returns</span>
 <span class="sd">        dictionary entry &#39;error&#39; with text of the error if one exists.</span>
 
 <span class="sd">        :returns: DictType -- the event analysis parameters. These include:</span>
-<span class="sd">                -- &#39;error&#39; - Text if there was an error</span>
-<span class="sd">                OR</span>
-<span class="sd">                -- &#39;min_event_length&#39;</span>
-<span class="sd">                -- &#39;max_event_length&#39;</span>
-<span class="sd">                -- &#39;baseline_type&#39;</span>
-<span class="sd">                -- &#39;filter_parameter&#39;</span>
-<span class="sd">                -- &#39;baseline_current&#39;</span>
-<span class="sd">                etc...</span>
+
+<span class="sd">            - &#39;error&#39; - Text if there was an error</span>
+
+<span class="sd">            OR</span>
+
+<span class="sd">            - &#39;min_event_length&#39;</span>
+<span class="sd">            - &#39;max_event_length&#39;</span>
+<span class="sd">            - &#39;baseline_type&#39;</span>
+<span class="sd">            - &#39;filter_parameter&#39;</span>
+<span class="sd">            - &#39;baseline_current&#39;</span>
+
+<span class="sd">            etc...</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c"># Get Min_event length in microseconds</span>
@@ -209,7 +213,7 @@
 
         <span class="k">return</span> <span class="n">parameters</span>
 </div>
-<div class="viewcode-block" id="EventFindingTab.open_files"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.EventFindingTab.EventFindingTab.open_files">[docs]</a>    <span class="k">def</span> <span class="nf">open_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_names</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="EventFindingTab.open_files"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.event_finding_tab.EventFindingTab.open_files">[docs]</a>    <span class="k">def</span> <span class="nf">open_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_names</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Analyzes the files for correctness, then adds them to the list widget.</span>
 
@@ -245,7 +249,7 @@
         <span class="k">if</span> <span class="n">are_files_opened</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">analyze_button</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="EventFindingTab.plot_data"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.EventFindingTab.EventFindingTab.plot_data">[docs]</a>    <span class="k">def</span> <span class="nf">plot_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot_options</span><span class="p">):</span>
+<div class="viewcode-block" id="EventFindingTab.plot_data"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.event_finding_tab.EventFindingTab.plot_data">[docs]</a>    <span class="k">def</span> <span class="nf">plot_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot_options</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plots waveform in datadict.</span>
 <span class="sd">        :param DictType plot_options: Dictionary of plot options. Must contain:</span>
@@ -277,7 +281,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_events_callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">process_events_callback</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="EventFindingTab.set_process_events_callback"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.EventFindingTab.EventFindingTab.set_process_events_callback">[docs]</a>    <span class="k">def</span> <span class="nf">set_process_events_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+<div class="viewcode-block" id="EventFindingTab.set_process_events_callback"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.event_finding_tab.EventFindingTab.set_process_events_callback">[docs]</a>    <span class="k">def</span> <span class="nf">set_process_events_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sets a callback for when the EventFindingTab requests app.processEvents</span>
 
@@ -285,7 +289,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">process_events_callback</span> <span class="o">=</span> <span class="n">callback</span>
 </div>
-<div class="viewcode-block" id="EventFindingTab.set_on_status_update_callback"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.EventFindingTab.EventFindingTab.set_on_status_update_callback">[docs]</a>    <span class="k">def</span> <span class="nf">set_on_status_update_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+<div class="viewcode-block" id="EventFindingTab.set_on_status_update_callback"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.event_finding_tab.EventFindingTab.set_on_status_update_callback">[docs]</a>    <span class="k">def</span> <span class="nf">set_on_status_update_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sets a callback for when the EventFinderTab&#39;s status is updated. The status is a String of information</span>
 <span class="sd">        about the current state of the EventFinderTab.</span>
