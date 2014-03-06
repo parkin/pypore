@@ -58,14 +58,18 @@ class EventFindingTab(_ThreadManager, QtGui.QSplitter):
         dictionary entry 'error' with text of the error if one exists.
 
         :returns: DictType -- the event analysis parameters. These include:
-                -- 'error' - Text if there was an error
-                OR
-                -- 'min_event_length'
-                -- 'max_event_length'
-                -- 'baseline_type'
-                -- 'filter_parameter'
-                -- 'baseline_current'
-                etc...
+
+            - 'error' - Text if there was an error
+
+            OR
+
+            - 'min_event_length'
+            - 'max_event_length'
+            - 'baseline_type'
+            - 'filter_parameter'
+            - 'baseline_current'
+
+            etc...
         """
         parameters = {}
         # Get Min_event length in microseconds

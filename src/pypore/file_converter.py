@@ -41,10 +41,19 @@ def convert_file(filename, output_filename=None):
     return output_filename
 
 
-def filter_file(filename, filter_frequency, output_file_name=None):
+def filter_file(filename, filter_frequency, output_filename=None):
     """
-    Filters the data.
+    Reads data from the filename file and uses a Butterworth low-pass filter with cutoff at filter_frequency. Outputs
+    the filtered waveform to a new file.
+
+    :param StringType filename: Filename containing data to be filtered.
+    :param DoubleType filter_frequency: Cutoff frequency for the low-pass Butterworth filter.
+    :param StringType output_filename: (Optional) Filename for the filtered data. If not specified,
+        for an example filename='test.mat', the default output_filename would be 'test_filtered.h5'
+    :returns: StringType -- The output filename of the filtered data.
+
     Usage:
+
     >>> import pypore.file_converter as fC
     >>> fC.filter_file("filename", 1.e4, "output.h5") // filter at 10kHz
     """
@@ -55,10 +64,10 @@ def filter_file(filename, filter_frequency, output_file_name=None):
     sample_rate = specs['sample_rate']
     n_points = len(data)
     
-    if output_file_name is None:
-        output_file_name = filename.split('.')[0] + '.h5'
+    if output_filename is None:
+        output_filename = filename.split('.')[0] + '_filtered.h5'
     
-    save_file = data_file.open_file(output_file_name, mode='w', sampleRate=sample_rate, nPoints=n_points)
+    save_file = data_file.open_file(output_filename, mode='w', sampleRate=sample_rate, nPoints=n_points)
 
     # wn is a fraction of the Nyquist frequency (half the sampling frequency).
     wn = filter_frequency / (0.5 * sample_rate)
@@ -69,4 +78,4 @@ def filter_file(filename, filter_frequency, output_file_name=None):
     
     save_file.flush()
     save_file.close()
-    return output_file_name
+    return output_filename
