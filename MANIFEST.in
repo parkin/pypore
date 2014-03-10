@@ -1,0 +1,1 @@
+recursive-include src *.py *.pyx *.c *.h *.log
