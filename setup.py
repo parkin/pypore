@@ -1,8 +1,24 @@
-
+#!/usr/bin/env python
 # NOTE THIS IS THE INITIAL COMMIT. THIS WILL NOT WORK.
 
-import sys, getopt
-from distutils.core import setup, Extension
+import sys
+import getopt
+from distutils.core import setup
+from distutils.extension import Extension
+import numpy
+
+CLASSIFIERS = """\
+Development Status :: 2 - Pre-Alpha
+Intended Audience :: Science/Research
+License :: OSI Approved :: Apache Software License
+Programming Language :: Python
+Programming Language :: Python :: 2.7
+Topic :: Scientific/Engineering
+Operating System :: Microsoft :: Windows
+Operating System :: POSIX
+Operating System :: Unix
+Operating System :: MacOS
+"""
 
 # get command line arguments
 argv = sys.argv[1:]
@@ -22,21 +38,42 @@ except getopt.GetoptError:
 # Set up the .c or .pyx (Cython) extensions
 ext = '.pyx' if USE_CYTHON else '.c'
 
-extensions = [Extension('*', '*' + ext)]
+extensions = []
+if USE_CYTHON:
+    extensions += [Extension('pypore.data_file_opener', ['pypore.data_file_opener.pyx']),
+                   Extension('pypore.event_finder', ['pypore.event_finder.pyx'])]
+else:
+    extensions += [Extension('pypore.data_file_opener', ['src/pypore/.pyxbld/temp.linux-x86_64-2.7/pyrex/pypore/data_file_opener.c']),
+                   Extension('pypore.event_finder', ['src/pypore/.pyxbld/temp.linux-x86_64-2.7/pyrex/pypore/event_finder.c'])]
 
 # Cythonize .pyx extensions if needed
 if USE_CYTHON:
     from Cython.Build import cythonize
+
     extensions = cythonize(extensions)
+
+packages = ['pypore', 'pypore.filetypes', 'pypore.filetypes.tests', 'pypore.tests']
+packages += ['pyporegui', 'pyporegui.graphicsItems', 'pyporegui.graphicsItems.tests', 'pyporegui.tests',
+             'pyporegui.widgets', 'pyporegui.widgets.tests']
 
 setup(
     name='pypore',
+    version='0.0.1-dev',
     description='Pythonic/Cythonic Nanopore Translocation Analysis',
     author='Will Parkin',
     author_email='wmparkin@gmail.com',
     url='http://parkin1.github.io/pypore/',
     package_dir={'': 'src'},
+    packages=packages,
     requires=['numpy', 'scipy', 'tables', 'PySide', 'pyqtgraph'],
-    #ext_modules = cythonize(extensions), requires=['PySide']
-
+    include_dirs=[numpy.get_include()],
+    ext_modules=extensions,
 )
+
+
+def setup_package():
+    pass
+
+
+if __name__ == '__main__':
+    setup_package()
