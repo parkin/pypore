@@ -1,1 +1,2 @@
 recursive-include src *.py *.pyx *.c *.h *.log
+recursive-include src/pypore/tests/testDataFiles *
