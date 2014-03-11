@@ -13,12 +13,16 @@ Intended Audience :: Science/Research
 License :: OSI Approved :: Apache Software License
 Programming Language :: Python
 Programming Language :: Python :: 2.7
+Programming Language :: Cython
 Topic :: Scientific/Engineering
 Operating System :: Microsoft :: Windows
 Operating System :: POSIX
 Operating System :: Unix
 Operating System :: MacOS
 """
+
+with open('README.rst') as file:
+    long_description = file.read()
 
 # get command line arguments
 argv = sys.argv[1:]
@@ -43,8 +47,10 @@ if USE_CYTHON:
     extensions += [Extension('pypore.data_file_opener', ['pypore.data_file_opener.pyx']),
                    Extension('pypore.event_finder', ['pypore.event_finder.pyx'])]
 else:
-    extensions += [Extension('pypore.data_file_opener', ['src/pypore/.pyxbld/temp.linux-x86_64-2.7/pyrex/pypore/data_file_opener.c']),
-                   Extension('pypore.event_finder', ['src/pypore/.pyxbld/temp.linux-x86_64-2.7/pyrex/pypore/event_finder.c'])]
+    extensions += [Extension('pypore.data_file_opener',
+                             ['src/pypore/.pyxbld/temp.linux-x86_64-2.7/pyrex/pypore/data_file_opener.c']),
+                   Extension('pypore.event_finder',
+                             ['src/pypore/.pyxbld/temp.linux-x86_64-2.7/pyrex/pypore/event_finder.c'])]
 
 # Cythonize .pyx extensions if needed
 if USE_CYTHON:
@@ -58,8 +64,9 @@ packages += ['pyporegui', 'pyporegui.graphicsItems', 'pyporegui.graphicsItems.te
 
 setup(
     name='pypore',
-    version='0.0.1-dev',
+    version='0.0.1-dev-1',
     description='Pythonic/Cythonic Nanopore Translocation Analysis',
+    long_description=long_description,
     author='Will Parkin',
     author_email='wmparkin@gmail.com',
     url='http://parkin1.github.io/pypore/',
