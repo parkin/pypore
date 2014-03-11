@@ -9,3 +9,6 @@ More information can be found `here <http://parkin1.github.io/pypore>`_.
 
 Note that Pypore/PyporeGui are pre-alpha, major changes can happen at any time.
 
+Pull requests are `welcome! <https://github.com/parkin1/pypore>`_
+
+
