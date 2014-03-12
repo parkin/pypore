@@ -29,18 +29,15 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
         plots = self._create_event_viewer_plot_widget()
 
         # Put everything in filter_parameter scroll area
-        scroll_options = QtGui.QScrollArea()
         scroll_plots = QtGui.QScrollArea()
-        scroll_options.setWidgetResizable(True)
         scroll_plots.setWidgetResizable(True)
 
-        scroll_options.setWidget(options)
         scroll_plots.setWidget(plots)
 
-        self.addWidget(scroll_options)
+        self.addWidget(options)
         self.addWidget(scroll_plots)
 
-    def open_event_database(self, file_names=None):
+    def open_event_databases(self, file_names=None):
         """
         Adds the files to the list widget.
 

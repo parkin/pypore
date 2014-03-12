@@ -18,7 +18,7 @@ class EventAnalysisTab(_ThreadManager, QtGui.QSplitter):
         self._parent = parent
 
         options = self._create_event_analysis_options()
-        self.eventAnalysisWidget = EventAnalysisPlotWidget()
+        self.event_analysis_widget = EventAnalysisPlotWidget()
 
         # Put everything in filter_parameter scroll area
         scroll_options = QtGui.QScrollArea()
@@ -27,7 +27,7 @@ class EventAnalysisTab(_ThreadManager, QtGui.QSplitter):
         scroll_plots.setWidgetResizable(True)
 
         scroll_options.setWidget(options)
-        scroll_plots.setWidget(self.eventAnalysisWidget)
+        scroll_plots.setWidget(self.event_analysis_widget)
 
         self.addWidget(scroll_options)
         self.addWidget(scroll_plots)
@@ -53,15 +53,15 @@ class EventAnalysisTab(_ThreadManager, QtGui.QSplitter):
             file_names.append(item.get_file_name())
 
         item = FilterListItem(file_names, **params)
-        self.listFilterWidget.addItem(item)
+        self.list_filter_widget.addItem(item)
 
-        self.eventAnalysisWidget.add_selections(file_names, params)
+        self.event_analysis_widget.add_selections(file_names, params)
 
     def _get_current_event_analysis_params(self):
         params = {'color': self.event_color}
         return params
 
-    def open_event_database(self, file_names=None):
+    def open_event_databases(self, file_names=None):
         """
         Adds the files to the list widget.
 
@@ -80,17 +80,17 @@ class EventAnalysisTab(_ThreadManager, QtGui.QSplitter):
             self.list_event_widget.addItem(item)
 
     def remove_filter_clicked(self):
-        items = self.listFilterWidget.selectedItems()
+        items = self.list_filter_widget.selectedItems()
         for item in items:
-            index = self.listFilterWidget.indexFromItem(item).row()
-            self.eventAnalysisWidget.removeFilter(index)
-            self.listFilterWidget.takeItem(index)
+            index = self.list_filter_widget.indexFromItem(item).row()
+            self.event_analysis_widget.removeFilter(index)
+            self.list_filter_widget.takeItem(index)
 
     def _on_event_file_selection_changed(self):
         """
         Called when the user clicks a new file in the file list.
         """
-        self.btnAddFilter.setEnabled(True)
+        self.btn_add_filter.setEnabled(True)
 
     def _create_event_analysis_options(self):
         """
@@ -101,7 +101,6 @@ class EventAnalysisTab(_ThreadManager, QtGui.QSplitter):
 
         # Create filter_parameter list for files want to analyze
         self.list_event_widget = QtGui.QListWidget()
-        #         self.listEventWidget.itemDoubleClicked.connect(self._on_file_item_doubleclick)
         self.list_event_widget.setMaximumHeight(100)
         self.list_event_widget.itemSelectionChanged.connect(self._on_event_file_selection_changed)
         self.list_event_widget.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
@@ -124,15 +123,15 @@ class EventAnalysisTab(_ThreadManager, QtGui.QSplitter):
         files_options.addRow(pick_color_btn, self.frm)
 
         # # List of filters created
-        self.btnAddFilter = QtGui.QPushButton('Add selections as filter')
-        self.btnAddFilter.clicked.connect(self.add_filter_clicked)
-        self.btnAddFilter.setEnabled(False)
-        formFilter = QtGui.QFormLayout()
-        formFilter.addRow('Filters:', self.btnAddFilter)
-        self.listFilterWidget = QtGui.QListWidget()
+        self.btn_add_filter = QtGui.QPushButton('Add selections as filter')
+        self.btn_add_filter.clicked.connect(self.add_filter_clicked)
+        self.btn_add_filter.setEnabled(False)
+        form_filter = QtGui.QFormLayout()
+        form_filter.addRow('Filters:', self.btn_add_filter)
+        self.list_filter_widget = QtGui.QListWidget()
         vbox = QtGui.QVBoxLayout()
-        vbox.addLayout(formFilter)
-        vbox.addWidget(self.listFilterWidget)
+        vbox.addLayout(form_filter)
+        vbox.addWidget(self.list_filter_widget)
         btn_remove_filter = QtGui.QPushButton('Remove selected filters')
         btn_remove_filter.clicked.connect(self.remove_filter_clicked)
         vbox.addWidget(btn_remove_filter)

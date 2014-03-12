@@ -24,7 +24,8 @@ def _long_imports(**kwargs):
         sys.path.append(src_dir)
 
     global AnalyzeDataThread, PlotThread, pg, pgc, LayoutWidget, linspace, np, \
-        EventAnalysisWidget, ed, EventFindingTab, EventViewingTab, EventAnalysisTab
+        EventAnalysisWidget, ed, EventFindingTab, EventViewingTab, EventAnalysisTab, \
+        FileViewerTab
 
     update_splash = False
     if 'splash' in kwargs and 'app' in kwargs:
@@ -61,6 +62,7 @@ def _long_imports(**kwargs):
     from widgets.event_viewing_tab import EventViewingTab
     from widgets.event_analysis_tab import EventAnalysisTab
     from widgets.event_finding_tab import EventFindingTab
+    from widgets.file_viewer_tab import FileViewerTab
 
     if update_splash:
         splash.showMessage("Compiling Cython imports... EventFinder", alignment=QtCore.Qt.AlignBottom)
@@ -91,8 +93,9 @@ class MyMainWindow(QtGui.QMainWindow):
         self._create_menu()
         self._create_main_frame()
         self._create_status_bar()
+        self._on_current_tab_changed(0)
 
-    def open_files(self):
+    def open_data_files(self):
         """
         Opens file dialog box, adds names of files to open to list
         """
@@ -105,17 +108,16 @@ class MyMainWindow(QtGui.QMainWindow):
                                                         "Chimera files *.log(*.log);;"
                                                         "Gabys files *.mat(*.mat)")[0]
         if len(file_names) > 0:
-            self.event_finding_tab.open_files(file_names)
+            self.main_tabwig.currentWidget().open_data_files(file_names)
 
-    def open_event_database(self):
+    def open_event_databases(self):
         """
         Opens file dialog box, add names of event database files to open list
         """
         file_names = QtGui.QFileDialog.getOpenFileNames(self, 'Open event database', self.open_dir, '*.h5')[0]
 
         if len(file_names) > 0:
-            self.event_viewer_tab.open_event_database(file_names)
-            self.event_analysis_tab.open_event_database(file_names)
+            self.main_tabwig.currentWidget().open_event_databases(file_names)
 
     def set_status(self, text):
         """
@@ -132,20 +134,25 @@ class MyMainWindow(QtGui.QMainWindow):
         """
         Helper to initialize the main gui frame.
         """
-        self.event_finding_tab = EventFindingTab(self)
-        self.event_finding_tab.set_on_status_update_callback(self.set_status)
-        self.event_finding_tab.set_process_events_callback(self._process_events)
+        file_viewer_tab = FileViewerTab(self)
 
-        self.event_viewer_tab = EventViewingTab(self)
+        event_finding_tab = EventFindingTab(self)
+        event_finding_tab.set_on_status_update_callback(self.set_status)
+        event_finding_tab.set_process_events_callback(self._process_events)
 
-        self.event_analysis_tab = EventAnalysisTab(self)
+        event_viewer_tab = EventViewingTab(self)
+
+        event_analysis_tab = EventAnalysisTab(self)
 
         # Layout holding everything        
         self.main_tabwig = QtGui.QTabWidget()
-        self.main_tabwig.addTab(self.event_finding_tab, 'Event Finding')
-        self.main_tabwig.addTab(self.event_viewer_tab, 'Event View')
-        self.main_tabwig.addTab(self.event_analysis_tab, 'Event Analysis')
+        self.main_tabwig.addTab(file_viewer_tab, 'File Viewer')
+        self.main_tabwig.addTab(event_finding_tab, 'Event Finding')
+        self.main_tabwig.addTab(event_viewer_tab, 'Event View')
+        self.main_tabwig.addTab(event_analysis_tab, 'Event Analysis')
         self.main_tabwig.setMinimumSize(1000, 550)
+
+        self.main_tabwig.currentChanged.connect(self._on_current_tab_changed)
 
         text = """*********************
 Welcome to pyporegui!
@@ -163,7 +170,7 @@ The current namespace should include:
     currentPlot -  Top plot in the event finding tab.
 *********************"""
 
-        namespace = {'np': np, 'pg': pg, 'ed': ed, 'currentPlot': self.event_finding_tab.plot_widget}
+        namespace = {'np': np, 'pg': pg, 'ed': ed, 'currentPlot': event_finding_tab.plot_widget}
         self.console = pgc.ConsoleWidget(namespace=namespace, text=text)
 
         frame = QtGui.QSplitter()
@@ -172,6 +179,20 @@ The current namespace should include:
         frame.addWidget(self.console)
 
         self.setCentralWidget(frame)
+
+    def _on_current_tab_changed(self, index):
+        """
+        Callback for when the user changes the current tab to index position.
+        """
+        wig = self.main_tabwig.widget(index)
+        # first disable all of the tab-dependent actions
+        for action in self.open_menu.actions():
+            action.setEnabled(False)
+        # Then add actions that this widget requests.
+        if hasattr(wig, 'open_data_files'):
+            self.load_data_file_action.setEnabled(True)
+        if hasattr(wig, 'open_event_databases'):
+            self.load_events_database_action.setEnabled(True)
 
     def _create_status_bar(self):
         """
@@ -186,17 +207,23 @@ The current namespace should include:
         """
         self.file_menu = self.menuBar().addMenu("&File")
 
-        load_data_file_action = self.create_action("&Open Data File",
-                                                   shortcut="Ctrl+O", slot=self.open_files,
-                                                   tip="Open data Files")
-        load_events_database_action = self.create_action("&Open Events Database",
-                                                         shortcut="Ctrl+E", slot=self.open_event_database,
-                                                         tip="Open Events Database")
+        self.open_menu = self.file_menu.addMenu("&Open")
+
+        self.load_data_file_action = self.create_action("&Open Data File",
+                                                        shortcut="Ctrl+O", slot=self.open_data_files,
+                                                        tip="Open data Files")
+        self.load_data_file_action.setEnabled(False)
+        self.load_events_database_action = self.create_action("&Open Events Database",
+                                                              shortcut="Ctrl+E", slot=self.open_event_databases,
+                                                              tip="Open Events Database")
+        self.load_events_database_action.setEnabled(False)
         quit_action = self.create_action("&Quit", slot=self.close,
                                          shortcut="Ctrl+Q", tip="Close the application")
 
+        self.add_actions(self.open_menu, (self.load_data_file_action, self.load_events_database_action))
+
         self.add_actions(self.file_menu,
-                         (load_data_file_action, load_events_database_action, None, quit_action))
+                         (None, quit_action))
 
     #         self.help_menu = self.menuBar().addMenu("&Help")
     #         about_action = self.create_action("&About",
@@ -205,8 +232,8 @@ The current namespace should include:
     #
     #         self.add_actions(self.help_menu, (about_action,))
 
-    @classmethod
-    def add_actions(cls, target, actions):
+    @staticmethod
+    def add_actions(target, actions):
         for action in actions:
             if action is None:
                 target.addSeparator()
@@ -237,7 +264,7 @@ The current namespace should include:
     def clean_threads(self):
         for w in self.thread_pool:
             w.cancel()
-            #             w.wait()
+            # w.wait()
             self.thread_pool.remove(w)
 
 

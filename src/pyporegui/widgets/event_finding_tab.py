@@ -3,19 +3,18 @@ from numpy import linspace
 import pyqtgraph as pg
 from pyqtgraph.widgets.LayoutWidget import LayoutWidget
 
-from pypore.data_file_opener import prepare_data_file
-from pyporegui._thread_manager import _ThreadManager
 from pyporegui.my_threads import AnalyzeDataThread, PlotThread
 from pyporegui.graphicsItems.my_plot_item import MyPlotItem
-from pyporegui.file_items import DataFileListItem
 from pyporegui.widgets.plot_tool_bar import PlotToolBar
+
+from base_tabs import BaseQSplitterDataFile
 
 
 __all__ = ['EventFindingTab']
 
 
 # Note _ThreadManager must go first, otherwise its __init__ is never called
-class EventFindingTab(_ThreadManager, QtGui.QSplitter):
+class EventFindingTab(BaseQSplitterDataFile):
     """
     A QtGui.QSplitter that contains event finding options on the left and a plot on the right.
     """
@@ -24,33 +23,12 @@ class EventFindingTab(_ThreadManager, QtGui.QSplitter):
         """
         :param PySide.QtGui.QMainWindow parent: Parent main window (optional).
         """
-        super(EventFindingTab, self).__init__(parent)
-
         # Define the instance elements
         self.events = []  # holds the events from the most recent analysis run
-
-        self.on_status_update_callback = None
-        self.process_events_callback = None
         self.plot_widget = None
         self.p1 = None
         self.plot_tool_bar = None
-
-        # Set up the widgets
-
-        options = self._create_event_finding_options()
-        plots = self._create_event_finder_plots_widget(parent)
-
-        # Put everything in filter_parameter scroll area
-        scroll_options = QtGui.QScrollArea()
-        scroll_plots = QtGui.QScrollArea()
-        scroll_options.setWidgetResizable(True)
-        scroll_plots.setWidgetResizable(True)
-
-        scroll_options.setWidget(options)
-        scroll_plots.setWidget(plots)
-
-        self.addWidget(scroll_options)
-        self.addWidget(scroll_plots)
+        super(EventFindingTab, self).__init__(parent)
 
     def get_current_analysis_parameters(self):
         """
@@ -133,42 +111,6 @@ class EventFindingTab(_ThreadManager, QtGui.QSplitter):
 
         return parameters
 
-    def open_files(self, file_names=None):
-        """
-        Analyzes the files for correctness, then adds them to the list widget.
-
-        :param ListType<StringType> file_names: The file names to be included in the list widget. If not included,
-                                                this function will use a QtGui.QFileDialog.getOpenFileNames to open
-                                                files.
-        """
-        if file_names is None:
-            file_names = QtGui.QFileDialog.getOpenFileNames(self,
-                                                            'Open data file',
-                                                            '.',
-                                                            "All types(*.h5 *.hkd *.log *.mat);;"
-                                                            "Pypore data files *.h5(*.h5);;"
-                                                            "Heka files *.hkd(*.hkd);;"
-                                                            "Chimera files *.log(*.log);;Gabys files *.mat(*.mat)")[0]
-        if len(file_names) > 0:
-            self.list_widget.clear()
-        else:
-            return
-        are_files_opened = False
-        open_dir = None
-        for w in file_names:
-            f, params = prepare_data_file(w)
-            if 'error' in params:
-                self.status_text.setText(params['error'])
-            else:
-                are_files_opened = True
-                f.close()
-                item = DataFileListItem(w, params)
-                open_dir = item.get_directory()
-                self.list_widget.addItem(item)
-
-        if are_files_opened:
-            self.analyze_button.setEnabled(False)
-
     def plot_data(self, plot_options):
         """
         Plots waveform in datadict.
@@ -198,33 +140,7 @@ class EventFindingTab(_ThreadManager, QtGui.QSplitter):
         self.plot_widget.clear_event_items()
         self.p1.setData(x=times, y=y_data)
         self.plot_widget.autoRange()
-        if self.process_events_callback is not None:
-            self.process_events_callback()
-
-    def set_process_events_callback(self, callback):
-        """
-        Sets a callback for when the EventFindingTab requests app.processEvents
-
-        :param MethodType callback:
-        """
-        self.process_events_callback = callback
-
-    def set_on_status_update_callback(self, callback):
-        """
-        Sets a callback for when the EventFinderTab's status is updated. The status is a String of information
-        about the current state of the EventFinderTab.
-
-        :param MethodType callback: Callback method for when the EventFinderTab's status is updated.
-                                    This callback must accept one string parameter.
-        """
-        self.on_status_update_callback = callback
-
-    def _dispatch_status_update(self, text):
-        """
-        Dispatches text to the on_status_update_callback if the on_status_update_callback is not None.
-        """
-        if self.on_status_update_callback is not None:
-            self.on_status_update_callback(text)
+        self._dispatch_process_events()
 
     def _analyze_data_thread_callback(self, results):
         """
@@ -249,7 +165,7 @@ class EventFindingTab(_ThreadManager, QtGui.QSplitter):
                 self.addEventsToConcatEventPlot(events)
             if single_plot:
                 self.event_display_edit.setText('1')
-            self.app.processEvents()
+            self._dispatch_process_events()
             self.analyzethread.readyForEvents = True
         if 'done' in results:
             if results['done']:
@@ -259,7 +175,7 @@ class EventFindingTab(_ThreadManager, QtGui.QSplitter):
         """
         Searches for events in the file that is currently highlighted in the files list.
         """
-        selected_items = self.list_widget.selectedItems()
+        selected_items = self.file_list_widget.selectedItems()
         if len(selected_items) > 0:
             curr_item = selected_items[0]
         else:
@@ -267,7 +183,7 @@ class EventFindingTab(_ThreadManager, QtGui.QSplitter):
 
         parameters = self.get_current_analysis_parameters()
         if 'error' in parameters:
-            self.status_text.setText(parameters['error'])
+            self._dispatch_status_update(parameters['error'])
             return
 
         # Clear the current events
@@ -276,8 +192,7 @@ class EventFindingTab(_ThreadManager, QtGui.QSplitter):
 
         file_names = [str(curr_item.get_file_name())]
 
-        if self.on_status_update_callback is not None:
-            self.on_status_update_callback("Event Count: 0 Percent Done: 0")
+        self._dispatch_status_update("Event Count: 0 Percent Done: 0")
 
         # Start analyzing data in new analyzethread.
         self.analyzethread = AnalyzeDataThread(file_names, parameters)
@@ -301,8 +216,7 @@ class EventFindingTab(_ThreadManager, QtGui.QSplitter):
         Starts the plotting thread, which opens the file, parses data, then passes to plotData
         """
         # adding by emitting signal in different thread
-        if self.on_status_update_callback is not None:
-            self.on_status_update_callback('Plotting...')
+        self._dispatch_status_update("Plotting...")
         decimates = self.plot_tool_bar.is_decimate_checked()
         thread = PlotThread(self.p1, filename=str(item.get_file_name()), decimate=decimates)
         thread.dataReady.connect(self._on_file_item_doubleclick_callback)
@@ -312,16 +226,16 @@ class EventFindingTab(_ThreadManager, QtGui.QSplitter):
     def _on_file_item_doubleclick_callback(self, results):
         if 'plot_options' in results:
             self.plot_data(results['plot_options'])
-        if 'status_text' in results and self.on_status_update_callback is not None:
-            self.on_status_update_callback(results['status_text'])
+        if 'status_text' in results:
+            self._dispatch_status_update(results['status_text'])
         if 'thread' in results:
             self.remove_thread(results['thread'])
 
     def _on_file_item_selection_changed(self):
         self.analyze_button.setEnabled(True)
 
-    def _create_event_finder_plots_widget(self, parent=None):
-        wig = pg.GraphicsLayoutWidget()
+    def _create_right_widget(self, parent=None):
+        wig = pg.GraphicsLayoutWidget(parent)
 
         # Main plot
         self.plot_widget = MyPlotItem(title='Current Trace', name='Plot')
@@ -340,18 +254,19 @@ class EventFindingTab(_ThreadManager, QtGui.QSplitter):
 
         return event_finder_plots_layout
 
-    def _create_event_finding_options(self):
+    def open_data_files(self, file_names=None):
+        are_files_opened = super(EventFindingTab, self).open_data_files(file_names)
+        if are_files_opened:
+            self.analyze_button.setEnabled(False)
+
+    def _create_left_widget(self, parent=None):
         """
         Initializes everything in the options pane on the left side of the splitter.
         """
         scroll_area = QtGui.QScrollArea()
         scroll_area.setWidgetResizable(True)
 
-        # Create filter_parameter list for files want to analyze
-        self.list_widget = QtGui.QListWidget()
-        self.list_widget.itemSelectionChanged.connect(self._on_file_item_selection_changed)
-        self.list_widget.itemDoubleClicked.connect(self._on_file_item_doubleclick)
-        self.list_widget.setMaximumHeight(100)
+        list_form_layout = super(EventFindingTab, self)._create_left_widget(parent)
 
         # Other GUI controls
         #
@@ -370,8 +285,8 @@ class EventFindingTab(_ThreadManager, QtGui.QSplitter):
         self.max_event_length_edit = QtGui.QLineEdit()
         self.max_event_length_edit.setText('1000.0')
         self.max_event_length_edit.setValidator(QtGui.QDoubleValidator(0, 1e12, 5, self.max_event_length_edit))
+
         fixed_analysis_options = QtGui.QFormLayout()
-        fixed_analysis_options.addRow('Data Files:', self.list_widget)
         fixed_analysis_options.addRow('Min Event Length [us]:', self.min_event_length_edit)
         fixed_analysis_options.addRow('Max Event Length [us]:', self.max_event_length_edit)
 
@@ -476,6 +391,7 @@ class EventFindingTab(_ThreadManager, QtGui.QSplitter):
 
         # Left vertical layout with settings
         vbox_left = QtGui.QVBoxLayout()
+        vbox_left.addLayout(list_form_layout)
         vbox_left.addLayout(fixed_analysis_options)
         vbox_left.addLayout(baseline_form)
         vbox_left.addLayout(baseline_options)

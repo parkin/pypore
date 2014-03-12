@@ -44,7 +44,7 @@ def convert_file(filename, output_filename=None):
 def filter_file(filename, filter_frequency, output_filename=None):
     """
     Reads data from the filename file and uses a Butterworth low-pass filter with cutoff at filter_frequency. Outputs
-    the filtered waveform to a new file.
+    the filtered waveform to a new :py:class:`pypore.filetypes.data_file.DataFile`.
 
     :param StringType filename: Filename containing data to be filtered.
     :param DoubleType filter_frequency: Cutoff frequency for the low-pass Butterworth filter.
