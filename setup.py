@@ -58,7 +58,8 @@ if USE_CYTHON:
 
     extensions = cythonize(extensions)
 
-packages = ['pypore', 'pypore.filetypes', 'pypore.filetypes.tests', 'pypore.tests']
+packages = ['pypore', 'pypore.filetypes', 'pypore.filetypes.tests', 'pypore.tests', 'pypore.filreaders',
+            'pypore.filereaders.tests', 'pypore.filetypes', 'pypore.strategies']
 packages += ['pyporegui', 'pyporegui.graphicsItems', 'pyporegui.graphicsItems.tests', 'pyporegui.tests',
              'pyporegui.widgets', 'pyporegui.widgets.tests']
 
