@@ -7,20 +7,18 @@ Created on Aug 19, 2013
 
 import os
 import time, datetime
-import numpy as np
 
+import numpy as np
 cimport numpy as np
+
 import filetypes.event_database as ed
-from pypore.data_file_opener import prepare_data_file, get_next_blocks
-from itertools import chain
 import sys
 
-from libc.math cimport sqrt, pow, fmax, fmin, fabs
+from libc.math cimport sqrt, pow, fmax, fabs
 from cpython cimport bool
 from pypore.filereaders import get_reader_from_filename
 
 from pypore.filereaders.abstract_reader cimport AbstractReader
-from pypore.filereaders.chimera_reader cimport ChimeraReader
 
 DTYPE = np.float
 ctypedef np.float_t DTYPE_t
