@@ -14,13 +14,7 @@ import pypore.filetypes.event_database as eD
 
 class TestEventFinder(unittest.TestCase):
     def setUp(self):
-        self.default_params = {'min_event_length': 10.,
-                               'max_event_length': 10000.,
-                               'threshold_direction': 'Negative',
-                               'filter_parameter': 0.93,
-                               'threshold_type': 'Noise Based',
-                               'start_stddev': 5.,
-                               'end_stddev': 1.}
+        pass
 
     def tearDown(self):
         pass
@@ -95,7 +89,7 @@ class TestEventFinder(unittest.TestCase):
         filename = os.path.dirname(os.path.realpath(__file__))
         filename = os.path.join(filename, 'testDataFiles', 'chimera_1event.log')
 
-        event_database = find_events([filename], save_file_name=['_testSavingFiles_9238.h5'])[0]
+        event_database = find_events([filename], save_file_names=['_testSavingFiles_9238.h5'])[0]
 
         self.assertTrue(os.path.isfile(event_database))
 
@@ -111,8 +105,7 @@ class TestEventFinder(unittest.TestCase):
     def test_chimera_no_noise_1event(self):
         filename = os.path.dirname(os.path.realpath(__file__))
         filename = os.path.join(filename, 'testDataFiles', 'chimera_nonoise_1event.log')
-        event_database = find_events([filename], save_file_name=['_testChimera_nonoise_1Event_9238.h5'],
-                                     **self.default_params)[0]
+        event_database = find_events([filename], save_file_names=['_testChimera_nonoise_1Event_9238.h5'])[0]
 
         h5file = eD.open_file(event_database, mode='r')
 
@@ -177,8 +170,7 @@ class TestEventFinder(unittest.TestCase):
     def test_chimera_no_noise_1event_2levels(self):
         filename = os.path.dirname(os.path.realpath(__file__))
         filename = os.path.join(filename, 'testDataFiles', 'chimera_nonoise_1event_2levels.log')
-        event_database = find_events([filename], save_file_name=['_testChimera_nonoise_1Event_2Levels_9238.h5'],
-                                     **self.default_params)[0]
+        event_database = find_events([filename], save_file_names=['_testChimera_nonoise_1Event_2Levels_9238.h5'])[0]
 
         h5file = eD.open_file(event_database, mode='r')
         self._test_chimera_no_noise_1event_2levels_helper(h5file)
@@ -230,8 +222,7 @@ class TestEventFinder(unittest.TestCase):
     def test_chimera_no_noise_2events_1levels(self):
         filename = os.path.dirname(os.path.realpath(__file__))
         filename = os.path.join(filename, 'testDataFiles', 'chimera_nonoise_2events_1levels.log')
-        event_databases = find_events([filename], save_file_name=['_testChimera_nonoise_2events_1levels_9238.h5'],
-                                      **self.default_params)
+        event_databases = find_events([filename], save_file_names=['_testChimera_nonoise_2events_1levels_9238.h5'])
 
         self.assertEqual(len(event_databases), 1)
 
@@ -251,8 +242,7 @@ class TestEventFinder(unittest.TestCase):
         filename2 = os.path.join(filename2, 'testDataFiles', 'chimera_nonoise_1event_2levels.log')
         file_names = [filename1, filename2]
         event_databases = find_events(file_names,
-                                      save_file_names=['_testMultipleFiles_1_9238.h5', '_testMultipleFiles_2_9238.h5'],
-                                      **self.default_params)
+                                      save_file_names=['_testMultipleFiles_1_9238.h5', '_testMultipleFiles_2_9238.h5'])
 
         self.assertEqual(len(event_databases), 2)
 
