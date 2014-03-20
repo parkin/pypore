@@ -17,6 +17,8 @@ import sys
 
 from libc.math cimport sqrt, pow, fmax, fmin, fabs
 from cpython cimport bool
+from pypore.filereaders import get_reader_from_filename
+
 from pypore.filereaders.abstract_reader cimport AbstractReader
 from pypore.filereaders.chimera_reader cimport ChimeraReader
 
@@ -640,7 +642,7 @@ def find_events(files, pipe=None, h5file=None, save_file_names=None, params=Para
     :param h5file: (Optional) An already opened :py:class:`pypore.filetypes.event_database.EventDatabase`. \
         If left out, a new EventDatabase will be created.
     :param [string] save_file_names: List of names for the output files.
-    :param params: Dictionary of event finding parameters.
+    :param params: :py:class:`Parameters` for event finding.
     :returns: List of String file names of the created EventDatabases.
 
     >>> file_names = ['tests/testDataFiles/chimera_1event.log']
@@ -656,8 +658,7 @@ def find_events(files, pipe=None, h5file=None, save_file_names=None, params=Para
             save_file_name = save_file_names[i]
         if not isinstance(reader, AbstractReader):
             # If not already a reader, assume it is a string filename and create a reader.
-            # TODO Change this default, guess the correct reader based on file extension.
-            reader = ChimeraReader(reader)
+            reader = get_reader_from_filename(reader)
         database_filename = _lazy_load_find_events(reader, params, pipe, h5file, save_file_name)
         print database_filename
         if database_filename is not None:
