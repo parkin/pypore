@@ -67,7 +67,7 @@ cdef class ChimeraReader(AbstractReader):
     cpdef close(self):
         self.datafile.close()
 
-    cpdef get_all_data(self, bool decimate):
+    cpdef get_all_data(self, bool decimate=False):
         """
         Reads files created by the Chimera acquisition software.  It requires a
         filename.log file with the data, and a filename.mat file containing the

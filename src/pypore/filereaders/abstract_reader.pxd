@@ -18,7 +18,7 @@ cdef class AbstractReader:
 
     cpdef _prepare_file(self, filename)
     cpdef close(self)
-    cpdef get_all_data(self, bool decimate)
+    cpdef get_all_data(self, bool decimate=?)
     cpdef get_next_blocks(self, long n_blocks)
     cpdef set_block_size(self, long block_size)
     cpdef double get_sample_rate(self)

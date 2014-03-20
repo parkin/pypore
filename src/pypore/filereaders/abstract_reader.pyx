@@ -40,7 +40,7 @@ cdef class AbstractReader:
         """
         raise NotImplementedError
 
-    cpdef get_all_data(self, bool decimate):
+    cpdef get_all_data(self, bool decimate=False):
         """
         Opens a datafile and returns a dictionary with the data in 'data'.
         If unable to return, will return an error message.
