@@ -79,7 +79,7 @@ cdef class BaselineStrategy:
         """
         raise NotImplementedError
 
-    cdef void initialize(self, np.ndarray[DTYPE_t] initialization_points):
+    cpdef initialize(self, np.ndarray[DTYPE_t] initialization_points):
         """initialize(double baseline)
 
         (Note: this is a cpdef wrapper around the cdef function :py:func:`initialize_c`.
@@ -120,7 +120,7 @@ cdef class BaselineStrategy:
         """
         return self.baseline
 
-    cdef double get_variance(self):
+    cpdef double get_variance(self):
         """get_variance()
 
         (Note: this is a cpdef wrapper around the cdef function :py:func:`get_variance_c`.

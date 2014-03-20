@@ -16,11 +16,11 @@ cdef class BaselineStrategy:
     cpdef double compute_variance(self, double data_point)
     cdef double compute_variance_c(self, double data_point)
 
-    cdef void initialize(self, np.ndarray[DTYPE_t] initialization_points)
+    cpdef initialize(self, np.ndarray[DTYPE_t] initialization_points)
     cdef void initialize_c(self, np.ndarray[DTYPE_t] initialization_points)
 
     cpdef double get_baseline(self)
     cdef double get_baseline_c(self)
 
-    cdef double get_variance(self)
+    cpdef double get_variance(self)
     cdef double get_variance_c(self)
