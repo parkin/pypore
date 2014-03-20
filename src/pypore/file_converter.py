@@ -4,19 +4,19 @@ Created on Jan 28, 2014
 @author: `@parkin1`_
 """
 import cythonsetup
-from data_file_opener import prepare_data_file, get_next_blocks, open_data
 from filetypes import data_file
 import scipy.signal as sig
+from pypore.filereaders import get_reader_from_filename
 
 
 def convert_file(filename, output_filename=None):
     """
     Convert a file to the pypore .h5 file format. Returns the new file's name.
     """
-    f, params = prepare_data_file(filename)
+    reader = get_reader_from_filename(filename)
     
-    sample_rate = params['sample_rate']
-    n_points = params['points_per_channel_total']
+    sample_rate = reader.get_sample_rate()
+    n_points = reader.get_points_per_channel_total()
     
     if output_filename is None:
         output_filename = filename.split('.')[0] + '.h5'
@@ -24,17 +24,17 @@ def convert_file(filename, output_filename=None):
     save_file = data_file.open_file(output_filename, mode='w', sampleRate=sample_rate, nPoints=n_points)
     
     blocks_to_get = 1
-    data = get_next_blocks(f, params, blocks_to_get)[0]
-    
+    data = reader.get_next_blocks(blocks_to_get)[0]
+
     n = data.size
     i = 0
     while n > 0:
         save_file.root.data[i:n + i] = data[:]
         i += n
-        data = get_next_blocks(f, params, blocks_to_get)[0]
+        data = reader.get_next_blocks(blocks_to_get)[0]
         n = data.size
         
-    f.close()
+    reader.close()
     
     save_file.flush()
     save_file.close()
@@ -57,11 +57,11 @@ def filter_file(filename, filter_frequency, output_filename=None):
     >>> import pypore.file_converter as fC
     >>> fC.filter_file("filename", 1.e4, "output.h5") // filter at 10kHz
     """
-    specs = open_data(filename)
+    reader = get_reader_from_filename(filename)
 
-    data = specs['data'][0]
+    data = reader.get_all_data()[0]
     
-    sample_rate = specs['sample_rate']
+    sample_rate = reader.get_sample_rate()
     n_points = len(data)
     
     if output_filename is None:
