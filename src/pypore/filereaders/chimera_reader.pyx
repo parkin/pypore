@@ -73,8 +73,7 @@ cdef class ChimeraReader(AbstractReader):
         filename.log file with the data, and a filename.mat file containing the
         parameters of the run.
 
-        :returns: a dictionary with the keys / values in the filename.mat file\
-            as well as 'data', a numpy array of the current values
+        :returns: List of numpy arrays, one for each channel of data.
         """
         cdef long decimated_size = 0
         cdef long i = 0
