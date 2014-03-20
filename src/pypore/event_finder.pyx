@@ -643,7 +643,7 @@ cdef class Parameters:
         self.baseline_strategy = baseline_strategy
         self.threshold_strategy = threshold_strategy
 
-def find_events(files, pipe=None, h5file=None, save_file_names=None, parameters=Parameters()):
+def find_events(files, parameters=Parameters(), h5file=None, save_file_names=None, pipe=None):
     """
 
     :param files: List of files to search. Each item in the list can be one of the following:
@@ -652,7 +652,8 @@ def find_events(files, pipe=None, h5file=None, save_file_names=None, parameters=
            For example, a :py:class:`pypore.filereaders.chimera_reader.ChimeraReader`.
         #. A string filename to be opened. The appropriate reader will be chosen based on the file extension.
 
-    :param pipe: pipe
+    :param pipe: (Optional) :py:class:`multiprocessing.Pipe` for status updates during the run.\
+        If omitted, status updates will just be printed to standard output.
     :param h5file: (Optional) An already opened :py:class:`pypore.filetypes.event_database.EventDatabase`. \
         If left out, a new EventDatabase will be created.
     :param [string] save_file_names: (Optional) List of names for the output files. If omitted, \
