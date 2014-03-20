@@ -3,10 +3,12 @@ from numpy import linspace
 import pyqtgraph as pg
 from pyqtgraph.widgets.LayoutWidget import LayoutWidget
 
-from pypore.event_finder import Parameters, NoiseBasedThresholdStrategy, \
-    PercentChangeThresholdStrategy, AbsoluteChangeThresholdStrategy
+from pypore.event_finder import Parameters
+from pypore.strategies.absolute_change_threshold_strategy import AbsoluteChangeThresholdStrategy
 from pypore.strategies.adaptive_baseline_strategy import AdaptiveBaselineStrategy
 from pypore.strategies.fixed_baseline_strategy import FixedBaselineStrategy
+from pypore.strategies.noise_based_threshold_strategy import NoiseBasedThresholdStrategy
+from pypore.strategies.percent_change_threshold_strategy import PercentChangeThresholdStrategy
 from pyporegui.my_threads import AnalyzeDataThread, PlotThread
 from pyporegui.graphicsItems.my_plot_item import MyPlotItem
 from pyporegui.widgets.plot_tool_bar import PlotToolBar

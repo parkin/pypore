@@ -7,7 +7,8 @@ Created on Aug 19, 2013
 
 
 import os
-import time, datetime
+import time
+import datetime
 
 import numpy as np
 cimport numpy as np
@@ -25,6 +26,8 @@ from pypore.filereaders import get_reader_from_filename
 from pypore.filereaders.abstract_reader cimport AbstractReader
 from pypore.strategies.baseline_strategy cimport BaselineStrategy
 from pypore.strategies.adaptive_baseline_strategy import AdaptiveBaselineStrategy
+from pypore.strategies.threshold_strategy cimport ThresholdStrategy
+from pypore.strategies.noise_based_threshold_strategy import NoiseBasedThresholdStrategy
 
 DTYPE = np.float
 ctypedef np.float_t DTYPE_t
@@ -479,62 +482,6 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
         os.remove(save_file_name)
 
     return None
-
-cdef class ThresholdStrategy:
-    """
-    Abstract base class defining the behavior that a ThresholdType should implement. These methods
-    will be called by :py:func:`find_events`.
-    """
-
-    cdef double compute_starting_threshold(self, double baseline, double variance):
-        raise NotImplementedError
-
-    cdef double compute_ending_threshold(self, double baseline, double variance):
-        raise NotImplementedError
-
-cdef class AbsoluteChangeThresholdStrategy(ThresholdStrategy):
-    cdef public double change_start
-    cdef public double change_end
-
-    def __init__(self, double change_start=3.e-9, double change_end=5.e-10):
-        self.change_start = change_start
-        self.change_end = change_end
-
-    cdef double compute_starting_threshold(self, double baseline, double variance):
-        # TODO figure out how to handle both positive and negative changes...
-        raise NotImplementedError
-
-    cdef double compute_ending_threshold(self, double baseline, double variance):
-        raise NotImplementedError
-
-cdef class PercentChangeThresholdStrategy(ThresholdStrategy):
-    cdef public double percent_change_start
-    cdef public double percent_change_end
-
-    def __init__(self, double percent_change_start=30., double percent_change_end=10.):
-        self.percent_change_start = percent_change_start
-        self.percent_change_end = percent_change_end
-
-    cdef double compute_starting_threshold(self, double baseline, double variance):
-        return baseline * self.percent_change_start / 100.0
-
-    cdef double compute_ending_threshold(self, double baseline, double variance):
-        return baseline * self.percent_change_end / 100.0
-
-cdef class NoiseBasedThresholdStrategy(ThresholdStrategy):
-    cdef public double start_std_dev
-    cdef public double end_std_dev
-
-    def __init__(self, double start_std_dev=5.0, double end_std_dev=1.0):
-        super(NoiseBasedThresholdStrategy, self).__init__()
-        self.start_std_dev = start_std_dev
-        self.end_std_dev = end_std_dev
-
-    cdef double compute_ending_threshold(self, double baseline, double variance):
-        return self.end_std_dev * sqrt(variance)
-
-    cdef double compute_starting_threshold(self, double baseline, double variance):
-        return self.start_std_dev * sqrt(variance)
 
 cdef class Parameters:
     """
