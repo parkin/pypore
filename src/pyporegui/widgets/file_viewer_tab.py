@@ -22,6 +22,7 @@ class FileViewerTab(BaseQSplitterDataFile):
 
     def _on_file_item_selection_changed(self):
         # TODO implement me
+        # or choose to do nothing
         pass
 
     def _on_file_item_doubleclick(self, item):

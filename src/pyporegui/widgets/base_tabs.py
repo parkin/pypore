@@ -1,7 +1,8 @@
 from PySide import QtGui
 from pypore.data_file_opener import prepare_data_file
+from pypore.filereaders import get_reader_from_filename
 from pyporegui._thread_manager import _ThreadManager
-from pyporegui.file_items import DataFileListItem
+from pyporegui.file_items import DataFileListItem, FileListItem
 
 
 class BaseQSplitter(_ThreadManager, QtGui.QSplitter):
@@ -78,15 +79,16 @@ class BaseQSplitterDataFile(BaseQSplitter):
         are_files_opened = False
         open_dir = None
         for w in file_names:
-            f, params = prepare_data_file(w)
-            if 'error' in params:
-                self._dispatch_status_update(params['error'])
-            else:
-                are_files_opened = True
-                f.close()
-                item = DataFileListItem(w, params)
-                open_dir = item.get_directory()
-                self.file_list_widget.addItem(item)
+            reader = get_reader_from_filename(w)
+            # if 'error' in params:
+            # TODO implement error handling in readers
+            # pass
+            # else:
+            reader.close()
+            are_files_opened = True
+            item = FileListItem(w)
+            open_dir = item.get_directory()
+            self.file_list_widget.addItem(item)
 
         return are_files_opened
 

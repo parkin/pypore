@@ -2,6 +2,8 @@ from PySide import QtGui, QtCore
 from numpy import linspace
 import pyqtgraph as pg
 from pyqtgraph.widgets.LayoutWidget import LayoutWidget
+from pypore.event_finder import Parameters, AdaptiveBaselineStrategy, BaselineStrategy, NoiseBasedThresholdStrategy, \
+    PercentChangeThresholdStrategy, AbsoluteChangeThresholdStrategy
 
 from pyporegui.my_threads import AnalyzeDataThread, PlotThread
 from pyporegui.graphicsItems.my_plot_item import MyPlotItem
@@ -49,66 +51,77 @@ class EventFindingTab(BaseQSplitterDataFile):
 
             etc...
         """
-        parameters = {}
+
+        threshold_type = baseline_type = None
         # Get Min_event length in microseconds
         try:
-            parameters['min_event_length'] = float(self.min_event_length_edit.text())
+            min_event_length = float(self.min_event_length_edit.text())
         except ValueError:
-            parameters['error'] = 'Could not read float from Min Event Length text box.  Please fix.'
-            return parameters
+            return {'error': 'Could not read float from Min Event Length text box.  Please fix.'}
         # Get Max Event Length in microseconds
         try:
-            parameters['max_event_length'] = float(self.max_event_length_edit.text())
+            max_event_length = float(self.max_event_length_edit.text())
         except ValueError:
-            parameters['error'] = 'Could not read float from Max Event Length text box.  Please fix.'
-            return parameters
-        if parameters['min_event_length'] >= parameters['max_event_length']:
-            parameters['max_event_length'] = 'Min Event Length is greater than Max Event Length.  Please fix.'
-            return parameters
+            return {'error': 'Could not read float from Max Event Length text box.  Please fix.'}
+        if min_event_length >= max_event_length:
+            return {'error': 'Min Event Length is greater than Max Event Length.  Please fix.'}
 
-        parameters['baseline_type'] = str(self.baseline_type_combo.currentText())
-        if parameters['baseline_type'] == 'Adaptive':
+        baseline_type_str = str(self.baseline_type_combo.currentText())
+        if baseline_type_str == 'Adaptive':
             try:
-                parameters['filter_parameter'] = float(self.filter_parameter_edit.text())
+                filter_parameter = float(self.filter_parameter_edit.text())
+                baseline_type = AdaptiveBaselineStrategy(filter_parameter=filter_parameter)
             except ValueError:
-                parameters['error'] = 'Could not read float from Filter Parameter text box.  Please fix.'
-                return
-        elif parameters['baseline_type'] == 'Fixed':
+                return {'error': 'Could not read float from Filter Parameter text box.  Please fix.'}
+        elif baseline_type_str == 'Fixed':
             try:
-                parameters['baseline_current'] = float(self.baseline_current_edit.text())
+                baseline_current = float(self.baseline_current_edit.text())
+                baseline_type = BaselineStrategy(baseline=baseline_current)
             except ValueError:
-                parameters['error'] = 'Could not read float from Baseline Current text box.  Please fix.'
+                return {'error': 'Could not read float from Baseline Current text box.  Please fix.'}
 
-        parameters['threshold_direction'] = str(self.threshold_direction_combo.currentText())
-        parameters['threshold_type'] = str(self.threshold_type_combo.currentText())
-        if parameters['threshold_type'] == 'Noise Based':
-            try:
-                parameters['start_stddev'] = float(self.threshold_stdev_start.text())
-            except ValueError:
-                parameters['error'] = 'Could not read float from Start StdDev text box.  Please fix.'
-            try:
-                parameters['end_stddev'] = float(self.threshold_stdev_end.text())
-            except ValueError:
-                parameters['error'] = 'Could not read float from End StdDev text box.  Please fix.'
-        elif parameters['threshold_type'] == 'Absolute Change':
-            try:
-                parameters['absolute_change_start'] = float(self.absolute_change_start_edit.text())
-            except ValueError:
-                parameters['error'] = 'Could not read float from Absolute Change Start.  Please fix.'
-            try:
-                parameters['absolute_change_end'] = float(self.absolute_change_end_edit.text())
-            except ValueError:
-                parameters['error'] = 'Could not read float from Absolute Change End.  Please fix.'
-        elif parameters['threshold_type'] == 'Percent Change':
-            try:
-                parameters['percent_change_start'] = float(self.percentage_change_start_edit.text())
-            except ValueError:
-                parameters['error'] = 'Could not read float from Percent Change Start text box.  Please fix.'
-            try:
-                parameters['percent_change_end'] = float(self.percentage_change_end_edit.text())
-            except ValueError:
-                parameters['error'] = 'Could not read float from Percent Change End text box.  Please fix.'
+        threshold_direction_str = str(self.threshold_direction_combo.currentText())
+        detect_positive_events = (threshold_direction_str in ('Positive', 'Both'))
+        detect_negative_events = (threshold_direction_str in ('Negative', 'Both'))
 
+        threshold_type_str = str(self.threshold_type_combo.currentText())
+        if threshold_type_str == 'Noise Based':
+            try:
+                start_stddev = float(self.threshold_stdev_start.text())
+            except ValueError:
+                return {'error': 'Could not read float from Start StdDev text box.  Please fix.'}
+            try:
+                end_stddev = float(self.threshold_stdev_end.text())
+            except ValueError:
+                return {'error': 'Could not read float from End StdDev text box.  Please fix.'}
+            threshold_type = NoiseBasedThresholdStrategy(start_std_dev=start_stddev, end_std_dev=end_stddev)
+        elif threshold_type_str == 'Absolute Change':
+            try:
+                absolute_change_start = float(self.absolute_change_start_edit.text())
+            except ValueError:
+                return {'error': 'Could not read float from Absolute Change Start.  Please fix.'}
+            try:
+                absolute_change_end = float(self.absolute_change_end_edit.text())
+            except ValueError:
+                return {'error': 'Could not read float from Absolute Change End.  Please fix.'}
+            threshold_type = AbsoluteChangeThresholdStrategy(change_start=absolute_change_start,
+                                                         change_end=absolute_change_end)
+        elif threshold_type_str == 'Percent Change':
+            try:
+                percent_change_start = float(self.percentage_change_start_edit.text())
+            except ValueError:
+                return {'error': 'Could not read float from Percent Change Start text box.  Please fix.'}
+            try:
+                percent_change_end = float(self.percentage_change_end_edit.text())
+            except ValueError:
+                return {'error': 'Could not read float from Percent Change End text box.  Please fix.'}
+            threshold_type = PercentChangeThresholdStrategy(percent_change_start=percent_change_start,
+                                                        percent_change_end=percent_change_end)
+
+        parameters = Parameters(min_event_length=min_event_length, max_event_length=max_event_length,
+                                detect_positive_events=detect_positive_events,
+                                detect_negative_events=detect_negative_events, baseline_type=baseline_type,
+                                threshold_type=threshold_type)
         return parameters
 
     def plot_data(self, plot_options):
@@ -182,7 +195,7 @@ class EventFindingTab(BaseQSplitterDataFile):
             return
 
         parameters = self.get_current_analysis_parameters()
-        if 'error' in parameters:
+        if isinstance(parameters, dict) and 'error' in parameters:
             self._dispatch_status_update(parameters['error'])
             return
 

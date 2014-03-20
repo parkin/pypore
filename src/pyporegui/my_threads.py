@@ -9,8 +9,8 @@ Created on Jul 23, 2013
 from PySide import QtCore
 import time
 from multiprocessing import Process, Pipe
-from pypore.data_file_opener import open_data, prepare_data_file
 from pypore.event_finder import find_events
+from pypore.filereaders import get_reader_from_filename
 
 
 class PlotThread(QtCore.QThread):
@@ -40,7 +40,9 @@ class PlotThread(QtCore.QThread):
     
     def run(self):
         if not self.filename == '' or self.plot_options['datadict'] == '':
-            self.plot_options['datadict'] = open_data(self.filename, self.decimate)
+            reader = get_reader_from_filename(self.filename)
+            self.plot_options['datadict'] = reader.get_all_data(self.decimate)
+            reader.close()
 #         self.emit(QtCore.SIGNAL('plotData(PyQt_PyObject)'), {'plot_options': self.plot_options, 'status_text': ''})
         if self.cancelled:
             return
@@ -114,7 +116,7 @@ class AnalyzeDataThread(QtCore.QThread):
     def run(self):
         self.time1 = time.time()
         self._pipe, child_conn = Pipe()
-        self.p = Process(target = find_events, args=(self.file_names, child_conn,), kwargs=self.parameters)
+        self.p = Process(target = find_events, args=(self.file_names, child_conn,), kwargs={'params': self.parameters})
         self.p.start()
         # child_conn needs to be closed in all processes before EOFError is thrown (on Linux)
         # So close it here immediately
