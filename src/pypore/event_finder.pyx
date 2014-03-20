@@ -532,6 +532,7 @@ cdef class NoiseBasedThresholdStrategy(ThresholdStrategy):
         return self.start_std_dev * sqrt(variance)
 
 cdef class BaselineStrategy:
+
     cdef public double baseline
     cdef public double variance
 
@@ -540,22 +541,46 @@ cdef class BaselineStrategy:
         self.variance = variance
 
     cdef double compute_baseline(self, double data_point):
-        return self.baseline
+        raise NotImplementedError
 
     cdef double compute_variance(self, double data_point):
-        return self.variance
+        raise NotImplementedError
 
     cdef void update_baseline(self, double baseline):
-        self.baseline = baseline
+        raise NotImplementedError
 
     cdef void update_variance(self, double variance):
-        self.variance = variance
+        raise NotImplementedError
 
     cdef double get_baseline(self):
         return self.baseline
 
     cdef double get_variance(self):
         return self.variance
+
+
+cdef class FixedBaselineStrategy(BaselineStrategy):
+
+    cdef double compute_baseline(self, double data_point):
+        # fixed baseline
+        return self.baseline
+
+    cdef double compute_variance(self, double data_point):
+        # fixed variance
+        return self.variance
+
+    cdef void update_baseline(self, double baseline):
+        pass
+
+    cdef void update_variance(self, double variance):
+        pass
+
+    cdef double get_baseline(self):
+        return BaselineStrategy.get_baseline(self)
+
+    cdef double get_variance(self):
+        return BaselineStrategy.get_variance(self)
+
 
 cdef class AdaptiveBaselineStrategy(BaselineStrategy):
     cdef public double filter_parameter
@@ -581,10 +606,10 @@ cdef class AdaptiveBaselineStrategy(BaselineStrategy):
         return BaselineStrategy.get_variance(self)
 
     cdef void update_baseline(self, double baseline):
-        BaselineStrategy.update_baseline(self, baseline)
+        self.baseline = baseline
 
     cdef void update_variance(self, double variance):
-        BaselineStrategy.update_variance(self, variance)
+        self.variance = variance
 
 cdef class Parameters:
     """

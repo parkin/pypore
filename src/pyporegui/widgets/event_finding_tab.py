@@ -2,13 +2,12 @@ from PySide import QtGui, QtCore
 from numpy import linspace
 import pyqtgraph as pg
 from pyqtgraph.widgets.LayoutWidget import LayoutWidget
-from pypore.event_finder import Parameters, AdaptiveBaselineStrategy, BaselineStrategy, NoiseBasedThresholdStrategy, \
-    PercentChangeThresholdStrategy, AbsoluteChangeThresholdStrategy
 
+from pypore.event_finder import Parameters, AdaptiveBaselineStrategy, NoiseBasedThresholdStrategy, \
+    PercentChangeThresholdStrategy, AbsoluteChangeThresholdStrategy, FixedBaselineStrategy
 from pyporegui.my_threads import AnalyzeDataThread, PlotThread
 from pyporegui.graphicsItems.my_plot_item import MyPlotItem
 from pyporegui.widgets.plot_tool_bar import PlotToolBar
-
 from base_tabs import BaseQSplitterDataFile
 
 
@@ -76,7 +75,7 @@ class EventFindingTab(BaseQSplitterDataFile):
         elif baseline_type_str == 'Fixed':
             try:
                 baseline_current = float(self.baseline_current_edit.text())
-                baseline_type = BaselineStrategy(baseline=baseline_current)
+                baseline_type = FixedBaselineStrategy(baseline=baseline_current)
             except ValueError:
                 return {'error': 'Could not read float from Baseline Current text box.  Please fix.'}
 
@@ -105,7 +104,7 @@ class EventFindingTab(BaseQSplitterDataFile):
             except ValueError:
                 return {'error': 'Could not read float from Absolute Change End.  Please fix.'}
             threshold_type = AbsoluteChangeThresholdStrategy(change_start=absolute_change_start,
-                                                         change_end=absolute_change_end)
+                                                             change_end=absolute_change_end)
         elif threshold_type_str == 'Percent Change':
             try:
                 percent_change_start = float(self.percentage_change_start_edit.text())
@@ -116,7 +115,7 @@ class EventFindingTab(BaseQSplitterDataFile):
             except ValueError:
                 return {'error': 'Could not read float from Percent Change End text box.  Please fix.'}
             threshold_type = PercentChangeThresholdStrategy(percent_change_start=percent_change_start,
-                                                        percent_change_end=percent_change_end)
+                                                            percent_change_end=percent_change_end)
 
         parameters = Parameters(min_event_length=min_event_length, max_event_length=max_event_length,
                                 detect_positive_events=detect_positive_events,
