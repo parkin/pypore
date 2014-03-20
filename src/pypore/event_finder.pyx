@@ -72,7 +72,8 @@ cpdef np.ndarray[DTYPE_t] _get_data_range_test_wrapper(data_cache, long i, long 
     """
     return _get_data_range(data_cache, i, n)
 
-cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object pipe=None, h5file=None, save_file_name=None):
+cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object pipe=None, h5file=None,
+                            save_file_name=None):
     cdef unsigned int event_count = 0
 
     cdef unsigned int get_blocks = 1
@@ -86,7 +87,7 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
     cdef unsigned int max_event_steps = np.ceil(parameters.max_event_length * 1e-6 / time_step)
     cdef long points_per_channel_total = reader.get_points_per_channel_total()
 
-    cdef BaselineStrategy baseline_type = parameters.baseline_type
+    cdef BaselineStrategy baseline_type = parameters.baseline_strategy
 
     # Threshold direction.  -1 for negative, 0 for both, +1 for positive
     direction_positive = False
@@ -135,7 +136,7 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
 
     baseline_type.baseline = data_point
 
-    cdef ThresholdStrategy threshold_type = parameters.threshold_type
+    cdef ThresholdStrategy threshold_type = parameters.threshold_strategy
 
     cdef double threshold_start = 0.0
     cdef double threshold_end = 0.0
@@ -239,7 +240,7 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
         if is_event:
             is_event = False
             # Set ending threshold_end
-            threshold_end = threshold_type.compute_ending_threshold(baseline , variance)
+            threshold_end = threshold_type.compute_ending_threshold(baseline, variance)
             event_start = i
             event_end = i + 1
             done = False
@@ -250,7 +251,7 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
             sn = sp = Sn = Sp = Gn = Gp = 0
             var_estimate = variance
             #             n_levels = 1  # We're already starting with one level
-            delta = fabs(mean_estimate - baseline ) / 2.
+            delta = fabs(mean_estimate - baseline) / 2.
             min_index_p = min_index_n = i
             min_Sp = min_Sn = float_inf
             ko = i
@@ -284,7 +285,7 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
                 else:
                     data_point = data_cache[cache_index][event_i % n]
                 if (not was_event_positive and data_point >= baseline - threshold_end) or (
-                    was_event_positive and data_point <= baseline + threshold_end):
+                            was_event_positive and data_point <= baseline + threshold_end):
                     event_end = event_i
                     done = True
                     break
@@ -292,7 +293,7 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
                 new_mean = mean_estimate + (data_point - mean_estimate) / (1 + event_i - ko)
                 # New variance recursion relation 
                 var_estimate = ((event_i - ko) * var_estimate + (data_point - mean_estimate) * (
-                data_point - new_mean)) / (1 + event_i - ko)
+                    data_point - new_mean)) / (1 + event_i - ko)
                 mean_estimate = new_mean
                 if var_estimate > 0:
                     sp = (delta / var_estimate) * (data_point - mean_estimate - delta / 2.)
@@ -419,7 +420,7 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
                     total_rate = (place_in_data + i) / total_time
                     time_left = int((points_per_channel_total - (place_in_data + i)) / rate)
                     status_text = "Event Count: %d Percent Done: %.2f Rate: %.2e pt/s Total Rate: %.2e pt/s Time Left: %s" % (
-                    event_count, percent_done, rate, total_rate, datetime.timedelta(seconds=time_left))
+                        event_count, percent_done, rate, total_rate, datetime.timedelta(seconds=time_left))
                     if pipe is not None:
                         #                     if event_count > last_event_sent:
                         #                         pipe.send({'status_text': status_text, 'Events': save_file['Events'][last_event_sent:]})
@@ -447,7 +448,7 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
     total_rate = (place_in_data + i) / total_time
     time_left = int((points_per_channel_total - (place_in_data + i)) / rate)
     status_text = "Event Count: %d Percent Done: %.2f Rate: %.2e pt/s Total Rate: %.2e pt/s Time Left: %s" % (
-    event_count, percent_done, rate, total_rate, datetime.timedelta(seconds=time_left))
+        event_count, percent_done, rate, total_rate, datetime.timedelta(seconds=time_left))
     if pipe is not None:
         #                     if event_count > last_event_sent:
         #                         pipe.send({'status_text': status_text, 'Events': save_file['Events'][last_event_sent:]})
@@ -488,9 +489,7 @@ cdef class ThresholdStrategy:
     cdef double compute_ending_threshold(self, double baseline, double variance):
         raise NotImplementedError
 
-
 cdef class AbsoluteChangeThresholdStrategy(ThresholdStrategy):
-
     cdef public double change_start
     cdef public double change_end
 
@@ -505,9 +504,7 @@ cdef class AbsoluteChangeThresholdStrategy(ThresholdStrategy):
     cdef double compute_ending_threshold(self, double baseline, double variance):
         raise NotImplementedError
 
-
 cdef class PercentChangeThresholdStrategy(ThresholdStrategy):
-
     cdef public double percent_change_start
     cdef public double percent_change_end
 
@@ -520,7 +517,6 @@ cdef class PercentChangeThresholdStrategy(ThresholdStrategy):
 
     cdef double compute_ending_threshold(self, double baseline, double variance):
         return baseline * self.percent_change_end / 100.0
-
 
 cdef class NoiseBasedThresholdStrategy(ThresholdStrategy):
     cdef public double start_std_dev
@@ -592,23 +588,41 @@ cdef class AdaptiveBaselineStrategy(BaselineStrategy):
     cdef void update_variance(self, double variance):
         BaselineStrategy.update_variance(self, variance)
 
-
 cdef class Parameters:
     """
-    Parameter object to pass to :py:func:`find_events`.
+    Parameter object to pass to :py:func:`find_events`. Defines the following:
+
+    * min_event_length -- Minimum event length to count as an event [us].
+    * max_event_length -- Maximum event length to count as an event [us].
+    * detect_positive_events -- Whether to detect events where the current increases.
+    * detect_negative_events -- Whether to detect events where the current decreases.
+    * baseline_strategy -- Strategy for keeping track of the baseline current. See \
+      :py:class:`BaselineStrategy` for a definition of methods and \
+      :py:class:`AdaptiveBaselineStrategy` as an example implementation of an adaptive baseline.
+    * threshold_strategy -- Strategy for the thresholds deciding the start and end of \
+      an event. See :py:class:`ThresholdStrategy` for a definition of the methods and \
+      :py:class:`NoiseBasedThresholdStrategy` for an example implementation.
+
+    Usage:
+
+    >>> from pypore.event_finder import Parameters, AdaptiveBaselineStrategy
+    >>> from pypore.event_finder import find_events
+    >>> params = Parameters(baseline_strategy=AdaptiveBaselineStrategy(filter_parameter=0.93))
+    >>> event_database_filenames = find_events(['test.log'], parameters=params)
+
     """
 
     cdef public double min_event_length
     cdef public double max_event_length
-    cdef public object baseline_type
-    cdef public object threshold_type
+    cdef public BaselineStrategy baseline_strategy
+    cdef public ThresholdStrategy threshold_strategy
     cdef public bool detect_positive_events
     cdef public bool detect_negative_events
 
     def __init__(self, min_event_length=10., max_event_length=1.e4,
                  detect_positive_events=True, detect_negative_events=True,
-                 baseline_type=AdaptiveBaselineStrategy(),
-                 threshold_type=NoiseBasedThresholdStrategy()):
+                 baseline_strategy=AdaptiveBaselineStrategy(),
+                 threshold_strategy=NoiseBasedThresholdStrategy()):
         """
         Initialize the Parameters object.
 
@@ -618,37 +632,40 @@ cdef class Parameters:
             Default is True.
         :param bool detect_negative_events: Event finder should look for events where the current decreases.\
             Default is True.
-        :param baseline_type: Type of the baseline. Default is :py:class:`AdaptiveBaselineType`.
-        :param threshold_type: Type of the threshold for beginning and end to an event.\
-            Default is :py:class:`NoiseBasedThresholdType`.
+        :param baseline_strategy: Type of the baseline. Default is :py:class:`AdaptiveBaselineStrategy`.\
+            Note that this needs to be a subclass of :py:class:`BaselineStrategy`.
+        :param threshold_strategy: Type of the threshold for beginning and end to an event.\
+            Default is :py:class:`NoiseBasedThresholdStrategy`.\
+            Note that this must be a subclass of :py:class:`ThresholdStrategy`.
         """
         self.min_event_length = min_event_length
         self.max_event_length = max_event_length
         self.detect_positive_events = detect_positive_events
         self.detect_negative_events = detect_negative_events
-        self.baseline_type = baseline_type
-        self.threshold_type = threshold_type
+        self.baseline_strategy = baseline_strategy
+        self.threshold_strategy = threshold_strategy
 
-def find_events(files, pipe=None, h5file=None, save_file_names=None, params=Parameters()):
+def find_events(files, pipe=None, h5file=None, save_file_names=None, parameters=Parameters()):
     """
 
     :param files: List of files to search. Each item in the list can be one of the following:
 
         #. An already opened reader. A subclass of :py:class:`pypore.filereaders.abstract_reader.AbstractReader`.\
-            For example, a :py:class:`pypore.filreaders.chimera_reader.ChimeraReader`.
+           For example, a :py:class:`pypore.filereaders.chimera_reader.ChimeraReader`.
         #. A string filename to be opened. The appropriate reader will be chosen based on the file extension.
 
     :param pipe: pipe
     :param h5file: (Optional) An already opened :py:class:`pypore.filetypes.event_database.EventDatabase`. \
         If left out, a new EventDatabase will be created.
-    :param [string] save_file_names: List of names for the output files.
-    :param params: :py:class:`Parameters` for event finding.
+    :param [string] save_file_names: (Optional) List of names for the output files. If omitted, \
+        appropriate save file names will be generated.
+    :param Parameters parameters: :py:class:`Parameters` for event finding.
     :returns: List of String file names of the created EventDatabases.
 
     >>> file_names = ['tests/testDataFiles/chimera_1event.log']
     >>> output_files = find_events(file_names)
     >>> # .... ....
-    >>> output_files2 = find_events(file_names, ['min_event_length': 100.0])
+    >>> output_files2 = find_events(file_names, parameters=Parameters(min_event_length=15.))
     """
     event_databases = []
     save_file_name = None
@@ -659,7 +676,7 @@ def find_events(files, pipe=None, h5file=None, save_file_names=None, params=Para
         if not isinstance(reader, AbstractReader):
             # If not already a reader, assume it is a string filename and create a reader.
             reader = get_reader_from_filename(reader)
-        database_filename = _lazy_load_find_events(reader, params, pipe, h5file, save_file_name)
+        database_filename = _lazy_load_find_events(reader, parameters, pipe, h5file, save_file_name)
         print database_filename
         if database_filename is not None:
             event_databases.append(database_filename)

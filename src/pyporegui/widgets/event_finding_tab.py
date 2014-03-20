@@ -45,7 +45,7 @@ class EventFindingTab(BaseQSplitterDataFile):
 
             - 'min_event_length'
             - 'max_event_length'
-            - 'baseline_type'
+            - 'baseline_strategy'
             - 'filter_parameter'
             - 'baseline_current'
 
@@ -120,8 +120,8 @@ class EventFindingTab(BaseQSplitterDataFile):
 
         parameters = Parameters(min_event_length=min_event_length, max_event_length=max_event_length,
                                 detect_positive_events=detect_positive_events,
-                                detect_negative_events=detect_negative_events, baseline_type=baseline_type,
-                                threshold_type=threshold_type)
+                                detect_negative_events=detect_negative_events, baseline_strategy=baseline_type,
+                                threshold_strategy=threshold_type)
         return parameters
 
     def plot_data(self, plot_options):
