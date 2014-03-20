@@ -44,8 +44,8 @@ cpdef open_data(filename, decimate=False):
     """
     if '.h5' in filename:
         return open_pypore_file(filename, decimate)
-    if '.log' in filename:
-        return open_chimera_file(filename, decimate)
+    # if '.log' in filename:
+    #     return open_chimera_file(filename, decimate)
     elif '.hkd' in filename:
         return open_heka_file(filename, decimate)
     elif '.mat' in filename:
@@ -74,8 +74,8 @@ cpdef prepare_data_file(filename):
     """
     if '.h5' in filename:
         return prepare_pypore_file(filename)
-    if '.log' in filename:
-        return prepare_chimera_file(filename)
+    # if '.log' in filename:
+    #     return prepare_chimera_file(filename)
     if '.hkd' in filename:
         return prepare_heka_file(filename)
     if '.mat' in filename:
@@ -101,8 +101,8 @@ cpdef get_next_blocks(datafile, params, int n=1):
     """
     if '.h5' in params['filename']:
         return get_next_pypore_blocks(datafile, params, n)
-    if '.log' in params['filename']:
-        return get_next_chimera_blocks(datafile, params, n)
+    # if '.log' in params['filename']:
+    #     return get_next_chimera_blocks(datafile, params, n)
     if '.hkd' in params['filename']:
         return get_next_heka_blocks(datafile, params, n)
     if '.mat' in params['filename']:
@@ -208,122 +208,6 @@ cdef get_next_gabys_blocks(datafile, params, int n):
     else:
         params['nextToSend'] += points_per_block2
         return [group.Raw[0][next_to_send_2:next_to_send_2 + points_per_block2].astype(DTYPE)]
-
-cdef open_chimera_file(filename, decimate=False):
-    """
-    Reads files created by the Chimera acquisition software.  It requires a
-    filename.log file with the data, and a filename.mat file containing the
-    parameters of the run.
-    
-    Returns a dictionary with the keys / values in the filename.mat file
-    as well as 'data', a numpy array of the current values
-    """
-    # remove 'log' append 'mat'
-    datafile, p = prepare_chimera_file(filename)
-
-    if 'error' in p:
-        return p
-
-    cdef long adc_bits = p['ADCBITS']
-    cdef double adc_v_ref = p['ADCvref']
-    data_type = p['datatype']
-    #     ctypedef datatype datatype_t
-    specs_file = p['specsfile']
-
-    cdef long bitmask = (2 ** 16) - 1 - (2 ** (16 - adc_bits) - 1)
-    cdef long num_points = 0
-    cdef int block_size = 0
-    cdef long decimated_size = 0
-    cdef long i = 0
-    cdef np.ndarray[DTYPE_t] logdata, readvalues
-    cdef np.ndarray rawvalues
-    cdef double sample_rate = specs_file['SETUP_ADCSAMPLERATE'][0][0]
-    if decimate:
-        # Calculate number of points in the dataset
-        filesize = os.path.getsize(filename)
-        num_points = filesize / data_type.itemsize
-        # use 5000 for plot decimation
-        block_size = 5000
-        decimated_size = int(2 * num_points / block_size)
-        if num_points % block_size > 0:  # will there be a block at the end with < block_size datapoints?
-            decimated_size = decimated_size + 2
-        logdata = np.empty(decimated_size)
-        i = 0
-        while True:
-            rawvalues = np.fromfile(datafile, data_type, block_size)
-            if rawvalues.size < 1:
-                break
-            readvalues = -adc_v_ref + (2 * adc_v_ref) * (rawvalues & bitmask) / (2 ** 16)
-            logdata[i] = np.max(readvalues)
-            logdata[i + 1] = np.min(readvalues)
-            i += 2
-
-        # Change the sample rate
-        sample_rate = sample_rate * 2.0 / block_size
-    else:
-        rawvalues = np.fromfile(datafile, data_type)
-        rawvalues = rawvalues & bitmask
-        logdata = -adc_v_ref + (2 * adc_v_ref) * rawvalues / (2 ** 16);
-
-    datafile.close()
-    return {'data': [logdata], 'sample_rate': sample_rate}
-
-cdef prepare_chimera_file(filename):
-    """
-    Implementation of :py:func:`prepare_data_file` for Chimera ".log" files with the associated ".mat" file.
-    """
-    # remove 'log' append 'mat'
-    s = list(filename)
-    s.pop()
-    s.pop()
-    s.pop()
-    s.append('mat')
-    # load the matlab file with parameters for the runs
-    try:
-        specsfile = sio.loadmat("".join(s))
-    except IOError:
-        return 0, {
-            'error': 'Error opening ' + filename + ', Chimera .mat specs file of same name must be located in same folder.'}
-
-    # Calculate number of points per channel
-    filesize = os.path.getsize(filename)
-    datatype = np.dtype('<u2')
-    cdef int points_per_channel_per_blocks = 10000
-    cdef long points_per_channel_total = filesize / datatype.itemsize
-
-    cdef long ADCBITS = specsfile['SETUP_ADCBITS'][0][0]
-    cdef double ADCvref = specsfile['SETUP_ADCVREF'][0][0]
-
-    datafile = open(filename, 'rb')
-
-    cdef long bitmaskk = (2 ** 16) - 1 - (2 ** (16 - ADCBITS) - 1)
-
-    cdef double sample_rate = 1.0 * specsfile['SETUP_ADCSAMPLERATE'][0][0]
-
-    p = {'filetype': 'chimera',
-         'ADCBITS': ADCBITS, 'ADCvref': ADCvref, 'datafile': datafile,
-         'datatype': datatype, 'specsfile': specsfile,
-         'bitmask': bitmaskk, 'filename': filename,
-         'sample_rate': sample_rate,
-         'points_per_channel_per_block': points_per_channel_per_blocks,
-         'points_per_channel_total': points_per_channel_total}
-
-    return datafile, p
-
-cdef get_next_chimera_blocks(datafile, params, int n):
-    """
-    """
-    cdef int block_size = params['points_per_channel_per_block']
-
-    datatype = params['datatype']
-    cdef long bitmask = params['bitmask']
-    cdef double ADCvref = params['ADCvref']
-
-    cdef np.ndarray rawvalues = np.fromfile(datafile, datatype, n * block_size)
-    rawvalues = rawvalues & bitmask
-    cdef np.ndarray[DTYPE_t] logdata = -ADCvref + (2 * ADCvref) * rawvalues / (2 ** 16)
-
-    return [logdata]
 
 cdef prepare_heka_file(filename):
     """
