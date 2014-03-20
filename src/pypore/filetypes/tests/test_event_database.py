@@ -308,7 +308,7 @@ class TestEventDatabase(unittest.TestCase):
 
     def test_initialize_database_with_existing_nodes(self):
         """
-        Test that calling initialize database with existing nodes does not
+        Test that calling initialize_c database with existing nodes does not
         throw an error (ie existing nodes ignored).
         """
         self.assertIn('eventTable', self.database.root.events)

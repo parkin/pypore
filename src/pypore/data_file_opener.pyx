@@ -305,7 +305,7 @@ cdef open_heka_file(filename, decimate=False):
         if decimate:  # If decimating, just keep max and min value from each block
             data.append(np.empty(num_blocks_in_file * 2))
         else:
-            data.append(np.empty(points_per_channel_total))  # initialize array
+            data.append(np.empty(points_per_channel_total))  # initialize_c array
 
     for i in xrange(0, num_blocks_in_file):
         block = _read_heka_next_block(f, per_file_params, per_block_param_list, per_channel_param_list, channel_list,

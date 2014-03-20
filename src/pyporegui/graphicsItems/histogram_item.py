@@ -44,7 +44,7 @@ class HistogramItem(PlotItem):
         self.n_bins_array.append(n_bins)
 
         # if this is the first histogram plotted,
-        # initialize settings
+        # initialize_c settings
         if len(self.data_array) < 1:
             self.minimum = minimum
             self.maximum = maximum

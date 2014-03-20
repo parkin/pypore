@@ -132,7 +132,7 @@ class MyMainWindow(QtGui.QMainWindow):
 
     def _create_main_frame(self):
         """
-        Helper to initialize the main gui frame.
+        Helper to initialize_c the main gui frame.
         """
         file_viewer_tab = FileViewerTab(self)
 
