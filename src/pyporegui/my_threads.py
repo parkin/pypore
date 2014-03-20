@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-'''
+"""
 Created on Jul 23, 2013
 
-@author: parkin
-'''
+@author: `@parkin1`_
+"""
 
 from PySide import QtCore
 import time
@@ -18,18 +18,12 @@ class PlotThread(QtCore.QThread):
     
     cancelled = False
     
-    def __init__(self, axes, datadict='', plot_range='all', filename='',
-                 threshold_type='adaptive', a=0.93,
-                 threshold_direction='negative', min_event_length=10., max_event_length=1000., decimate=False):
+    def __init__(self, axes, data='', plot_range='all', filename='', decimate=False, sample_rate=0.0):
         QtCore.QThread.__init__(self)
-        self.plot_options = {'axes': axes, 'datadict': datadict, 'plot_range': plot_range}
+        self.plot_options = {'axes': axes, 'data': data, 'plot_range': plot_range}
         self.filename = filename
-        self.threshold_type = threshold_type
-        self.filter_parameter = a
-        self.threshold_direction = threshold_direction
-        self.min_event_length = min_event_length
-        self.max_event_length = max_event_length
         self.decimate = decimate
+        self.sample_rate = sample_rate
     
     def __del__(self):
         """
@@ -41,11 +35,13 @@ class PlotThread(QtCore.QThread):
     def run(self):
         if not self.filename == '' or self.plot_options['datadict'] == '':
             reader = get_reader_from_filename(self.filename)
-            self.plot_options['datadict'] = reader.get_all_data(self.decimate)
+            self.plot_options['data'] = reader.get_all_data(self.decimate)
+            if self.sample_rate == 0.0:
+                self.sample_rate = reader.get_sample_rate()
             reader.close()
-#         self.emit(QtCore.SIGNAL('plotData(PyQt_PyObject)'), {'plot_options': self.plot_options, 'status_text': ''})
         if self.cancelled:
             return
+        self.plot_options['sample_rate'] = self.sample_rate
         self.dataReady.emit({'plot_options': self.plot_options, 'status_text': '', 'thread': self})
 
 

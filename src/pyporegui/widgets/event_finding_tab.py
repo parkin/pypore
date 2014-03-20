@@ -128,14 +128,16 @@ class EventFindingTab(BaseQSplitterDataFile):
         """
         Plots waveform in datadict.
         :param DictType plot_options: Dictionary of plot options. Must contain:
-        - Data at plot_options['datadict']['data'][0]
-        - sample_rate at plot_options['datadict']['sample_rate']
-        - plot_range at plot_options['datadict']['plot_range']. This can be [start,stop], or
-        'all' for 0:n.
+
+        * Data at plot_options['data'][0]
+        * sample_rate at plot_options['sample_rate']
+        * plot_range at plot_options['plot_range']. This can be [start,stop], or
+          'all' for 0:n.
+
         """
         # Read the first file, store data in dictionary
-        data = plot_options['datadict']['data'][0]
-        sample_rate = plot_options['datadict']['sample_rate']
+        data = plot_options['data'][0]
+        sample_rate = plot_options['sample_rate']
         plot_range = plot_options['plot_range']
 
         n = len(data)
