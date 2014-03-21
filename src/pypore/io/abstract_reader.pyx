@@ -6,7 +6,7 @@ cdef class AbstractReader:
 
         -Subclasses should implement opening full data files.
         -Subclasses should implement lazy loading with\
-            :py:func:`pypore.filereaders.abstract_reader.get_next_blocks`
+            :py:func:`pypore.io.abstract_reader.get_next_blocks`
 
     """
 

@@ -1,6 +1,6 @@
 from PySide import QtGui
 from pypore.data_file_opener import prepare_data_file
-from pypore.filereaders import get_reader_from_filename
+from pypore.io import get_reader_from_filename
 from pyporegui._thread_manager import _ThreadManager
 from pyporegui.file_items import DataFileListItem, FileListItem
 

@@ -4,8 +4,8 @@
 
 import unittest
 import os
-from pypore.filereaders import get_reader_from_filename
-from pypore.filereaders.pypore_reader import PyporeReader
+from pypore.io import get_reader_from_filename
+from pypore.io.pypore_reader import PyporeReader
 from pypore.filetypes.data_file import DataFile
 from pypore.file_converter import convert_file
 

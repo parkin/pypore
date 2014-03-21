@@ -22,8 +22,8 @@ from libc.math cimport fabs
 
 from cpython cimport bool
 
-from pypore.filereaders import get_reader_from_filename
-from pypore.filereaders.abstract_reader cimport AbstractReader
+from pypore.io import get_reader_from_filename
+from pypore.io.abstract_reader cimport AbstractReader
 from pypore.strategies.baseline_strategy cimport BaselineStrategy
 from pypore.strategies.adaptive_baseline_strategy import AdaptiveBaselineStrategy
 from pypore.strategies.threshold_strategy cimport ThresholdStrategy
@@ -545,8 +545,8 @@ def find_events(files, parameters=Parameters(), h5file=None, save_file_names=Non
 
     :param files: List of files to search. Each item in the list can be one of the following:
 
-        #. An already opened reader. A subclass of :py:class:`pypore.filereaders.abstract_reader.AbstractReader`.\
-           For example, a :py:class:`pypore.filereaders.chimera_reader.ChimeraReader`.
+        #. An already opened reader. A subclass of :py:class:`pypore.io.abstract_reader.AbstractReader`.\
+           For example, a :py:class:`pypore.io.chimera_reader.ChimeraReader`.
         #. A string filename to be opened. The appropriate reader will be chosen based on the file extension.
 
     :param pipe: (Optional) :py:class:`multiprocessing.Pipe` for status updates during the run.\
