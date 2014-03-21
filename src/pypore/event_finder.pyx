@@ -87,12 +87,12 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
 
     cdef unsigned int raw_points_per_side = 50
 
-    cdef double sample_rate = reader.get_sample_rate()
+    cdef double sample_rate = reader.get_sample_rate_c()
     cdef double time_step = 1. / sample_rate
     # Min and Max number of points in an event
     cdef unsigned int min_event_steps = np.ceil(parameters.min_event_length * 1e-6 / time_step)
     cdef unsigned int max_event_steps = np.ceil(parameters.max_event_length * 1e-6 / time_step)
-    cdef long points_per_channel_total = reader.get_points_per_channel_total()
+    cdef long points_per_channel_total = reader.get_points_per_channel_total_c()
 
     cdef BaselineStrategy baseline_type = parameters.baseline_strategy
 
@@ -105,7 +105,7 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
         direction_negative = True
 
     # allocate memory for data
-    data_x = reader.get_next_blocks(get_blocks)
+    data_x = reader.get_next_blocks_c(get_blocks)
     cdef np.ndarray[DTYPE_t] data = data_x[0]  # only get channel 1
     del data_x
 
@@ -121,7 +121,7 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
         # Get the name of the database file we want to save
         # if we have input.hkd, then save database to
         # input_Events_YYmmdd_HHMMSS.h5
-        save_file_name = list(reader.get_filename())
+        save_file_name = list(reader.get_filename_c())
         # Remove the .mat off the end
         for _ in xrange(0, 4):
             save_file_name.pop()
@@ -233,7 +233,7 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
     # http://pubs.rsc.org/en/content/articlehtml/2012/nr/c2nr30951c for more details.
     while i < n:
         data_point = curr_data[i]
-        threshold_start = threshold_type.compute_starting_threshold(baseline, variance)
+        threshold_start = threshold_type.compute_starting_threshold_c(baseline, variance)
 
         # Detecting a negative event
         if direction_negative and data_point < baseline - threshold_start:
@@ -246,7 +246,7 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
         if is_event:
             is_event = False
             # Set ending threshold_end
-            threshold_end = threshold_type.compute_ending_threshold(baseline, variance)
+            threshold_end = threshold_type.compute_ending_threshold_c(baseline, variance)
             event_start = i
             event_end = i + 1
             done = False
@@ -277,7 +277,7 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
                 if event_i >= cache_size:  # We may need new data
                     # we need new data if we've run out
                     cache_index += 1
-                    datas = reader.get_next_blocks(get_blocks)
+                    datas = reader.get_next_blocks_c(get_blocks)
                     datas = datas[0]
                     n = datas.size
                     cache_size += n
@@ -411,7 +411,7 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
             # for old data, then we need new data.
             if len(data_cache) < 2:
                 cache_refreshes += 1
-                data_next = reader.get_next_blocks(get_blocks)
+                data_next = reader.get_next_blocks_c(get_blocks)
                 data_cache.append(data_next[0])
             if len(data_cache) > 1:
                 curr_data = data_cache[1]
@@ -471,7 +471,7 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
         # PyTables might print a warning
         h5file.root.events.eventTable.attrs.sampleRate = sample_rate
         h5file.root.events.eventTable.attrs.eventCount = event_count
-        h5file.root.events.eventTable.attrs.dataFilename = reader.get_filename()
+        h5file.root.events.eventTable.attrs.dataFilename = reader.get_filename_c()
         h5file.flush()
         h5file.close()
         return save_file_name
