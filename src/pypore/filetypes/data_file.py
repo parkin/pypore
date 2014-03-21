@@ -23,8 +23,8 @@ class DataFile(tb.file.File):
     
     Must be instantiated by calling :py:func:`pypore.dataFile.open_file`
     
-    >>> import pypore.dataFile as dF
-    >>> database = dF.open_file(tests,mode='w')
+    >>> import pypore.dataFile as df
+    >>> database = df.open_file(tests,mode='w')
     >>> # Now do stuff with the DataFile
     >>> # ...
     >>> # Close and remove the DataFile
@@ -101,8 +101,8 @@ def open_file(*args, **kargs):
     :returns: :py:class:`pypore.filetypes.data_file.DataFile` -- an already opened
         :py:class:`pypore.filetypes.data_file.DataFile`.
 
-    >>> import pypore.dataFile as dF
-    >>> dF.open_file(tests', mode='w')
+    >>> import pypore.dataFile as df
+    >>> df.open_file(tests', mode='w')
     """
     f = tb.openFile(*args, **kargs)
     DataFile._convert_to_event_database(f)
