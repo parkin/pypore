@@ -45,9 +45,9 @@ class EventDatabase(tb.file.File):
     Must be instantiated by calling eventDatabase's
     
     >>> import pypore.eventDatabase as ed
-    >>> database = ed.open_file(tests',mode='w')
+    >>> database = ed.open_file('tests.h5',mode='w')
     >>> database.close()
-    >>> os.removetests5')
+    >>> os.remove('tests.h5')
     """
 
     DEFAULT_MAX_EVENT_LENGTH = 100
