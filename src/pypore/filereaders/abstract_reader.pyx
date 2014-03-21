@@ -20,13 +20,10 @@ cdef class AbstractReader:
         """
         self.block_size = 5000
         self.filename = filename
-        self._prepare_file_c(filename)
+        self._prepare_file(filename)
 
     cpdef _prepare_file(self, filename):
         """_prepare_file(filename)
-
-        (Note this is a cpdef wrapper around the cdef method :py:func:`_prepare_file_c`. This cpdef version
-        is **never** called. If overriding, make sure to override the :py:func:`_prepare_file_c` version.)
 
         Opens a data file, reads relevant parameters, and returns then open file and parameters.
 
@@ -36,9 +33,6 @@ cdef class AbstractReader:
 
         _prepare_file should set the sample_rate and points_per_channel_total.
         """
-        self._prepare_file_c(filename)
-
-    cdef void _prepare_file_c(self, filename):
         raise NotImplementedError
 
     cpdef close(self):

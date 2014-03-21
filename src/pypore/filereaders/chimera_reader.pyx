@@ -31,9 +31,9 @@ cdef class ChimeraReader(AbstractReader):
 
         return [log_data]
 
-    cdef void _prepare_file_c(self, filename):
+    cpdef _prepare_file(self, filename):
         """
-        Implementation of :py:func:`prepare_data_file_c` for Chimera ".log" files with the associated ".mat" file.
+        Implementation of :py:func:`prepare_data_file` for Chimera ".log" files with the associated ".mat" file.
         """
         # remove 'log' append 'mat'
         s = list(filename)

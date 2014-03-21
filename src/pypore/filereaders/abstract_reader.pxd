@@ -19,7 +19,6 @@ cdef class AbstractReader:
     cdef object filename
 
     cpdef _prepare_file(self, filename)
-    cdef void _prepare_file_c(self, filename)
 
     cpdef close(self)
     cdef void close_c(self)
