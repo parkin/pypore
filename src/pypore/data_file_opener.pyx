@@ -11,7 +11,6 @@ import numpy as np
 cimport numpy as np
 import os
 import tables as tb
-import filetypes.data_file as dF
 
 DTYPE = np.float
 ctypedef np.float_t DTYPE_t
@@ -42,11 +41,11 @@ cpdef open_data(filename, decimate=False):
     :returns: DictType -- dictionary with data in the 'data' key. If there is an error, it will return a
         dictionary with 'error' key containing a String error message.
     """
-    if '.h5' in filename:
-        return open_pypore_file(filename, decimate)
+    # if '.h5' in filename:
+    #     return open_pypore_file(filename, decimate)
     # if '.log' in filename:
     #     return open_chimera_file(filename, decimate)
-    elif '.hkd' in filename:
+    if '.hkd' in filename:
         return open_heka_file(filename, decimate)
     elif '.mat' in filename:
         return open_gabys_file(filename, decimate)
@@ -72,8 +71,8 @@ cpdef prepare_data_file(filename):
 
         If there was an error opening the files, params will have 'error' key with string description.
     """
-    if '.h5' in filename:
-        return prepare_pypore_file(filename)
+    # if '.h5' in filename:
+    #     return prepare_pypore_file(filename)
     # if '.log' in filename:
     #     return prepare_chimera_file(filename)
     if '.hkd' in filename:
@@ -99,8 +98,8 @@ cpdef get_next_blocks(datafile, params, int n=1):
     :param IntType n: Number of blocks to read and return.
     :returns: ListType<np.array> -- List of numpy arrays, one for each channel of the data.
     """
-    if '.h5' in params['filename']:
-        return get_next_pypore_blocks(datafile, params, n)
+    # if '.h5' in params['filename']:
+    #     return get_next_pypore_blocks(datafile, params, n)
     # if '.log' in params['filename']:
     #     return get_next_chimera_blocks(datafile, params, n)
     if '.hkd' in params['filename']:
@@ -110,53 +109,6 @@ cpdef get_next_blocks(datafile, params, int n=1):
 
     return 'File not specified with correct extension. Possibilities are: \'.log\', \'.hkd\''
 
-cdef prepare_pypore_file(filename):
-    """
-    Implementation of :py:func:`prepare_data_file` for Pypore HDF5 files.
-    """
-    datafile = dF.open_file(filename, mode='r')
-
-    cdef int points_per_channel_per_block = 5000
-
-    p = {'filetype': 'pypore', 'filename': filename,
-         'sample_rate': datafile.root.data.attrs.sampleRate,
-         'points_per_channel_per_block': points_per_channel_per_block,
-         'points_per_channel_total': datafile.root.data.nrows,
-         'nextToSend': 0}
-    return datafile, p
-
-cdef get_next_pypore_blocks(datafile, params, int n):
-    data = datafile.root.data
-
-    cdef long next_to_send = params['nextToSend']
-    cdef long points_per_block = params['points_per_channel_per_block']
-    cdef total_points = params['points_per_channel_total']
-
-    if next_to_send >= total_points:
-        return [data[next_to_send:].astype(DTYPE)]
-    else:
-        params['nextToSend'] += points_per_block
-        print "nextToSend:", next_to_send, "data[nTS]:", data[next_to_send]
-        return [data[next_to_send:next_to_send + points_per_block].astype(DTYPE)]
-
-cdef open_pypore_file(filename, decimate=False):
-    f, p = prepare_pypore_file(filename)
-
-    arr = f.root.data
-
-    cdef np.ndarray data
-
-    cdef float sample_rate = p['sample_rate']
-
-    if decimate:
-        data = arr[::5000]
-        sample_rate /= 5000.
-    else:
-        data = arr[:]
-
-    specs_file = {'data': [data], 'sample_rate': sample_rate}
-    f.close()
-    return specs_file
 
 cdef prepare_gabys_file(filename):
     """
