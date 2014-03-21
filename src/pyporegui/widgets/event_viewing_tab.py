@@ -115,46 +115,46 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
         h5file.close()
 
     def plotSingleEvent(self, h5file, position, plot):
-        sampleRate = h5file.get_sample_rate()
+        sample_rate = h5file.get_sample_rate()
         row = h5file.get_event_row(position)
-        arrayRow = row['arrayRow']
-        eventLength = row['eventLength']
-        rawPointsPerSide = row['rawPointsPerSide']
+        array_row = row['array_row']
+        event_length = row['event_length']
+        raw_points_per_side = row['raw_points_per_side']
 
-        rawData = h5file.get_raw_data_at(arrayRow)
+        raw_data = h5file.get_raw_data_at(array_row)
 
-        n = len(rawData)
+        n = len(raw_data)
 
-        times = np.linspace(0.0, 1.0 * n / sampleRate, n)
+        times = np.linspace(0.0, 1.0 * n / sample_rate, n)
 
         plot.clear()
-        plot.plot(times, rawData)
+        plot.plot(times, raw_data)
         # plot the event points in yellow
-        plot.plot(times[rawPointsPerSide:rawPointsPerSide + eventLength], \
-                  rawData[rawPointsPerSide:rawPointsPerSide + eventLength], pen='y')
+        plot.plot(times[raw_points_per_side:raw_points_per_side + event_length], \
+                  raw_data[raw_points_per_side:raw_points_per_side + event_length], pen='y')
 
         # Plot the cusum levels
-        nLevels = row['nLevels']
+        n_levels = row['n_levels']
         baseline = row['baseline']
         # left, start-1, start,
-        levels = h5file.get_levels_at(arrayRow)
-        indices = h5file.get_level_lengths_at(arrayRow)
+        levels = h5file.get_levels_at(array_row)
+        indices = h5file.get_level_lengths_at(array_row)
 
-        levelTimes = np.zeros(2 * nLevels + 4)
-        levelValues = np.zeros(2 * nLevels + 4)
+        levelTimes = np.zeros(2 * n_levels + 4)
+        levelValues = np.zeros(2 * n_levels + 4)
 
-        levelTimes[1] = 1.0 * (rawPointsPerSide - 1) / sampleRate
+        levelTimes[1] = 1.0 * (raw_points_per_side - 1) / sample_rate
         levelValues[0] = levelValues[1] = baseline
         i = 0
         length = 0
-        for i in xrange(nLevels):
-            levelTimes[2 * i + 2] = times[rawPointsPerSide] + 1.0 * (length) / sampleRate
+        for i in xrange(n_levels):
+            levelTimes[2 * i + 2] = times[raw_points_per_side] + 1.0 * (length) / sample_rate
             levelValues[2 * i + 2] = levels[i]
-            levelTimes[2 * i + 3] = times[rawPointsPerSide] + 1.0 * (length + indices[i]) / sampleRate
+            levelTimes[2 * i + 3] = times[raw_points_per_side] + 1.0 * (length + indices[i]) / sample_rate
             levelValues[2 * i + 3] = levels[i]
             length += indices[i]
         i += 1
-        levelTimes[2 * i + 2] = times[rawPointsPerSide + eventLength]
+        levelTimes[2 * i + 2] = times[raw_points_per_side + event_length]
         levelTimes[2 * i + 3] = times[n - 1]
         levelValues[2 * i + 2] = levelValues[2 * i + 3] = baseline
 

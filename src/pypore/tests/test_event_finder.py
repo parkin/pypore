@@ -116,21 +116,21 @@ class TestEventFinder(unittest.TestCase):
         self.assertTrue(event_table.nrows, 1)
 
         # check raw data array correct length
-        raw_data_matrix = events.rawData
+        raw_data_matrix = events.raw_data
         self.assertEqual(raw_data_matrix.nrows, 1)
-        event_length = event_table[0]['eventLength']
+        event_length = event_table[0]['event_length']
         self.assertEqual(event_length, 1000)
 
         # Make sure only 1 event with 1 level
         levels_matrix = events.levels
         self.assertEqual(levels_matrix.nrows, 1)
-        n_levels = event_table[0]['nLevels']
+        n_levels = event_table[0]['n_levels']
         self.assertEqual(n_levels, 1)
         levels = levels_matrix[0]
         self.assertAlmostEqual(levels[0], 0.9332, 4)
 
         # Check 1 event with 1 levelLength
-        lengths_matrix = events.levelLengths
+        lengths_matrix = events.level_lengths
         self.assertEqual(lengths_matrix.nrows, 1)
         lengths = lengths_matrix[0]
         self.assertEqual(lengths[0], 1000)
@@ -147,20 +147,20 @@ class TestEventFinder(unittest.TestCase):
         self.assertTrue(event_table.nrows, 1)
 
         # check raw data array correct length
-        raw_data_matrix = events.rawData
+        raw_data_matrix = events.raw_data
         self.assertEqual(raw_data_matrix.nrows, 1)
-        event_length = event_table[0]['eventLength']
+        event_length = event_table[0]['event_length']
         self.assertEqual(event_length, 1500)
 
         levels_matrix = events.levels
         self.assertEqual(levels_matrix.nrows, 1)
         levels = levels_matrix[0]
-        n_levels = event_table[0]['nLevels']
+        n_levels = event_table[0]['n_levels']
         self.assertEqual(n_levels, 2)
         self.assertAlmostEqual(levels[0], 0.9332, 4)
         self.assertAlmostEqual(levels[1], 0.78064, 4)
 
-        levels_matrix = events.levelLengths
+        levels_matrix = events.level_lengths
         self.assertEqual(levels_matrix.nrows, 1)
         levels = h5file.get_level_lengths_at(0)
         self.assertEqual(len(levels), 2)
@@ -187,29 +187,29 @@ class TestEventFinder(unittest.TestCase):
         self.assertTrue(event_table.nrows, 2)
 
         # check raw data array correct length
-        raw_data_matrix = events.rawData
+        raw_data_matrix = events.raw_data
         self.assertEqual(raw_data_matrix.nrows, 2)
-        event_length = event_table[0]['eventLength']
+        event_length = event_table[0]['event_length']
         self.assertEqual(event_length, 1000)
         # second event
-        event_length = event_table[1]['eventLength']
+        event_length = event_table[1]['event_length']
         self.assertEqual(event_length, 1000)
 
         # Make sure only 2 events with 1 level each
         levels_matrix = events.levels
         self.assertEqual(levels_matrix.nrows, 2)
         levels = levels_matrix[0]
-        n_levels = event_table[0]['nLevels']
+        n_levels = event_table[0]['n_levels']
         self.assertEqual(n_levels, 1)
         self.assertAlmostEqual(levels[0], 0.9332, 4)
         # event 2
         levels = levels_matrix[1]
-        n_levels_1 = event_table[1]['nLevels']
+        n_levels_1 = event_table[1]['n_levels']
         self.assertEqual(n_levels_1, 1)
         self.assertAlmostEqual(levels[0], 0.9332, 4)
 
         # Check 2 events with 1 level -> 1 lengths
-        lengths_matrix = events.levelLengths
+        lengths_matrix = events.level_lengths
         self.assertEqual(lengths_matrix.nrows, 2)
         lengths1 = h5file.get_level_lengths_at(0)
         self.assertEqual(len(lengths1), 1)

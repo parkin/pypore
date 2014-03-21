@@ -49,7 +49,7 @@ class DataFile(tb.file.File):
         self.initialize_database()
 
     @classmethod
-    def _convert_to_event_database(cls, tables_object):
+    def _convert_to_data_file(cls, tables_object):
         """
         Converts a PyTables object's __class__ field to DataFile so
         you can use the object as an DataFile object.
@@ -66,14 +66,14 @@ class DataFile(tb.file.File):
 
     def get_sample_rate(self):
         """
-        :returns: The sample rate at root.events.eventTable.attrs.sampleRate
+        :returns: The sample rate at root.events.eventTable.attrs.sample_rate
         """
-        return self.root.attrs.sampleRate
+        return self.root.attrs.sample_rate
 
     def initialize_database(self, **kargs):
         """
         Initializes the EventDatabase.  Adds a group 'events' with
-        table 'eventsTable' and matrices 'rawData', 'levels', and 'levelLengths'.
+        table 'eventsTable' and matrices 'raw_data', 'levels', and 'level_lengths'.
         
         :param kargs: Can pass in 'maxEventLength': Maximum number of data points for an event to be added.
         """
@@ -85,7 +85,7 @@ class DataFile(tb.file.File):
             self.createCArray(self.root, 'data', a, shape=shape, title='Data', filters=filters)
 
         # set the attributes
-        self.root.data.attrs.sampleRate = kargs['sampleRate']
+        self.root.data.attrs.sample_rate = kargs['sample_rate']
 
 
 def open_file(*args, **kargs):
@@ -96,16 +96,16 @@ def open_file(*args, **kargs):
     :param kargs: Arguments that get passed to :py:func:`tables.openFile`. Should additionally include:
 
         - nPoints: Number of points that should be in the array.
-        - sampleRate: Sample rate of the data.
+        - sample_rate: Sample rate of the data.
 
     :returns: :py:class:`pypore.filetypes.data_file.DataFile` -- an already opened
         :py:class:`pypore.filetypes.data_file.DataFile`.
 
-    >>> import pypore.dataFile as df
-    >>> df.open_file(tests', mode='w')
+    >>> import pypore.filetypes.data_file as df
+    >>> df.open_file('tests.h5', mode='w')
     """
     f = tb.openFile(*args, **kargs)
-    DataFile._convert_to_event_database(f)
+    DataFile._convert_to_data_file(f)
     if 'mode' in kargs:
         mode = kargs['mode']
         if 'w' in mode or 'a' in mode:

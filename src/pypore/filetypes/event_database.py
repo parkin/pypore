@@ -13,14 +13,13 @@ class _Event(tb.IsDescription):
     Description of the table /events/eventTable.
     """
     # UIntAtom = uint32
-    arrayRow = tb.UIntCol(pos=0)  # indicates the corresponding row in the
-    # eventData and rawData etc VLArrays
-    eventStart = tb.UIntCol(itemsize=8, pos=1)  # start index of the event in the data
-    eventLength = tb.UIntCol(pos=2)
-    nLevels = tb.UIntCol(pos=3)
-    rawPointsPerSide = tb.UIntCol(pos=4)
+    array_row = tb.UIntCol(pos=0)  # indicates the corresponding row in the
+    event_start = tb.UIntCol(itemsize=8, pos=1)  # start index of the event in the data
+    event_length = tb.UIntCol(pos=2)
+    n_levels = tb.UIntCol(pos=3)
+    raw_points_per_side = tb.UIntCol(pos=4)
     baseline = tb.FloatCol(pos=5)
-    currentBlockage = tb.FloatCol(pos=6)
+    current_blockage = tb.FloatCol(pos=6)
     area = tb.FloatCol(pos=7)
 
 
@@ -40,7 +39,7 @@ class EventDatabase(tb.file.File):
     With table
     /events/eventTable
     and matrices
-    /events/rawData, /event/levels, and /event/levelLength
+    /events/raw_data, /event/levels, and /event/levelLength
     
     Must be instantiated by calling eventDatabase's
     
@@ -54,49 +53,49 @@ class EventDatabase(tb.file.File):
     max_event_length = DEFAULT_MAX_EVENT_LENGTH
     event_row = None
 
-    def append_event(self, arrayRow, eventStart, eventLength, nLevels, rawPointsPerSide, baseline, currentBlockage, area,
-                    rawData=None, levels=None, levelLengths=None):
+    def append_event(self, array_row, event_start, event_length, n_levels, raw_points_per_side, baseline, current_blockage, area,
+                    raw_data=None, levels=None, level_lengths=None):
         """
-        Appends an event with the specified values to the eventsTable.  If rawData, levels, or levelLengths
+        Appends an event with the specified values to the eventsTable.  If raw_data, levels, or level_lengths
         are included, they are added to the corresponding matrices.
         
-        :param Int arrayRow: The row in the rawData, levels, and levelLengths array that corresponds
+        :param Int array_row: The row in the raw_data, levels, and level_lengths array that corresponds
                              to this event.
-        :param eventStart: The starting index of this event in the data.
-        :param eventLength: Number of data points in the event.
-        :param nLevels: Number of levels in the event.
-        :param rawPointsPerSide: Number of extra points kept on either side of the event in rawData.
+        :param event_start: The starting index of this event in the data.
+        :param event_length: Number of data points in the event.
+        :param n_levels: Number of levels in the event.
+        :param raw_points_per_side: Number of extra points kept on either side of the event in raw_data.
         :param baseline: Open-pore current at the time of the event.
-        :param currentBlockage: The mean current blockage of the event.
+        :param current_blockage: The mean current blockage of the event.
         :param area: The area of the event.
-        :param rawData: Numpy array of the raw data.
+        :param raw_data: Numpy array of the raw data.
         :param levels: Numpy array of the levels.
-        :param levelLengths: Numpy array of the level lengths.
+        :param level_lengths: Numpy array of the level lengths.
         """
         row = self.get_event_table_row()
-        row['arrayRow'] = arrayRow
-        row['eventStart'] = eventStart
-        row['eventLength'] = eventLength
-        row['nLevels'] = nLevels
-        row['rawPointsPerSide'] = rawPointsPerSide
+        row['array_row'] = array_row
+        row['event_start'] = event_start
+        row['event_length'] = event_length
+        row['n_levels'] = n_levels
+        row['raw_points_per_side'] = raw_points_per_side
         row['baseline'] = baseline
-        row['currentBlockage'] = currentBlockage
+        row['current_blockage'] = current_blockage
         row['area'] = area
         row.append()
 
-        if rawData is not None:
-            self.append_raw_data(rawData)
+        if raw_data is not None:
+            self.append_raw_data(raw_data)
         if levels is not None:
             self.append_levels(levels)
-        if levelLengths is not None:
-            self.append_level_lengths(levelLengths)
+        if level_lengths is not None:
+            self.append_level_lengths(level_lengths)
 
-    def append_level_lengths(self, levelLengths):
+    def append_level_lengths(self, level_lengths):
         """
-        Appends a numpy matrix levelLengths to root.events.levelLengths
+        Appends a numpy matrix level_lengths to root.events.level_lengths
         """
-        if levelLengths is not None:
-            self.root.events.levelLengths.append(levelLengths)
+        if level_lengths is not None:
+            self.root.events.level_lengths.append(level_lengths)
 
     def append_levels(self, levels):
         """
@@ -105,12 +104,12 @@ class EventDatabase(tb.file.File):
         if levels is not None:
             self.root.events.levels.append(levels)
 
-    def append_raw_data(self, rawData):
+    def append_raw_data(self, raw_data):
         """
-        Appends a numpy matrix rawData to root.events.rawData
+        Appends a numpy matrix raw_data to root.events.raw_data
         """
-        if rawData is not None:
-            self.root.events.rawData.append(rawData)
+        if raw_data is not None:
+            self.root.events.raw_data.append(raw_data)
 
     def clean_database(self):
         """
@@ -146,14 +145,14 @@ class EventDatabase(tb.file.File):
 
     def get_event_data_at(self, i):
         """
-        Returns the event data portion of rawData[i], ie excluding the
+        Returns the event data portion of raw_data[i], ie excluding the
         raw buffer points kept on each side of an event.
         """
         row = self.get_event_row(i)
-        array_row = row['arrayRow']
-        event_length = row['eventLength']
-        raw_points_per_side = row['rawPointsPerSide']
-        return self.root.events.rawData[array_row][raw_points_per_side:event_length + raw_points_per_side]
+        array_row = row['array_row']
+        event_length = row['event_length']
+        raw_points_per_side = row['raw_points_per_side']
+        return self.root.events.raw_data[array_row][raw_points_per_side:event_length + raw_points_per_side]
 
     def get_event_row(self, i):
         """
@@ -189,13 +188,13 @@ class EventDatabase(tb.file.File):
 
     def get_level_lengths_at(self, i):
         """
-        Returns a numpy array of the levelLengths corresponding to the event
+        Returns a numpy array of the level_lengths corresponding to the event
         in row 'i' of eventTable.
         """
         row = self.get_event_row(i)
-        array_row = row['arrayRow']
-        n_levels = row['nLevels']
-        return self.root.events.levelLengths[array_row][:n_levels]
+        array_row = row['array_row']
+        n_levels = row['n_levels']
+        return self.root.events.level_lengths[array_row][:n_levels]
 
     def get_levels_at(self, i):
         """
@@ -203,30 +202,30 @@ class EventDatabase(tb.file.File):
         in row 'i' of eventTable.
         """
         row = self.get_event_row(i)
-        array_row = row['arrayRow']
-        n_levels = row['nLevels']
+        array_row = row['array_row']
+        n_levels = row['n_levels']
         return self.root.events.levels[array_row][:n_levels]
 
     def get_raw_data_at(self, i):
         """
-        Returns the rawData numpy matrix associated with event 'i'.
+        Returns the raw_data numpy matrix associated with event 'i'.
         """
         row = self.get_event_row(i)
-        array_row = row['arrayRow']
-        event_length = row['eventLength']
-        raw_points_per_side = row['rawPointsPerSide']
-        return self.root.events.rawData[array_row][:event_length + 2 * raw_points_per_side]
+        array_row = row['array_row']
+        event_length = row['event_length']
+        raw_points_per_side = row['raw_points_per_side']
+        return self.root.events.raw_data[array_row][:event_length + 2 * raw_points_per_side]
 
     def get_sample_rate(self):
         """
-        Gets the sample rate at root.events.eventTable.attrs.sampleRate
+        Gets the sample rate at root.events.eventTable.attrs.sample_rate
         """
-        return self.root.events.eventTable.attrs.sampleRate
+        return self.root.events.eventTable.attrs.sample_rate
 
     def initialize_database(self, **kargs):
         """
         Initializes the EventDatabase.  Adds a group 'events' with
-        table 'eventsTable' and matrices 'rawData', 'levels', and 'levelLengths'.
+        table 'eventsTable' and matrices 'raw_data', 'levels', and 'level_lengths'.
 
         :param kargs: Dictionary - includes:
                         -maxEventLength: Maximum number of datapoints for an event to be added.
@@ -246,8 +245,8 @@ class EventDatabase(tb.file.File):
         a = tb.FloatAtom()
         b = tb.IntAtom()
 
-        if not 'rawData' in self.root.events:
-            self.createEArray(self.root.events, 'rawData',
+        if not 'raw_data' in self.root.events:
+            self.createEArray(self.root.events, 'raw_data',
                               a, shape=shape,
                               title="Raw data points",
                               filters=filters)
@@ -258,8 +257,8 @@ class EventDatabase(tb.file.File):
                               title="Cusum levels",
                               filters=filters)
 
-        if not 'levelLengths' in self.root.events:
-            self.createEArray(self.root.events, 'levelLengths',
+        if not 'level_lengths' in self.root.events:
+            self.createEArray(self.root.events, 'level_lengths',
                               b, shape=shape,
                               title="Lengths of the cusum levels",
                               filters=filters)

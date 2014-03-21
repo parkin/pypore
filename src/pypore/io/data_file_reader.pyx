@@ -1,3 +1,5 @@
+from cpython cimport bool
+
 import numpy as np
 cimport numpy as np
 
@@ -7,7 +9,7 @@ from pypore.io.abstract_reader cimport AbstractReader
 
 DTYPE = np.float
 
-cdef class PyporeReader(AbstractReader):
+cdef class DataFileReader(AbstractReader):
     cdef long next_to_send
     cdef object datafile
 
@@ -24,7 +26,7 @@ cdef class PyporeReader(AbstractReader):
 
         self.next_to_send = 0
 
-    cpdef get_next_blocks(self, long n_blocks):
+    cdef object get_next_blocks(self, long n_blocks):
         data = self.datafile.root.data
 
         if self.next_to_send >= self.points_per_channel_total:
@@ -33,7 +35,7 @@ cdef class PyporeReader(AbstractReader):
             self.next_to_send += self.block_size
             return [data[self.next_to_send:self.next_to_send + self.block_size].astype(DTYPE)]
 
-    cpdef get_all_data(self, decimate=False):
+    cpdef get_all_data(self, bool decimate=False):
         self.next_to_send = 0
 
         arr = self.datafile.root.data

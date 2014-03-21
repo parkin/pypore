@@ -135,9 +135,9 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
     # Open the event database
     if h5file is None:
         h5file = ed.open_file(save_file_name, maxEventLength=max_points, mode='w')
-    raw_data = h5file.root.events.rawData
+    raw_data = h5file.root.events.raw_data
     levels_matrix = h5file.root.events.levels
-    lengths_matrix = h5file.root.events.levelLengths
+    lengths_matrix = h5file.root.events.level_lengths
 
     cdef double data_point = data[0]
 
@@ -469,7 +469,7 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
         # add attributes
         h5file.root.events.eventTable.flush()  # if you don't flush before adding attributes,
         # PyTables might print a warning
-        h5file.root.events.eventTable.attrs.sampleRate = sample_rate
+        h5file.root.events.eventTable.attrs.sample_rate = sample_rate
         h5file.root.events.eventTable.attrs.eventCount = event_count
         h5file.root.events.eventTable.attrs.dataFilename = reader.get_filename_c()
         h5file.flush()
