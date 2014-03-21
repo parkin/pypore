@@ -1,3 +1,6 @@
+import numpy as np
+cimport numpy as np
+
 from cpython cimport bool
 
 cdef class AbstractReader:
@@ -15,12 +18,23 @@ cdef class AbstractReader:
     cdef public long points_per_channel_total
     cdef object filename
 
-
     cpdef _prepare_file(self, filename)
+    cdef void _prepare_file_c(self, filename)
+
     cpdef close(self)
-    cpdef get_all_data(self, bool decimate=?)
-    cpdef get_next_blocks(self, long n_blocks)
-    cpdef set_block_size(self, long block_size)
+    cdef void close_c(self)
+
+    cpdef object get_all_data(self, bool decimate=?)
+    cdef object get_all_data_c(self, bool decimate=?)
+
+    cpdef object get_next_blocks(self, long n_blocks=?)
+    cdef object get_next_blocks_c(self, long n_blocks=?)
+
     cpdef double get_sample_rate(self)
+    cdef double get_sample_rate_c(self)
+
     cpdef long get_points_per_channel_total(self)
-    cpdef get_filename(self)
+    cdef long get_points_per_channel_total_c(self)
+
+    cpdef object get_filename(self)
+    cdef object get_filename_c(self)

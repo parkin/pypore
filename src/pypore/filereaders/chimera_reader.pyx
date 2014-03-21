@@ -5,10 +5,8 @@ cimport numpy as np
 import os
 from cpython cimport bool
 import pypore.cythonsetup
-cimport pypore.filereaders.abstract_reader
 from pypore.filereaders.abstract_reader cimport AbstractReader
 
-DTYPE = np.float
 ctypedef np.float_t DTYPE_t
 
 CHIMERA_DATA_TYPE = np.dtype('<u2')
@@ -18,7 +16,7 @@ cdef class ChimeraReader(AbstractReader):
     # Note that these need to be public in order for the calling of
     # _prepare_file from AbstractReader to work.
 
-    cpdef get_next_blocks(self, long n_blocks):
+    cdef object get_next_blocks_c(self, long n_blocks=1):
         """
         Get the next n blocks of data.
 
@@ -33,9 +31,9 @@ cdef class ChimeraReader(AbstractReader):
 
         return [log_data]
 
-    cpdef _prepare_file(self, filename):
+    cdef void _prepare_file_c(self, filename):
         """
-        Implementation of :py:func:`prepare_data_file` for Chimera ".log" files with the associated ".mat" file.
+        Implementation of :py:func:`prepare_data_file_c` for Chimera ".log" files with the associated ".mat" file.
         """
         # remove 'log' append 'mat'
         s = list(filename)
@@ -64,10 +62,10 @@ cdef class ChimeraReader(AbstractReader):
         # Change the decimate sample rate
         self.decimate_sample_rate = self.sample_rate * 2.0 / self.block_size
 
-    cpdef close(self):
+    cdef void close_c(self):
         self.datafile.close()
 
-    cpdef get_all_data(self, bool decimate=False):
+    cdef object get_all_data_c(self, bool decimate=False):
         """
         Reads files created by the Chimera acquisition software.  It requires a
         filename.log file with the data, and a filename.mat file containing the
