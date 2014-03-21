@@ -5,9 +5,8 @@
 import unittest
 import os
 from pypore.filereaders import get_reader_from_filename
+from pypore.filereaders.pypore_reader import PyporeReader
 from pypore.filetypes.data_file import DataFile
-from pypore.data_file_opener import open_data
-
 from pypore.file_converter import convert_file
 
 import numpy as np
@@ -55,9 +54,9 @@ class TestFileConverter(unittest.TestCase):
 
         self.assertEqual(len(orig_data_all), 1)
 
-        out = open_data(output_filename)
-        out_data_all = out['data']
-        out_sample_rate = out['sample_rate']
+        out_reader = PyporeReader(filename)
+        out_data_all = out_reader.get_all_data()
+        out_sample_rate = out_reader.get_sample_rate()
 
         self.assertEqual(len(out_data_all), 1)
 
