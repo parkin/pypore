@@ -1,6 +1,3 @@
-import numpy as np
-cimport numpy as np
-
 from cpython cimport bool
 
 cdef class AbstractReader:
