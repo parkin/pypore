@@ -9,9 +9,9 @@ cdef class AbsoluteChangeThresholdStrategy(ThresholdStrategy):
         self.change_start = change_start
         self.change_end = change_end
 
-    cdef double compute_starting_threshold(self, double baseline, double variance):
+    cdef double compute_starting_threshold_c(self, double baseline, double variance):
         # TODO figure out how to handle both positive and negative changes...
         raise NotImplementedError
 
-    cdef double compute_ending_threshold(self, double baseline, double variance):
+    cdef double compute_ending_threshold_c(self, double baseline, double variance):
         raise NotImplementedError

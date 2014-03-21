@@ -10,8 +10,8 @@ cdef class NoiseBasedThresholdStrategy(ThresholdStrategy):
         self.start_std_dev = start_std_dev
         self.end_std_dev = end_std_dev
 
-    cdef double compute_ending_threshold(self, double baseline, double variance):
+    cdef double compute_ending_threshold_c(self, double baseline, double variance):
         return self.end_std_dev * sqrt(variance)
 
-    cdef double compute_starting_threshold(self, double baseline, double variance):
+    cdef double compute_starting_threshold_c(self, double baseline, double variance):
         return self.start_std_dev * sqrt(variance)
