@@ -14,7 +14,9 @@ SOURCE_DIR=src
 rm -rf $SPHINX_AUTODOC_DIR/*
 
 # generate the autodoc stuff
-sphinx-apidoc -o $SPHINX_AUTODOC_DIR $SOURCE_DIR -f
+# -f: overwrite files if necessary (even though just deleted directory above!)
+# -e: put each module file in its own page
+sphinx-apidoc -o $SPHINX_AUTODOC_DIR $SOURCE_DIR -f -e
 
 # cd to the sphinx dir, clean, then build html
 cd $SPHINX_DIR
