@@ -1,0 +1,22 @@
+language: python
+python:
+  - "2.6"
+  - "2.7"
+  - "3.2"
+  - "3.3"
+  - "pypy"
+
+before_install:
+  - uname -a
+  - free -m
+  - df -h
+  - python -V
+  - sudo apt-get update -qq
+  - pip install .
+
+script:
+  - nosetests
+
+notifications:
+  email: false
+
