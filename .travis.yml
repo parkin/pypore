@@ -23,7 +23,7 @@ before_install:
   - python -V
   - sudo apt-get update -qq
   - echo $PIP_INSTALL
-  - sudo apt-get install python-numpy python-scipy python-cython python-tables
+  - sudo apt-get install python-numpy python-scipy cython python-tables
 
 install:
   - python setup.py build --use-cython
