@@ -1,7 +1,7 @@
 """
 Created on Aug 20, 2013
 
-@author: `@parkin1`_
+@author: `@parkin`_
 """
 from PySide import QtGui
 import unittest

@@ -1,5 +1,5 @@
 """
-@author: `@parkin1`_
+@author: `@parkin`_
 This module sets up pyximport so that any .pyx file is automatically
 compiled on import.
 

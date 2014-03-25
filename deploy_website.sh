@@ -2,7 +2,7 @@
 
 set -ex
 
-REPO="https://github.com/parkin1/pypore.git"
+REPO="https://github.com/parkin/pypore.git"
 
 DIR=temp-pages-clone
 WEBSITE_DIR=website

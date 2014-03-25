@@ -3,7 +3,7 @@
 """
 Created on Jul 23, 2013
 
-@author: `@parkin1`_
+@author: `@parkin`_
 """
 
 from PySide import QtCore

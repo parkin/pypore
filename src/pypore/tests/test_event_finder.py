@@ -1,7 +1,7 @@
 """
 Tests for eventFinder.pyx
 
-@author: `@parkin1`_
+@author: `@parkin`_
 """
 import unittest
 from pypore import cythonsetup

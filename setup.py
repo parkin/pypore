@@ -70,7 +70,7 @@ setup(
     long_description=long_description,
     author='Will Parkin',
     author_email='wmparkin@gmail.com',
-    url='http://parkin1.github.io/pypore/',
+    url='http://parkin.github.io/pypore/',
     package_dir={'': 'src'},
     packages=packages,
     requires=['numpy', 'scipy', 'tables', 'PySide', 'pyqtgraph'],

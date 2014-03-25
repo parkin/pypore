@@ -1,7 +1,7 @@
 """
 Created on Aug 19, 2013
 
-@author: `@parkin1`_
+@author: `@parkin`_
 """
 #cython: embedsignature=True
 

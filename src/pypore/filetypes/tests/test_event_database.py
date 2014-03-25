@@ -1,7 +1,7 @@
 """
 Created on Sep 13, 2013
 
-@author: `@parkin1`_
+@author: `@parkin`_
 """
 import unittest
 import os
