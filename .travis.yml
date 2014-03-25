@@ -1,6 +1,14 @@
 language: python
 python:
+<<<<<<< HEAD
   - "2.7"
+=======
+  - "2.6"
+  - "2.7"
+  - "3.2"
+  - "3.3"
+  - "pypy"
+>>>>>>> 5b50b97c7dc399d580b7607ea696e2dc88a656c8
 
 before_install:
   - uname -a
