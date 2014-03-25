@@ -8,14 +8,17 @@ data/*
 website/sphinx-docs/build/doctrees/*
 website/sphinx-docs/build/.doctrees/*
 
-# 
-src/pypore/*.html
+# Python Files #
+################
 src/pypore/build/*
+# setup.py working directory
+build
 
 # any event files generated during testing
 src/pypore/test/testDataFiles/*Events*
 
 # Cython generated files
+src/pypore/*.html
 *.lprof
 *.so
 *.c
