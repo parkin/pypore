@@ -1,3 +1,5 @@
+# After changing this file, check it on:
+#   http://lint.travis-ci.org/
 language: python
 python:
   - "2.6"
@@ -6,13 +8,25 @@ python:
   - "3.3"
   - "pypy"
 
+matrix:
+  include:
+    - python: 2.7
+      env: PIP_INSTALL=1
+
+virtualenv:
+  system_site_packages: true
+
 before_install:
   - uname -a
   - free -m
   - df -h
   - python -V
   - sudo apt-get update -qq
-  - pip install numpy
+  - echo $PIP_INSTALL
+  - sudo apt-get install python-numpy python-scipy python-cython python-tables
+
+install:
+  - python setup.py build --use-cython
 
 script:
   - nosetests
