@@ -8,13 +8,14 @@ data/*
 website/sphinx-docs/build/doctrees/*
 website/sphinx-docs/build/.doctrees/*
 
-# Python Files #
-################
-src/pypore/build/*
+# setup.py generated files #
+############################
 # setup.py working directory
 build
 # hash database for cython compiled files
 cythonize.dat
+# version files
+version.py
 
 # any event files generated during testing
 src/pypore/test/testDataFiles/*Events*
