@@ -1,3 +1,4 @@
+# TODO finish implementing this file
 from cpython cimport bool
 
 import numpy as np
@@ -26,7 +27,7 @@ cdef class DataFileReader(AbstractReader):
 
         self.next_to_send = 0
 
-    cdef object get_next_blocks(self, long n_blocks):
+    cdef object get_next_blocks_c(self, long n_blocks=1):
         data = self.datafile.root.data
 
         if self.next_to_send >= self.points_per_channel_total:
@@ -42,14 +43,13 @@ cdef class DataFileReader(AbstractReader):
 
         cdef np.ndarray data
 
-        cdef float sample_rate = p['sample_rate']
+        # cdef float sample_rate = p['sample_rate']
 
-        if decimate:
-            data = arr[::5000]
-            sample_rate /= 5000.
-        else:
-            data = arr[:]
-
-        specs_file = {'data': [data], 'sample_rate': sample_rate}
-        f.close()
-        return specs_file
+        # if decimate:
+        #     data = arr[::5000]
+        #     sample_rate /= 5000.
+        # else:
+        #     data = arr[:]
+        #
+        # specs_file = {'data': [data], 'sample_rate': sample_rate}
+        # return specs_file
