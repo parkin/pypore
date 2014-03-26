@@ -4,7 +4,6 @@ Tests for eventFinder.pyx
 @author: `@parkin`_
 """
 import unittest
-from pypore import cythonsetup
 from pypore.event_finder import find_events
 from pypore.event_finder import _get_data_range_test_wrapper
 import numpy as np

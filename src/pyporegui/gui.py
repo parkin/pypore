@@ -50,12 +50,6 @@ def _long_imports(**kwargs):
         app.processEvents()
     import numpy as np
 
-    # My stuff
-    if update_splash:
-        splash.showMessage("Setting up Cython imports...", alignment=QtCore.Qt.AlignBottom)
-        app.processEvents()
-    from pypore import cythonsetup
-
     if update_splash:
         splash.showMessage("Compiling Cython imports... DataFileOpener", alignment=QtCore.Qt.AlignBottom)
         app.processEvents()

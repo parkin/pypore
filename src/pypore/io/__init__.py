@@ -1,6 +1,5 @@
 
 def get_reader_from_filename(filename):
-    import pypore.cythonsetup
 
     # TODO implement for other file types
 
