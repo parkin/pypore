@@ -33,7 +33,8 @@ before_install:
 
 install:
   - travis_retry sudo apt-get install libhdf5-serial-dev
-  - echo $PYTHON
+  - echo ${PYTHON}
+  - echo "${PYTHON}"
   - if [ "${USE_APT}" == "true" ]; then
       if [ "${PYTHON}" == "2.6" -o "${PYTHON}" == "2.7" ]; then
         travis_retry sudo apt-get install -qq -y python-numpy python-scipy;
