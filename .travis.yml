@@ -39,7 +39,7 @@ install:
   # apt Cython version too small, must use pip
   - pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel --use-mirrors Cython
   - if [ "${USE_APT}" == "true" ]; then
-      echo "Using apt"
+      echo "Using apt";
       if [ "${TRAVIS_PYTHON_VERSION}" == "2.7" ]; then
         travis_retry sudo apt-get install -qq -y python-numpy python-scipy;
         travis_retry sudo apt-get install python-pyside python-nose;
