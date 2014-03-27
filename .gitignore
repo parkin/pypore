@@ -5,8 +5,7 @@ data/*
 *.pyc
 
 # sphinx files generated during build
-website/sphinx-docs/build/doctrees/*
-website/sphinx-docs/build/.doctrees/*
+website/sphinx-docs/build/
 
 # setup.py generated files #
 ############################
