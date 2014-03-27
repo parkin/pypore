@@ -26,15 +26,17 @@ before_install:
   - free -m
   - df -h
   - python -V
-  - sudo apt-get update -qq
-  - echo $PIP_INSTALL
-  - sudo apt-get install python-numpy python-scipy cython python-tables
+  - travis_retry sudo apt-get update
 
 install:
-  - python setup.py build
+  - echo $PIP_INSTALL
+  - pip install --upgrade pip setuptools  # Upgrade pip and setuptools to get ones with `wheel` support
+  - pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel --use-mirrors nose numpy Cython scipy
+  - sudo apt-get install python-tables
+  - python setup.py install
 
 script:
-  - nosetests
+  - python setup.py test
 
 notifications:
   email: false
