@@ -8,7 +8,7 @@ matrix:
     - python: "2.7"
       env:
         - USE_APT=true
-        - TEST_MODE=full
+        - TESTMODE=full
     - python: "3.2"
       env:
         - USE_APT=true
@@ -82,7 +82,7 @@ script:
   - if [ "${TESTMODE}" == "full" ]; then coverage run --source=src; fi;
 
 after_success:
-  - coveralls
+  - if [ "${TESTMODE}" == "full" ]; then coveralls; fi;
 
 notifications:
   email: false
