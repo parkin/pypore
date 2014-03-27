@@ -34,6 +34,9 @@ before_install:
 
 install:
   - travis_retry sudo apt-get install libhdf5-serial-dev
+  - pip install --upgrade pip setuptools  # Upgrade pip and setuptools to get ones with `wheel` support
+  # apt Cython version too small, must use pip
+  - pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel --use-mirrors Cython
   - if [ "${USE_APT}" == "true" ]; then
       if [ "${TRAVIS_PYTHON_VERSION}" == "2.7" ]; then
         travis_retry sudo apt-get install -qq -y python-numpy python-scipy;
@@ -54,10 +57,6 @@ install:
       pip install pyside;
       pip insatll --upgrade sphinx;
     fi;
-
-  - pip install --upgrade pip setuptools  # Upgrade pip and setuptools to get ones with `wheel` support
-  # apt Cython version too small, must use pip
-  - pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel --use-mirrors Cython
   - pip install pyqtgraph
   - python setup.py -q install
 
