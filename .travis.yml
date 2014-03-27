@@ -26,7 +26,6 @@ before_install:
   - free -m
   - df -h
   - python -V
-  - travis_retry sudo apt-get update
 
 install:
   - echo $PIP_INSTALL
