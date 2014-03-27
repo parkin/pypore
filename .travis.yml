@@ -77,9 +77,7 @@ script:
   - popd
 
   # run the tests
-  - python setup.py test
-
-  - if [ "${TESTMODE}" == "full" ]; then coverage run --source=src; fi;
+  - if [ "${TESTMODE}" == "full" ]; then coverage run --source=src setup.py test; fi;
 
 after_success:
   - if [ "${TESTMODE}" == "full" ]; then coveralls; fi;
