@@ -76,11 +76,14 @@ script:
   - echo "import pypore" | python
   - popd
 
+  # Build C extensions next to .c files
+  - python setup.py build_ext --inplace
+
   # run the tests
   - if [ "${TESTMODE}" == "full" ]; then
       coverage run --source=src setup.py test;
     else
-      python setup.py test;
+      nosetests
     fi;
 
 after_success:
