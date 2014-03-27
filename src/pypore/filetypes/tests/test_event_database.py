@@ -428,7 +428,7 @@ class TestEventDatabase(unittest.TestCase):
 
     def test_get_sample_rate(self):
         """
-        Test that getSampleRate returns root.events.eventTable.attrs.sample_rate
+        Test that get_sample_rate returns root.events.eventTable.attrs.sample_rate
         """
         rate = 13928.99
         self.database.root.events.eventTable.attrs.sample_rate = rate
