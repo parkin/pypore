@@ -40,7 +40,9 @@ script:
   - pip install .
 
   # check we can import pypore
-  - cd /; echo "import pypore" | python
+  - pushd /
+  - echo "import pypore" | python
+  - popd
 
   # run the tests
   - python setup.py test
