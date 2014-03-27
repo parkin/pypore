@@ -1,3 +1,19 @@
+master branch
+
+.. image:: https://travis-ci.org/parkin/pypore.svg?branch=master 
+    :target: https://travis-ci.org/parkin/pypore
+    
+.. image:: https://coveralls.io/repos/parkin/pypore/badge.png?branch=master
+    :target: https://coveralls.io/r/parkin/pypore?branch=master
+
+dev branch
+
+.. image:: https://travis-ci.org/parkin/pypore.svg?branch=dev 
+    :target: https://travis-ci.org/parkin/pypore
+    
+.. image:: https://coveralls.io/repos/parkin/pypore/badge.png?branch=dev
+    :target: https://coveralls.io/r/parkin/pypore?branch=dev
+   
 Pypore
 =======
 
