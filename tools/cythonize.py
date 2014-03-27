@@ -100,13 +100,13 @@ def process(path, from_file, to_file, hash_db):
     full_to_path = os.path.join(path, to_file)
     current_hash = get_hash(full_from_path, full_to_path)
     if current_hash == hash_db.get(norm_path(full_from_path), None):
-        print '%s has not changed' % full_from_path
+        print '{0} has not changed'.format(full_from_path)
         return
 
     orig_cwd = os.getcwd()
     try:
         os.chdir(path)
-        print 'Processing %s' % full_from_path
+        print 'Processing {0}'.format(full_from_path)
         process_pyx(from_file, to_file)
     finally:
         os.chdir(orig_cwd)
@@ -119,7 +119,7 @@ def process(path, from_file, to_file, hash_db):
 def save_hashes(hash_db, filename):
     with open(filename, 'w') as f:
         for key, value in sorted(hash_db.items()):
-            f.write("%s %s %s\n" % (key, value[0], value[1]))
+            f.write("{0} {1} {2}\n".format(key, value[0], value[1]))
 
 
 def find_process_files(root_dir):
