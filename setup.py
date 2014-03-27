@@ -206,7 +206,8 @@ def setup_package():
         url='http://parkin.github.io/pypore/',
         requires=['numpy', 'scipy', 'tables', 'PySide', 'pyqtgraph'],
         include_dirs=[numpy.get_include()],
-        package_dir={'': 'src'}
+        package_dir={'': 'src'},
+        test_suite='nose.collector'
     )
 
     if len(sys.argv) >= 2 and ('--help' in sys.argv[1:] or
