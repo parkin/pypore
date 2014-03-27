@@ -30,18 +30,20 @@ before_install:
   - free -m
   - df -h
   - python -V
+  - pip -V
 
 install:
   - travis_retry sudo apt-get install libhdf5-serial-dev
-  - echo ${TRAVIS_PYTHON_VERSION}
-  - echo "${TRAVIS_PYTHON_VERSION}"
   - if [ "${USE_APT}" == "true" ]; then
-      if [ "${TRAVIS_PYTHON_VERSION}" == "2.6" -o "${TRAVIS_PYTHON_VERSION}" == "2.7" ]; then
+      if [ "${TRAVIS_PYTHON_VERSION}" == "2.7" ]; then
         travis_retry sudo apt-get install -qq -y python-numpy python-scipy;
         travis_retry sudo apt-get install python-pyside python-nose;
+        travis_retry sudo apt-get install python-tables;
       else
         travis_retry sudo apt-get install -qq -y python3-numpy python3-scipy;
         travis_retry sudo apt-get install python3-pyside python3-nose;
+        pip install numexpr;
+        pip install tables;
       fi;
     else
       pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel --use-mirrors nose numpy scipy;
