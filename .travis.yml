@@ -83,7 +83,7 @@ script:
   - if [ "${TESTMODE}" == "full" ]; then
       coverage run --source=src setup.py test;
     else
-      nosetests
+      nosetests;
     fi;
 
 after_success:
