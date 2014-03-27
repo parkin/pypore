@@ -11,46 +11,15 @@ Subpackages
 Submodules
 ----------
 
-pyporegui.widgets.event_analysis_plot_widget module
----------------------------------------------------
+.. toctree::
 
-.. automodule:: pyporegui.widgets.event_analysis_plot_widget
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pyporegui.widgets.event_analysis_tab module
--------------------------------------------
-
-.. automodule:: pyporegui.widgets.event_analysis_tab
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pyporegui.widgets.event_finding_tab module
-------------------------------------------
-
-.. automodule:: pyporegui.widgets.event_finding_tab
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pyporegui.widgets.event_viewing_tab module
-------------------------------------------
-
-.. automodule:: pyporegui.widgets.event_viewing_tab
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pyporegui.widgets.plot_tool_bar module
---------------------------------------
-
-.. automodule:: pyporegui.widgets.plot_tool_bar
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
+   pyporegui.widgets.base_tabs
+   pyporegui.widgets.event_analysis_plot_widget
+   pyporegui.widgets.event_analysis_tab
+   pyporegui.widgets.event_finding_tab
+   pyporegui.widgets.event_viewing_tab
+   pyporegui.widgets.file_viewer_tab
+   pyporegui.widgets.plot_tool_bar
 
 Module contents
 ---------------

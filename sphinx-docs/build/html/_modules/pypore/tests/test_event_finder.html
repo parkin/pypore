@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pypore.tests.test_event_finder &mdash; pypore 0.0.1 documentation</title>
+    <title>pypore.tests.test_event_finder &mdash; Pypore 0.0.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/architect.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pypore 0.0.1 documentation" href="../../../index.html" />
+    <link rel="top" title="Pypore 0.0.1 documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" />
 <link href="https://fonts.googleapis.com/css?family=Architects+Daughter" rel="stylesheet" type="text/css">
 
@@ -50,7 +50,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">pypore 0.0.1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">Pypore 0.0.1 documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>
@@ -81,10 +81,9 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Tests for eventFinder.pyx</span>
 
-<span class="sd">@author: `@parkin1`_</span>
+<span class="sd">@author: `@parkin`_</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">unittest</span>
-<span class="kn">from</span> <span class="nn">pypore</span> <span class="kn">import</span> <span class="n">cythonsetup</span>
 <span class="kn">from</span> <span class="nn">pypore.event_finder</span> <span class="kn">import</span> <span class="n">find_events</span>
 <span class="kn">from</span> <span class="nn">pypore.event_finder</span> <span class="kn">import</span> <span class="n">_get_data_range_test_wrapper</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
@@ -92,20 +91,14 @@
 <span class="kn">import</span> <span class="nn">pypore.filetypes.event_database</span> <span class="kn">as</span> <span class="nn">eD</span>
 
 
-<div class="viewcode-block" id="TestEventFinder"><a class="viewcode-back" href="../../../autodocs/pypore.tests.html#pypore.tests.test_event_finder.TestEventFinder">[docs]</a><span class="k">class</span> <span class="nc">TestEventFinder</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
-<div class="viewcode-block" id="TestEventFinder.setUp"><a class="viewcode-back" href="../../../autodocs/pypore.tests.html#pypore.tests.test_event_finder.TestEventFinder.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;min_event_length&#39;</span><span class="p">:</span> <span class="mf">10.</span><span class="p">,</span>
-                               <span class="s">&#39;max_event_length&#39;</span><span class="p">:</span> <span class="mf">10000.</span><span class="p">,</span>
-                               <span class="s">&#39;threshold_direction&#39;</span><span class="p">:</span> <span class="s">&#39;Negative&#39;</span><span class="p">,</span>
-                               <span class="s">&#39;filter_parameter&#39;</span><span class="p">:</span> <span class="mf">0.93</span><span class="p">,</span>
-                               <span class="s">&#39;threshold_type&#39;</span><span class="p">:</span> <span class="s">&#39;Noise Based&#39;</span><span class="p">,</span>
-                               <span class="s">&#39;start_stddev&#39;</span><span class="p">:</span> <span class="mf">5.</span><span class="p">,</span>
-                               <span class="s">&#39;end_stddev&#39;</span><span class="p">:</span> <span class="mf">1.</span><span class="p">}</span>
-</div>
-<div class="viewcode-block" id="TestEventFinder.tearDown"><a class="viewcode-back" href="../../../autodocs/pypore.tests.html#pypore.tests.test_event_finder.TestEventFinder.tearDown">[docs]</a>    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestEventFinder"><a class="viewcode-back" href="../../../autodocs/pypore.tests.test_event_finder.html#pypore.tests.test_event_finder.TestEventFinder">[docs]</a><span class="k">class</span> <span class="nc">TestEventFinder</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<div class="viewcode-block" id="TestEventFinder.setUp"><a class="viewcode-back" href="../../../autodocs/pypore.tests.test_event_finder.html#pypore.tests.test_event_finder.TestEventFinder.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 </div>
-<div class="viewcode-block" id="TestEventFinder.test_get_data_range_test_wrapper_at_new"><a class="viewcode-back" href="../../../autodocs/pypore.tests.html#pypore.tests.test_event_finder.TestEventFinder.test_get_data_range_test_wrapper_at_new">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_data_range_test_wrapper_at_new</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestEventFinder.tearDown"><a class="viewcode-back" href="../../../autodocs/pypore.tests.test_event_finder.html#pypore.tests.test_event_finder.TestEventFinder.tearDown">[docs]</a>    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="TestEventFinder.test_get_data_range_test_wrapper_at_new"><a class="viewcode-back" href="../../../autodocs/pypore.tests.test_event_finder.html#pypore.tests.test_event_finder.TestEventFinder.test_get_data_range_test_wrapper_at_new">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_data_range_test_wrapper_at_new</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">n</span> <span class="o">=</span> <span class="mi">100</span>
         <span class="n">first</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
         <span class="n">first</span><span class="p">[</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">1.</span>
@@ -171,11 +164,11 @@
         <span class="n">x</span><span class="p">[</span><span class="mi">210</span><span class="p">:]</span> <span class="o">+=</span> <span class="mf">40.</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">_get_data_range_test_wrapper</span><span class="p">(</span><span class="n">data_cache</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">210</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestEventFinder.test_saving_files"><a class="viewcode-back" href="../../../autodocs/pypore.tests.html#pypore.tests.test_event_finder.TestEventFinder.test_saving_files">[docs]</a>    <span class="k">def</span> <span class="nf">test_saving_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestEventFinder.test_saving_files"><a class="viewcode-back" href="../../../autodocs/pypore.tests.test_event_finder.html#pypore.tests.test_event_finder.TestEventFinder.test_saving_files">[docs]</a>    <span class="k">def</span> <span class="nf">test_saving_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;testDataFiles&#39;</span><span class="p">,</span> <span class="s">&#39;chimera_1event.log&#39;</span><span class="p">)</span>
 
-        <span class="n">event_database</span> <span class="o">=</span> <span class="n">find_events</span><span class="p">([</span><span class="n">filename</span><span class="p">],</span> <span class="n">save_file_name</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;_testSavingFiles_9238.h5&#39;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">event_database</span> <span class="o">=</span> <span class="n">find_events</span><span class="p">([</span><span class="n">filename</span><span class="p">],</span> <span class="n">save_file_names</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;_testSavingFiles_9238.h5&#39;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">event_database</span><span class="p">))</span>
 
@@ -188,11 +181,10 @@
         <span class="c"># delete the newly created event file</span>
         <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">event_database</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestEventFinder.test_chimera_no_noise_1event"><a class="viewcode-back" href="../../../autodocs/pypore.tests.html#pypore.tests.test_event_finder.TestEventFinder.test_chimera_no_noise_1event">[docs]</a>    <span class="k">def</span> <span class="nf">test_chimera_no_noise_1event</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestEventFinder.test_chimera_no_noise_1event"><a class="viewcode-back" href="../../../autodocs/pypore.tests.test_event_finder.html#pypore.tests.test_event_finder.TestEventFinder.test_chimera_no_noise_1event">[docs]</a>    <span class="k">def</span> <span class="nf">test_chimera_no_noise_1event</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;testDataFiles&#39;</span><span class="p">,</span> <span class="s">&#39;chimera_nonoise_1event.log&#39;</span><span class="p">)</span>
-        <span class="n">event_database</span> <span class="o">=</span> <span class="n">find_events</span><span class="p">([</span><span class="n">filename</span><span class="p">],</span> <span class="n">save_file_name</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;_testChimera_nonoise_1Event_9238.h5&#39;</span><span class="p">],</span>
-                                     <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">default_params</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">event_database</span> <span class="o">=</span> <span class="n">find_events</span><span class="p">([</span><span class="n">filename</span><span class="p">],</span> <span class="n">save_file_names</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;_testChimera_nonoise_1Event_9238.h5&#39;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="n">h5file</span> <span class="o">=</span> <span class="n">eD</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">event_database</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
 
@@ -203,21 +195,21 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">event_table</span><span class="o">.</span><span class="n">nrows</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
         <span class="c"># check raw data array correct length</span>
-        <span class="n">raw_data_matrix</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">rawData</span>
+        <span class="n">raw_data_matrix</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">raw_data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">raw_data_matrix</span><span class="o">.</span><span class="n">nrows</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">event_length</span> <span class="o">=</span> <span class="n">event_table</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;eventLength&#39;</span><span class="p">]</span>
+        <span class="n">event_length</span> <span class="o">=</span> <span class="n">event_table</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;event_length&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">event_length</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
 
         <span class="c"># Make sure only 1 event with 1 level</span>
         <span class="n">levels_matrix</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">levels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">levels_matrix</span><span class="o">.</span><span class="n">nrows</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">n_levels</span> <span class="o">=</span> <span class="n">event_table</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;nLevels&#39;</span><span class="p">]</span>
+        <span class="n">n_levels</span> <span class="o">=</span> <span class="n">event_table</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;n_levels&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">n_levels</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">levels</span> <span class="o">=</span> <span class="n">levels_matrix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">levels</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mf">0.9332</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 
         <span class="c"># Check 1 event with 1 levelLength</span>
-        <span class="n">lengths_matrix</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">levelLengths</span>
+        <span class="n">lengths_matrix</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">level_lengths</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">lengths_matrix</span><span class="o">.</span><span class="n">nrows</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">lengths</span> <span class="o">=</span> <span class="n">lengths_matrix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">lengths</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1000</span><span class="p">)</span>
@@ -234,31 +226,30 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">event_table</span><span class="o">.</span><span class="n">nrows</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
         <span class="c"># check raw data array correct length</span>
-        <span class="n">raw_data_matrix</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">rawData</span>
+        <span class="n">raw_data_matrix</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">raw_data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">raw_data_matrix</span><span class="o">.</span><span class="n">nrows</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">event_length</span> <span class="o">=</span> <span class="n">event_table</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;eventLength&#39;</span><span class="p">]</span>
+        <span class="n">event_length</span> <span class="o">=</span> <span class="n">event_table</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;event_length&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">event_length</span><span class="p">,</span> <span class="mi">1500</span><span class="p">)</span>
 
         <span class="n">levels_matrix</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">levels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">levels_matrix</span><span class="o">.</span><span class="n">nrows</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">levels</span> <span class="o">=</span> <span class="n">levels_matrix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">n_levels</span> <span class="o">=</span> <span class="n">event_table</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;nLevels&#39;</span><span class="p">]</span>
+        <span class="n">n_levels</span> <span class="o">=</span> <span class="n">event_table</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;n_levels&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">n_levels</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">levels</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mf">0.9332</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">levels</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mf">0.78064</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 
-        <span class="n">levels_matrix</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">levelLengths</span>
+        <span class="n">levels_matrix</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">level_lengths</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">levels_matrix</span><span class="o">.</span><span class="n">nrows</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">levels</span> <span class="o">=</span> <span class="n">h5file</span><span class="o">.</span><span class="n">get_level_lengths_at</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">levels</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">levels</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">750</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">levels</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">750</span><span class="p">)</span>
 
-<div class="viewcode-block" id="TestEventFinder.test_chimera_no_noise_1event_2levels"><a class="viewcode-back" href="../../../autodocs/pypore.tests.html#pypore.tests.test_event_finder.TestEventFinder.test_chimera_no_noise_1event_2levels">[docs]</a>    <span class="k">def</span> <span class="nf">test_chimera_no_noise_1event_2levels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestEventFinder.test_chimera_no_noise_1event_2levels"><a class="viewcode-back" href="../../../autodocs/pypore.tests.test_event_finder.html#pypore.tests.test_event_finder.TestEventFinder.test_chimera_no_noise_1event_2levels">[docs]</a>    <span class="k">def</span> <span class="nf">test_chimera_no_noise_1event_2levels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;testDataFiles&#39;</span><span class="p">,</span> <span class="s">&#39;chimera_nonoise_1event_2levels.log&#39;</span><span class="p">)</span>
-        <span class="n">event_database</span> <span class="o">=</span> <span class="n">find_events</span><span class="p">([</span><span class="n">filename</span><span class="p">],</span> <span class="n">save_file_name</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;_testChimera_nonoise_1Event_2Levels_9238.h5&#39;</span><span class="p">],</span>
-                                     <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">default_params</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">event_database</span> <span class="o">=</span> <span class="n">find_events</span><span class="p">([</span><span class="n">filename</span><span class="p">],</span> <span class="n">save_file_names</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;_testChimera_nonoise_1Event_2Levels_9238.h5&#39;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="n">h5file</span> <span class="o">=</span> <span class="n">eD</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">event_database</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_test_chimera_no_noise_1event_2levels_helper</span><span class="p">(</span><span class="n">h5file</span><span class="p">)</span>
@@ -275,29 +266,29 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">event_table</span><span class="o">.</span><span class="n">nrows</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 
         <span class="c"># check raw data array correct length</span>
-        <span class="n">raw_data_matrix</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">rawData</span>
+        <span class="n">raw_data_matrix</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">raw_data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">raw_data_matrix</span><span class="o">.</span><span class="n">nrows</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="n">event_length</span> <span class="o">=</span> <span class="n">event_table</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;eventLength&#39;</span><span class="p">]</span>
+        <span class="n">event_length</span> <span class="o">=</span> <span class="n">event_table</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;event_length&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">event_length</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
         <span class="c"># second event</span>
-        <span class="n">event_length</span> <span class="o">=</span> <span class="n">event_table</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;eventLength&#39;</span><span class="p">]</span>
+        <span class="n">event_length</span> <span class="o">=</span> <span class="n">event_table</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;event_length&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">event_length</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
 
         <span class="c"># Make sure only 2 events with 1 level each</span>
         <span class="n">levels_matrix</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">levels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">levels_matrix</span><span class="o">.</span><span class="n">nrows</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
         <span class="n">levels</span> <span class="o">=</span> <span class="n">levels_matrix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">n_levels</span> <span class="o">=</span> <span class="n">event_table</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;nLevels&#39;</span><span class="p">]</span>
+        <span class="n">n_levels</span> <span class="o">=</span> <span class="n">event_table</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;n_levels&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">n_levels</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">levels</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mf">0.9332</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
         <span class="c"># event 2</span>
         <span class="n">levels</span> <span class="o">=</span> <span class="n">levels_matrix</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">n_levels_1</span> <span class="o">=</span> <span class="n">event_table</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;nLevels&#39;</span><span class="p">]</span>
+        <span class="n">n_levels_1</span> <span class="o">=</span> <span class="n">event_table</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;n_levels&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">n_levels_1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">levels</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mf">0.9332</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 
         <span class="c"># Check 2 events with 1 level -&gt; 1 lengths</span>
-        <span class="n">lengths_matrix</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">levelLengths</span>
+        <span class="n">lengths_matrix</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">level_lengths</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">lengths_matrix</span><span class="o">.</span><span class="n">nrows</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
         <span class="n">lengths1</span> <span class="o">=</span> <span class="n">h5file</span><span class="o">.</span><span class="n">get_level_lengths_at</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lengths1</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
@@ -307,11 +298,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lengths2</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">lengths2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1000</span><span class="p">)</span>
 
-<div class="viewcode-block" id="TestEventFinder.test_chimera_no_noise_2events_1levels"><a class="viewcode-back" href="../../../autodocs/pypore.tests.html#pypore.tests.test_event_finder.TestEventFinder.test_chimera_no_noise_2events_1levels">[docs]</a>    <span class="k">def</span> <span class="nf">test_chimera_no_noise_2events_1levels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestEventFinder.test_chimera_no_noise_2events_1levels"><a class="viewcode-back" href="../../../autodocs/pypore.tests.test_event_finder.html#pypore.tests.test_event_finder.TestEventFinder.test_chimera_no_noise_2events_1levels">[docs]</a>    <span class="k">def</span> <span class="nf">test_chimera_no_noise_2events_1levels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;testDataFiles&#39;</span><span class="p">,</span> <span class="s">&#39;chimera_nonoise_2events_1levels.log&#39;</span><span class="p">)</span>
-        <span class="n">event_databases</span> <span class="o">=</span> <span class="n">find_events</span><span class="p">([</span><span class="n">filename</span><span class="p">],</span> <span class="n">save_file_name</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;_testChimera_nonoise_2events_1levels_9238.h5&#39;</span><span class="p">],</span>
-                                      <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">default_params</span><span class="p">)</span>
+        <span class="n">event_databases</span> <span class="o">=</span> <span class="n">find_events</span><span class="p">([</span><span class="n">filename</span><span class="p">],</span> <span class="n">save_file_names</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;_testChimera_nonoise_2events_1levels_9238.h5&#39;</span><span class="p">])</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">event_databases</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
 
@@ -324,15 +314,14 @@
         <span class="c"># delete the newly created event file</span>
         <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">event_database</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestEventFinder.test_multiple_files"><a class="viewcode-back" href="../../../autodocs/pypore.tests.html#pypore.tests.test_event_finder.TestEventFinder.test_multiple_files">[docs]</a>    <span class="k">def</span> <span class="nf">test_multiple_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestEventFinder.test_multiple_files"><a class="viewcode-back" href="../../../autodocs/pypore.tests.test_event_finder.html#pypore.tests.test_event_finder.TestEventFinder.test_multiple_files">[docs]</a>    <span class="k">def</span> <span class="nf">test_multiple_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">filename1</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
         <span class="n">filename1</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filename1</span><span class="p">,</span> <span class="s">&#39;testDataFiles&#39;</span><span class="p">,</span> <span class="s">&#39;chimera_nonoise_2events_1levels.log&#39;</span><span class="p">)</span>
         <span class="n">filename2</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
         <span class="n">filename2</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filename2</span><span class="p">,</span> <span class="s">&#39;testDataFiles&#39;</span><span class="p">,</span> <span class="s">&#39;chimera_nonoise_1event_2levels.log&#39;</span><span class="p">)</span>
         <span class="n">file_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">filename1</span><span class="p">,</span> <span class="n">filename2</span><span class="p">]</span>
         <span class="n">event_databases</span> <span class="o">=</span> <span class="n">find_events</span><span class="p">(</span><span class="n">file_names</span><span class="p">,</span>
-                                      <span class="n">save_file_names</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;_testMultipleFiles_1_9238.h5&#39;</span><span class="p">,</span> <span class="s">&#39;_testMultipleFiles_2_9238.h5&#39;</span><span class="p">],</span>
-                                      <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">default_params</span><span class="p">)</span>
+                                      <span class="n">save_file_names</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;_testMultipleFiles_1_9238.h5&#39;</span><span class="p">,</span> <span class="s">&#39;_testMultipleFiles_2_9238.h5&#39;</span><span class="p">])</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">event_databases</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
 
@@ -366,7 +355,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">pypore 0.0.1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">Pypore 0.0.1 documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

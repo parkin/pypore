@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyporegui.graphicsItems.histogram_item &mdash; pypore 0.0.1 documentation</title>
+    <title>pyporegui.graphicsItems.histogram_item &mdash; Pypore 0.0.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/architect.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pypore 0.0.1 documentation" href="../../../index.html" />
+    <link rel="top" title="Pypore 0.0.1 documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" />
 <link href="https://fonts.googleapis.com/css?family=Architects+Daughter" rel="stylesheet" type="text/css">
 
@@ -50,7 +50,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">pypore 0.0.1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">Pypore 0.0.1 documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>
@@ -84,9 +84,9 @@
 <span class="kn">from</span> <span class="nn">pyqtgraph.graphicsItems.PlotCurveItem</span> <span class="kn">import</span> <span class="n">PlotCurveItem</span>
 
 
-<div class="viewcode-block" id="HistogramItem"><a class="viewcode-back" href="../../../autodocs/pyporegui.graphicsItems.html#pyporegui.graphicsItems.histogram_item.HistogramItem">[docs]</a><span class="k">class</span> <span class="nc">HistogramItem</span><span class="p">(</span><span class="n">PlotItem</span><span class="p">):</span>
+<div class="viewcode-block" id="HistogramItem"><a class="viewcode-back" href="../../../autodocs/pyporegui.graphicsItems.histogram_item.html#pyporegui.graphicsItems.histogram_item.HistogramItem">[docs]</a><span class="k">class</span> <span class="nc">HistogramItem</span><span class="p">(</span><span class="n">PlotItem</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="HistogramItem.__init__"><a class="viewcode-back" href="../../../autodocs/pyporegui.graphicsItems.histogram_item.html#pyporegui.graphicsItems.histogram_item.HistogramItem.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rotate</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="k">if</span> <span class="s">&#39;rotate&#39;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">rotate</span> <span class="o">=</span> <span class="n">kargs</span><span class="p">[</span><span class="s">&#39;rotate&#39;</span><span class="p">]</span>
@@ -104,8 +104,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">minimum_array</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">maximum_array</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_bins_array</span> <span class="o">=</span> <span class="p">[]</span>
-
-<div class="viewcode-block" id="HistogramItem.add_histogram"><a class="viewcode-back" href="../../../autodocs/pyporegui.graphicsItems.html#pyporegui.graphicsItems.histogram_item.HistogramItem.add_histogram">[docs]</a>    <span class="k">def</span> <span class="nf">add_histogram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">n_bins</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="HistogramItem.add_histogram"><a class="viewcode-back" href="../../../autodocs/pyporegui.graphicsItems.histogram_item.html#pyporegui.graphicsItems.histogram_item.HistogramItem.add_histogram">[docs]</a>    <span class="k">def</span> <span class="nf">add_histogram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">n_bins</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adds a histogram to the plot.</span>
 
@@ -124,7 +124,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">n_bins_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n_bins</span><span class="p">)</span>
 
         <span class="c"># if this is the first histogram plotted,</span>
-        <span class="c"># initialize settings</span>
+        <span class="c"># initialize_c settings</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_array</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">minimum</span> <span class="o">=</span> <span class="n">minimum</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">maximum</span> <span class="o">=</span> <span class="n">maximum</span>
@@ -173,7 +173,7 @@
                 <span class="n">x</span> <span class="o">*=</span> <span class="o">-</span><span class="mf">1.</span>
             <span class="n">item</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 
-<div class="viewcode-block" id="HistogramItem.remove_item_at"><a class="viewcode-back" href="../../../autodocs/pyporegui.graphicsItems.html#pyporegui.graphicsItems.histogram_item.HistogramItem.remove_item_at">[docs]</a>    <span class="k">def</span> <span class="nf">remove_item_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="HistogramItem.remove_item_at"><a class="viewcode-back" href="../../../autodocs/pyporegui.graphicsItems.histogram_item.html#pyporegui.graphicsItems.histogram_item.HistogramItem.remove_item_at">[docs]</a>    <span class="k">def</span> <span class="nf">remove_item_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Removes the histogram item at index.</span>
 
@@ -225,7 +225,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">pypore 0.0.1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">Pypore 0.0.1 documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

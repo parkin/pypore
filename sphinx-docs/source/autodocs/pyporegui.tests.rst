@@ -4,22 +4,10 @@ pyporegui.tests package
 Submodules
 ----------
 
-pyporegui.tests.test_file_items module
---------------------------------------
+.. toctree::
 
-.. automodule:: pyporegui.tests.test_file_items
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pyporegui.tests.test_pyporegui module
--------------------------------------
-
-.. automodule:: pyporegui.tests.test_pyporegui
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
+   pyporegui.tests.test_file_items
+   pyporegui.tests.test_pyporegui
 
 Module contents
 ---------------

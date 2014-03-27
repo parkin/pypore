@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyporegui.tests.test_file_items &mdash; pypore 0.0.1 documentation</title>
+    <title>pyporegui.tests.test_file_items &mdash; Pypore 0.0.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/architect.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pypore 0.0.1 documentation" href="../../../index.html" />
+    <link rel="top" title="Pypore 0.0.1 documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" />
 <link href="https://fonts.googleapis.com/css?family=Architects+Daughter" rel="stylesheet" type="text/css">
 
@@ -50,7 +50,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">pypore 0.0.1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">Pypore 0.0.1 documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>
@@ -81,7 +81,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Created on Aug 20, 2013</span>
 
-<span class="sd">@author: `@parkin1`_</span>
+<span class="sd">@author: `@parkin`_</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtGui</span>
 <span class="kn">import</span> <span class="nn">unittest</span>
@@ -97,44 +97,44 @@
 <span class="kn">from</span> <span class="nn">pyporegui.file_items</span> <span class="kn">import</span> <span class="n">FilterListItem</span><span class="p">,</span> <span class="n">FileListItem</span><span class="p">,</span> <span class="n">DataFileListItem</span>
 
 
-<div class="viewcode-block" id="TestFileListItem"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.html#pyporegui.tests.test_file_items.TestFileListItem">[docs]</a><span class="k">class</span> <span class="nc">TestFileListItem</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<div class="viewcode-block" id="TestFileListItem"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.test_file_items.html#pyporegui.tests.test_file_items.TestFileListItem">[docs]</a><span class="k">class</span> <span class="nc">TestFileListItem</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
     
-<div class="viewcode-block" id="TestFileListItem.setUp"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.html#pyporegui.tests.test_file_items.TestFileListItem.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestFileListItem.setUp"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.test_file_items.html#pyporegui.tests.test_file_items.TestFileListItem.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s">&#39;hi.txt&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_item</span><span class="p">()</span>
         </div>
     <span class="k">def</span> <span class="nf">_set_item</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">item</span> <span class="o">=</span> <span class="n">FileListItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
     
-<div class="viewcode-block" id="TestFileListItem.tearDown"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.html#pyporegui.tests.test_file_items.TestFileListItem.tearDown">[docs]</a>    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestFileListItem.tearDown"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.test_file_items.html#pyporegui.tests.test_file_items.TestFileListItem.tearDown">[docs]</a>    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
     </div>
-<div class="viewcode-block" id="TestFileListItem.test_file_list_item_simple_name"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.html#pyporegui.tests.test_file_items.TestFileListItem.test_file_list_item_simple_name">[docs]</a>    <span class="k">def</span> <span class="nf">test_file_list_item_simple_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestFileListItem.test_file_list_item_simple_name"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.test_file_items.html#pyporegui.tests.test_file_items.TestFileListItem.test_file_list_item_simple_name">[docs]</a>    <span class="k">def</span> <span class="nf">test_file_list_item_simple_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">simple_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">get_simple_name</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">simple_name</span><span class="p">,</span> <span class="s">&#39;hi.txt&#39;</span><span class="p">)</span>
         </div>
-<div class="viewcode-block" id="TestFileListItem.test_file_list_item_directory"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.html#pyporegui.tests.test_file_items.TestFileListItem.test_file_list_item_directory">[docs]</a>    <span class="k">def</span> <span class="nf">test_file_list_item_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestFileListItem.test_file_list_item_directory"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.test_file_items.html#pyporegui.tests.test_file_items.TestFileListItem.test_file_list_item_directory">[docs]</a>    <span class="k">def</span> <span class="nf">test_file_list_item_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">directory</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">get_directory</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">))</span>
         </div>
-<div class="viewcode-block" id="TestFileListItem.test_file_list_item_filename"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.html#pyporegui.tests.test_file_items.TestFileListItem.test_file_list_item_filename">[docs]</a>    <span class="k">def</span> <span class="nf">test_file_list_item_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestFileListItem.test_file_list_item_filename"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.test_file_items.html#pyporegui.tests.test_file_items.TestFileListItem.test_file_list_item_filename">[docs]</a>    <span class="k">def</span> <span class="nf">test_file_list_item_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">check</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">get_file_name</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">check</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
         
         </div></div>
-<div class="viewcode-block" id="TestDataFileListItem"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.html#pyporegui.tests.test_file_items.TestDataFileListItem">[docs]</a><span class="k">class</span> <span class="nc">TestDataFileListItem</span><span class="p">(</span><span class="n">TestFileListItem</span><span class="p">):</span>
+<div class="viewcode-block" id="TestDataFileListItem"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.test_file_items.html#pyporegui.tests.test_file_items.TestDataFileListItem">[docs]</a><span class="k">class</span> <span class="nc">TestDataFileListItem</span><span class="p">(</span><span class="n">TestFileListItem</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Subclassing TestFileListItem will also run those tests too.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
      
-<div class="viewcode-block" id="TestDataFileListItem.setUp"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.html#pyporegui.tests.test_file_items.TestDataFileListItem.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestDataFileListItem.setUp"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.test_file_items.html#pyporegui.tests.test_file_items.TestDataFileListItem.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;hi&#39;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span> <span class="s">&#39;bye&#39;</span><span class="p">:</span> <span class="mi">19</span><span class="p">}</span>
         <span class="n">TestFileListItem</span><span class="o">.</span><span class="n">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         </div>
     <span class="k">def</span> <span class="nf">_set_item</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">item</span> <span class="o">=</span> <span class="n">DataFileListItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
         
-<div class="viewcode-block" id="TestDataFileListItem.test_data_file_list_item_params"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.html#pyporegui.tests.test_file_items.TestDataFileListItem.test_data_file_list_item_params">[docs]</a>    <span class="k">def</span> <span class="nf">test_data_file_list_item_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestDataFileListItem.test_data_file_list_item_params"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.test_file_items.html#pyporegui.tests.test_file_items.TestDataFileListItem.test_data_file_list_item_params">[docs]</a>    <span class="k">def</span> <span class="nf">test_data_file_list_item_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">get_params</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
         
@@ -142,7 +142,7 @@
         <span class="n">params</span><span class="p">[</span><span class="s">&#39;qwertyuiop&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertNotIn</span><span class="p">(</span><span class="s">&#39;qwertyuiop&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">get_params</span><span class="p">())</span>
         </div>
-<div class="viewcode-block" id="TestDataFileListItem.test_data_file_list_item_get_param"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.html#pyporegui.tests.test_file_items.TestDataFileListItem.test_data_file_list_item_get_param">[docs]</a>    <span class="k">def</span> <span class="nf">test_data_file_list_item_get_param</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestDataFileListItem.test_data_file_list_item_get_param"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.test_file_items.html#pyporegui.tests.test_file_items.TestDataFileListItem.test_data_file_list_item_get_param">[docs]</a>    <span class="k">def</span> <span class="nf">test_data_file_list_item_get_param</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s">&#39;hi&#39;</span><span class="p">),</span> <span class="mi">9</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s">&#39;bye&#39;</span><span class="p">),</span> <span class="mi">19</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s">&#39;sdafkfasfweoaifeawfksfd&#39;</span><span class="p">))</span>
@@ -150,15 +150,15 @@
 <span class="n">_instance</span> <span class="o">=</span> <span class="bp">None</span>
     
     
-<div class="viewcode-block" id="TestFilterListItem"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.html#pyporegui.tests.test_file_items.TestFilterListItem">[docs]</a><span class="k">class</span> <span class="nc">TestFilterListItem</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<div class="viewcode-block" id="TestFilterListItem"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.test_file_items.html#pyporegui.tests.test_file_items.TestFilterListItem">[docs]</a><span class="k">class</span> <span class="nc">TestFilterListItem</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
     
-<div class="viewcode-block" id="TestFilterListItem.setUp"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.html#pyporegui.tests.test_file_items.TestFilterListItem.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestFilterListItem.setUp"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.test_file_items.html#pyporegui.tests.test_file_items.TestFilterListItem.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 </div>
-<div class="viewcode-block" id="TestFilterListItem.tearDown"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.html#pyporegui.tests.test_file_items.TestFilterListItem.tearDown">[docs]</a>    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestFilterListItem.tearDown"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.test_file_items.html#pyporegui.tests.test_file_items.TestFilterListItem.tearDown">[docs]</a>    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 </div>
-<div class="viewcode-block" id="TestFilterListItem.test_filter_list_item_simple_name"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.html#pyporegui.tests.test_file_items.TestFilterListItem.test_filter_list_item_simple_name">[docs]</a>    <span class="k">def</span> <span class="nf">test_filter_list_item_simple_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestFilterListItem.test_filter_list_item_simple_name"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.test_file_items.html#pyporegui.tests.test_file_items.TestFilterListItem.test_filter_list_item_simple_name">[docs]</a>    <span class="k">def</span> <span class="nf">test_filter_list_item_simple_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">file_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s">&#39;hi.txt&#39;</span><span class="p">)]</span>
         <span class="n">item</span> <span class="o">=</span> <span class="n">FilterListItem</span><span class="p">(</span><span class="n">file_names</span><span class="p">)</span>
         <span class="n">simple_names</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get_simple_names</span><span class="p">()</span>
@@ -172,7 +172,7 @@
         <span class="n">simple_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;blahblahblahblahblah&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">get_simple_names</span><span class="p">()),</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_names</span><span class="p">))</span>
         </div>
-<div class="viewcode-block" id="TestFilterListItem.test_filter_list_item_file_names"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.html#pyporegui.tests.test_file_items.TestFilterListItem.test_filter_list_item_file_names">[docs]</a>    <span class="k">def</span> <span class="nf">test_filter_list_item_file_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestFilterListItem.test_filter_list_item_file_names"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.test_file_items.html#pyporegui.tests.test_file_items.TestFilterListItem.test_filter_list_item_file_names">[docs]</a>    <span class="k">def</span> <span class="nf">test_filter_list_item_file_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">file_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s">&#39;x.hi&#39;</span><span class="p">)]</span>
         <span class="n">item</span> <span class="o">=</span> <span class="n">FilterListItem</span><span class="p">(</span><span class="n">file_names</span><span class="p">)</span>
         <span class="n">names</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get_file_names</span><span class="p">()</span>
@@ -184,20 +184,20 @@
         <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;blahblahblahblah&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">get_file_names</span><span class="p">()),</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_names</span><span class="p">))</span>
         </div>
-<div class="viewcode-block" id="TestFilterListItem.test_filter_list_item_default_color"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.html#pyporegui.tests.test_file_items.TestFilterListItem.test_filter_list_item_default_color">[docs]</a>    <span class="k">def</span> <span class="nf">test_filter_list_item_default_color</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestFilterListItem.test_filter_list_item_default_color"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.test_file_items.html#pyporegui.tests.test_file_items.TestFilterListItem.test_filter_list_item_default_color">[docs]</a>    <span class="k">def</span> <span class="nf">test_filter_list_item_default_color</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">file_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s">&#39;hi.txt&#39;</span><span class="p">)]</span>
         <span class="n">item</span> <span class="o">=</span> <span class="n">FilterListItem</span><span class="p">(</span><span class="n">file_names</span><span class="p">)</span>
         <span class="n">color</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get_params</span><span class="p">()[</span><span class="s">&#39;color&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">color</span><span class="p">)</span> <span class="ow">is</span> <span class="n">QColor</span><span class="p">)</span>
         </div>
-<div class="viewcode-block" id="TestFilterListItem.test_filter_list_item_color"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.html#pyporegui.tests.test_file_items.TestFilterListItem.test_filter_list_item_color">[docs]</a>    <span class="k">def</span> <span class="nf">test_filter_list_item_color</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestFilterListItem.test_filter_list_item_color"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.test_file_items.html#pyporegui.tests.test_file_items.TestFilterListItem.test_filter_list_item_color">[docs]</a>    <span class="k">def</span> <span class="nf">test_filter_list_item_color</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">file_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s">&#39;hi.txt&#39;</span><span class="p">)]</span>
         <span class="n">color</span> <span class="o">=</span> <span class="n">QColor</span><span class="o">.</span><span class="n">fromRgbF</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">)</span>
         <span class="n">item</span> <span class="o">=</span> <span class="n">FilterListItem</span><span class="p">(</span><span class="n">file_names</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
         <span class="n">color_check</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get_params</span><span class="p">()[</span><span class="s">&#39;color&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">color_check</span><span class="p">)</span>
         </div>
-<div class="viewcode-block" id="TestFilterListItem.test_filter_list_item_params"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.html#pyporegui.tests.test_file_items.TestFilterListItem.test_filter_list_item_params">[docs]</a>    <span class="k">def</span> <span class="nf">test_filter_list_item_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestFilterListItem.test_filter_list_item_params"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.test_file_items.html#pyporegui.tests.test_file_items.TestFilterListItem.test_filter_list_item_params">[docs]</a>    <span class="k">def</span> <span class="nf">test_filter_list_item_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">file_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s">&#39;hi.txt&#39;</span><span class="p">)]</span>
         <span class="n">item</span> <span class="o">=</span> <span class="n">FilterListItem</span><span class="p">(</span><span class="n">file_names</span><span class="p">)</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get_params</span><span class="p">()</span>
@@ -215,7 +215,7 @@
         <span class="n">params</span><span class="p">[</span><span class="s">&#39;qwertyuiop&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertNotIn</span><span class="p">(</span><span class="s">&#39;qwertyuiop&#39;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">get_params</span><span class="p">())</span>
         </div>
-<div class="viewcode-block" id="TestFilterListItem.test_filter_list_item_text"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.html#pyporegui.tests.test_file_items.TestFilterListItem.test_filter_list_item_text">[docs]</a>    <span class="k">def</span> <span class="nf">test_filter_list_item_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestFilterListItem.test_filter_list_item_text"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.test_file_items.html#pyporegui.tests.test_file_items.TestFilterListItem.test_filter_list_item_text">[docs]</a>    <span class="k">def</span> <span class="nf">test_filter_list_item_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">file_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s">&#39;hi.txt&#39;</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s">&#39;bye.py&#39;</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s">&#39;q&#39;</span><span class="p">)]</span>
         <span class="n">item</span> <span class="o">=</span> <span class="n">FilterListItem</span><span class="p">(</span><span class="n">file_names</span><span class="p">)</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
@@ -226,7 +226,7 @@
         <span class="n">text</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="s">&#39;item&#39;</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="TestFilterListItem.test_filter_list_item_has_icon"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.html#pyporegui.tests.test_file_items.TestFilterListItem.test_filter_list_item_has_icon">[docs]</a>    <span class="k">def</span> <span class="nf">test_filter_list_item_has_icon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestFilterListItem.test_filter_list_item_has_icon"><a class="viewcode-back" href="../../../autodocs/pyporegui.tests.test_file_items.html#pyporegui.tests.test_file_items.TestFilterListItem.test_filter_list_item_has_icon">[docs]</a>    <span class="k">def</span> <span class="nf">test_filter_list_item_has_icon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">file_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s">&#39;hi.txt&#39;</span><span class="p">)]</span>
         <span class="n">color</span> <span class="o">=</span> <span class="n">QColor</span><span class="o">.</span><span class="n">fromRgbF</span><span class="p">(</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span> <span class="o">.</span><span class="mi">6</span><span class="p">,</span> <span class="o">.</span><span class="mi">4</span><span class="p">,</span> <span class="o">.</span><span class="mi">34</span><span class="p">)</span>
         <span class="n">item</span> <span class="o">=</span> <span class="n">FilterListItem</span><span class="p">(</span><span class="n">file_names</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
@@ -253,7 +253,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">pypore 0.0.1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">Pypore 0.0.1 documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

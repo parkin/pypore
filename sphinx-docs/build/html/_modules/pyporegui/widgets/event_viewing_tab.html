@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyporegui.widgets.event_viewing_tab &mdash; pypore 0.0.1 documentation</title>
+    <title>pyporegui.widgets.event_viewing_tab &mdash; Pypore 0.0.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/architect.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pypore 0.0.1 documentation" href="../../../index.html" />
+    <link rel="top" title="Pypore 0.0.1 documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" />
 <link href="https://fonts.googleapis.com/css?family=Architects+Daughter" rel="stylesheet" type="text/css">
 
@@ -50,7 +50,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">pypore 0.0.1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">Pypore 0.0.1 documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>
@@ -90,12 +90,12 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;EventViewingTab&#39;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="EventViewingTab"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.event_viewing_tab.EventViewingTab">[docs]</a><span class="k">class</span> <span class="nc">EventViewingTab</span><span class="p">(</span><span class="n">_ThreadManager</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QSplitter</span><span class="p">):</span>
+<div class="viewcode-block" id="EventViewingTab"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.event_viewing_tab.html#pyporegui.widgets.event_viewing_tab.EventViewingTab">[docs]</a><span class="k">class</span> <span class="nc">EventViewingTab</span><span class="p">(</span><span class="n">_ThreadManager</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QSplitter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A QtGui.Splitter that contains a file opener list on the left and plots on the right.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="EventViewingTab.__init__"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.event_viewing_tab.html#pyporegui.widgets.event_viewing_tab.EventViewingTab.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param PySide.QtGui.QMainWindow parent: Parent main window (optional).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -109,18 +109,15 @@
         <span class="n">plots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_event_viewer_plot_widget</span><span class="p">()</span>
 
         <span class="c"># Put everything in filter_parameter scroll area</span>
-        <span class="n">scroll_options</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QScrollArea</span><span class="p">()</span>
         <span class="n">scroll_plots</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QScrollArea</span><span class="p">()</span>
-        <span class="n">scroll_options</span><span class="o">.</span><span class="n">setWidgetResizable</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
         <span class="n">scroll_plots</span><span class="o">.</span><span class="n">setWidgetResizable</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
 
-        <span class="n">scroll_options</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
         <span class="n">scroll_plots</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="n">plots</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">scroll_options</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">scroll_plots</span><span class="p">)</span>
-
-<div class="viewcode-block" id="EventViewingTab.open_event_database"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.event_viewing_tab.EventViewingTab.open_event_database">[docs]</a>    <span class="k">def</span> <span class="nf">open_event_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_names</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="EventViewingTab.open_event_databases"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.event_viewing_tab.html#pyporegui.widgets.event_viewing_tab.EventViewingTab.open_event_databases">[docs]</a>    <span class="k">def</span> <span class="nf">open_event_databases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_names</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adds the files to the list widget.</span>
 
@@ -177,7 +174,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">event_display_edit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">event_display_edit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;1&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="EventViewingTab.plotSingleEvents"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.event_viewing_tab.EventViewingTab.plotSingleEvents">[docs]</a>    <span class="k">def</span> <span class="nf">plotSingleEvents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<div class="viewcode-block" id="EventViewingTab.plotSingleEvents"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.event_viewing_tab.html#pyporegui.widgets.event_viewing_tab.EventViewingTab.plotSingleEvents">[docs]</a>    <span class="k">def</span> <span class="nf">plotSingleEvents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Plots the event on the plot with</span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -197,59 +194,59 @@
 
         <span class="n">h5file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="EventViewingTab.plotSingleEvent"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.event_viewing_tab.EventViewingTab.plotSingleEvent">[docs]</a>    <span class="k">def</span> <span class="nf">plotSingleEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h5file</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">plot</span><span class="p">):</span>
-        <span class="n">sampleRate</span> <span class="o">=</span> <span class="n">h5file</span><span class="o">.</span><span class="n">get_sample_rate</span><span class="p">()</span>
+<div class="viewcode-block" id="EventViewingTab.plotSingleEvent"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.event_viewing_tab.html#pyporegui.widgets.event_viewing_tab.EventViewingTab.plotSingleEvent">[docs]</a>    <span class="k">def</span> <span class="nf">plotSingleEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h5file</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">plot</span><span class="p">):</span>
+        <span class="n">sample_rate</span> <span class="o">=</span> <span class="n">h5file</span><span class="o">.</span><span class="n">get_sample_rate</span><span class="p">()</span>
         <span class="n">row</span> <span class="o">=</span> <span class="n">h5file</span><span class="o">.</span><span class="n">get_event_row</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
-        <span class="n">arrayRow</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;arrayRow&#39;</span><span class="p">]</span>
-        <span class="n">eventLength</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;eventLength&#39;</span><span class="p">]</span>
-        <span class="n">rawPointsPerSide</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;rawPointsPerSide&#39;</span><span class="p">]</span>
+        <span class="n">array_row</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;array_row&#39;</span><span class="p">]</span>
+        <span class="n">event_length</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;event_length&#39;</span><span class="p">]</span>
+        <span class="n">raw_points_per_side</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;raw_points_per_side&#39;</span><span class="p">]</span>
 
-        <span class="n">rawData</span> <span class="o">=</span> <span class="n">h5file</span><span class="o">.</span><span class="n">get_raw_data_at</span><span class="p">(</span><span class="n">arrayRow</span><span class="p">)</span>
+        <span class="n">raw_data</span> <span class="o">=</span> <span class="n">h5file</span><span class="o">.</span><span class="n">get_raw_data_at</span><span class="p">(</span><span class="n">array_row</span><span class="p">)</span>
 
-        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rawData</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">raw_data</span><span class="p">)</span>
 
-        <span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">n</span> <span class="o">/</span> <span class="n">sampleRate</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+        <span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">n</span> <span class="o">/</span> <span class="n">sample_rate</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
 
         <span class="n">plot</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
-        <span class="n">plot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">rawData</span><span class="p">)</span>
+        <span class="n">plot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">raw_data</span><span class="p">)</span>
         <span class="c"># plot the event points in yellow</span>
-        <span class="n">plot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">rawPointsPerSide</span><span class="p">:</span><span class="n">rawPointsPerSide</span> <span class="o">+</span> <span class="n">eventLength</span><span class="p">],</span> \
-                  <span class="n">rawData</span><span class="p">[</span><span class="n">rawPointsPerSide</span><span class="p">:</span><span class="n">rawPointsPerSide</span> <span class="o">+</span> <span class="n">eventLength</span><span class="p">],</span> <span class="n">pen</span><span class="o">=</span><span class="s">&#39;y&#39;</span><span class="p">)</span>
+        <span class="n">plot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">raw_points_per_side</span><span class="p">:</span><span class="n">raw_points_per_side</span> <span class="o">+</span> <span class="n">event_length</span><span class="p">],</span> \
+                  <span class="n">raw_data</span><span class="p">[</span><span class="n">raw_points_per_side</span><span class="p">:</span><span class="n">raw_points_per_side</span> <span class="o">+</span> <span class="n">event_length</span><span class="p">],</span> <span class="n">pen</span><span class="o">=</span><span class="s">&#39;y&#39;</span><span class="p">)</span>
 
         <span class="c"># Plot the cusum levels</span>
-        <span class="n">nLevels</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;nLevels&#39;</span><span class="p">]</span>
+        <span class="n">n_levels</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;n_levels&#39;</span><span class="p">]</span>
         <span class="n">baseline</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;baseline&#39;</span><span class="p">]</span>
         <span class="c"># left, start-1, start,</span>
-        <span class="n">levels</span> <span class="o">=</span> <span class="n">h5file</span><span class="o">.</span><span class="n">get_levels_at</span><span class="p">(</span><span class="n">arrayRow</span><span class="p">)</span>
-        <span class="n">indices</span> <span class="o">=</span> <span class="n">h5file</span><span class="o">.</span><span class="n">get_level_lengths_at</span><span class="p">(</span><span class="n">arrayRow</span><span class="p">)</span>
+        <span class="n">levels</span> <span class="o">=</span> <span class="n">h5file</span><span class="o">.</span><span class="n">get_levels_at</span><span class="p">(</span><span class="n">array_row</span><span class="p">)</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">h5file</span><span class="o">.</span><span class="n">get_level_lengths_at</span><span class="p">(</span><span class="n">array_row</span><span class="p">)</span>
 
-        <span class="n">levelTimes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">nLevels</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span>
-        <span class="n">levelValues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">nLevels</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">levelTimes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n_levels</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">levelValues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n_levels</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span>
 
-        <span class="n">levelTimes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">rawPointsPerSide</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">sampleRate</span>
+        <span class="n">levelTimes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">raw_points_per_side</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">sample_rate</span>
         <span class="n">levelValues</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">levelValues</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">baseline</span>
         <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">length</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">nLevels</span><span class="p">):</span>
-            <span class="n">levelTimes</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">times</span><span class="p">[</span><span class="n">rawPointsPerSide</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">length</span><span class="p">)</span> <span class="o">/</span> <span class="n">sampleRate</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">n_levels</span><span class="p">):</span>
+            <span class="n">levelTimes</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">times</span><span class="p">[</span><span class="n">raw_points_per_side</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">length</span><span class="p">)</span> <span class="o">/</span> <span class="n">sample_rate</span>
             <span class="n">levelValues</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">levels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-            <span class="n">levelTimes</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">times</span><span class="p">[</span><span class="n">rawPointsPerSide</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">length</span> <span class="o">+</span> <span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="n">sampleRate</span>
+            <span class="n">levelTimes</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">times</span><span class="p">[</span><span class="n">raw_points_per_side</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">length</span> <span class="o">+</span> <span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="n">sample_rate</span>
             <span class="n">levelValues</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">levels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="n">length</span> <span class="o">+=</span> <span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
         <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="n">levelTimes</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">times</span><span class="p">[</span><span class="n">rawPointsPerSide</span> <span class="o">+</span> <span class="n">eventLength</span><span class="p">]</span>
+        <span class="n">levelTimes</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">times</span><span class="p">[</span><span class="n">raw_points_per_side</span> <span class="o">+</span> <span class="n">event_length</span><span class="p">]</span>
         <span class="n">levelTimes</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">times</span><span class="p">[</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
         <span class="n">levelValues</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">levelValues</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">baseline</span>
 
         <span class="n">plot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">levelTimes</span><span class="p">,</span> <span class="n">levelValues</span><span class="p">,</span> <span class="n">pen</span><span class="o">=</span><span class="s">&#39;g&#39;</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="EventViewingTab.previous_clicked"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.event_viewing_tab.EventViewingTab.previous_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">previous_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EventViewingTab.previous_clicked"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.event_viewing_tab.html#pyporegui.widgets.event_viewing_tab.EventViewingTab.previous_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">previous_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">moveEventDisplayBy</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eventviewer_plots</span><span class="p">))</span>
 </div>
-<div class="viewcode-block" id="EventViewingTab.next_clicked"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.event_viewing_tab.EventViewingTab.next_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">next_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EventViewingTab.next_clicked"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.event_viewing_tab.html#pyporegui.widgets.event_viewing_tab.EventViewingTab.next_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">next_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">moveEventDisplayBy</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eventviewer_plots</span><span class="p">))</span>
 </div>
-<div class="viewcode-block" id="EventViewingTab.moveEventDisplayBy"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.event_viewing_tab.EventViewingTab.moveEventDisplayBy">[docs]</a>    <span class="k">def</span> <span class="nf">moveEventDisplayBy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
+<div class="viewcode-block" id="EventViewingTab.moveEventDisplayBy"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.event_viewing_tab.html#pyporegui.widgets.event_viewing_tab.EventViewingTab.moveEventDisplayBy">[docs]</a>    <span class="k">def</span> <span class="nf">moveEventDisplayBy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Changes the event displayed on the event display plot to</span>
 <span class="sd">        current value + count</span>
@@ -357,7 +354,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">pypore 0.0.1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">Pypore 0.0.1 documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

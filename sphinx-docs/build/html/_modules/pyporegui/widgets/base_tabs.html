@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyporegui.widgets.base_tabs &mdash; Pypore 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/architect.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Pypore 0.0.1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+<link href="https://fonts.googleapis.com/css?family=Architects+Daughter" rel="stylesheet" type="text/css">
+
+  </head>
+  <body>
+<header>
+    <div class="inner">
+        <h1><a href="http://parkin1.github.io/pypore/">Pypore</a></h1>
+
+        <h2></h2>
+        <a href="https://github.com/parkin1/pypore" class="button">
+            <small>View project on</small>
+            GitHub</a>
+    </div>
+</header>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">Pypore 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyporegui.widgets.base_tabs</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">pypore.data_file_opener</span> <span class="kn">import</span> <span class="n">prepare_data_file</span>
+<span class="kn">from</span> <span class="nn">pypore.io</span> <span class="kn">import</span> <span class="n">get_reader_from_filename</span>
+<span class="kn">from</span> <span class="nn">pyporegui._thread_manager</span> <span class="kn">import</span> <span class="n">_ThreadManager</span>
+<span class="kn">from</span> <span class="nn">pyporegui.file_items</span> <span class="kn">import</span> <span class="n">DataFileListItem</span><span class="p">,</span> <span class="n">FileListItem</span>
+
+
+<div class="viewcode-block" id="BaseQSplitter"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.base_tabs.html#pyporegui.widgets.base_tabs.BaseQSplitter">[docs]</a><span class="k">class</span> <span class="nc">BaseQSplitter</span><span class="p">(</span><span class="n">_ThreadManager</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QSplitter</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseQSplitter.__init__"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.base_tabs.html#pyporegui.widgets.base_tabs.BaseQSplitter.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BaseQSplitter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_status_update_callback</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process_events_callback</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="n">left_widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_left_widget</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="n">right_widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_right_widget</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">left_widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">right_widget</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="BaseQSplitter.set_process_events_callback"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.base_tabs.html#pyporegui.widgets.base_tabs.BaseQSplitter.set_process_events_callback">[docs]</a>    <span class="k">def</span> <span class="nf">set_process_events_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets a callback for when the EventFindingTab requests app.processEvents</span>
+
+<span class="sd">        :param MethodType callback:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process_events_callback</span> <span class="o">=</span> <span class="n">callback</span>
+</div>
+    <span class="k">def</span> <span class="nf">_dispatch_process_events</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calls the process_events_callback if it is not None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_events_callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process_events_callback</span><span class="p">()</span>
+
+<div class="viewcode-block" id="BaseQSplitter.set_on_status_update_callback"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.base_tabs.html#pyporegui.widgets.base_tabs.BaseQSplitter.set_on_status_update_callback">[docs]</a>    <span class="k">def</span> <span class="nf">set_on_status_update_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets a callback for when the EventFinderTab&#39;s status is updated. The status is a String of information</span>
+<span class="sd">        about the current state of the EventFinderTab.</span>
+
+<span class="sd">        :param MethodType callback: Callback method for when the EventFinderTab&#39;s status is updated.</span>
+<span class="sd">                                    This callback must accept one string parameter.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_status_update_callback</span> <span class="o">=</span> <span class="n">callback</span>
+</div>
+    <span class="k">def</span> <span class="nf">_dispatch_status_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Dispatches text to the on_status_update_callback if the on_status_update_callback is not None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_status_update_callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">on_status_update_callback</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="BaseQSplitterDataFile"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.base_tabs.html#pyporegui.widgets.base_tabs.BaseQSplitterDataFile">[docs]</a><span class="k">class</span> <span class="nc">BaseQSplitterDataFile</span><span class="p">(</span><span class="n">BaseQSplitter</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseQSplitterDataFile.__init__"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.base_tabs.html#pyporegui.widgets.base_tabs.BaseQSplitterDataFile.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BaseQSplitterDataFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="BaseQSplitterDataFile.open_data_files"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.base_tabs.html#pyporegui.widgets.base_tabs.BaseQSplitterDataFile.open_data_files">[docs]</a>    <span class="k">def</span> <span class="nf">open_data_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_names</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Analyzes the files for correctness, then adds them to the list widget.</span>
+
+<span class="sd">        :param ListType&lt;StringType&gt; file_names: The file names to be included in the list widget. If not included,</span>
+<span class="sd">                                                this function will use a QtGui.QFileDialog.getOpenFileNames to open</span>
+<span class="sd">                                                files.</span>
+<span class="sd">        :returns: BooleanType -- **True** if files were opened, **False** otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">file_names</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">file_names</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">getOpenFileNames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                                            <span class="s">&#39;Open data file&#39;</span><span class="p">,</span>
+                                                            <span class="s">&#39;.&#39;</span><span class="p">,</span>
+                                                            <span class="s">&quot;All types(*.h5 *.hkd *.log *.mat);;&quot;</span>
+                                                            <span class="s">&quot;Pypore data files *.h5(*.h5);;&quot;</span>
+                                                            <span class="s">&quot;Heka files *.hkd(*.hkd);;&quot;</span>
+                                                            <span class="s">&quot;Chimera files *.log(*.log);;Gabys files *.mat(*.mat)&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">file_list_widget</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">are_files_opened</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">open_dir</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">file_names</span><span class="p">:</span>
+            <span class="n">reader</span> <span class="o">=</span> <span class="n">get_reader_from_filename</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+            <span class="c"># if &#39;error&#39; in params:</span>
+            <span class="c"># TODO implement error handling in readers</span>
+            <span class="c"># pass</span>
+            <span class="c"># else:</span>
+            <span class="n">reader</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">are_files_opened</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">FileListItem</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+            <span class="n">open_dir</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get_directory</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">file_list_widget</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">are_files_opened</span>
+</div>
+    <span class="k">def</span> <span class="nf">_create_list_form</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_list_widget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QListWidget</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_list_widget</span><span class="o">.</span><span class="n">setMaximumHeight</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_list_widget</span><span class="o">.</span><span class="n">itemSelectionChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_file_item_selection_changed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_list_widget</span><span class="o">.</span><span class="n">itemDoubleClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_file_item_doubleclick</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_list_widget</span><span class="o">.</span><span class="n">setMaximumHeight</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+
+        <span class="n">file_options</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFormLayout</span><span class="p">()</span>
+        <span class="n">file_options</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s">&#39;Data Files:&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_list_widget</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">file_options</span>
+
+    <span class="k">def</span> <span class="nf">_create_left_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_list_form</span><span class="p">()</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">Pypore 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Will Parkin.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

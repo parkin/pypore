@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pypore package &mdash; pypore 0.0.1 documentation</title>
+    <title>pypore package &mdash; Pypore 0.0.1 documentation</title>
     
     <link rel="stylesheet" href="../_static/architect.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pypore 0.0.1 documentation" href="../index.html" />
+    <link rel="top" title="Pypore 0.0.1 documentation" href="../index.html" />
     <link rel="up" title="src" href="modules.html" />
     <link rel="next" title="pypore.filetypes package" href="pypore.filetypes.html" />
     <link rel="prev" title="src" href="modules.html" />
@@ -58,7 +58,7 @@
         <li class="right" >
           <a href="modules.html" title="src"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">pypore 0.0.1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">Pypore 0.0.1 documentation</a> &raquo;</li>
           <li><a href="modules.html" accesskey="U">src</a> &raquo;</li> 
       </ul>
     </div>
@@ -69,10 +69,6 @@
 <li><a class="reference internal" href="#">pypore package</a><ul>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-pypore.cythonsetup">pypore.cythonsetup module</a></li>
-<li><a class="reference internal" href="#module-pypore.data_file_opener">pypore.data_file_opener module</a></li>
-<li><a class="reference internal" href="#module-pypore.event_finder">pypore.event_finder module</a></li>
-<li><a class="reference internal" href="#module-pypore.file_converter">pypore.file_converter module</a></li>
 <li><a class="reference internal" href="#module-pypore">Module contents</a></li>
 </ul>
 </li>
@@ -119,24 +115,64 @@
 <li class="toctree-l1"><a class="reference internal" href="pypore.filetypes.html">pypore.filetypes package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="pypore.filetypes.html#subpackages">Subpackages</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="pypore.filetypes.tests.html">pypore.filetypes.tests package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pypore.filetypes.tests.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pypore.filetypes.tests.html#module-pypore.filetypes.tests.test_event_database">pypore.filetypes.tests.test_event_database module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pypore.filetypes.tests.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="pypore.filetypes.tests.test_event_database.html">pypore.filetypes.tests.test_event_database module</a></li>
+</ul>
+</li>
 <li class="toctree-l4"><a class="reference internal" href="pypore.filetypes.tests.html#module-pypore.filetypes.tests">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="pypore.filetypes.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pypore.filetypes.html#module-pypore.filetypes.data_file">pypore.filetypes.data_file module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pypore.filetypes.html#module-pypore.filetypes.event_database">pypore.filetypes.event_database module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pypore.filetypes.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pypore.filetypes.data_file.html">pypore.filetypes.data_file module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pypore.filetypes.event_database.html">pypore.filetypes.event_database module</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="pypore.filetypes.html#module-pypore.filetypes">Module contents</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="pypore.io.html">pypore.io package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pypore.io.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pypore.io.tests.html">pypore.io.tests package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pypore.io.tests.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="pypore.io.tests.test_chimera_reader.html">pypore.io.tests.test_chimera_reader module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="pypore.io.tests.html#module-pypore.io.tests">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pypore.io.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pypore.io.abstract_reader.html">pypore.io.abstract_reader module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pypore.io.chimera_reader.html">pypore.io.chimera_reader module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pypore.io.data_file_reader.html">pypore.io.data_file_reader module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pypore.io.html#module-pypore.io">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pypore.strategies.html">pypore.strategies package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pypore.strategies.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pypore.strategies.absolute_change_threshold_strategy.html">pypore.strategies.absolute_change_threshold_strategy module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pypore.strategies.adaptive_baseline_strategy.html">pypore.strategies.adaptive_baseline_strategy module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pypore.strategies.baseline_strategy.html">pypore.strategies.baseline_strategy module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pypore.strategies.fixed_baseline_strategy.html">pypore.strategies.fixed_baseline_strategy module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pypore.strategies.noise_based_threshold_strategy.html">pypore.strategies.noise_based_threshold_strategy module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pypore.strategies.percent_change_threshold_strategy.html">pypore.strategies.percent_change_threshold_strategy module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pypore.strategies.threshold_strategy.html">pypore.strategies.threshold_strategy module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pypore.strategies.html#module-pypore.strategies">Module contents</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="pypore.tests.html">pypore.tests package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pypore.tests.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pypore.tests.html#module-pypore.tests.test_data_file_opener">pypore.tests.test_data_file_opener module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pypore.tests.html#module-pypore.tests.test_event_finder">pypore.tests.test_event_finder module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pypore.tests.html#module-pypore.tests.test_file_converter">pypore.tests.test_file_converter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pypore.tests.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pypore.tests.test_event_finder.html">pypore.tests.test_event_finder module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pypore.tests.test_file_converter.html">pypore.tests.test_file_converter module</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="pypore.tests.html#module-pypore.tests">Module contents</a></li>
 </ul>
 </li>
@@ -145,167 +181,18 @@
 </div>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-pypore.cythonsetup">
-<span id="pypore-cythonsetup-module"></span><h2>pypore.cythonsetup module<a class="headerlink" href="#module-pypore.cythonsetup" title="Permalink to this headline">¶</a></h2>
-<p>&#64;author: <a class="reference external" href="https://github.com/parkin1">&#64;parkin1</a>
-This module sets up pyximport so that any .pyx file is automatically
-compiled on import.</p>
-<p>This file should be imported before importing any cython modules.
-(Unless building cython modules yourself).</p>
-<p>This automatically chooses the correct C compiler based on the operating
-system, ie MinGW for Windows, gcc for Unix.</p>
-<p>To import a Cython module, for example <tt class="xref py py-mod docutils literal"><span class="pre">pypore.eventFinder</span></tt>, simply do:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pypore.cythonsetup</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pypore.eventFinder</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="module-pypore.data_file_opener">
-<span id="pypore-data-file-opener-module"></span><h2>pypore.data_file_opener module<a class="headerlink" href="#module-pypore.data_file_opener" title="Permalink to this headline">¶</a></h2>
-<p>Created on May 23, 2013</p>
-<p>&#64;author: parkin1</p>
-<dl class="function">
-<dt id="pypore.data_file_opener.get_next_blocks">
-<tt class="descclassname">pypore.data_file_opener.</tt><tt class="descname">get_next_blocks</tt><big>(</big><big>)</big><a class="headerlink" href="#pypore.data_file_opener.get_next_blocks" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the next n blocks (~5000 data points) of data from filename.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>datafile</strong> (<em>DataFile</em>) &#8211; An already open <a class="reference internal" href="pypore.filetypes.html#pypore.filetypes.data_file.DataFile" title="pypore.filetypes.data_file.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">pypore.filetypes.data_file.DataFile</span></tt></a>.</li>
-<li><strong>params</strong> (<em>DictType</em>) &#8211; <p>Parameters of the file, usually the ones returned from <a class="reference internal" href="#pypore.data_file_opener.prepare_data_file" title="pypore.data_file_opener.prepare_data_file"><tt class="xref py py-func docutils literal"><span class="pre">prepare_data_file()</span></tt></a>.</p>
+<div class="toctree-wrapper compound">
 <ul>
-<li>Assumes &#8216;.h5&#8217; extension is Pypore HDF5 format.</li>
-<li>Assumes &#8216;.log&#8217; extension is Chimera data.  Chimera data requires a &#8216;.mat&#8217;            file with the same name to be in the same folder.</li>
-<li>Assumes &#8216;.hkd&#8217; extension is Heka data.</li>
-<li>Assumes &#8216;.mat&#8217; extension is Gaby&#8217;s format.</li>
+<li class="toctree-l1"><a class="reference internal" href="pypore.data_file_opener.html">pypore.data_file_opener module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pypore.event_finder.html">pypore.event_finder module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pypore.file_converter.html">pypore.file_converter module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pypore.version.html">pypore.version module</a></li>
 </ul>
-</li>
-<li><strong>n</strong> (<em>IntType</em>) &#8211; Number of blocks to read and return.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">ListType&lt;np.array&gt; &#8211; List of numpy arrays, one for each channel of the data.</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="pypore.data_file_opener.open_data">
-<tt class="descclassname">pypore.data_file_opener.</tt><tt class="descname">open_data</tt><big>(</big><big>)</big><a class="headerlink" href="#pypore.data_file_opener.open_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Opens a datafile and returns a dictionary with the data in &#8216;data&#8217;.
-If unable to return, will return an error message.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>filename</strong> (<em>StringType</em>) &#8211; <p>Filename to open.</p>
-<ul>
-<li>Assumes &#8216;.h5&#8217; extension is Pypore HDF5 format.</li>
-<li>Assumes &#8216;.log&#8217; extension is Chimera data.  Chimera data requires a &#8216;.mat&#8217;            file with the same name to be in the same folder.</li>
-<li>Assumes &#8216;.hkd&#8217; extension is Heka data.</li>
-<li>Assumes &#8216;.mat&#8217; extension is Gaby&#8217;s format.</li>
-</ul>
-</li>
-<li><strong>decimate</strong> (<em>BooleanType</em>) &#8211; Whether or not to decimate the data. Default is False.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">DictType &#8211; dictionary with data in the &#8216;data&#8217; key. If there is an error, it will return a
-dictionary with &#8216;error&#8217; key containing a String error message.</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="pypore.data_file_opener.prepare_data_file">
-<tt class="descclassname">pypore.data_file_opener.</tt><tt class="descname">prepare_data_file</tt><big>(</big><big>)</big><a class="headerlink" href="#pypore.data_file_opener.prepare_data_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Opens a data file, reads relevant parameters, and returns then open file and parameters.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>StringType</em>) &#8211; <p>Filename to open and read parameters.</p>
-<ul class="simple">
-<li>Assumes &#8216;.h5&#8217; extension is Pypore HDF5 format.</li>
-<li>Assumes &#8216;.log&#8217; extension is Chimera data.  Chimera data requires a &#8216;.mat&#8217;            file with the same name to be in the same folder.</li>
-<li>Assumes &#8216;.hkd&#8217; extension is Heka data.</li>
-<li>Assumes &#8216;.mat&#8217; extension is Gaby&#8217;s format.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">2 things:<ol class="arabic simple">
-<li>datafile &#8211; already opened <a class="reference internal" href="pypore.filetypes.html#pypore.filetypes.data_file.DataFile" title="pypore.filetypes.data_file.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">pypore.filetypes.data_file.DataFile</span></tt></a>.</li>
-<li>params &#8211; parameters read from the file.</li>
-</ol>
-<p>If there was an error opening the files, params will have &#8216;error&#8217; key with string description.</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 </div>
-<div class="section" id="module-pypore.event_finder">
-<span id="pypore-event-finder-module"></span><h2>pypore.event_finder module<a class="headerlink" href="#module-pypore.event_finder" title="Permalink to this headline">¶</a></h2>
-<p>Created on Aug 19, 2013</p>
-<p>&#64;author: parkin1</p>
-<dl class="function">
-<dt id="pypore.event_finder.find_events">
-<tt class="descclassname">pypore.event_finder.</tt><tt class="descname">find_events</tt><big>(</big><big>)</big><a class="headerlink" href="#pypore.event_finder.find_events" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</div>
-<div class="section" id="module-pypore.file_converter">
-<span id="pypore-file-converter-module"></span><h2>pypore.file_converter module<a class="headerlink" href="#module-pypore.file_converter" title="Permalink to this headline">¶</a></h2>
-<p>Created on Jan 28, 2014</p>
-<p>&#64;author: <a class="reference external" href="https://github.com/parkin1">&#64;parkin1</a></p>
-<dl class="function">
-<dt id="pypore.file_converter.convert_file">
-<tt class="descclassname">pypore.file_converter.</tt><tt class="descname">convert_file</tt><big>(</big><em>filename</em>, <em>output_filename=None</em><big>)</big><a class="reference internal" href="../_modules/pypore/file_converter.html#convert_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.file_converter.convert_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert a file to the pypore .h5 file format. Returns the new file&#8217;s name.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pypore.file_converter.filter_file">
-<tt class="descclassname">pypore.file_converter.</tt><tt class="descname">filter_file</tt><big>(</big><em>filename</em>, <em>filter_frequency</em>, <em>output_filename=None</em><big>)</big><a class="reference internal" href="../_modules/pypore/file_converter.html#filter_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.file_converter.filter_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reads data from the filename file and uses a Butterworth low-pass filter with cutoff at filter_frequency. Outputs
-the filtered waveform to a new file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>filename</strong> (<em>StringType</em>) &#8211; Filename containing data to be filtered.</li>
-<li><strong>filter_frequency</strong> (<em>DoubleType</em>) &#8211; Cutoff frequency for the low-pass Butterworth filter.</li>
-<li><strong>output_filename</strong> (<em>StringType</em>) &#8211; (Optional) Filename for the filtered data. If not specified,
-for an example filename=&#8217;test.mat&#8217;, the default output_filename would be &#8216;test_filtered.h5&#8217;</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">StringType &#8211; The output filename of the filtered data.</p>
-</td>
-</tr>
-</tbody>
-</table>
-<p>Usage:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pypore.file_converter</span> <span class="kn">as</span> <span class="nn">fC</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fC</span><span class="o">.</span><span class="n">filter_file</span><span class="p">(</span><span class="s">&quot;filename&quot;</span><span class="p">,</span> <span class="mf">1.e4</span><span class="p">,</span> <span class="s">&quot;output.h5&quot;</span><span class="p">)</span> <span class="o">//</span> <span class="nb">filter</span> <span class="n">at</span> <span class="mi">10</span><span class="n">kHz</span>
-</pre></div>
-</div>
-</dd></dl>
-
 </div>
 <div class="section" id="module-pypore">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pypore" title="Permalink to this headline">¶</a></h2>
-<p>Created by <a class="reference external" href="https://github.com/parkin1">&#64;parkin1</a> 8/6/13</p>
+<p>Created by <a class="reference external" href="https://github.com/parkin">&#64;parkin</a> 8/6/13</p>
 <p>pypore is a nanopore translocation analysis package.</p>
 </div>
 </div>
@@ -331,7 +218,7 @@ for an example filename=&#8217;test.mat&#8217;, the default output_filename woul
         <li class="right" >
           <a href="modules.html" title="src"
              >previous</a> |</li>
-        <li><a href="../index.html">pypore 0.0.1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">Pypore 0.0.1 documentation</a> &raquo;</li>
           <li><a href="modules.html" >src</a> &raquo;</li> 
       </ul>
     </div>

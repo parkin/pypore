@@ -49,9 +49,9 @@ Fow Windows, `MinGW <http://www.mingw.org/>`_ is used.
 
 Get the Code
 -----------------
-`Fork me on GitHub! <https://github.com/parkin1/pypore>`_.
+`Fork me on GitHub! <https://github.com/parkin/pypore>`_.
 
-`Download .zip file <https://github.com/parkin1/pypore/zipball/master>`_.
+`Download .zip file <https://github.com/parkin/pypore/zipball/master>`_.
 
-`Download .tar.gz file <https://github.com/parkin1/pypore/tarball/master>`_.
+`Download .tar.gz file <https://github.com/parkin/pypore/tarball/master>`_.
 

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pypore.tests.test_file_converter &mdash; pypore 0.0.1 documentation</title>
+    <title>pypore.tests.test_file_converter &mdash; Pypore 0.0.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/architect.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pypore 0.0.1 documentation" href="../../../index.html" />
+    <link rel="top" title="Pypore 0.0.1 documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" />
 <link href="https://fonts.googleapis.com/css?family=Architects+Daughter" rel="stylesheet" type="text/css">
 
@@ -50,7 +50,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">pypore 0.0.1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">Pypore 0.0.1 documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>
@@ -84,23 +84,22 @@
 
 <span class="kn">import</span> <span class="nn">unittest</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">pypore.filetypes.data_file</span> <span class="kn">import</span> <span class="n">DataFile</span>
-<span class="kn">from</span> <span class="nn">pypore.data_file_opener</span> <span class="kn">import</span> <span class="n">open_data</span>
-
+<span class="kn">from</span> <span class="nn">pypore.io</span> <span class="kn">import</span> <span class="n">get_reader_from_filename</span>
 <span class="kn">from</span> <span class="nn">pypore.file_converter</span> <span class="kn">import</span> <span class="n">convert_file</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pypore.io.data_file_reader</span> <span class="kn">import</span> <span class="n">DataFileReader</span>
 
 
-<div class="viewcode-block" id="TestFileConverter"><a class="viewcode-back" href="../../../autodocs/pypore.tests.html#pypore.tests.test_file_converter.TestFileConverter">[docs]</a><span class="k">class</span> <span class="nc">TestFileConverter</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<div class="viewcode-block" id="TestFileConverter"><a class="viewcode-back" href="../../../autodocs/pypore.tests.test_file_converter.html#pypore.tests.test_file_converter.TestFileConverter">[docs]</a><span class="k">class</span> <span class="nc">TestFileConverter</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
 
-<div class="viewcode-block" id="TestFileConverter.setUp"><a class="viewcode-back" href="../../../autodocs/pypore.tests.html#pypore.tests.test_file_converter.TestFileConverter.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestFileConverter.setUp"><a class="viewcode-back" href="../../../autodocs/pypore.tests.test_file_converter.html#pypore.tests.test_file_converter.TestFileConverter.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 </div>
-<div class="viewcode-block" id="TestFileConverter.tearDown"><a class="viewcode-back" href="../../../autodocs/pypore.tests.html#pypore.tests.test_file_converter.TestFileConverter.tearDown">[docs]</a>    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestFileConverter.tearDown"><a class="viewcode-back" href="../../../autodocs/pypore.tests.test_file_converter.html#pypore.tests.test_file_converter.TestFileConverter.tearDown">[docs]</a>    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 </div>
-<div class="viewcode-block" id="TestFileConverter.test_convert_file_set_output_filename"><a class="viewcode-back" href="../../../autodocs/pypore.tests.html#pypore.tests.test_file_converter.TestFileConverter.test_convert_file_set_output_filename">[docs]</a>    <span class="k">def</span> <span class="nf">test_convert_file_set_output_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestFileConverter.test_convert_file_set_output_filename"><a class="viewcode-back" href="../../../autodocs/pypore.tests.test_file_converter.html#pypore.tests.test_file_converter.TestFileConverter.test_convert_file_set_output_filename">[docs]</a>    <span class="k">def</span> <span class="nf">test_convert_file_set_output_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Tests that the output filename can be set correctly.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -116,40 +115,44 @@
 
         <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">output_filename</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestFileConverter.test_convert_chimera_file_equality"><a class="viewcode-back" href="../../../autodocs/pypore.tests.html#pypore.tests.test_file_converter.TestFileConverter.test_convert_chimera_file_equality">[docs]</a>    <span class="k">def</span> <span class="nf">test_convert_chimera_file_equality</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="nd">@unittest.skip</span><span class="p">(</span><span class="s">&quot;Not implemented&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="TestFileConverter.test_convert_chimera_file_equality"><a class="viewcode-back" href="../../../autodocs/pypore.tests.test_file_converter.html#pypore.tests.test_file_converter.TestFileConverter.test_convert_chimera_file_equality">[docs]</a>    <span class="k">def</span> <span class="nf">test_convert_chimera_file_equality</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Test that the original/converted matrices and sample rates are the same for one-channel data.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
         <span class="c"># TODO add tests for multichannel data.</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;testDataFiles&#39;</span><span class="p">,</span> <span class="s">&#39;chimera_1event.log&#39;</span><span class="p">)</span>
-
-        <span class="n">output_filename_set</span> <span class="o">=</span> <span class="s">&quot;out.h5&quot;</span>
-
-        <span class="n">output_filename</span> <span class="o">=</span> <span class="n">convert_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">output_filename</span><span class="o">=</span><span class="n">output_filename_set</span><span class="p">)</span>
-
-        <span class="n">orig</span> <span class="o">=</span> <span class="n">open_data</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="n">orig_data_all</span> <span class="o">=</span> <span class="n">orig</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">]</span>
-        <span class="n">orig_sample_rate</span> <span class="o">=</span> <span class="n">orig</span><span class="p">[</span><span class="s">&#39;sample_rate&#39;</span><span class="p">]</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">orig_data_all</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
-
-        <span class="n">out</span> <span class="o">=</span> <span class="n">open_data</span><span class="p">(</span><span class="n">output_filename</span><span class="p">)</span>
-        <span class="n">out_data_all</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">]</span>
-        <span class="n">out_sample_rate</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="s">&#39;sample_rate&#39;</span><span class="p">]</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">out_data_all</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
-
-        <span class="n">orig_data</span> <span class="o">=</span> <span class="n">orig_data_all</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">out_data</span> <span class="o">=</span> <span class="n">out_data_all</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-        <span class="c"># assert sample rates are equal</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="mf">1.0</span><span class="o">*</span><span class="n">orig_sample_rate</span><span class="o">/</span><span class="n">out_sample_rate</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
-
-        <span class="c"># assert the two arrays are equal</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">orig_data</span><span class="p">,</span> <span class="n">out_data</span><span class="p">)</span>
-
-        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">output_filename</span><span class="p">)</span>
+        <span class="c"># filename = os.path.dirname(os.path.realpath(__file__))</span>
+        <span class="c"># filename = os.path.join(filename, &#39;testDataFiles&#39;, &#39;chimera_1event.log&#39;)</span>
+        <span class="c">#</span>
+        <span class="c"># output_filename_set = &quot;out.h5&quot;</span>
+        <span class="c">#</span>
+        <span class="c"># output_filename = convert_file(filename, output_filename=output_filename_set)</span>
+        <span class="c">#</span>
+        <span class="c"># orig_reader = get_reader_from_filename(filename)</span>
+        <span class="c"># orig_data_all = orig_reader.get_all_data()</span>
+        <span class="c"># orig_sample_rate = orig_reader.get_sample_rate()</span>
+        <span class="c">#</span>
+        <span class="c"># self.assertEqual(len(orig_data_all), 1)</span>
+        <span class="c">#</span>
+        <span class="c"># out_reader = DataFileReader(filename)</span>
+        <span class="c"># out_data_all = out_reader.get_all_data()</span>
+        <span class="c"># out_sample_rate = out_reader.get_sample_rate()</span>
+        <span class="c">#</span>
+        <span class="c"># self.assertEqual(len(out_data_all), 1)</span>
+        <span class="c">#</span>
+        <span class="c"># orig_data = orig_data_all[0]</span>
+        <span class="c"># out_data = out_data_all[0]</span>
+        <span class="c">#</span>
+        <span class="c"># # assert sample rates are equal</span>
+        <span class="c"># self.assertAlmostEqual(1.0*orig_sample_rate/out_sample_rate, 1, 4)</span>
+        <span class="c">#</span>
+        <span class="c"># # assert the two arrays are equal</span>
+        <span class="c"># np.testing.assert_array_equal(orig_data, out_data)</span>
+        <span class="c">#</span>
+        <span class="c"># orig_reader.close()</span>
+        <span class="c">#</span>
+        <span class="c"># os.remove(output_filename)</span>
 
 </div></div>
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
@@ -171,7 +174,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">pypore 0.0.1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">Pypore 0.0.1 documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

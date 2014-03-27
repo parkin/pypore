@@ -4,30 +4,10 @@ pypore.tests package
 Submodules
 ----------
 
-pypore.tests.test_data_file_opener module
------------------------------------------
+.. toctree::
 
-.. automodule:: pypore.tests.test_data_file_opener
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pypore.tests.test_event_finder module
--------------------------------------
-
-.. automodule:: pypore.tests.test_event_finder
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pypore.tests.test_file_converter module
----------------------------------------
-
-.. automodule:: pypore.tests.test_file_converter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
+   pypore.tests.test_event_finder
+   pypore.tests.test_file_converter
 
 Module contents
 ---------------

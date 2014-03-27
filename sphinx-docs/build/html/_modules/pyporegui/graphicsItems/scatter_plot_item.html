@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyporegui.graphicsItems.scatter_plot_item &mdash; pypore 0.0.1 documentation</title>
+    <title>pyporegui.graphicsItems.scatter_plot_item &mdash; Pypore 0.0.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/architect.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pypore 0.0.1 documentation" href="../../../index.html" />
+    <link rel="top" title="Pypore 0.0.1 documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" />
 <link href="https://fonts.googleapis.com/css?family=Architects+Daughter" rel="stylesheet" type="text/css">
 
@@ -50,7 +50,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">pypore 0.0.1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">Pypore 0.0.1 documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>
@@ -82,20 +82,20 @@
 <span class="kn">from</span> <span class="nn">pyporegui.graphicsItems.spot_item</span> <span class="kn">import</span> <span class="n">SpotItem</span>
 
 
-<div class="viewcode-block" id="ScatterPlotItem"><a class="viewcode-back" href="../../../autodocs/pyporegui.graphicsItems.html#pyporegui.graphicsItems.scatter_plot_item.ScatterPlotItem">[docs]</a><span class="k">class</span> <span class="nc">ScatterPlotItem</span><span class="p">(</span><span class="n">ScatterPlotItem</span><span class="p">):</span>
+<div class="viewcode-block" id="ScatterPlotItem"><a class="viewcode-back" href="../../../autodocs/pyporegui.graphicsItems.scatter_plot_item.html#pyporegui.graphicsItems.scatter_plot_item.ScatterPlotItem">[docs]</a><span class="k">class</span> <span class="nc">ScatterPlotItem</span><span class="p">(</span><span class="n">ScatterPlotItem</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="ScatterPlotItem.__init__"><a class="viewcode-back" href="../../../autodocs/pyporegui.graphicsItems.scatter_plot_item.html#pyporegui.graphicsItems.scatter_plot_item.ScatterPlotItem.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ScatterPlotItem</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="n">kargs</span><span class="p">[</span><span class="s">&#39;files&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">counts</span> <span class="o">=</span> <span class="n">kargs</span><span class="p">[</span><span class="s">&#39;counts&#39;</span><span class="p">]</span>  <span class="c"># number of events in each file</span>
-
-<div class="viewcode-block" id="ScatterPlotItem.points"><a class="viewcode-back" href="../../../autodocs/pyporegui.graphicsItems.html#pyporegui.graphicsItems.scatter_plot_item.ScatterPlotItem.points">[docs]</a>    <span class="k">def</span> <span class="nf">points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="ScatterPlotItem.points"><a class="viewcode-back" href="../../../autodocs/pyporegui.graphicsItems.scatter_plot_item.html#pyporegui.graphicsItems.scatter_plot_item.ScatterPlotItem.points">[docs]</a>    <span class="k">def</span> <span class="nf">points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">rec</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">rec</span><span class="p">[</span><span class="s">&#39;item&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="n">rec</span><span class="p">[</span><span class="s">&#39;item&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SpotItem</span><span class="p">(</span><span class="n">rec</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;item&#39;</span><span class="p">]</span>
 </div>
-<div class="viewcode-block" id="ScatterPlotItem.get_file_name_from_position"><a class="viewcode-back" href="../../../autodocs/pyporegui.graphicsItems.html#pyporegui.graphicsItems.scatter_plot_item.ScatterPlotItem.get_file_name_from_position">[docs]</a>    <span class="k">def</span> <span class="nf">get_file_name_from_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">):</span>
+<div class="viewcode-block" id="ScatterPlotItem.get_file_name_from_position"><a class="viewcode-back" href="../../../autodocs/pyporegui.graphicsItems.scatter_plot_item.html#pyporegui.graphicsItems.scatter_plot_item.ScatterPlotItem.get_file_name_from_position">[docs]</a>    <span class="k">def</span> <span class="nf">get_file_name_from_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns filename, eventNumber for the</span>
 <span class="sd">        SpotItem position.</span>
@@ -121,7 +121,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">pypore 0.0.1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">Pypore 0.0.1 documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

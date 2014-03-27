@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyporegui.widgets.event_analysis_tab &mdash; pypore 0.0.1 documentation</title>
+    <title>pyporegui.widgets.event_analysis_tab &mdash; Pypore 0.0.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/architect.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pypore 0.0.1 documentation" href="../../../index.html" />
+    <link rel="top" title="Pypore 0.0.1 documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" />
 <link href="https://fonts.googleapis.com/css?family=Architects+Daughter" rel="stylesheet" type="text/css">
 
@@ -50,7 +50,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">pypore 0.0.1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">Pypore 0.0.1 documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>
@@ -86,11 +86,11 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;EventAnalysisTab&#39;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="EventAnalysisTab"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.event_analysis_tab.EventAnalysisTab">[docs]</a><span class="k">class</span> <span class="nc">EventAnalysisTab</span><span class="p">(</span><span class="n">_ThreadManager</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QSplitter</span><span class="p">):</span>
+<div class="viewcode-block" id="EventAnalysisTab"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.event_analysis_tab.html#pyporegui.widgets.event_analysis_tab.EventAnalysisTab">[docs]</a><span class="k">class</span> <span class="nc">EventAnalysisTab</span><span class="p">(</span><span class="n">_ThreadManager</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QSplitter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="EventAnalysisTab.__init__"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.event_analysis_tab.html#pyporegui.widgets.event_analysis_tab.EventAnalysisTab.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param PySide.QtGui.QMainWindow parent: Parent window of this tab (optional).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -98,7 +98,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">parent</span>
 
         <span class="n">options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_event_analysis_options</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">eventAnalysisWidget</span> <span class="o">=</span> <span class="n">EventAnalysisPlotWidget</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_analysis_widget</span> <span class="o">=</span> <span class="n">EventAnalysisPlotWidget</span><span class="p">()</span>
 
         <span class="c"># Put everything in filter_parameter scroll area</span>
         <span class="n">scroll_options</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QScrollArea</span><span class="p">()</span>
@@ -107,12 +107,12 @@
         <span class="n">scroll_plots</span><span class="o">.</span><span class="n">setWidgetResizable</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
 
         <span class="n">scroll_options</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
-        <span class="n">scroll_plots</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eventAnalysisWidget</span><span class="p">)</span>
+        <span class="n">scroll_plots</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event_analysis_widget</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">scroll_options</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">scroll_plots</span><span class="p">)</span>
-
-<div class="viewcode-block" id="EventAnalysisTab.color_picker_btn_clicked"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.event_analysis_tab.EventAnalysisTab.color_picker_btn_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">color_picker_btn_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="EventAnalysisTab.color_picker_btn_clicked"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.event_analysis_tab.html#pyporegui.widgets.event_analysis_tab.EventAnalysisTab.color_picker_btn_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">color_picker_btn_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">col</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColorDialog</span><span class="o">.</span><span class="n">getColor</span><span class="p">(</span><span class="n">initial</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event_color</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
@@ -120,7 +120,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">frm</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="s">&quot;QWidget { background-color: </span><span class="si">%s</span><span class="s"> }&quot;</span>
                                    <span class="o">%</span> <span class="n">col</span><span class="o">.</span><span class="n">name</span><span class="p">())</span>
 </div>
-<div class="viewcode-block" id="EventAnalysisTab.add_filter_clicked"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.event_analysis_tab.EventAnalysisTab.add_filter_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">add_filter_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EventAnalysisTab.add_filter_clicked"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.event_analysis_tab.html#pyporegui.widgets.event_analysis_tab.EventAnalysisTab.add_filter_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">add_filter_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_event_widget</span><span class="o">.</span><span class="n">selectedItems</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">items</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span>
@@ -133,15 +133,15 @@
             <span class="n">file_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">get_file_name</span><span class="p">())</span>
 
         <span class="n">item</span> <span class="o">=</span> <span class="n">FilterListItem</span><span class="p">(</span><span class="n">file_names</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">listFilterWidget</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_filter_widget</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">eventAnalysisWidget</span><span class="o">.</span><span class="n">add_selections</span><span class="p">(</span><span class="n">file_names</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_analysis_widget</span><span class="o">.</span><span class="n">add_selections</span><span class="p">(</span><span class="n">file_names</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
 </div>
     <span class="k">def</span> <span class="nf">_get_current_event_analysis_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;color&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_color</span><span class="p">}</span>
         <span class="k">return</span> <span class="n">params</span>
 
-<div class="viewcode-block" id="EventAnalysisTab.open_event_database"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.event_analysis_tab.EventAnalysisTab.open_event_database">[docs]</a>    <span class="k">def</span> <span class="nf">open_event_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_names</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="EventAnalysisTab.open_event_databases"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.event_analysis_tab.html#pyporegui.widgets.event_analysis_tab.EventAnalysisTab.open_event_databases">[docs]</a>    <span class="k">def</span> <span class="nf">open_event_databases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_names</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adds the files to the list widget.</span>
 
@@ -159,18 +159,18 @@
             <span class="n">item</span> <span class="o">=</span> <span class="n">FileListItem</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">list_event_widget</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="EventAnalysisTab.remove_filter_clicked"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.html#pyporegui.widgets.event_analysis_tab.EventAnalysisTab.remove_filter_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">remove_filter_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">listFilterWidget</span><span class="o">.</span><span class="n">selectedItems</span><span class="p">()</span>
+<div class="viewcode-block" id="EventAnalysisTab.remove_filter_clicked"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.event_analysis_tab.html#pyporegui.widgets.event_analysis_tab.EventAnalysisTab.remove_filter_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">remove_filter_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_filter_widget</span><span class="o">.</span><span class="n">selectedItems</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
-            <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">listFilterWidget</span><span class="o">.</span><span class="n">indexFromItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">row</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">eventAnalysisWidget</span><span class="o">.</span><span class="n">removeFilter</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">listFilterWidget</span><span class="o">.</span><span class="n">takeItem</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_filter_widget</span><span class="o">.</span><span class="n">indexFromItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">row</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">event_analysis_widget</span><span class="o">.</span><span class="n">removeFilter</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">list_filter_widget</span><span class="o">.</span><span class="n">takeItem</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 </div>
     <span class="k">def</span> <span class="nf">_on_event_file_selection_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Called when the user clicks a new file in the file list.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">btnAddFilter</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">btn_add_filter</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_create_event_analysis_options</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -181,7 +181,6 @@
 
         <span class="c"># Create filter_parameter list for files want to analyze</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">list_event_widget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QListWidget</span><span class="p">()</span>
-        <span class="c">#         self.listEventWidget.itemDoubleClicked.connect(self._on_file_item_doubleclick)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">list_event_widget</span><span class="o">.</span><span class="n">setMaximumHeight</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">list_event_widget</span><span class="o">.</span><span class="n">itemSelectionChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_event_file_selection_changed</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">list_event_widget</span><span class="o">.</span><span class="n">setSelectionMode</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">ExtendedSelection</span><span class="p">)</span>
@@ -204,15 +203,15 @@
         <span class="n">files_options</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="n">pick_color_btn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frm</span><span class="p">)</span>
 
         <span class="c"># # List of filters created</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">btnAddFilter</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s">&#39;Add selections as filter&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">btnAddFilter</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">add_filter_clicked</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">btnAddFilter</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
-        <span class="n">formFilter</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFormLayout</span><span class="p">()</span>
-        <span class="n">formFilter</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s">&#39;Filters:&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">btnAddFilter</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">listFilterWidget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QListWidget</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">btn_add_filter</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s">&#39;Add selections as filter&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">btn_add_filter</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">add_filter_clicked</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">btn_add_filter</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+        <span class="n">form_filter</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFormLayout</span><span class="p">()</span>
+        <span class="n">form_filter</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s">&#39;Filters:&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">btn_add_filter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_filter_widget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QListWidget</span><span class="p">()</span>
         <span class="n">vbox</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">()</span>
-        <span class="n">vbox</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">formFilter</span><span class="p">)</span>
-        <span class="n">vbox</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">listFilterWidget</span><span class="p">)</span>
+        <span class="n">vbox</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">form_filter</span><span class="p">)</span>
+        <span class="n">vbox</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_filter_widget</span><span class="p">)</span>
         <span class="n">btn_remove_filter</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s">&#39;Remove selected filters&#39;</span><span class="p">)</span>
         <span class="n">btn_remove_filter</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">remove_filter_clicked</span><span class="p">)</span>
         <span class="n">vbox</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">btn_remove_filter</span><span class="p">)</span>
@@ -243,7 +242,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">pypore 0.0.1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">Pypore 0.0.1 documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

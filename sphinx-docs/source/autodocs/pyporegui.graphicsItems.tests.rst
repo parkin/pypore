@@ -4,14 +4,9 @@ pyporegui.graphicsItems.tests package
 Submodules
 ----------
 
-pyporegui.graphicsItems.tests.test_my_plot_item module
-------------------------------------------------------
+.. toctree::
 
-.. automodule:: pyporegui.graphicsItems.tests.test_my_plot_item
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
+   pyporegui.graphicsItems.tests.test_my_plot_item
 
 Module contents
 ---------------
