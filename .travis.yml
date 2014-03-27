@@ -33,10 +33,10 @@ before_install:
 
 install:
   - travis_retry sudo apt-get install libhdf5-serial-dev
-  - echo ${PYTHON}
-  - echo "${PYTHON}"
+  - echo ${TRAVIS_PYTHON_VERSION}
+  - echo "${TRAVIS_PYTHON_VERSION}"
   - if [ "${USE_APT}" == "true" ]; then
-      if [ "${PYTHON}" == "2.6" -o "${PYTHON}" == "2.7" ]; then
+      if [ "${TRAVIS_PYTHON_VERSION}" == "2.6" -o "${TRAVIS_PYTHON_VERSION}" == "2.7" ]; then
         travis_retry sudo apt-get install -qq -y python-numpy python-scipy;
         travis_retry sudo apt-get install python-pyside python-nose;
       else
