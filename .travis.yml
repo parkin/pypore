@@ -29,23 +29,21 @@ before_install:
 
 install:
   - travis_retry sudo apt-get install libhdf5-serial-dev
-  - if [ "${USE_APT}" == "true"]; then
+  - if [ "${USE_APT}" == "true" ]; then
       if [ "or", [ ${PYTHON}, "2.6", ${PYTHON}, "2.7"]]; then
-        travis_retry sudo apt-get install -qq -y python-numpy python-scipy &&
+        travis_retry sudo apt-get install -qq -y python-numpy python-scipy;
         travis_retry sudo apt-get install python-pyside python-nose;
       else
-        travis_retry sudo apt-get install -qq -y python3-numpy python3-scipy &&
+        travis_retry sudo apt-get install -qq -y python3-numpy python3-scipy;
         travis_retry sudo apt-get install python3-pyside python3-nose;
       fi;
     else
-      pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel --use-mirrors nose numpy scipy &&
-      # pytables
-      pip install numexpr &&
-      pip install tables &&
-      # PySide
-      pip install sphinx==1.1.3 &&
-      sudo apt-get install build-essential git cmake libqt4-dev libphonon-dev python2.7-dev libxml2-dev libxslt1-dev qtmobility-dev &&
-      pip install pyside &&
+      pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel --use-mirrors nose numpy scipy;
+      pip install numexpr;
+      pip install tables;
+      pip install sphinx==1.1.3;
+      sudo apt-get install build-essential git cmake libqt4-dev libphonon-dev python2.7-dev libxml2-dev libxslt1-dev qtmobility-dev;
+      pip install pyside;
       pip insatll --upgrade sphinx;
     fi;
 
