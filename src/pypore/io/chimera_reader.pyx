@@ -68,6 +68,7 @@ cdef class ChimeraReader(AbstractReader):
 
         :returns: List of numpy arrays, one for each channel of data.
         """
+        self.datafile.seek(0)
         cdef long decimated_size = 0
         cdef long i = 0
         cdef np.ndarray[DTYPE_t] log_data, read_values

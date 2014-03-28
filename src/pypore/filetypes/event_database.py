@@ -263,6 +263,35 @@ class EventDatabase(tb.file.File):
                               title="Lengths of the cusum levels",
                               filters=filters)
 
+        # Create/init the debug group if needed.
+        if 'debug' in kargs and kargs['debug']:
+            if not 'debug' in self.root:
+                self.createGroup(self.root, 'debug', 'Debug')
+            debug_shape = (kargs['n_channels'], kargs['n_points'])
+            if not 'data' in self.root.debug:
+                self.createCArray(self.root.debug, 'data',
+                                  a, shape=debug_shape,
+                                  title="Raw data",
+                                  filters=filters)
+
+            if not 'baseline' in self.root.debug:
+                self.createCArray(self.root.debug, 'baseline',
+                                  a, shape=debug_shape,
+                                  title="Baseline data",
+                                  filters=filters)
+
+            if not 'threshold_positive' in self.root.debug:
+                self.createCArray(self.root.debug, 'threshold_positive',
+                                  a, shape=debug_shape,
+                                  title="Raw data",
+                                  filters=filters)
+
+            if not 'threshold_negative' in self.root.debug:
+                self.createCArray(self.root.debug, 'threshold_negative',
+                                  a, shape=debug_shape,
+                                  title="Raw data",
+                                  filters=filters)
+
     def remove_event(self, i):
         """
         Deletes event i from /events/eventTable. Does nothing if
@@ -302,8 +331,21 @@ def open_file(*args, **kargs):
     Opens an EventDatabase by calling tables.openFile and then
     copying the __dict__ to a new EventDatabase instance.
     
-    Args:
-        maxEventLength: Maximum length of an event for the table. Default is 100.
+    :param kargs: Pass in the following named parameters.
+
+        - maxEventLength: Maximum length of an event for the table. Default is 100.
+        - debug: boolean -- If debug, an extra root.debug group will be created. If passing debug=True, then\
+            you need to also pass the following parameters. This mode is used by\
+            :py:func:`pypore.event_finder.find_events`, and only does anything if you are opening a new databse.
+
+            - n_points: number of points in the original data.
+            - n_channels: number of channels in the original data.
+
+            And optional parameters
+
+            - threshold_positive: boolean -- True if you need an array allocated for positive threshold.
+            - threshold_negative: boolean -- True if you need an array allocated to keep negative threshold data.
+
     """
     f = tb.openFile(*args, **kargs)
     EventDatabase._convert_to_event_database(f)

@@ -265,7 +265,7 @@ class TestEventFinder(unittest.TestCase):
         reader = get_reader_from_filename(filename)
         data = [reader]
         event_databases = find_events(data,
-                                      save_file_names=['_testMultipleFiles_1_9238.h5', '_testMultipleFiles_2_9238.h5'])
+                                      save_file_names=['_test_passing_reader.h5'])
 
         self.assertEqual(len(event_databases), 1)
 
@@ -273,6 +273,38 @@ class TestEventFinder(unittest.TestCase):
         self._test_chimera_no_noise_2events_1levels_wrapper(h5file)
         h5file.close()
         os.remove(event_databases[0])
+
+    def test_debug_option(self):
+        filename = os.path.dirname(os.path.realpath(__file__))
+        filename = os.path.join(filename, 'testDataFiles', 'chimera_nonoise_2events_1levels.log')
+
+        output_filename = '_test_debug_option.h5'
+
+        reader = get_reader_from_filename(filename)
+        data = [reader]
+        event_databases = find_events(data,
+                                      save_file_names=[output_filename], debug=True)
+
+        data = reader.get_all_data()[0]
+
+        reader.close()
+
+        self.assertEqual(len(event_databases), 1)
+
+        h5file = ed.open_file(event_databases[0], mode='r')
+        self._test_chimera_no_noise_2events_1levels_wrapper(h5file)
+
+        # check that the file has the correct groups
+        groups = [x._v_name for x in h5file.walkGroups()]
+        self.assertIn('debug', groups, "No debug group in debug file.")
+
+        print "data:", h5file.root.debug.data[:]
+        np.testing.assert_array_equal(data, h5file.root.debug.data[0][:])
+
+        h5file.close()
+
+        os.remove(event_databases[0])
+
 
 
 if __name__ == "__main__":

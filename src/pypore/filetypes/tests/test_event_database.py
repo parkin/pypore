@@ -29,25 +29,25 @@ class TestEventDatabase(unittest.TestCase):
         if file_h is None:
             file_h = self.database
 
-        names = []
-        for group in file_h.walkGroups():
-            names.append(group._v_name)
-        self.assertEqual(len(names), 2, "Incorrect number of initial groups in event database.")
+        names = [x._v_name for x in file_h.walkGroups()]
         self.assertIn('/', names, 'file missing root group')
         self.assertIn('events', names, "file missing event group.")
 
-    def _test_empty_events_group(self, events_group=None):
+    def _test_empty_events_group(self, database=None, events_group=None):
         """
         Checks that the events group has the correct (and empty) tables/arrays
         """
+        if database is None:
+            database = self.database
         if events_group is None:
-            events_group = self.database.root.events
+            events_group = database.root.events
 
         # Check the events group has the correct nodes
         # Should be events, eventTable, eventData, raw_data
         names = []
-        for node in self.database.walkNodes(events_group):
+        for node in database.walkNodes(events_group):
             names.append(node._v_name)
+        names = [x._v_name for x in database.walkNodes(events_group)]
         names_should_be = ['events', 'eventTable', 'raw_data', 'levels', 'level_lengths']
         self.assertEqual(len(names), len(names_should_be))
         self.assertEqual(sorted(names), sorted(names_should_be))  # i don't care what order these lists are
@@ -76,7 +76,7 @@ class TestEventDatabase(unittest.TestCase):
         self.database.clean_database()
 
         # check that the database has all the empty table/matrices
-        self._test_empty_events_group(self.database.root.events)
+        self._test_empty_events_group(events_group=self.database.root.events)
 
     def test_append_event(self):
         """
@@ -242,6 +242,45 @@ class TestEventDatabase(unittest.TestCase):
         self.database.root.events.raw_data.append(np.zeros((1, 100)))
         self.database.flush()
 
+    def test_initialize_events_database_with_debug(self):
+        filename = 'test_initialize_events_database_with_debug.h5'
+        if os.path.exists(filename):
+            os.remove(filename)
+        n_points = 100
+        n_channels = 2
+        database = eD.open_file(filename, mode='w', debug=True, n_points=n_points, n_channels=n_channels)
+
+        self._test_initial_root(database)
+
+        self._test_empty_events_group(events_group=database.root.events)
+
+        # Make sure the debug group is there.
+        names = [x._v_name for x in database.walkGroups()]
+        self.assertIn('debug', names, 'No debug group.')
+
+        debug_group = database.root.debug
+
+        # Make sure the debug group
+        debug_group_names = [x._v_name for x in database.walkNodes(debug_group)]
+        print debug_group_names
+        self.assertIn('data', debug_group_names, 'No data matrix.')
+        self.assertIn('baseline', debug_group_names, 'No baseline matrix.')
+        self.assertIn('threshold_positive', debug_group_names, 'No positive threshold matrix.')
+        self.assertIn('threshold_negative', debug_group_names, 'No negative threshold matrix.')
+
+        # Make sure arrays are correct dimensions
+        self.assertEqual(debug_group.data.shape, (n_channels, n_points))
+        self.assertEqual(debug_group.baseline.shape, (n_channels, n_points))
+        self.assertEqual(debug_group.threshold_positive.shape, (n_channels, n_points))
+        self.assertEqual(debug_group.threshold_negative.shape, (n_channels, n_points))
+
+        # Check is in write mode
+        database.root.events.raw_data.append(np.zeros((1, 100)))
+        database.flush()
+
+        database.close()
+        os.remove(filename)
+
     def test_open_existing_empty_database(self):
         """
         Tests opening an existing h5 file with an empty 
@@ -328,7 +367,7 @@ class TestEventDatabase(unittest.TestCase):
         Test the getter for /events
         """
         events_group = self.database.get_events_group()
-        self._test_empty_events_group(events_group)
+        self._test_empty_events_group(events_group=events_group)
 
         self.assertIn('raw_data', events_group)
         self.assertIn('levels', events_group)

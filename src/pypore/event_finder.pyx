@@ -11,6 +11,7 @@ import time
 import datetime
 
 import numpy as np
+
 cimport numpy as np
 
 import filetypes.event_database as ed
@@ -23,9 +24,11 @@ from libc.math cimport fabs
 from cpython cimport bool
 
 from pypore.io import get_reader_from_filename
+
 from pypore.io.abstract_reader cimport AbstractReader
 from pypore.strategies.baseline_strategy cimport BaselineStrategy
 from pypore.strategies.adaptive_baseline_strategy import AdaptiveBaselineStrategy
+
 from pypore.strategies.threshold_strategy cimport ThresholdStrategy
 from pypore.strategies.noise_based_threshold_strategy import NoiseBasedThresholdStrategy
 
@@ -80,7 +83,7 @@ cpdef np.ndarray[DTYPE_t] _get_data_range_test_wrapper(data_cache, long i, long 
     return _get_data_range(data_cache, i, n)
 
 cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object pipe=None, h5file=None,
-                            save_file_name=None):
+                            save_file_name=None, debug=False):
     cdef unsigned int event_count = 0
 
     cdef unsigned int get_blocks = 1
@@ -106,6 +109,7 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
 
     # allocate memory for data
     data_x = reader.get_next_blocks_c(get_blocks)
+    cdef unsigned int n_channels = len(data_x)
     cdef np.ndarray[DTYPE_t] data = data_x[0]  # only get channel 1
     del data_x
 
@@ -134,7 +138,9 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
 
     # Open the event database
     if h5file is None:
-        h5file = ed.open_file(save_file_name, maxEventLength=max_points, mode='w')
+        h5file = ed.open_file(save_file_name, maxEventLength=max_points, mode='w', debug=debug, n_points=points_per_channel_total,
+                              n_channels=n_channels, threshold_positive=parameters.detect_positive_events,
+                                threshold_negative=parameters.detect_negative_events)
     raw_data = h5file.root.events.raw_data
     levels_matrix = h5file.root.events.levels
     lengths_matrix = h5file.root.events.level_lengths
@@ -228,6 +234,11 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
 
         int last_event_sent = 0
 
+        np.ndarray[DTYPE_t] debug_data_matrix = np.zeros(points_per_channel_total if debug else 0, dtype=DTYPE)
+        np.ndarray[DTYPE_t] debug_baseline_matrix = np.zeros(points_per_channel_total if debug else 0, dtype=DTYPE)
+        np.ndarray[DTYPE_t] debug_threshold_pos_matrix = np.zeros(points_per_channel_total if debug else 0, dtype=DTYPE)
+        np.ndarray[DTYPE_t] debug_threshold_neg_matrix = np.zeros(points_per_channel_total if debug else 0, dtype=DTYPE)
+
     # search for events.  Keep track of filter_parameter filtered local (adapting!) mean and variance,
     # and use them to decide filter_parameter threshold_start for events.  See
     # http://pubs.rsc.org/en/content/articlehtml/2012/nr/c2nr30951c for more details.
@@ -243,6 +254,13 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
         elif direction_positive and data_point > baseline + threshold_start:
             is_event = True
             was_event_positive = True
+        if debug:
+            debug_data_matrix[place_in_data + i] = data_point
+            debug_baseline_matrix[i + place_in_data] = baseline
+            if direction_positive:
+                debug_threshold_pos_matrix[i + place_in_data] = baseline + threshold_start
+            if direction_negative:
+                debug_threshold_neg_matrix[i + place_in_data] = baseline - threshold_start
         if is_event:
             is_event = False
             # Set ending threshold_end
@@ -290,6 +308,13 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
                     data_point = curr_data[event_i]
                 else:
                     data_point = data_cache[cache_index][event_i % n]
+                if debug:
+                    debug_data_matrix[event_i + place_in_data] = data_point
+                    debug_baseline_matrix[event_i + place_in_data] = baseline
+                    if direction_positive:
+                        debug_threshold_pos_matrix[event_i + place_in_data] = baseline + threshold_end
+                    if direction_negative:
+                        debug_threshold_neg_matrix[event_i + place_in_data] = baseline - threshold_end
                 if (not was_event_positive and data_point >= baseline - threshold_end) or (
                             was_event_positive and data_point <= baseline + threshold_end):
                     event_end = event_i
@@ -472,6 +497,13 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
         h5file.root.events.eventTable.attrs.sample_rate = sample_rate
         h5file.root.events.eventTable.attrs.eventCount = event_count
         h5file.root.events.eventTable.attrs.dataFilename = reader.get_filename_c()
+
+        if debug:
+            h5file.root.debug.data[0,:] = debug_data_matrix[:]
+            h5file.root.debug.baseline[0,:] = debug_baseline_matrix[:]
+            h5file.root.debug.threshold_positive[0,:] = debug_threshold_pos_matrix[:]
+            h5file.root.debug.threshold_negative[0,:] = debug_threshold_neg_matrix[:]
+
         h5file.flush()
         h5file.close()
         return save_file_name
@@ -540,7 +572,7 @@ cdef class Parameters:
         self.baseline_strategy = baseline_strategy
         self.threshold_strategy = threshold_strategy
 
-def find_events(data, parameters=Parameters(), h5file=None, save_file_names=None, pipe=None):
+def find_events(data, parameters=Parameters(), h5file=None, save_file_names=None, pipe=None, debug=False):
     """
 
     :param data: List of data to search. Each item in the list can be one of the following:
@@ -556,6 +588,11 @@ def find_events(data, parameters=Parameters(), h5file=None, save_file_names=None
     :param [string] save_file_names: (Optional) List of names for the output data. If omitted, \
         appropriate save file names will be generated.
     :param Parameters parameters: :py:class:`Parameters` for event finding.
+    :param boolean debug: If set to True, more information will be added to the resulting EventDatabase, including
+
+        - The baseline used at every point.
+        - The thresholds at every point (positive, negative, or both depending on the Parameters)
+
     :returns: List of String file names of the created EventDatabases.
 
     >>> file_names = ['tests/testDataFiles/chimera_1event.log']
@@ -567,12 +604,17 @@ def find_events(data, parameters=Parameters(), h5file=None, save_file_names=None
     save_file_name = None
     reader = None
     for i, reader in enumerate(data):
+        should_close = False
         if save_file_names is not None:
             save_file_name = save_file_names[i]
         if not isinstance(reader, AbstractReader):
             # If not already a reader, assume it is a string filename and create a reader.
             reader = get_reader_from_filename(reader)
-        database_filename = _lazy_load_find_events(reader, parameters, pipe, h5file, save_file_name)
+            should_close = True
+        database_filename = _lazy_load_find_events(reader, parameters, pipe, h5file, save_file_name, debug=debug)
+        if should_close:
+            # only close readers we opened here
+            reader.close()
         print database_filename
         if database_filename is not None:
             event_databases.append(database_filename)
