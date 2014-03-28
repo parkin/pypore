@@ -35,14 +35,10 @@ cdef class ChimeraReader(AbstractReader):
         Implementation of :py:func:`prepare_data_file` for Chimera ".log" files with the associated ".mat" file.
         """
         # remove 'log' append 'mat'
-        s = list(filename)
-        s.pop()
-        s.pop()
-        s.pop()
-        s.append('mat')
+        specs_filename = filename[:-len('log')] + 'mat'
         # load the matlab file with parameters for the runs
         try:
-            self.specs_file = sio.loadmat("".join(s))
+            self.specs_file = sio.loadmat(specs_filename)
         except IOError:
             raise IOError("Error opening " + filename + ", Chimera .mat specs file of same name must be located in same folder.")
 
