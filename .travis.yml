@@ -8,6 +8,8 @@ matrix:
     - python: "2.7"
       env:
         - USE_APT=true
+    - python: "2.7
+      env:
         - TESTMODE=full
     - python: "3.2"
       env:
