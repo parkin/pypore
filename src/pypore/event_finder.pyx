@@ -540,10 +540,10 @@ cdef class Parameters:
         self.baseline_strategy = baseline_strategy
         self.threshold_strategy = threshold_strategy
 
-def find_events(files, parameters=Parameters(), h5file=None, save_file_names=None, pipe=None):
+def find_events(data, parameters=Parameters(), h5file=None, save_file_names=None, pipe=None):
     """
 
-    :param files: List of files to search. Each item in the list can be one of the following:
+    :param data: List of data to search. Each item in the list can be one of the following:
 
         #. An already opened reader. A subclass of :py:class:`pypore.io.abstract_reader.AbstractReader`.\
            For example, a :py:class:`pypore.io.chimera_reader.ChimeraReader`.
@@ -553,7 +553,7 @@ def find_events(files, parameters=Parameters(), h5file=None, save_file_names=Non
         If omitted, status updates will just be printed to standard output.
     :param h5file: (Optional) An already opened :py:func:`pypore.filetypes.event_database.EventDatabase`. \
         If left out, a new EventDatabase will be created.
-    :param [string] save_file_names: (Optional) List of names for the output files. If omitted, \
+    :param [string] save_file_names: (Optional) List of names for the output data. If omitted, \
         appropriate save file names will be generated.
     :param Parameters parameters: :py:class:`Parameters` for event finding.
     :returns: List of String file names of the created EventDatabases.
@@ -566,7 +566,7 @@ def find_events(files, parameters=Parameters(), h5file=None, save_file_names=Non
     event_databases = []
     save_file_name = None
     reader = None
-    for i, reader in enumerate(files):
+    for i, reader in enumerate(data):
         if save_file_names is not None:
             save_file_name = save_file_names[i]
         if not isinstance(reader, AbstractReader):
