@@ -28,7 +28,7 @@ class PlotThread(QtCore.QThread):
     def __del__(self):
         """
         If the object instantiating this thread gets deleted, the thread will be deleted, causing
-        filter_parameter segfault, unless we implement this destructor.
+        baseline_filter_parameter segfault, unless we implement this destructor.
         """
         self.wait()
 
@@ -47,7 +47,7 @@ class PlotThread(QtCore.QThread):
 
 class AnalyzeDataThread(QtCore.QThread):
     """
-    Class for searching for events in filter_parameter separate thread.  
+    Class for searching for events in baseline_filter_parameter separate thread.
     """
     dataReady = QtCore.Signal(object)
 
@@ -56,7 +56,7 @@ class AnalyzeDataThread(QtCore.QThread):
     readyForEvents = True
 
     def __init__(self, file_names, parameters):
-        #     def __init__(self, axes, filename='', threshold_strategy='adaptive', filter_parameter=0.93,
+        #     def __init__(self, axes, filename='', threshold_strategy='adaptive', baseline_filter_parameter=0.93,
         #                  threshold_direction='negative', min_event_length=10., max_event_length=1000.):
         QtCore.QThread.__init__(self)
         self.parameters = parameters
@@ -78,7 +78,7 @@ class AnalyzeDataThread(QtCore.QThread):
     def __del__(self):
         """
         If the object instantiating this thread gets deleted, the thread will be deleted, causing
-        filter_parameter segfault, unless we implement this destructor.
+        baseline_filter_parameter segfault, unless we implement this destructor.
         """
         self.wait()
 

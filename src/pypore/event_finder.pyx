@@ -239,8 +239,8 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
         np.ndarray[DTYPE_t] debug_threshold_pos_matrix = np.zeros(points_per_channel_total if debug else 0, dtype=DTYPE)
         np.ndarray[DTYPE_t] debug_threshold_neg_matrix = np.zeros(points_per_channel_total if debug else 0, dtype=DTYPE)
 
-    # search for events.  Keep track of filter_parameter filtered local (adapting!) mean and variance,
-    # and use them to decide filter_parameter threshold_start for events.  See
+    # search for events.  Keep track of baseline_filter_parameter filtered local (adapting!) mean and variance,
+    # and use them to decide baseline_filter_parameter threshold_start for events.  See
     # http://pubs.rsc.org/en/content/articlehtml/2012/nr/c2nr30951c for more details.
     while i < n:
         data_point = curr_data[i]
@@ -534,7 +534,7 @@ cdef class Parameters:
 
     >>> from pypore.strategies.adaptive_baseline_strategy import AdaptiveBaselineStrategy    >>> from pypore.event_finder import Parameters
     >>> from pypore.event_finder import find_events
-    >>> params = Parameters(baseline_strategy=AdaptiveBaselineStrategy(filter_parameter=0.93))
+    >>> params = Parameters(baseline_strategy=AdaptiveBaselineStrategy(baseline_filter_parameter=0.93))
     >>> event_database_filenames = find_events(['test.log'], parameters=params)
 
     """

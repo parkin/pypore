@@ -49,7 +49,7 @@ class EventFindingTab(BaseQSplitterDataFile):
             - 'min_event_length'
             - 'max_event_length'
             - 'baseline_strategy'
-            - 'filter_parameter'
+            - 'baseline_filter_parameter'
             - 'baseline_current'
 
             etc...
@@ -72,10 +72,15 @@ class EventFindingTab(BaseQSplitterDataFile):
         baseline_type_str = str(self.baseline_type_combo.currentText())
         if baseline_type_str == 'Adaptive':
             try:
-                filter_parameter = float(self.filter_parameter_edit.text())
-                baseline_type = AdaptiveBaselineStrategy(filter_parameter=filter_parameter)
+                baseline_filter_parameter = float(self.baseline_filter_parameter_edit.text())
             except ValueError:
-                return {'error': 'Could not read float from Filter Parameter text box.  Please fix.'}
+                return {'error': 'Could not read float from Baseline Filter Parameter text box.  Please fix.'}
+            try:
+                variance_filter_parameter = float(self.variance_filter_parameter_edit.text())
+            except ValueError:
+                return {'error': 'Could not read float from Variance Filter Parameter text box.  Please fix.'}
+            baseline_type = AdaptiveBaselineStrategy(baseline_filter_parameter=baseline_filter_parameter,
+                                                     variance_filter_parameter=variance_filter_parameter)
         elif baseline_type_str == 'Fixed':
             try:
                 baseline_current = float(self.baseline_current_edit.text())
@@ -230,7 +235,7 @@ class EventFindingTab(BaseQSplitterDataFile):
 
     def _on_file_item_doubleclick(self, item):
         """
-        Called when filter_parameter file list item is double clicked.
+        Called when baseline_filter_parameter file list item is double clicked.
         Starts the plotting thread, which opens the file, parses data, then passes to plotData
         """
         # adding by emitting signal in different thread
@@ -315,10 +320,14 @@ class EventFindingTab(BaseQSplitterDataFile):
         self.baseline_type_combo.activated.connect(baseline_options.setCurrentIndex)
 
         adaptive_options_layout = QtGui.QFormLayout()
-        self.filter_parameter_edit = QtGui.QLineEdit()
-        self.filter_parameter_edit.setValidator(QtGui.QDoubleValidator(0, 10, 5, self.filter_parameter_edit))
-        self.filter_parameter_edit.setText('0.93')
-        adaptive_options_layout.addRow('Filter Parameter \'a\':', self.filter_parameter_edit)
+        self.baseline_filter_parameter_edit = QtGui.QLineEdit()
+        self.baseline_filter_parameter_edit.setValidator(QtGui.QDoubleValidator(0, 10, 5, self.baseline_filter_parameter_edit))
+        self.baseline_filter_parameter_edit.setText('0.93')
+        adaptive_options_layout.addRow('Baseline Filter Parameter \'a_baseline\':', self.baseline_filter_parameter_edit)
+        self.variance_filter_parameter_edit = QtGui.QLineEdit()
+        self.variance_filter_parameter_edit.setValidator(QtGui.QDoubleValidator(0, 10, 5, self.variance_filter_parameter_edit))
+        self.variance_filter_parameter_edit.setText('0.8')
+        adaptive_options_layout.addRow('Variance Filter Parameter \'a_baseline\':', self.variance_filter_parameter_edit)
         # need to cast to widget to add to QStackedLayout
         adaptive_options_widget = QtGui.QWidget()
         adaptive_options_widget.setLayout(adaptive_options_layout)

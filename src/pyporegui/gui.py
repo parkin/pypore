@@ -190,7 +190,7 @@ The current namespace should include:
 
     def _create_status_bar(self):
         """
-        Creates filter_parameter status bar with filter_parameter text widget.
+        Creates baseline_filter_parameter status bar with baseline_filter_parameter text widget.
         """
         self.status_text = QtGui.QLabel("")
         self.statusBar().addWidget(self.status_text, 1)

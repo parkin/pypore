@@ -28,7 +28,7 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
         options = self._create_event_viewer_options()
         plots = self._create_event_viewer_plot_widget()
 
-        # Put everything in filter_parameter scroll area
+        # Put everything in baseline_filter_parameter scroll area
         scroll_plots = QtGui.QScrollArea()
         scroll_plots.setWidgetResizable(True)
 
@@ -59,7 +59,7 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
         scroll_area = QtGui.QScrollArea()
         scroll_area.setWidgetResizable(True)
 
-        # Create filter_parameter list for files want to analyze
+        # Create baseline_filter_parameter list for files want to analyze
         self.eventview_list_widget = QtGui.QListWidget()
         self.eventview_list_widget.itemDoubleClicked.connect(self._on_eventview_file_item_doubleclick)
         self.eventview_list_widget.setMaximumHeight(100)

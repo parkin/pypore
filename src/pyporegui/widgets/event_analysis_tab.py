@@ -20,7 +20,7 @@ class EventAnalysisTab(_ThreadManager, QtGui.QSplitter):
         options = self._create_event_analysis_options()
         self.event_analysis_widget = EventAnalysisPlotWidget()
 
-        # Put everything in filter_parameter scroll area
+        # Put everything in baseline_filter_parameter scroll area
         scroll_options = QtGui.QScrollArea()
         scroll_plots = QtGui.QScrollArea()
         scroll_options.setWidgetResizable(True)
@@ -99,7 +99,7 @@ class EventAnalysisTab(_ThreadManager, QtGui.QSplitter):
         scroll_area = QtGui.QScrollArea()
         scroll_area.setWidgetResizable(True)
 
-        # Create filter_parameter list for files want to analyze
+        # Create baseline_filter_parameter list for files want to analyze
         self.list_event_widget = QtGui.QListWidget()
         self.list_event_widget.setMaximumHeight(100)
         self.list_event_widget.itemSelectionChanged.connect(self._on_event_file_selection_changed)
