@@ -4,11 +4,11 @@ Tests for eventFinder.pyx
 @author: `@parkin`_
 """
 import unittest
-from pypore.event_finder import find_events
+from pypore.event_finder import find_events, get_reader_from_filename
 from pypore.event_finder import _get_data_range_test_wrapper
 import numpy as np
 import os
-import pypore.filetypes.event_database as eD
+import pypore.filetypes.event_database as ed
 
 
 class TestEventFinder(unittest.TestCase):
@@ -92,7 +92,7 @@ class TestEventFinder(unittest.TestCase):
 
         self.assertTrue(os.path.isfile(event_database))
 
-        h5file = eD.open_file(event_database, mode='r')
+        h5file = ed.open_file(event_database, mode='r')
 
         self.assertTrue(h5file.isopen)
 
@@ -106,7 +106,7 @@ class TestEventFinder(unittest.TestCase):
         filename = os.path.join(filename, 'testDataFiles', 'chimera_nonoise_1event.log')
         event_database = find_events([filename], save_file_names=['_testChimera_nonoise_1Event_9238.h5'])[0]
 
-        h5file = eD.open_file(event_database, mode='r')
+        h5file = ed.open_file(event_database, mode='r')
 
         events = h5file.root.events
 
@@ -171,7 +171,7 @@ class TestEventFinder(unittest.TestCase):
         filename = os.path.join(filename, 'testDataFiles', 'chimera_nonoise_1event_2levels.log')
         event_database = find_events([filename], save_file_names=['_testChimera_nonoise_1Event_2Levels_9238.h5'])[0]
 
-        h5file = eD.open_file(event_database, mode='r')
+        h5file = ed.open_file(event_database, mode='r')
         self._test_chimera_no_noise_1event_2levels_helper(h5file)
         h5file.close()
 
@@ -227,7 +227,7 @@ class TestEventFinder(unittest.TestCase):
 
         event_database = event_databases[0]
 
-        h5file = eD.open_file(event_database, mode='r')
+        h5file = ed.open_file(event_database, mode='r')
         self._test_chimera_no_noise_2events_1levels_wrapper(h5file)
         h5file.close()
 
@@ -245,15 +245,34 @@ class TestEventFinder(unittest.TestCase):
 
         self.assertEqual(len(event_databases), 2)
 
-        h5file = eD.open_file(event_databases[0], mode='r')
+        h5file = ed.open_file(event_databases[0], mode='r')
         self._test_chimera_no_noise_2events_1levels_wrapper(h5file)
         h5file.close()
         os.remove(event_databases[0])
 
-        h5file = eD.open_file(event_databases[1], mode='r')
+        h5file = ed.open_file(event_databases[1], mode='r')
         self._test_chimera_no_noise_1event_2levels_helper(h5file)
         h5file.close()
         os.remove(event_databases[1])
+
+    def test_passing_reader(self):
+        """
+        Tests that passing an open subtype of :py:class:`pypore.io.abstract_reader.AbstractReader` works.
+        """
+        filename = os.path.dirname(os.path.realpath(__file__))
+        filename = os.path.join(filename, 'testDataFiles', 'chimera_nonoise_2events_1levels.log')
+
+        reader = get_reader_from_filename(filename)
+        data = [reader]
+        event_databases = find_events(data,
+                                      save_file_names=['_testMultipleFiles_1_9238.h5', '_testMultipleFiles_2_9238.h5'])
+
+        self.assertEqual(len(event_databases), 1)
+
+        h5file = ed.open_file(event_databases[0], mode='r')
+        self._test_chimera_no_noise_2events_1levels_wrapper(h5file)
+        h5file.close()
+        os.remove(event_databases[0])
 
 
 if __name__ == "__main__":
