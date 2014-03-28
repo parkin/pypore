@@ -34,10 +34,10 @@
   <body>
 <header>
     <div class="inner">
-        <h1><a href="http://parkin1.github.io/pypore/">Pypore</a></h1>
+        <h1><a href="http://parkin.github.io/pypore/">Pypore</a></h1>
 
         <h2></h2>
-        <a href="https://github.com/parkin1/pypore" class="button">
+        <a href="https://github.com/parkin/pypore" class="button">
             <small>View project on</small>
             GitHub</a>
     </div>
@@ -49,9 +49,6 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
         <li class="right" >
           <a href="pypore.filetypes.event_database.html" title="pypore.filetypes.event_database module"
              accesskey="N">next</a> |</li>
@@ -98,116 +95,8 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-pypore.filetypes.data_file">
-<span id="pypore-filetypes-data-file-module"></span><h1>pypore.filetypes.data_file module<a class="headerlink" href="#module-pypore.filetypes.data_file" title="Permalink to this headline">¶</a></h1>
-<p>Created on Jan 28, 2014</p>
-<p>&#64;author: <a class="reference external" href="https://github.com/parkin">&#64;parkin</a></p>
-<dl class="class">
-<dt id="pypore.filetypes.data_file.DataFile">
-<em class="property">class </em><tt class="descclassname">pypore.filetypes.data_file.</tt><tt class="descname">DataFile</tt><big>(</big><em>filename</em>, <em>mode='r'</em>, <em>title=''</em>, <em>root_uep='/'</em>, <em>filters=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/data_file.html#DataFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.data_file.DataFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">tables.file.File</span></tt></p>
-<p>PyTables HDF5 database storing raw data.
-Inherits from tables.file.File, so you can interact with this
-just as you would a PyTables File object. However, this contains
-some extra convenience methods for storing/reading data. Note that 
-DataFile allows you to interact
-with this PyTables file in the usual PyTables file manner, so you
-can potentially mangle the data from the original DataFile
-format.</p>
-<p>Automatically adds matrix
-/data</p>
-<p>Must be instantiated by calling <tt class="xref py py-func docutils literal"><span class="pre">pypore.dataFile.open_file()</span></tt></p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pypore.dataFile</span> <span class="kn">as</span> <span class="nn">df</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">database</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">tests</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&#39;w&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c"># Now do stuff with the DataFile</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c"># ...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c"># Close and remove the DataFile</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">database</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tests</span><span class="p">)</span>
-</pre></div>
-</div>
-<dl class="method">
-<dt id="pypore.filetypes.data_file.DataFile.clean_database">
-<tt class="descname">clean_database</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/data_file.html#DataFile.clean_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.data_file.DataFile.clean_database" title="Permalink to this definition">¶</a></dt>
-<dd><p>Removes /events and then re-initializes the /events group. Note
-that any references to any table/matrix in this group will
-be broken and need to be refreshed.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">h5</span> <span class="o">=</span> <span class="n">open_file</span><span class="p">(</span><span class="n">tests</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&#39;a&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">h5</span><span class="o">.</span><span class="n">get_event_table</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">h5</span><span class="o">.</span><span class="n">clean_database</span><span class="p">()</span> <span class="o">//</span> <span class="n">table</span> <span class="ow">is</span> <span class="n">now</span> <span class="n">refers</span> <span class="n">to</span> <span class="n">deleted</span> <span class="n">table</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">h5</span><span class="o">.</span><span class="n">get_event_table</span><span class="p">()</span> <span class="o">//</span> <span class="n">table</span> <span class="n">now</span> <span class="n">refers</span> <span class="n">to</span> <span class="n">live</span> <span class="n">table</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="pypore.filetypes.data_file.DataFile.get_data_length">
-<tt class="descname">get_data_length</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/data_file.html#DataFile.get_data_length"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.data_file.DataFile.get_data_length" title="Permalink to this definition">¶</a></dt>
-<dd><p>Note this will flush the table so the data is correct.
-:returns: The number of rows in the data matrix.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pypore.filetypes.data_file.DataFile.get_sample_rate">
-<tt class="descname">get_sample_rate</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/data_file.html#DataFile.get_sample_rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.data_file.DataFile.get_sample_rate" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The sample rate at root.events.eventTable.attrs.sample_rate</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pypore.filetypes.data_file.DataFile.initialize_database">
-<tt class="descname">initialize_database</tt><big>(</big><em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/data_file.html#DataFile.initialize_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.data_file.DataFile.initialize_database" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initializes the EventDatabase.  Adds a group &#8216;events&#8217; with
-table &#8216;eventsTable&#8217; and matrices &#8216;raw_data&#8217;, &#8216;levels&#8217;, and &#8216;level_lengths&#8217;.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>kargs</strong> &#8211; Can pass in &#8216;maxEventLength&#8217;: Maximum number of data points for an event to be added.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="pypore.filetypes.data_file.open_file">
-<tt class="descclassname">pypore.filetypes.data_file.</tt><tt class="descname">open_file</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/data_file.html#open_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.data_file.open_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Opens a <a class="reference internal" href="#pypore.filetypes.data_file.DataFile" title="pypore.filetypes.data_file.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a>, which is a subclass of <tt class="xref py py-class docutils literal"><span class="pre">tables.file.File</span></tt> and can be treated as such.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>args</strong> &#8211; Arguments that get passed to <tt class="xref py py-func docutils literal"><span class="pre">tables.openFile()</span></tt>.</li>
-<li><strong>kargs</strong> &#8211; <p>Arguments that get passed to <tt class="xref py py-func docutils literal"><span class="pre">tables.openFile()</span></tt>. Should additionally include:</p>
-<ul>
-<li>nPoints: Number of points that should be in the array.</li>
-<li>sample_rate: Sample rate of the data.</li>
-</ul>
-</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#pypore.filetypes.data_file.DataFile" title="pypore.filetypes.data_file.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">pypore.filetypes.data_file.DataFile</span></tt></a> &#8211; an already opened
-<a class="reference internal" href="#pypore.filetypes.data_file.DataFile" title="pypore.filetypes.data_file.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">pypore.filetypes.data_file.DataFile</span></tt></a>.</p>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pypore.filetypes.data_file</span> <span class="kn">as</span> <span class="nn">df</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s">&#39;tests.h5&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;w&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
+  <div class="section" id="pypore-filetypes-data-file-module">
+<h1>pypore.filetypes.data_file module<a class="headerlink" href="#pypore-filetypes-data-file-module" title="Permalink to this headline">¶</a></h1>
 </div>
 
 
@@ -222,9 +111,6 @@ table &#8216;eventsTable&#8217; and matrices &#8216;raw_data&#8217;, &#8216;leve
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
         <li class="right" >
           <a href="pypore.filetypes.event_database.html" title="pypore.filetypes.event_database module"
              >next</a> |</li>

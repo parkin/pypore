@@ -34,10 +34,10 @@
   <body>
 <header>
     <div class="inner">
-        <h1><a href="http://parkin1.github.io/pypore/">Pypore</a></h1>
+        <h1><a href="http://parkin.github.io/pypore/">Pypore</a></h1>
 
         <h2></h2>
-        <a href="https://github.com/parkin1/pypore" class="button">
+        <a href="https://github.com/parkin/pypore" class="button">
             <small>View project on</small>
             GitHub</a>
     </div>
@@ -49,9 +49,6 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
         <li class="right" >
           <a href="pypore.strategies.fixed_baseline_strategy.html" title="pypore.strategies.fixed_baseline_strategy module"
              accesskey="N">next</a> |</li>
@@ -98,144 +95,8 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-pypore.strategies.baseline_strategy">
-<span id="pypore-strategies-baseline-strategy-module"></span><h1>pypore.strategies.baseline_strategy module<a class="headerlink" href="#module-pypore.strategies.baseline_strategy" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="pypore.strategies.baseline_strategy.BaselineStrategy">
-<em class="property">class </em><tt class="descclassname">pypore.strategies.baseline_strategy.</tt><tt class="descname">BaselineStrategy</tt><a class="headerlink" href="#pypore.strategies.baseline_strategy.BaselineStrategy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
-<p>This is an abstract class defining how <tt class="xref py py-func docutils literal"><span class="pre">find_events()</span></tt> handles computing the baseline.</p>
-<p>Example implementations&#8211;</p>
-<ul class="simple">
-<li><tt class="xref py py-class docutils literal"><span class="pre">FixedBaselineStrategy</span></tt> &#8211; baseline is fixed.</li>
-<li><tt class="xref py py-class docutils literal"><span class="pre">AdaptiveBaselineStrategy</span></tt> &#8211; applies a first-order recursive filter to adapt the        baseline as the data changes.</li>
-</ul>
-<p>When a <a class="reference internal" href="#pypore.strategies.baseline_strategy.BaselineStrategy" title="pypore.strategies.baseline_strategy.BaselineStrategy"><tt class="xref py py-class docutils literal"><span class="pre">BaselineStrategy</span></tt></a> is passed to <tt class="xref py py-func docutils literal"><span class="pre">find_events()</span></tt>,
-<tt class="xref py py-func docutils literal"><span class="pre">find_events()</span></tt> will call the following methods, so Subclasses must override
-these methods.</p>
-<dl class="attribute">
-<dt id="pypore.strategies.baseline_strategy.BaselineStrategy.__init__">
-<tt class="descname">__init__</tt><a class="headerlink" href="#pypore.strategies.baseline_strategy.BaselineStrategy.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>(double baseline=0.0, double variance=0.0)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>baseline</strong> (<em>double</em>) &#8211; baseline</li>
-<li><strong>variance</strong> (<em>double</em>) &#8211; variance</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pypore.strategies.baseline_strategy.BaselineStrategy.baseline">
-<tt class="descname">baseline</tt><a class="headerlink" href="#pypore.strategies.baseline_strategy.BaselineStrategy.baseline" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pypore.strategies.baseline_strategy.BaselineStrategy.compute_baseline">
-<tt class="descname">compute_baseline</tt><big>(</big><em>double data_point</em><big>)</big><a class="headerlink" href="#pypore.strategies.baseline_strategy.BaselineStrategy.compute_baseline" title="Permalink to this definition">¶</a></dt>
-<dd><p>(Note: this is a cpdef wrapper around the cdef function <tt class="xref py py-func docutils literal"><span class="pre">compute_baseline_c()</span></tt>.
-This function can be called directly from Python. If calling from Cython,
-you can call the cdef version <tt class="xref py py-func docutils literal"><span class="pre">compute_baseline_c()</span></tt>)</p>
-<p>When a <tt class="xref py py-class docutils literal"><span class="pre">BaselineType</span></tt> or subclass is passed in a <tt class="xref py py-class docutils literal"><span class="pre">Parameters</span></tt> object to         <tt class="xref py py-func docutils literal"><span class="pre">find_events()</span></tt>, it will call this method with each new data_point as it linearly         loops through its data.</p>
-<p>This method will raise a NotImplementedError, so it should be overridden.
-Subclasses can use this data_point to compute/modify the baseline.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data_point</strong> (<em>double</em>) &#8211; When called from <tt class="xref py py-func docutils literal"><span class="pre">find_events()</span></tt>, data_point is the most             recent data point.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the new baseline. Subclasses should return             <cite>BaselineStrategy.compute_baseline_c(self, data_point)</cite>.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pypore.strategies.baseline_strategy.BaselineStrategy.compute_variance">
-<tt class="descname">compute_variance</tt><big>(</big><em>double data_point</em><big>)</big><a class="headerlink" href="#pypore.strategies.baseline_strategy.BaselineStrategy.compute_variance" title="Permalink to this definition">¶</a></dt>
-<dd><p>(Note: this is a cpdef wrapper around the cdef function <tt class="xref py py-func docutils literal"><span class="pre">compute_variance_c()</span></tt>.
-This function can be called directly from Python. If calling from Cython,
-you can call the cdef version <tt class="xref py py-func docutils literal"><span class="pre">compute_variance_c()</span></tt>)</p>
-<p>When a <tt class="xref py py-class docutils literal"><span class="pre">BaselineType</span></tt> or subclass is passed in a <tt class="xref py py-class docutils literal"><span class="pre">Parameters</span></tt> object to         <tt class="xref py py-func docutils literal"><span class="pre">find_events()</span></tt>, it will call this method with each new data_point as it linearly         loops through its data.</p>
-<p>This method will raise a NotImplementedError, so it should be overridden.
-Subclasses can use this data_point to compute/modify the variance.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data_point</strong> (<em>double</em>) &#8211; When called from <tt class="xref py py-func docutils literal"><span class="pre">find_events()</span></tt>, data_point is the most             recent data point.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the new variance. Subclasses should return             <cite>BaselineStrategy.compute_variance_c(self, data_point)</cite>.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pypore.strategies.baseline_strategy.BaselineStrategy.get_baseline">
-<tt class="descname">get_baseline</tt><big>(</big><big>)</big><a class="headerlink" href="#pypore.strategies.baseline_strategy.BaselineStrategy.get_baseline" title="Permalink to this definition">¶</a></dt>
-<dd><p>(Note: this is a cpdef wrapper around the cdef function <tt class="xref py py-func docutils literal"><span class="pre">get_baseline_c()</span></tt>.
-This function can be called directly from Python. If calling from Cython,
-you can call the cdef version <tt class="xref py py-func docutils literal"><span class="pre">get_baseline_c()</span></tt>)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the current baseline.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pypore.strategies.baseline_strategy.BaselineStrategy.get_variance">
-<tt class="descname">get_variance</tt><big>(</big><big>)</big><a class="headerlink" href="#pypore.strategies.baseline_strategy.BaselineStrategy.get_variance" title="Permalink to this definition">¶</a></dt>
-<dd><p>(Note: this is a cpdef wrapper around the cdef function <tt class="xref py py-func docutils literal"><span class="pre">get_variance_c()</span></tt>.
-This function can be called directly from Python. If calling from Cython,
-you can call the cdef version <tt class="xref py py-func docutils literal"><span class="pre">get_variance_c()</span></tt>)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the current variance.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pypore.strategies.baseline_strategy.BaselineStrategy.initialize">
-<tt class="descname">initialize</tt><big>(</big><em>double baseline</em><big>)</big><a class="headerlink" href="#pypore.strategies.baseline_strategy.BaselineStrategy.initialize" title="Permalink to this definition">¶</a></dt>
-<dd><p>(Note: this is a cpdef wrapper around the cdef function <tt class="xref py py-func docutils literal"><span class="pre">initialize_c()</span></tt>.
-This function can be called directly from Python. If calling from Cython,
-you can call the cdef version <tt class="xref py py-func docutils literal"><span class="pre">initialize_c()</span></tt>)</p>
-<p>When a <tt class="xref py py-class docutils literal"><span class="pre">BaselineType</span></tt> or subclass is passed in a <tt class="xref py py-class docutils literal"><span class="pre">Parameters</span></tt> object to         <tt class="xref py py-func docutils literal"><span class="pre">find_events()</span></tt>, it will call this method with the first 100 data points or so.</p>
-<p>This method will raise a NotImplementedError, so it should be overridden.
-Subclasses can use the initialization_points initialize_c the baseline and the variance.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>initialization_points</strong> (<em>numpy.ndarray[numpy.float]</em>) &#8211; When called from             <tt class="xref py py-func docutils literal"><span class="pre">find_events()</span></tt>, this is the first 100 data points or so.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pypore.strategies.baseline_strategy.BaselineStrategy.variance">
-<tt class="descname">variance</tt><a class="headerlink" href="#pypore.strategies.baseline_strategy.BaselineStrategy.variance" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+  <div class="section" id="pypore-strategies-baseline-strategy-module">
+<h1>pypore.strategies.baseline_strategy module<a class="headerlink" href="#pypore-strategies-baseline-strategy-module" title="Permalink to this headline">¶</a></h1>
 </div>
 
 
@@ -250,9 +111,6 @@ Subclasses can use the initialization_points initialize_c the baseline and the v
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
         <li class="right" >
           <a href="pypore.strategies.fixed_baseline_strategy.html" title="pypore.strategies.fixed_baseline_strategy module"
              >next</a> |</li>

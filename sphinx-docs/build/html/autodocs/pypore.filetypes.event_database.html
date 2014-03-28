@@ -34,10 +34,10 @@
   <body>
 <header>
     <div class="inner">
-        <h1><a href="http://parkin1.github.io/pypore/">Pypore</a></h1>
+        <h1><a href="http://parkin.github.io/pypore/">Pypore</a></h1>
 
         <h2></h2>
-        <a href="https://github.com/parkin1/pypore" class="button">
+        <a href="https://github.com/parkin/pypore" class="button">
             <small>View project on</small>
             GitHub</a>
     </div>
@@ -49,9 +49,6 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
         <li class="right" >
           <a href="pypore.io.html" title="pypore.io package"
              accesskey="N">next</a> |</li>
@@ -98,237 +95,8 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-pypore.filetypes.event_database">
-<span id="pypore-filetypes-event-database-module"></span><h1>pypore.filetypes.event_database module<a class="headerlink" href="#module-pypore.filetypes.event_database" title="Permalink to this headline">¶</a></h1>
-<p>Created on Sep 13, 2013</p>
-<p>&#64;author: <a class="reference external" href="https://github.com/parkin">&#64;parkin</a></p>
-<dl class="class">
-<dt id="pypore.filetypes.event_database.EventDatabase">
-<em class="property">class </em><tt class="descclassname">pypore.filetypes.event_database.</tt><tt class="descname">EventDatabase</tt><big>(</big><em>filename</em>, <em>mode='r'</em>, <em>title=''</em>, <em>root_uep='/'</em>, <em>filters=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/event_database.html#EventDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.event_database.EventDatabase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">tables.file.File</span></tt></p>
-<p>PyTables HDF5 database storing events and corresponding data.
-Inherits from tables.file.File, so you can interact with this
-just as you would a PyTables File object. However, this contains
-some extra convenience methods for storing/reading events
-and event data. Note that EventDatabase allows you to interact
-with this PyTables file in the usual PyTables file manner, so you
-can potentially mangle the data from the original EventDatabase
-format.</p>
-<p>Automatically adds a group
-/events
-With table
-/events/eventTable
-and matrices
-/events/raw_data, /event/levels, and /event/levelLength</p>
-<p>Must be instantiated by calling eventDatabase&#8217;s</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pypore.eventDatabase</span> <span class="kn">as</span> <span class="nn">ed</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">database</span> <span class="o">=</span> <span class="n">ed</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s">&#39;tests.h5&#39;</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&#39;w&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">database</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s">&#39;tests.h5&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<dl class="attribute">
-<dt id="pypore.filetypes.event_database.EventDatabase.DEFAULT_MAX_EVENT_LENGTH">
-<tt class="descname">DEFAULT_MAX_EVENT_LENGTH</tt><em class="property"> = 100</em><a class="headerlink" href="#pypore.filetypes.event_database.EventDatabase.DEFAULT_MAX_EVENT_LENGTH" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pypore.filetypes.event_database.EventDatabase.append_event">
-<tt class="descname">append_event</tt><big>(</big><em>array_row</em>, <em>event_start</em>, <em>event_length</em>, <em>n_levels</em>, <em>raw_points_per_side</em>, <em>baseline</em>, <em>current_blockage</em>, <em>area</em>, <em>raw_data=None</em>, <em>levels=None</em>, <em>level_lengths=None</em><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/event_database.html#EventDatabase.append_event"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.event_database.EventDatabase.append_event" title="Permalink to this definition">¶</a></dt>
-<dd><p>Appends an event with the specified values to the eventsTable.  If raw_data, levels, or level_lengths
-are included, they are added to the corresponding matrices.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>array_row</strong> (<em>Int</em>) &#8211; The row in the raw_data, levels, and level_lengths array that corresponds
-to this event.</li>
-<li><strong>event_start</strong> &#8211; The starting index of this event in the data.</li>
-<li><strong>event_length</strong> &#8211; Number of data points in the event.</li>
-<li><strong>n_levels</strong> &#8211; Number of levels in the event.</li>
-<li><strong>raw_points_per_side</strong> &#8211; Number of extra points kept on either side of the event in raw_data.</li>
-<li><strong>baseline</strong> &#8211; Open-pore current at the time of the event.</li>
-<li><strong>current_blockage</strong> &#8211; The mean current blockage of the event.</li>
-<li><strong>area</strong> &#8211; The area of the event.</li>
-<li><strong>raw_data</strong> &#8211; Numpy array of the raw data.</li>
-<li><strong>levels</strong> &#8211; Numpy array of the levels.</li>
-<li><strong>level_lengths</strong> &#8211; Numpy array of the level lengths.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pypore.filetypes.event_database.EventDatabase.append_level_lengths">
-<tt class="descname">append_level_lengths</tt><big>(</big><em>level_lengths</em><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/event_database.html#EventDatabase.append_level_lengths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.event_database.EventDatabase.append_level_lengths" title="Permalink to this definition">¶</a></dt>
-<dd><p>Appends a numpy matrix level_lengths to root.events.level_lengths</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pypore.filetypes.event_database.EventDatabase.append_levels">
-<tt class="descname">append_levels</tt><big>(</big><em>levels</em><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/event_database.html#EventDatabase.append_levels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.event_database.EventDatabase.append_levels" title="Permalink to this definition">¶</a></dt>
-<dd><p>Appends a numpy matrix levels to root.events.levels</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pypore.filetypes.event_database.EventDatabase.append_raw_data">
-<tt class="descname">append_raw_data</tt><big>(</big><em>raw_data</em><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/event_database.html#EventDatabase.append_raw_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.event_database.EventDatabase.append_raw_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Appends a numpy matrix raw_data to root.events.raw_data</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pypore.filetypes.event_database.EventDatabase.clean_database">
-<tt class="descname">clean_database</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/event_database.html#EventDatabase.clean_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.event_database.EventDatabase.clean_database" title="Permalink to this definition">¶</a></dt>
-<dd><p>Removes /events and then re-initializes the /events group. Note
-that any references to any table/matrix in this group will
-be broken and need to be refreshed.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">h5</span> <span class="o">=</span> <span class="n">open_file</span><span class="p">(</span><span class="s">&#39;tests.h5&#39;</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&#39;a&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">h5</span><span class="o">.</span><span class="n">get_event_table</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">h5</span><span class="o">.</span><span class="n">clean_database</span><span class="p">()</span> <span class="o">//</span> <span class="n">table</span> <span class="ow">is</span> <span class="n">now</span> <span class="n">refers</span> <span class="n">to</span> <span class="n">deleted</span> <span class="n">table</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">h5</span><span class="o">.</span><span class="n">get_event_table</span><span class="p">()</span> <span class="o">//</span> <span class="n">table</span> <span class="n">now</span> <span class="n">refers</span> <span class="n">to</span> <span class="n">live</span> <span class="n">table</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pypore.filetypes.event_database.EventDatabase.event_row">
-<tt class="descname">event_row</tt><em class="property"> = None</em><a class="headerlink" href="#pypore.filetypes.event_database.EventDatabase.event_row" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pypore.filetypes.event_database.EventDatabase.get_event_count">
-<tt class="descname">get_event_count</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/event_database.html#EventDatabase.get_event_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.event_database.EventDatabase.get_event_count" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the number of rows in the /events/eventTable table.
-Note this will flush the table so the data is correct.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pypore.filetypes.event_database.EventDatabase.get_event_data_at">
-<tt class="descname">get_event_data_at</tt><big>(</big><em>i</em><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/event_database.html#EventDatabase.get_event_data_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.event_database.EventDatabase.get_event_data_at" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the event data portion of raw_data[i], ie excluding the
-raw buffer points kept on each side of an event.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pypore.filetypes.event_database.EventDatabase.get_event_row">
-<tt class="descname">get_event_row</tt><big>(</big><em>i</em><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/event_database.html#EventDatabase.get_event_row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.event_database.EventDatabase.get_event_row" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the ith row in /events/eventTable. Throws IndexOutOfBounds
-or similar error if i out of bounds. Note this flushes the
-eventTable before returning.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pypore.filetypes.event_database.EventDatabase.get_event_table">
-<tt class="descname">get_event_table</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/event_database.html#EventDatabase.get_event_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.event_database.EventDatabase.get_event_table" title="Permalink to this definition">¶</a></dt>
-<dd><p>returns /events/eventTable</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pypore.filetypes.event_database.EventDatabase.get_event_table_row">
-<tt class="descname">get_event_table_row</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/event_database.html#EventDatabase.get_event_table_row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.event_database.EventDatabase.get_event_table_row" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the PyTables Row object of the eventTable.
-root.events.eventTable.row</p>
-<p>If you need a specific row in eventTable, use getEventRow(i)</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pypore.filetypes.event_database.EventDatabase.get_events_group">
-<tt class="descname">get_events_group</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/event_database.html#EventDatabase.get_events_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.event_database.EventDatabase.get_events_group" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the events group in the PyTables HDF5 file.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pypore.filetypes.event_database.EventDatabase.get_level_lengths_at">
-<tt class="descname">get_level_lengths_at</tt><big>(</big><em>i</em><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/event_database.html#EventDatabase.get_level_lengths_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.event_database.EventDatabase.get_level_lengths_at" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a numpy array of the level_lengths corresponding to the event
-in row &#8216;i&#8217; of eventTable.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pypore.filetypes.event_database.EventDatabase.get_levels_at">
-<tt class="descname">get_levels_at</tt><big>(</big><em>i</em><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/event_database.html#EventDatabase.get_levels_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.event_database.EventDatabase.get_levels_at" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a numpy array of the levels corresponding to the event
-in row &#8216;i&#8217; of eventTable.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pypore.filetypes.event_database.EventDatabase.get_raw_data_at">
-<tt class="descname">get_raw_data_at</tt><big>(</big><em>i</em><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/event_database.html#EventDatabase.get_raw_data_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.event_database.EventDatabase.get_raw_data_at" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the raw_data numpy matrix associated with event &#8216;i&#8217;.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pypore.filetypes.event_database.EventDatabase.get_sample_rate">
-<tt class="descname">get_sample_rate</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/event_database.html#EventDatabase.get_sample_rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.event_database.EventDatabase.get_sample_rate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the sample rate at root.events.eventTable.attrs.sample_rate</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pypore.filetypes.event_database.EventDatabase.initialize_database">
-<tt class="descname">initialize_database</tt><big>(</big><em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/event_database.html#EventDatabase.initialize_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.event_database.EventDatabase.initialize_database" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initializes the EventDatabase.  Adds a group &#8216;events&#8217; with
-table &#8216;eventsTable&#8217; and matrices &#8216;raw_data&#8217;, &#8216;levels&#8217;, and &#8216;level_lengths&#8217;.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>kargs</strong> &#8211; Dictionary - includes:
--maxEventLength: Maximum number of datapoints for an event to be added.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pypore.filetypes.event_database.EventDatabase.max_event_length">
-<tt class="descname">max_event_length</tt><em class="property"> = 100</em><a class="headerlink" href="#pypore.filetypes.event_database.EventDatabase.max_event_length" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pypore.filetypes.event_database.EventDatabase.remove_event">
-<tt class="descname">remove_event</tt><big>(</big><em>i</em><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/event_database.html#EventDatabase.remove_event"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.event_database.EventDatabase.remove_event" title="Permalink to this definition">¶</a></dt>
-<dd><p>Deletes event i from /events/eventTable. Does nothing if
-i &lt; 0 or i &gt;= eventCount. Note the table will be flushed.
-Note that deleting a row in a table of length 1 is not
-currently supported.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pypore.filetypes.event_database.EventDatabase.remove_events">
-<tt class="descname">remove_events</tt><big>(</big><em>i</em>, <em>j</em><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/event_database.html#EventDatabase.remove_events"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.event_database.EventDatabase.remove_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Deletes events [i,j) from /events/eventTable. Does nothing
-if deleting out of range events is requested. Note the table
-will be flushed. Note that deleting all the rows in a 
-table is not currently supported. Refer to cleanDatabase for
-deleting everything.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt>i - First entry to delete.  Must be within range</dt>
-<dd>0 &lt; i &lt; eventCount</dd>
-<dt>j - 1 past last entry to delete.  Must be within range</dt>
-<dd>i &lt; j &lt;= eventCount</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="pypore.filetypes.event_database.open_file">
-<tt class="descclassname">pypore.filetypes.event_database.</tt><tt class="descname">open_file</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/event_database.html#open_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.event_database.open_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Opens an EventDatabase by calling tables.openFile and then
-copying the __dict__ to a new EventDatabase instance.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>maxEventLength: Maximum length of an event for the table. Default is 100.</dd>
-</dl>
-</dd></dl>
-
+  <div class="section" id="pypore-filetypes-event-database-module">
+<h1>pypore.filetypes.event_database module<a class="headerlink" href="#pypore-filetypes-event-database-module" title="Permalink to this headline">¶</a></h1>
 </div>
 
 
@@ -343,9 +111,6 @@ copying the __dict__ to a new EventDatabase instance.</p>
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
         <li class="right" >
           <a href="pypore.io.html" title="pypore.io package"
              >next</a> |</li>

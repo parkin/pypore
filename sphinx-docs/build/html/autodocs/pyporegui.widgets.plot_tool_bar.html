@@ -34,10 +34,10 @@
   <body>
 <header>
     <div class="inner">
-        <h1><a href="http://parkin1.github.io/pypore/">Pypore</a></h1>
+        <h1><a href="http://parkin.github.io/pypore/">Pypore</a></h1>
 
         <h2></h2>
-        <a href="https://github.com/parkin1/pypore" class="button">
+        <a href="https://github.com/parkin/pypore" class="button">
             <small>View project on</small>
             GitHub</a>
     </div>
@@ -49,9 +49,6 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
         <li class="right" >
           <a href="pyporegui.file_items.html" title="pyporegui.file_items module"
              accesskey="N">next</a> |</li>
@@ -98,70 +95,8 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-pyporegui.widgets.plot_tool_bar">
-<span id="pyporegui-widgets-plot-tool-bar-module"></span><h1>pyporegui.widgets.plot_tool_bar module<a class="headerlink" href="#module-pyporegui.widgets.plot_tool_bar" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="pyporegui.widgets.plot_tool_bar.PlotToolBar">
-<em class="property">class </em><tt class="descclassname">pyporegui.widgets.plot_tool_bar.</tt><tt class="descname">PlotToolBar</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/plot_tool_bar.html#PlotToolBar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.plot_tool_bar.PlotToolBar" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtGui.QToolBar</span></tt></p>
-<p>A toolbar for plots, with a zoom button, check boxes for options.</p>
-<dl class="method">
-<dt id="pyporegui.widgets.plot_tool_bar.PlotToolBar.__init__">
-<tt class="descname">__init__</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/plot_tool_bar.html#PlotToolBar.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.plot_tool_bar.PlotToolBar.__init__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.widgets.plot_tool_bar.PlotToolBar.addWidget">
-<tt class="descname">addWidget</tt><big>(</big><em>widget</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/plot_tool_bar.html#PlotToolBar.addWidget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.plot_tool_bar.PlotToolBar.addWidget" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.widgets.plot_tool_bar.PlotToolBar.get_widget_list">
-<tt class="descname">get_widget_list</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/plot_tool_bar.html#PlotToolBar.get_widget_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.plot_tool_bar.PlotToolBar.get_widget_list" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">ListType&lt;QtGui.QWidget&gt; &#8211; Returns a list of the widgets contained in the PlotToolBar.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.widgets.plot_tool_bar.PlotToolBar.is_decimate_checked">
-<tt class="descname">is_decimate_checked</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/plot_tool_bar.html#PlotToolBar.is_decimate_checked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.plot_tool_bar.PlotToolBar.is_decimate_checked" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">boolean &#8211; true if the toolbar&#8217;s decimate checkbox is checked, false
-otherwise.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.widgets.plot_tool_bar.PlotToolBar.is_plot_during_checked">
-<tt class="descname">is_plot_during_checked</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/plot_tool_bar.html#PlotToolBar.is_plot_during_checked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.plot_tool_bar.PlotToolBar.is_plot_during_checked" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">boolean &#8211; true if the toolbar&#8217;s plot during checkbox is checked, false otherwise.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pyporegui.widgets.plot_tool_bar.PlotToolBar.staticMetaObject">
-<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x62ed440&gt;</em><a class="headerlink" href="#pyporegui.widgets.plot_tool_bar.PlotToolBar.staticMetaObject" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+  <div class="section" id="pyporegui-widgets-plot-tool-bar-module">
+<h1>pyporegui.widgets.plot_tool_bar module<a class="headerlink" href="#pyporegui-widgets-plot-tool-bar-module" title="Permalink to this headline">¶</a></h1>
 </div>
 
 
@@ -176,9 +111,6 @@ otherwise.</td>
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
         <li class="right" >
           <a href="pyporegui.file_items.html" title="pyporegui.file_items module"
              >next</a> |</li>

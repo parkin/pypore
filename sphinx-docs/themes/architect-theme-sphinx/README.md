@@ -16,6 +16,6 @@ This work is licensed under a [Creative Commons Attribution-ShareAlike 3.0 Unpor
 [2]: https://github.com/jasonlong
 [3]: http://pages.github.com/
 [4]: http://creativecommons.org/licenses/by-sa/3.0/
-[5]: http://parkin1.github.io/pypore/
-[6]: http://parkin1.github.io/pypore/sphinx-docs/build/html/index.html
+[5]: http://parkin.github.io/pypore/
+[6]: http://parkin.github.io/pypore/sphinx-docs/build/html/index.html
 [7]: https://github.com/jasonlong/architect-theme

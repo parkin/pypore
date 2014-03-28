@@ -34,10 +34,10 @@
   <body>
 <header>
     <div class="inner">
-        <h1><a href="http://parkin1.github.io/pypore/">Pypore</a></h1>
+        <h1><a href="http://parkin.github.io/pypore/">Pypore</a></h1>
 
         <h2></h2>
-        <a href="https://github.com/parkin1/pypore" class="button">
+        <a href="https://github.com/parkin/pypore" class="button">
             <small>View project on</small>
             GitHub</a>
     </div>
@@ -49,9 +49,6 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
         <li class="right" >
           <a href="pyporegui.my_threads.html" title="pyporegui.my_threads module"
              accesskey="N">next</a> |</li>
@@ -97,73 +94,8 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-pyporegui.gui">
-<span id="pyporegui-gui-module"></span><h1>pyporegui.gui module<a class="headerlink" href="#module-pyporegui.gui" title="Permalink to this headline">¶</a></h1>
-<p>This program is for finding events in files and displaying the results.</p>
-<dl class="class">
-<dt id="pyporegui.gui.MyMainWindow">
-<em class="property">class </em><tt class="descclassname">pyporegui.gui.</tt><tt class="descname">MyMainWindow</tt><big>(</big><em>app</em>, <em>parent=None</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/gui.html#MyMainWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.gui.MyMainWindow" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtGui.QMainWindow</span></tt></p>
-<dl class="method">
-<dt id="pyporegui.gui.MyMainWindow.__init__">
-<tt class="descname">__init__</tt><big>(</big><em>app</em>, <em>parent=None</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/gui.html#MyMainWindow.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.gui.MyMainWindow.__init__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="staticmethod">
-<dt id="pyporegui.gui.MyMainWindow.add_actions">
-<em class="property">static </em><tt class="descname">add_actions</tt><big>(</big><em>target</em>, <em>actions</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/gui.html#MyMainWindow.add_actions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.gui.MyMainWindow.add_actions" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.gui.MyMainWindow.clean_threads">
-<tt class="descname">clean_threads</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/gui.html#MyMainWindow.clean_threads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.gui.MyMainWindow.clean_threads" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.gui.MyMainWindow.create_action">
-<tt class="descname">create_action</tt><big>(</big><em>text</em>, <em>slot=None</em>, <em>shortcut=None</em>, <em>icon=None</em>, <em>tip=None</em>, <em>checkable=False</em>, <em>signal='triggered()'</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/gui.html#MyMainWindow.create_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.gui.MyMainWindow.create_action" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a <tt class="xref py py-class docutils literal"><span class="pre">QtGui.QAction</span></tt>.
-:param text: Text to show in the file menu</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.gui.MyMainWindow.open_data_files">
-<tt class="descname">open_data_files</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/gui.html#MyMainWindow.open_data_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.gui.MyMainWindow.open_data_files" title="Permalink to this definition">¶</a></dt>
-<dd><p>Opens file dialog box, adds names of files to open to list</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.gui.MyMainWindow.open_event_databases">
-<tt class="descname">open_event_databases</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/gui.html#MyMainWindow.open_event_databases"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.gui.MyMainWindow.open_event_databases" title="Permalink to this definition">¶</a></dt>
-<dd><p>Opens file dialog box, add names of event database files to open list</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.gui.MyMainWindow.set_status">
-<tt class="descname">set_status</tt><big>(</big><em>text</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/gui.html#MyMainWindow.set_status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.gui.MyMainWindow.set_status" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the status text.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>text</strong> (<em>StringType</em>) &#8211; Text to display in the status bar.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pyporegui.gui.MyMainWindow.staticMetaObject">
-<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x62ddf80&gt;</em><a class="headerlink" href="#pyporegui.gui.MyMainWindow.staticMetaObject" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="pyporegui.gui.main">
-<tt class="descclassname">pyporegui.gui.</tt><tt class="descname">main</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/gui.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.gui.main" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+  <div class="section" id="pyporegui-gui-module">
+<h1>pyporegui.gui module<a class="headerlink" href="#pyporegui-gui-module" title="Permalink to this headline">¶</a></h1>
 </div>
 
 
@@ -178,9 +110,6 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
         <li class="right" >
           <a href="pyporegui.my_threads.html" title="pyporegui.my_threads module"
              >next</a> |</li>

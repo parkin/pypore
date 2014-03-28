@@ -34,10 +34,10 @@
   <body>
 <header>
     <div class="inner">
-        <h1><a href="http://parkin1.github.io/pypore/">Pypore</a></h1>
+        <h1><a href="http://parkin.github.io/pypore/">Pypore</a></h1>
 
         <h2></h2>
-        <a href="https://github.com/parkin1/pypore" class="button">
+        <a href="https://github.com/parkin/pypore" class="button">
             <small>View project on</small>
             GitHub</a>
     </div>
@@ -49,9 +49,6 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
         <li class="right" >
           <a href="pyporegui.widgets.file_viewer_tab.html" title="pyporegui.widgets.file_viewer_tab module"
              accesskey="N">next</a> |</li>
@@ -98,76 +95,8 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-pyporegui.widgets.event_viewing_tab">
-<span id="pyporegui-widgets-event-viewing-tab-module"></span><h1>pyporegui.widgets.event_viewing_tab module<a class="headerlink" href="#module-pyporegui.widgets.event_viewing_tab" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="pyporegui.widgets.event_viewing_tab.EventViewingTab">
-<em class="property">class </em><tt class="descclassname">pyporegui.widgets.event_viewing_tab.</tt><tt class="descname">EventViewingTab</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/event_viewing_tab.html#EventViewingTab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.event_viewing_tab.EventViewingTab" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">pyporegui._thread_manager._ThreadManager</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtGui.QSplitter</span></tt></p>
-<p>A QtGui.Splitter that contains a file opener list on the left and plots on the right.</p>
-<dl class="method">
-<dt id="pyporegui.widgets.event_viewing_tab.EventViewingTab.__init__">
-<tt class="descname">__init__</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/event_viewing_tab.html#EventViewingTab.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.event_viewing_tab.EventViewingTab.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parent</strong> (<em>PySide.QtGui.QMainWindow</em>) &#8211; Parent main window (optional).</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.widgets.event_viewing_tab.EventViewingTab.moveEventDisplayBy">
-<tt class="descname">moveEventDisplayBy</tt><big>(</big><em>count</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/event_viewing_tab.html#EventViewingTab.moveEventDisplayBy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.event_viewing_tab.EventViewingTab.moveEventDisplayBy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Changes the event displayed on the event display plot to
-current value + count</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.widgets.event_viewing_tab.EventViewingTab.next_clicked">
-<tt class="descname">next_clicked</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/event_viewing_tab.html#EventViewingTab.next_clicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.event_viewing_tab.EventViewingTab.next_clicked" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.widgets.event_viewing_tab.EventViewingTab.open_event_databases">
-<tt class="descname">open_event_databases</tt><big>(</big><em>file_names=None</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/event_viewing_tab.html#EventViewingTab.open_event_databases"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.event_viewing_tab.EventViewingTab.open_event_databases" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds the files to the list widget.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_names</strong> (<em>ListType&lt;StringType&gt;</em>) &#8211; (Optional) List of file names to be added to the list widget. If not
-included, then a QtGui.QFileDialog will be opened to select files.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.widgets.event_viewing_tab.EventViewingTab.plotSingleEvent">
-<tt class="descname">plotSingleEvent</tt><big>(</big><em>h5file</em>, <em>position</em>, <em>plot</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/event_viewing_tab.html#EventViewingTab.plotSingleEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.event_viewing_tab.EventViewingTab.plotSingleEvent" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.widgets.event_viewing_tab.EventViewingTab.plotSingleEvents">
-<tt class="descname">plotSingleEvents</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/event_viewing_tab.html#EventViewingTab.plotSingleEvents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.event_viewing_tab.EventViewingTab.plotSingleEvents" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plots the event on the plot with</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyporegui.widgets.event_viewing_tab.EventViewingTab.previous_clicked">
-<tt class="descname">previous_clicked</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/event_viewing_tab.html#EventViewingTab.previous_clicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.event_viewing_tab.EventViewingTab.previous_clicked" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="pyporegui.widgets.event_viewing_tab.EventViewingTab.staticMetaObject">
-<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x62e8998&gt;</em><a class="headerlink" href="#pyporegui.widgets.event_viewing_tab.EventViewingTab.staticMetaObject" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+  <div class="section" id="pyporegui-widgets-event-viewing-tab-module">
+<h1>pyporegui.widgets.event_viewing_tab module<a class="headerlink" href="#pyporegui-widgets-event-viewing-tab-module" title="Permalink to this headline">¶</a></h1>
 </div>
 
 
@@ -182,9 +111,6 @@ included, then a QtGui.QFileDialog will be opened to select files.</td>
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
         <li class="right" >
           <a href="pyporegui.widgets.file_viewer_tab.html" title="pyporegui.widgets.file_viewer_tab module"
              >next</a> |</li>

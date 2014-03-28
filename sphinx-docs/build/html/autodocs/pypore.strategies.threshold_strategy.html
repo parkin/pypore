@@ -34,10 +34,10 @@
   <body>
 <header>
     <div class="inner">
-        <h1><a href="http://parkin1.github.io/pypore/">Pypore</a></h1>
+        <h1><a href="http://parkin.github.io/pypore/">Pypore</a></h1>
 
         <h2></h2>
-        <a href="https://github.com/parkin1/pypore" class="button">
+        <a href="https://github.com/parkin/pypore" class="button">
             <small>View project on</small>
             GitHub</a>
     </div>
@@ -49,9 +49,6 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
         <li class="right" >
           <a href="pypore.tests.html" title="pypore.tests package"
              accesskey="N">next</a> |</li>
@@ -98,72 +95,8 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-pypore.strategies.threshold_strategy">
-<span id="pypore-strategies-threshold-strategy-module"></span><h1>pypore.strategies.threshold_strategy module<a class="headerlink" href="#module-pypore.strategies.threshold_strategy" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="pypore.strategies.threshold_strategy.ThresholdStrategy">
-<em class="property">class </em><tt class="descclassname">pypore.strategies.threshold_strategy.</tt><tt class="descname">ThresholdStrategy</tt><a class="headerlink" href="#pypore.strategies.threshold_strategy.ThresholdStrategy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
-<p>Abstract base class defining the behavior that a <cite>ThresholdStrategy</cite> should implement. These methods
-will be called by <tt class="xref py py-func docutils literal"><span class="pre">find_events()</span></tt>.</p>
-<p>A threshold is defined as a absolute value distance away from the baseline that the current must
-pass in order to trigger an event.</p>
-<p>Example implementations&#8211;</p>
-<ul class="simple">
-<li><a class="reference internal" href="pypore.strategies.noise_based_threshold_strategy.html#pypore.strategies.noise_based_threshold_strategy.NoiseBasedThresholdStrategy" title="pypore.strategies.noise_based_threshold_strategy.NoiseBasedThresholdStrategy"><tt class="xref py py-class docutils literal"><span class="pre">pypore.strategies.noise_based_threshold_strategy.NoiseBasedThresholdStrategy</span></tt></a> &#8211; Use the         noise level to define event start and end thresholds.</li>
-</ul>
-<dl class="method">
-<dt id="pypore.strategies.threshold_strategy.ThresholdStrategy.compute_ending_threshold">
-<tt class="descname">compute_ending_threshold</tt><big>(</big><em>double baseline</em>, <em>double variance</em><big>)</big><a class="headerlink" href="#pypore.strategies.threshold_strategy.ThresholdStrategy.compute_ending_threshold" title="Permalink to this definition">¶</a></dt>
-<dd><p>(Note: this is a cpdef wrapper for the cdef method <tt class="xref py py-func docutils literal"><span class="pre">compute_ending_threshold_c()</span></tt>.
-This method is accessible from Python, while <tt class="xref py py-func docutils literal"><span class="pre">compute_ending_threshold_c()</span></tt> is
-only accessible from Cython. However, to subclass this class, you must implement the
-<tt class="xref py py-func docutils literal"><span class="pre">compute_ending_threshold_c()</span></tt> version.)</p>
-<p>Compute the starting threshold for the event.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>baseline</strong> (<em>double</em>) &#8211; The current baseline.</li>
-<li><strong>variance</strong> (<em>double</em>) &#8211; The variance of the baseline.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The threshold (magnitude of the change) to trigger the end of an event.</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pypore.strategies.threshold_strategy.ThresholdStrategy.compute_starting_threshold">
-<tt class="descname">compute_starting_threshold</tt><big>(</big><em>double baseline</em>, <em>double variance</em><big>)</big><a class="headerlink" href="#pypore.strategies.threshold_strategy.ThresholdStrategy.compute_starting_threshold" title="Permalink to this definition">¶</a></dt>
-<dd><p>(Note: this is a cpdef wrapper for the cdef method <tt class="xref py py-func docutils literal"><span class="pre">compute_starting_threshold_c()</span></tt>.
-This method is accessible from Python, while <tt class="xref py py-func docutils literal"><span class="pre">compute_starting_threshold_c()</span></tt> is
-only accessible from Cython. However, to subclass this class, you must implement the
-<tt class="xref py py-func docutils literal"><span class="pre">compute_starting_threshold_c()</span></tt> version.)</p>
-<p>Compute the starting threshold for the event.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>baseline</strong> (<em>double</em>) &#8211; The current baseline.</li>
-<li><strong>variance</strong> (<em>double</em>) &#8211; The variance of the baseline.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The threshold (magnitude of the change) to trigger the start an event.</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
+  <div class="section" id="pypore-strategies-threshold-strategy-module">
+<h1>pypore.strategies.threshold_strategy module<a class="headerlink" href="#pypore-strategies-threshold-strategy-module" title="Permalink to this headline">¶</a></h1>
 </div>
 
 
@@ -178,9 +111,6 @@ only accessible from Cython. However, to subclass this class, you must implement
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
         <li class="right" >
           <a href="pypore.tests.html" title="pypore.tests package"
              >next</a> |</li>
