@@ -36,20 +36,10 @@ cdef class DataFileReader(AbstractReader):
             self.next_to_send += self.block_size
             return [data[self.next_to_send:self.next_to_send + self.block_size].astype(DTYPE)]
 
-    cpdef get_all_data(self, bool decimate=False):
-        self.next_to_send = 0
+    cdef object get_all_data_c(self, bool decimate=False):
 
-        arr = self.datafile.root.data
+        return [self.datafile.root.data[:].astype(DTYPE)]
 
-        cdef np.ndarray data
+    cdef void close_c(self):
+        self.datafile.close()
 
-        # cdef float sample_rate = p['sample_rate']
-
-        # if decimate:
-        #     data = arr[::5000]
-        #     sample_rate /= 5000.
-        # else:
-        #     data = arr[:]
-        #
-        # specs_file = {'data': [data], 'sample_rate': sample_rate}
-        # return specs_file

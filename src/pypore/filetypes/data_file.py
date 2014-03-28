@@ -66,15 +66,15 @@ class DataFile(tb.file.File):
 
     def get_sample_rate(self):
         """
-        :returns: The sample rate at root.events.eventTable.attrs.sample_rate
+        :returns: The sample rate at root.attrs.sample_rate
         """
-        return self.root.attrs.sample_rate
+        return self.root.data.attrs.sample_rate
 
     def initialize_database(self, **kargs):
         """
         Initializes the data_file.
 
-        :param kargs: Can pass in 'maxEventLength': Maximum number of data points for an event to be added.
+        :param kargs: Can pass in 'nPoints': Maximum number of data points for an event to be added.
         """
 
         filters = tb.Filters(complib='blosc', complevel=4)
@@ -107,6 +107,6 @@ def open_file(*args, **kargs):
     DataFile._convert_to_data_file(f)
     if 'mode' in kargs:
         mode = kargs['mode']
-        if 'w' in mode or 'a' in mode:
+        if mode in ('w', 'a'):
             f.initialize_database(**kargs)
     return f
