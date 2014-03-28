@@ -21,7 +21,7 @@ class DataFile(tb.file.File):
     Automatically adds matrix
     /data
     
-    Must be instantiated by calling :py:func:`pypore.dataFile.open_file`
+    Must be instantiated by calling :py:func:`pypore.filetypes.data_file.open_file`
     
     >>> import pypore.dataFile as df
     >>> database = df.open_file(tests,mode='w')
@@ -72,9 +72,8 @@ class DataFile(tb.file.File):
 
     def initialize_database(self, **kargs):
         """
-        Initializes the EventDatabase.  Adds a group 'events' with
-        table 'eventsTable' and matrices 'raw_data', 'levels', and 'level_lengths'.
-        
+        Initializes the data_file.
+
         :param kargs: Can pass in 'maxEventLength': Maximum number of data points for an event to be added.
         """
 
