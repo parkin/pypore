@@ -39,7 +39,6 @@ class TestFileConverter(unittest.TestCase):
         """
         Test that the original/converted matrices and sample rates are the same for one-channel data.
         """
-        pass
         filename = os.path.dirname(os.path.realpath(__file__))
         filename = os.path.join(filename, 'testDataFiles', 'chimera_1event.log')
 
@@ -69,6 +68,7 @@ class TestFileConverter(unittest.TestCase):
         np.testing.assert_array_equal(orig_data, out_data)
 
         orig_reader.close()
+        out_reader.close()
 
         os.remove(output_filename)
 
