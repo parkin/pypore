@@ -13,7 +13,7 @@ cdef class AdaptiveBaselineStrategy(BaselineStrategy):
     cdef public double variance_filter_parameter
 
     def __init__(self, double baseline=0.0, double variance=0.0, double baseline_filter_parameter=0.93,
-                 double variance_filter_parameter=0.8):
+                 double variance_filter_parameter=0.99):
         super(AdaptiveBaselineStrategy, self).__init__(baseline, variance)
         self.variance = variance
         self.baseline_filter_parameter = baseline_filter_parameter

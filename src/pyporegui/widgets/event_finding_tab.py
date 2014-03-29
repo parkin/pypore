@@ -326,7 +326,7 @@ class EventFindingTab(BaseQSplitterDataFile):
         adaptive_options_layout.addRow('Baseline Filter Parameter \'a_baseline\':', self.baseline_filter_parameter_edit)
         self.variance_filter_parameter_edit = QtGui.QLineEdit()
         self.variance_filter_parameter_edit.setValidator(QtGui.QDoubleValidator(0, 10, 5, self.variance_filter_parameter_edit))
-        self.variance_filter_parameter_edit.setText('0.8')
+        self.variance_filter_parameter_edit.setText('0.99')
         adaptive_options_layout.addRow('Variance Filter Parameter \'a_baseline\':', self.variance_filter_parameter_edit)
         # need to cast to widget to add to QStackedLayout
         adaptive_options_widget = QtGui.QWidget()
