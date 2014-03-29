@@ -9,6 +9,7 @@ import pypore.filetypes.data_file as df
 from pypore.io.abstract_reader cimport AbstractReader
 
 DTYPE = np.float
+ctypedef np.float_t DTYPE_t
 
 cdef class DataFileReader(AbstractReader):
     cdef long next_to_send
@@ -28,13 +29,12 @@ cdef class DataFileReader(AbstractReader):
         self.next_to_send = 0
 
     cdef object get_next_blocks_c(self, long n_blocks=1):
-        data = self.datafile.root.data
 
-        if self.next_to_send >= self.points_per_channel_total:
-            return [data[self.next_to_send:].astype(DTYPE)]
+        self.next_to_send += self.block_size
+        if self.next_to_send > self.points_per_channel_total:
+            return [self.datafile.root.data[self.next_to_send - self.block_size:].astype(DTYPE)]
         else:
-            self.next_to_send += self.block_size
-            return [data[self.next_to_send:self.next_to_send + self.block_size].astype(DTYPE)]
+            return [self.datafile.root.data[self.next_to_send - self.block_size : self.next_to_send].astype(DTYPE)]
 
     cdef object get_all_data_c(self, bool decimate=False):
 

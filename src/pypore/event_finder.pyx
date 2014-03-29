@@ -489,7 +489,7 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
         sys.stdout.write("\r" + status_text)
         sys.stdout.flush()
 
-    if event_count > 0:
+    if event_count > 0 or debug:
         # Save the file
         # add attributes
         h5file.root.events.eventTable.flush()  # if you don't flush before adding attributes,
@@ -511,8 +511,6 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
         # if no events, just delete the file, if we're not debugging.
         h5file.flush()
         h5file.close()
-        if debug:
-            return save_file_name
         os.remove(save_file_name)
 
     return None
