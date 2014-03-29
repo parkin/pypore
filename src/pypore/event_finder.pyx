@@ -508,9 +508,11 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
         h5file.close()
         return save_file_name
     else:
-        # if no events, just delete the file.
+        # if no events, just delete the file, if we're not debugging.
         h5file.flush()
         h5file.close()
+        if debug:
+            return save_file_name
         os.remove(save_file_name)
 
     return None
