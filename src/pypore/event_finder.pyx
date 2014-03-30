@@ -239,12 +239,12 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
         np.ndarray[DTYPE_t] debug_threshold_pos_matrix = np.zeros(points_per_channel_total if debug else 0, dtype=DTYPE)
         np.ndarray[DTYPE_t] debug_threshold_neg_matrix = np.zeros(points_per_channel_total if debug else 0, dtype=DTYPE)
 
+    threshold_start = threshold_type.compute_starting_threshold_c(baseline, variance)
     # search for events.  Keep track of baseline_filter_parameter filtered local (adapting!) mean and variance,
     # and use them to decide baseline_filter_parameter threshold_start for events.  See
     # http://pubs.rsc.org/en/content/articlehtml/2012/nr/c2nr30951c for more details.
     while i < n:
         data_point = curr_data[i]
-        threshold_start = threshold_type.compute_starting_threshold_c(baseline, variance)
 
         # Detecting a negative event
         if direction_negative and data_point < baseline - threshold_start:
@@ -261,6 +261,7 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
                 debug_threshold_pos_matrix[i + place_in_data] = baseline + threshold_start
             if direction_negative:
                 debug_threshold_neg_matrix[i + place_in_data] = baseline - threshold_start
+        threshold_start = threshold_type.compute_starting_threshold_c(baseline, variance)
         if is_event:
             is_event = False
             # Set ending threshold_end
