@@ -6,6 +6,7 @@ from pypore.filetypes import event_database as eD
 from pyporegui._thread_manager import _ThreadManager
 from pyporegui.graphicsItems.my_plot_item import MyPlotItem
 from pyporegui.file_items import FileListItem
+from pyporegui.graphicsItems.path_item import PathItem
 
 __all__ = ['EventViewingTab']
 
@@ -86,6 +87,9 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
 
         event_count = h5file.get_event_count()
 
+        if h5file.is_debug():
+            self.plot_debug(h5file)
+
         h5file.close()
 
         self.event_display_edit.setMaxLength(int(event_count / 10) + 1)
@@ -94,27 +98,68 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
         self.event_display_edit.setText('')
         self.event_display_edit.setText('1')
 
-    def plotSingleEvents(self, event):
-        '''
+    def plot_debug(self, event_database):
+        """
+        Plots the data, baseline, and thresholds of the debug group in the event_database, if they exist,
+        in the main plot.
+
+        :param event_database: An already open\
+                :class:`EventDatabase <pypore.filetypes.event_database.EventDatabase>`.
+        """
+        if not event_database.is_debug():
+            return
+
+        self.eventview_plotwid.clear()
+
+        sample_rate = event_database.get_sample_rate()
+
+        # TODO remove the step_size.
+        step_size = 1000
+
+        data = event_database.root.debug.data[0][::step_size]
+
+        data_size = data.size
+        times = np.linspace(0, data_size *1.0/sample_rate, data_size)
+        item = PathItem(times, data)
+        item.setPen(pg.mkPen('w'))
+        self.eventview_plotwid.addItem(item)
+
+        baseline = event_database.root.debug.baseline[0][::step_size]
+        item = PathItem(times, baseline)
+        item.setPen(pg.mkPen('y'))
+        self.eventview_plotwid.addItem(item)
+
+        threshold_p = event_database.root.debug.threshold_positive[0][::step_size]
+        item = PathItem(times, threshold_p)
+        item.setPen(pg.mkPen('g'))
+        self.eventview_plotwid.addItem(item)
+
+        threshold_n = event_database.root.debug.threshold_negative[0][::step_size]
+        item = PathItem(times, threshold_n)
+        item.setPen(pg.mkPen('g'))
+        self.eventview_plotwid.addItem(item)
+
+    def plot_single_events(self, event):
+        """
         Plots the event on the plot with
-        '''
+        """
         h5file = eD.open_file(self.event_view_item.get_file_name(), mode='r')
 
-        eventCount = h5file.get_event_count()
+        event_count = h5file.get_event_count()
 
         for i in xrange(3):
             for j in xrange(3):
                 pos = 3 * i + j
-                if pos + event >= eventCount or pos + event < 0:
+                if pos + event >= event_count or pos + event < 0:
                     self.eventviewer_plots[pos].clear()
                     self.eventviewer_plots[pos].setTitle('')
                 else:
-                    self.plotSingleEvent(h5file, event + pos, self.eventviewer_plots[pos])
+                    self.plot_single_event(h5file, event + pos, self.eventviewer_plots[pos])
                     self.eventviewer_plots[pos].setTitle('Event ' + str(event + pos + 1))
 
         h5file.close()
 
-    def plotSingleEvent(self, h5file, position, plot):
+    def plot_single_event(self, h5file, position, plot):
         sample_rate = h5file.get_sample_rate()
         row = h5file.get_event_row(position)
         array_row = row['array_row']
@@ -130,7 +175,7 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
         plot.clear()
         plot.plot(times, raw_data)
         # plot the event points in yellow
-        plot.plot(times[raw_points_per_side:raw_points_per_side + event_length], \
+        plot.plot(times[raw_points_per_side:raw_points_per_side + event_length],
                   raw_data[raw_points_per_side:raw_points_per_side + event_length], pen='y')
 
         # Plot the cusum levels
@@ -140,59 +185,59 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
         levels = h5file.get_levels_at(array_row)
         indices = h5file.get_level_lengths_at(array_row)
 
-        levelTimes = np.zeros(2 * n_levels + 4)
-        levelValues = np.zeros(2 * n_levels + 4)
+        level_times = np.zeros(2 * n_levels + 4)
+        level_values = np.zeros(2 * n_levels + 4)
 
-        levelTimes[1] = 1.0 * (raw_points_per_side - 1) / sample_rate
-        levelValues[0] = levelValues[1] = baseline
+        level_times[1] = 1.0 * (raw_points_per_side - 1) / sample_rate
+        level_values[0] = level_values[1] = baseline
         i = 0
         length = 0
         for i in xrange(n_levels):
-            levelTimes[2 * i + 2] = times[raw_points_per_side] + 1.0 * (length) / sample_rate
-            levelValues[2 * i + 2] = levels[i]
-            levelTimes[2 * i + 3] = times[raw_points_per_side] + 1.0 * (length + indices[i]) / sample_rate
-            levelValues[2 * i + 3] = levels[i]
+            level_times[2 * i + 2] = times[raw_points_per_side] + 1.0 * length / sample_rate
+            level_values[2 * i + 2] = levels[i]
+            level_times[2 * i + 3] = times[raw_points_per_side] + 1.0 * (length + indices[i]) / sample_rate
+            level_values[2 * i + 3] = levels[i]
             length += indices[i]
         i += 1
-        levelTimes[2 * i + 2] = times[raw_points_per_side + event_length]
-        levelTimes[2 * i + 3] = times[n - 1]
-        levelValues[2 * i + 2] = levelValues[2 * i + 3] = baseline
+        level_times[2 * i + 2] = times[raw_points_per_side + event_length]
+        level_times[2 * i + 3] = times[n - 1]
+        level_values[2 * i + 2] = level_values[2 * i + 3] = baseline
 
-        plot.plot(levelTimes, levelValues, pen='g')
+        plot.plot(level_times, level_values, pen='g')
 
     def previous_clicked(self):
-        self.moveEventDisplayBy(-1 * len(self.eventviewer_plots))
+        self.move_event_display_by(-1 * len(self.eventviewer_plots))
 
     def next_clicked(self):
-        self.moveEventDisplayBy(len(self.eventviewer_plots))
+        self.move_event_display_by(len(self.eventviewer_plots))
 
-    def moveEventDisplayBy(self, count):
-        '''
+    def move_event_display_by(self, count):
+        """
         Changes the event displayed on the event display plot to
         current value + count
-        '''
-        h5eventCount = 0
+        """
+        h5_event_count = 0
         try:
             h5file = eD.open_file(self.event_view_item.get_file_name())
-            h5eventCount = h5file.get_event_count()
+            h5_event_count = h5file.get_event_count()
             h5file.close()
         except:
             return
         try:
-            eventCount = int(self.event_display_edit.text())
-            if 0 < eventCount + count <= h5eventCount:
-                self.event_display_edit.setText(str(eventCount + count))
+            event_count = int(self.event_display_edit.text())
+            if 0 < event_count + count <= h5_event_count:
+                self.event_display_edit.setText(str(event_count + count))
         except ValueError:
             # if we can't parse the event display text but there are events,
             # just set to zero
-            if h5eventCount > 0:
+            if h5_event_count > 0:
                 self.event_display_edit.setText('1')
 
-    def _eventDisplayEditOnChange(self, text):
+    def _event_display_edit_on_change(self, text):
         if len(text) < 1:
             return
         position = int(self.event_display_edit.text())
-        self.plotSingleEvents(position - 1)
+        self.plot_single_events(position - 1)
         return
 
     def _create_event_viewer_plot_widget(self):
@@ -203,7 +248,6 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
         self.eventview_plotwid = MyPlotItem(title='Current Trace', name='Plot')
         wig.addItem(self.eventview_plotwid)
         self.eventview_plotwid.enableAutoRange('xy', False)
-        self.eventview_p1 = self.eventview_plotwid.plot()  # create an empty plot curve to be filled later
 
         wig.nextRow()
         # Create Qwt plot for concatenated events
@@ -235,7 +279,7 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
         self.event_display_edit.setText('0')
         self.event_display_edit.setMaxLength(1)
         self.event_display_edit.setValidator(QtGui.QIntValidator(0, 0, self.event_display_edit))
-        self.event_display_edit.textChanged.connect(self._eventDisplayEditOnChange)
+        self.event_display_edit.textChanged.connect(self._event_display_edit_on_change)
         event_select_toolbar.addWidget(self.event_display_edit)
 
         self.event_count_text = QtGui.QLabel()

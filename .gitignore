@@ -22,11 +22,8 @@ src/pypore/test/testDataFiles/*Events*
 
 # Cython generated files
 src/pypore/*.html
-*.lprof
 *.so
 *.c
-src/pypore/__pycache__/*
-src/pypore/.pyxbld/*
 
 # intellij stuff
 .idea/

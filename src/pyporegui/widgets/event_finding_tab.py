@@ -209,6 +209,8 @@ class EventFindingTab(BaseQSplitterDataFile):
             self._dispatch_status_update(parameters['error'])
             return
 
+        debug = self.debug_check_box.isChecked()
+
         # Clear the current events
         del self.events[:]
         # self.prev_concat_time = 0.
@@ -218,7 +220,7 @@ class EventFindingTab(BaseQSplitterDataFile):
         self._dispatch_status_update("Event Count: 0 Percent Done: 0")
 
         # Start analyzing data in new analyzethread.
-        self.analyzethread = AnalyzeDataThread(file_names, parameters)
+        self.analyzethread = AnalyzeDataThread(file_names, parameters, debug)
         self.analyzethread.dataReady.connect(self._analyze_data_thread_callback)
         self.add_thread(self.analyzethread)
         self.analyzethread.start()
@@ -301,6 +303,12 @@ class EventFindingTab(BaseQSplitterDataFile):
         self.connect(self.stop_analyze_button, QtCore.SIGNAL('clicked()'), self._on_analyze_stop)
         self.stop_analyze_button.setEnabled(False)
 
+        self.debug_check_box = QtGui.QCheckBox()
+        self.debug_check_box.setChecked(False)
+        self.debug_check_box.setText('Debug')
+        self.debug_check_box.setToolTip("When checked, extra data will be saved to the EventDatabase. This"
+                                        " data includes the data, baseline, and thresholds at each datapoint.")
+
         # Analysis options
         self.min_event_length_edit = QtGui.QLineEdit()
         self.min_event_length_edit.setText('10.0')
@@ -323,11 +331,11 @@ class EventFindingTab(BaseQSplitterDataFile):
         self.baseline_filter_parameter_edit = QtGui.QLineEdit()
         self.baseline_filter_parameter_edit.setValidator(QtGui.QDoubleValidator(0, 10, 5, self.baseline_filter_parameter_edit))
         self.baseline_filter_parameter_edit.setText('0.93')
-        adaptive_options_layout.addRow('Baseline Filter Parameter \'a_baseline\':', self.baseline_filter_parameter_edit)
+        adaptive_options_layout.addRow('Baseline Filter Parameter:', self.baseline_filter_parameter_edit)
         self.variance_filter_parameter_edit = QtGui.QLineEdit()
         self.variance_filter_parameter_edit.setValidator(QtGui.QDoubleValidator(0, 10, 5, self.variance_filter_parameter_edit))
         self.variance_filter_parameter_edit.setText('0.99')
-        adaptive_options_layout.addRow('Variance Filter Parameter \'a_baseline\':', self.variance_filter_parameter_edit)
+        adaptive_options_layout.addRow('Variance Filter Parameter:', self.variance_filter_parameter_edit)
         # need to cast to widget to add to QStackedLayout
         adaptive_options_widget = QtGui.QWidget()
         adaptive_options_widget.setLayout(adaptive_options_layout)
@@ -424,6 +432,7 @@ class EventFindingTab(BaseQSplitterDataFile):
         vbox_left.addLayout(baseline_options)
         vbox_left.addLayout(threshold_form)
         vbox_left.addLayout(threshold_options)
+        vbox_left.addWidget(self.debug_check_box)
         vbox_left.addLayout(hbox)
 
         vbox_left_widget = QtGui.QWidget()

@@ -20,9 +20,8 @@ def convert_file(filename, output_filename=None):
 
     if output_filename is None:
         output_filename = filename.split('.')[0] + '.h5'
-
-    save_file = data_file.open_file(output_filename, mode='w', sample_rate=sample_rate, nPoints=n_points)
-
+    
+    save_file = data_file.open_file(output_filename, mode='w', sample_rate=sample_rate, n_points=n_points)
     blocks_to_get = 1
     data = reader.get_next_blocks(blocks_to_get)[0]
 
@@ -83,7 +82,7 @@ def filter_file(filename, filter_frequency, out_sample_rate, output_filename=Non
         n_out = int(np.ceil(n_points * out_sample_rate / sample_rate))
         filtered = sig.resample(filtered, num=n_out)
 
-    save_file = data_file.open_file(output_filename, mode='w', sample_rate=sample_rate, nPoints=filtered.size)
+    save_file = data_file.open_file(output_filename, mode='w', sample_rate=sample_rate, n_points=filtered.size)
     save_file.root.data[:] = filtered[:]
 
     save_file.flush()
