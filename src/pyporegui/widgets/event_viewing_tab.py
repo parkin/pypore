@@ -6,6 +6,7 @@ from pypore.filetypes import event_database as eD
 from pyporegui._thread_manager import _ThreadManager
 from pyporegui.graphicsItems.my_plot_item import MyPlotItem
 from pyporegui.file_items import FileListItem
+from pyporegui.graphicsItems.path_item import PathItem
 
 __all__ = ['EventViewingTab']
 
@@ -86,6 +87,9 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
 
         event_count = h5file.get_event_count()
 
+        if h5file.is_debug():
+            self.plot_debug(h5file)
+
         h5file.close()
 
         self.event_display_edit.setMaxLength(int(event_count / 10) + 1)
@@ -93,6 +97,47 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
         self.event_count_text.setText('/' + str(event_count))
         self.event_display_edit.setText('')
         self.event_display_edit.setText('1')
+
+    def plot_debug(self, event_database):
+        """
+        Plots the data, baseline, and thresholds of the debug group in the event_database, if they exist,
+        in the main plot.
+
+        :param event_database: An already open\
+                :class:`EventDatabase <pypore.filetypes.event_database.EventDatabase>`.
+        """
+        if not event_database.is_debug():
+            return
+
+        self.eventview_plotwid.clear()
+
+        sample_rate = event_database.get_sample_rate()
+
+        # TODO remove the step_size.
+        step_size = 1000
+
+        data = event_database.root.debug.data[0][::step_size]
+
+        data_size = data.size
+        times = np.linspace(0, data_size *1.0/sample_rate, data_size)
+        item = PathItem(times, data)
+        item.setPen(pg.mkPen('w'))
+        self.eventview_plotwid.addItem(item)
+
+        baseline = event_database.root.debug.baseline[0][::step_size]
+        item = PathItem(times, baseline)
+        item.setPen(pg.mkPen('y'))
+        self.eventview_plotwid.addItem(item)
+
+        threshold_p = event_database.root.debug.threshold_positive[0][::step_size]
+        item = PathItem(times, threshold_p)
+        item.setPen(pg.mkPen('g'))
+        self.eventview_plotwid.addItem(item)
+
+        threshold_n = event_database.root.debug.threshold_negative[0][::step_size]
+        item = PathItem(times, threshold_n)
+        item.setPen(pg.mkPen('g'))
+        self.eventview_plotwid.addItem(item)
 
     def plot_single_events(self, event):
         """
@@ -203,7 +248,6 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
         self.eventview_plotwid = MyPlotItem(title='Current Trace', name='Plot')
         wig.addItem(self.eventview_plotwid)
         self.eventview_plotwid.enableAutoRange('xy', False)
-        self.eventview_p1 = self.eventview_plotwid.plot()  # create an empty plot curve to be filled later
 
         wig.nextRow()
         # Create Qwt plot for concatenated events
