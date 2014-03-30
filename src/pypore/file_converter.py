@@ -20,7 +20,7 @@ def convert_file(filename, output_filename=None):
     if output_filename is None:
         output_filename = filename.split('.')[0] + '.h5'
     
-    save_file = data_file.open_file(output_filename, mode='w', sample_rate=sample_rate, nPoints=n_points)
+    save_file = data_file.open_file(output_filename, mode='w', sample_rate=sample_rate, n_points=n_points)
     
     blocks_to_get = 1
     data = reader.get_next_blocks(blocks_to_get)[0]
@@ -66,7 +66,7 @@ def filter_file(filename, filter_frequency, output_filename=None):
     if output_filename is None:
         output_filename = filename.split('.')[0] + '_filtered.h5'
     
-    save_file = data_file.open_file(output_filename, mode='w', sample_rate=sample_rate, nPoints=n_points)
+    save_file = data_file.open_file(output_filename, mode='w', sample_rate=sample_rate, n_points=n_points)
 
     # wn is a fraction of the Nyquist frequency (half the sampling frequency).
     wn = filter_frequency / (0.5 * sample_rate)

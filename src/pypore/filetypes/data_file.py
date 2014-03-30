@@ -74,11 +74,11 @@ class DataFile(tb.file.File):
         """
         Initializes the data_file.
 
-        :param kargs: Can pass in 'nPoints': Maximum number of data points for an event to be added.
+        :param kargs: Can pass in 'n_points': Maximum number of data points for an event to be added.
         """
 
         filters = tb.Filters(complib='blosc', complevel=4)
-        shape = (kargs['nPoints'],)
+        shape = (kargs['n_points'],)
         a = tb.FloatAtom()
         if not 'data' in self.root:
             self.createCArray(self.root, 'data', a, shape=shape, title='Data', filters=filters)
@@ -94,7 +94,7 @@ def open_file(*args, **kargs):
     :param args: Arguments that get passed to :py:func:`tables.openFile`.
     :param kargs: Arguments that get passed to :py:func:`tables.openFile`. Should additionally include:
 
-        - nPoints: Number of points that should be in the array.
+        - n_points: Number of points that should be in the array.
         - sample_rate: Sample rate of the data.
 
     :returns: :py:class:`pypore.filetypes.data_file.DataFile` -- an already opened
