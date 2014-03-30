@@ -292,6 +292,12 @@ class EventDatabase(tb.file.File):
                                   title="Raw data",
                                   filters=filters)
 
+    def is_debug(self):
+        """
+        :returns: True if the event was created with the debug keyword.
+        """
+        return 'debug' in self.root
+
     def remove_event(self, i):
         """
         Deletes event i from /events/eventTable. Does nothing if

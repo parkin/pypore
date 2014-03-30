@@ -254,6 +254,9 @@ class TestEventDatabase(unittest.TestCase):
 
         self._test_empty_events_group(events_group=database.root.events)
 
+        # Make sure is debug
+        self.assertTrue(database.is_debug())
+
         # Make sure the debug group is there.
         names = [x._v_name for x in database.walkGroups()]
         self.assertIn('debug', names, 'No debug group.')
