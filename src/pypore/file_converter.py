@@ -63,6 +63,7 @@ def filter_file(filename, filter_frequency, out_sample_rate, output_filename=Non
     data = reader.get_all_data()[0]
 
     sample_rate = reader.get_sample_rate()
+    final_sample_rate = sample_rate
     n_points = len(data)
 
     total_time = 1.0 * n_points / sample_rate
@@ -81,8 +82,9 @@ def filter_file(filename, filter_frequency, out_sample_rate, output_filename=Non
     if out_sample_rate > 0:
         n_out = int(np.ceil(n_points * out_sample_rate / sample_rate))
         filtered = sig.resample(filtered, num=n_out)
+        final_sample_rate = sample_rate * (1.0*n_out/n_points)
 
-    save_file = data_file.open_file(output_filename, mode='w', sample_rate=sample_rate, n_points=filtered.size)
+    save_file = data_file.open_file(output_filename, mode='w', sample_rate=final_sample_rate, n_points=filtered.size)
     save_file.root.data[:] = filtered[:]
 
     save_file.flush()
