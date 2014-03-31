@@ -168,6 +168,50 @@ class TestFilterFile(unittest.TestCase):
 
             os.remove(out_filename)
 
+    def test_set_output_sample_rate(self):
+        """
+        Tests that we can successfully set the output sample rate, and the number of data points changes correctly.
+        """
+        file_names = [os.path.join(self.directory, 'testDataFiles', 'chimera_1event.log'),
+                     os.path.join(self.directory, 'testDataFiles', 'chimera_1event_2levels.log')]
+
+        set_out_filename = os.path.join(self.directory, 'testDataFiles', 'test_set_output_sample_rate.h5')
+
+        if os.path.exists(set_out_filename):
+            os.remove(set_out_filename)
+
+        for filename in file_names:
+            # Open a reader and read the original sample rate
+            orig_reader = get_reader_from_filename(filename)
+            orig_sample_rate = orig_reader.get_sample_rate()
+            orig_data = orig_reader.get_all_data()
+            n_orig = orig_data[0].size
+            orig_reader.close()
+
+            for out_sample_rate in (100.e4, 1.e6, 5.e5):
+                out_filename = filter_file(filename, 10.e4, out_sample_rate, output_filename=set_out_filename)
+
+                # The output number of data points should be int(np.ceil(n_orig * out_sample_rate / orig_sample_rate))
+                n_out = int(np.ceil(n_orig * out_sample_rate / orig_sample_rate))
+                # The output sample rate should be set by n_out
+                out_sample_rate = orig_sample_rate * (1.0 * n_out) / n_orig
+
+                # Get the params from the output file
+                out_reader = get_reader_from_filename(out_filename)
+                o_s_r = out_reader.get_sample_rate()
+                out_data = out_reader.get_all_data()
+                n_o = out_data[0].size
+                out_reader.close()
+
+                self.assertEqual(n_out, n_o,
+                                 "Number of re-sample points not correct. "
+                                 "Original data {0}, output {1}, should be {2}.".format(n_orig, n_o, n_out))
+                self.assertAlmostEqual(o_s_r, out_sample_rate, 2,
+                                       "Sample rate not set correctly. Was {0}, should be {1}".format(o_s_r,
+                                                                                                      out_sample_rate))
+
+                os.remove(out_filename)
+
 
 if __name__ == "__main__":
     unittest.main()
