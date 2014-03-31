@@ -77,14 +77,16 @@ from pypore.file_converter import filter_file
 
 class TestFilterFile(unittest.TestCase):
 
+    def setUp(self):
+        self.directory = os.path.dirname(os.path.abspath(__file__))
+
     def test_default_output_name(self):
         """
         Tests that the default output filename of :func:`filter_file <pypore.file_converter.filter_file>` is correct.
         """
-        directory = os.path.dirname(os.path.abspath(__file__))
-        filename = os.path.join(directory, 'testDataFiles', 'chimera_1event.log')
+        filename = os.path.join(self.directory, 'testDataFiles', 'chimera_1event.log')
 
-        output_filename_should_be = os.path.join(directory, 'testDataFiles', 'chimera_1event_filtered.h5')
+        output_filename_should_be = os.path.join(self.directory, 'testDataFiles', 'chimera_1event_filtered.h5')
 
         if os.path.exists(output_filename_should_be):
             os.remove(output_filename_should_be)
@@ -105,10 +107,9 @@ class TestFilterFile(unittest.TestCase):
         """
         Tests that setting the output filename of :func:`filter_file <pypore.file_converter.filter_file>` is correct.
         """
-        directory = os.path.dirname(os.path.abspath(__file__))
-        filename = os.path.join(directory, 'testDataFiles', 'chimera_1event.log')
+        filename = os.path.join(self.directory, 'testDataFiles', 'chimera_1event.log')
 
-        set_out_filename = os.path.join(directory, 'testDataFiles', 'test_set_output_name.h5')
+        set_out_filename = os.path.join(self.directory, 'testDataFiles', 'test_set_output_name.h5')
 
         #remove if exists
         if os.path.exists(set_out_filename):
