@@ -101,7 +101,7 @@ class EventAnalysisPlotWidget(GraphicsLayoutWidget):
             break  # only take first point
 
         # Plot the new point clicked on the single event display
-        filename, position = plot.get_file_name_from_position(self.lastScatterClicked[0].eventPosition)
+        filename, position = plot.get_file_name_from_position(self.lastScatterClicked[0].event_position)
 
         h5file = eD.open_file(filename, mode='r')
 
