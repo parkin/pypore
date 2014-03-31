@@ -173,7 +173,7 @@ class TestFilterFile(unittest.TestCase):
         Tests that we can successfully set the output sample rate, and the number of data points changes correctly.
         """
         file_names = [os.path.join(self.directory, 'testDataFiles', 'chimera_1event.log'),
-                     os.path.join(self.directory, 'testDataFiles', 'chimera_1event_2levels.log')]
+                      os.path.join(self.directory, 'testDataFiles', 'chimera_1event_2levels.log')]
 
         set_out_filename = os.path.join(self.directory, 'testDataFiles', 'test_set_output_sample_rate.h5')
 
