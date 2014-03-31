@@ -63,6 +63,7 @@ def filter_file(filename, filter_frequency, out_sample_rate, output_filename=Non
     data = reader.get_all_data()[0]
 
     sample_rate = reader.get_sample_rate()
+    print "sample_rate:", sample_rate
     final_sample_rate = sample_rate
     n_points = len(data)
 

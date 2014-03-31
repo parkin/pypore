@@ -12,7 +12,6 @@ from pypore.io.data_file_reader import DataFileReader
 
 
 class TestFileConverter(unittest.TestCase):
-
     def setUp(self):
         pass
 
@@ -62,7 +61,7 @@ class TestFileConverter(unittest.TestCase):
         out_data = out_data_all[0]
 
         # assert sample rates are equal
-        self.assertAlmostEqual(1.0*orig_sample_rate/out_sample_rate, 1, 4)
+        self.assertAlmostEqual(1.0 * orig_sample_rate / out_sample_rate, 1, 4)
 
         # assert the two arrays are equal
         np.testing.assert_array_equal(orig_data, out_data)
@@ -71,6 +70,61 @@ class TestFileConverter(unittest.TestCase):
         out_reader.close()
 
         os.remove(output_filename)
+
+
+from pypore.file_converter import filter_file
+
+
+class TestFilterFile(unittest.TestCase):
+
+    def test_default_output_name(self):
+        """
+        Tests that the default output filename of :func:`filter_file <pypore.file_converter.filter_file>` is correct.
+        """
+        directory = os.path.dirname(os.path.abspath(__file__))
+        filename = os.path.join(directory, 'testDataFiles', 'chimera_1event.log')
+
+        output_filename_should_be = os.path.join(directory, 'testDataFiles', 'chimera_1event_filtered.h5')
+
+        if os.path.exists(output_filename_should_be):
+            os.remove(output_filename_should_be)
+
+        out_filename = filter_file(filename, 10.e4, 100.e4)
+
+        self.assertEqual(out_filename, output_filename_should_be,
+                         msg="Default filename incorrect. Was {0}, should be {1}.".format(out_filename,
+                                                                                          output_filename_should_be))
+
+        # Make sure the file actually exists. Try opening it.
+        f = open(out_filename)
+        f.close()
+
+        os.remove(out_filename)
+
+    def test_set_output_name(self):
+        """
+        Tests that setting the output filename of :func:`filter_file <pypore.file_converter.filter_file>` is correct.
+        """
+        directory = os.path.dirname(os.path.abspath(__file__))
+        filename = os.path.join(directory, 'testDataFiles', 'chimera_1event.log')
+
+        set_out_filename = os.path.join(directory, 'testDataFiles', 'test_set_output_name.h5')
+
+        #remove if exists
+        if os.path.exists(set_out_filename):
+            os.remove(set_out_filename)
+
+        out_filename = filter_file(filename, 10.e4, 100.e4, output_filename=set_out_filename)
+
+        self.assertEqual(set_out_filename, out_filename,
+                         "Output filename not set correctly. Was {0}, should be {1}".format(set_out_filename,
+                                                                                            out_filename))
+
+        # Make sure the file actually exists. Try opening it.
+        f = open(out_filename)
+        f.close()
+
+        os.remove(out_filename)
 
 
 if __name__ == "__main__":
