@@ -63,11 +63,8 @@ def filter_file(filename, filter_frequency, out_sample_rate, output_filename=Non
     data = reader.get_all_data()[0]
 
     sample_rate = reader.get_sample_rate()
-    print "sample_rate:", sample_rate
     final_sample_rate = sample_rate
     n_points = len(data)
-
-    total_time = 1.0 * n_points / sample_rate
 
     if output_filename is None:
         output_filename = filename.split('.')[0] + '_filtered.h5'
@@ -80,7 +77,7 @@ def filter_file(filename, filter_frequency, out_sample_rate, output_filename=Non
     filtered = sig.filtfilt(b, a, data)[:]
 
     # resample the data, if requested.
-    if out_sample_rate > 0:
+    if 0 < out_sample_rate < sample_rate:
         n_out = int(np.ceil(n_points * out_sample_rate / sample_rate))
         filtered = sig.resample(filtered, num=n_out)
         final_sample_rate = sample_rate * (1.0*n_out/n_points)

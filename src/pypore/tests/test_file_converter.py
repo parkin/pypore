@@ -76,7 +76,6 @@ from pypore.file_converter import filter_file
 
 
 class TestFilterFile(unittest.TestCase):
-
     def setUp(self):
         self.directory = os.path.dirname(os.path.abspath(__file__))
 
@@ -124,6 +123,80 @@ class TestFilterFile(unittest.TestCase):
         # Make sure the file actually exists. Try opening it.
         f = open(out_filename)
         f.close()
+
+        os.remove(out_filename)
+
+    def test_same_sample_rate_no_change(self):
+        """
+        Tests that if we set the output sample rate to < 0, the sampling doesn't change, but the file is filtered.
+        """
+        filename = os.path.join(self.directory, 'testDataFiles', 'chimera_1event.log')
+
+        set_out_filename = os.path.join(self.directory, 'testDataFiles', 'test_same_sample_rate_no_change.h5')
+
+        if os.path.exists(set_out_filename):
+            os.remove(set_out_filename)
+
+        # Open a reader and read the original sample rate
+        orig_reader = get_reader_from_filename(filename)
+        orig_sample_rate = orig_reader.get_sample_rate()
+        orig_data = orig_reader.get_all_data()
+        orig_reader.close()
+
+        # filter the file, with negative sample rate
+        out_filename = filter_file(filename, 10.e4, -1, output_filename=set_out_filename)
+
+        out_reader = get_reader_from_filename(out_filename)
+        out_sample_rate = out_reader.get_sample_rate()
+        out_data = out_reader.get_all_data()
+        out_reader.close()
+        self.assertAlmostEqual(orig_sample_rate, out_sample_rate, 2,
+                               msg="Sampling rate changed during filter_file, when it should not. Was {0}, wanted {1}".format(
+                                   orig_sample_rate, out_sample_rate))
+        self.assertEqual(len(orig_data), len(orig_data), msg="Filtering changed the number of channels.")
+        self.assertEqual(orig_data[0].size, out_data[0].size, msg="Output data size doesn't match the original.")
+
+        os.remove(out_filename)
+
+        # filter the file, with zero sample rate.
+        out_filename = filter_file(filename, 10.e4, 0., output_filename=set_out_filename)
+
+        out_reader = get_reader_from_filename(out_filename)
+        out_sample_rate = out_reader.get_sample_rate()
+        out_reader.close()
+        self.assertAlmostEqual(orig_sample_rate, out_sample_rate, 2,
+                               msg="Sampling rate changed during filter_file, when it should not. Was {0}, wanted {1}".format(
+                                   orig_sample_rate, out_sample_rate))
+        self.assertEqual(len(orig_data), len(orig_data), msg="Filtering changed the number of channels.")
+        self.assertEqual(orig_data[0].size, out_data[0].size, msg="Output data size doesn't match the original.")
+
+        os.remove(out_filename)
+
+        # filter the file, with the same sample rate
+        out_filename = filter_file(filename, 10.e4, orig_sample_rate, output_filename=set_out_filename)
+
+        out_reader = get_reader_from_filename(out_filename)
+        out_sample_rate = out_reader.get_sample_rate()
+        out_reader.close()
+        self.assertAlmostEqual(orig_sample_rate, out_sample_rate, 2,
+                               msg="Sampling rate changed during filter_file, when it should not. Was {0}, wanted {1}".format(
+                                   orig_sample_rate, out_sample_rate))
+        self.assertEqual(len(orig_data), len(orig_data), msg="Filtering changed the number of channels.")
+        self.assertEqual(orig_data[0].size, out_data[0].size, msg="Output data size doesn't match the original.")
+
+        os.remove(out_filename)
+
+        # filter the file, with a greater output sample rate. Should not change.
+        out_filename = filter_file(filename, 10.e4, orig_sample_rate + 100., output_filename=set_out_filename)
+
+        out_reader = get_reader_from_filename(out_filename)
+        out_sample_rate = out_reader.get_sample_rate()
+        out_reader.close()
+        self.assertAlmostEqual(orig_sample_rate, out_sample_rate, 2,
+                               msg="Sampling rate changed during filter_file, when it should not. Was {0}, wanted {1}".format(
+                                   orig_sample_rate, out_sample_rate))
+        self.assertEqual(len(orig_data), len(orig_data), msg="Filtering changed the number of channels.")
+        self.assertEqual(orig_data[0].size, out_data[0].size, msg="Output data size doesn't match the original.")
 
         os.remove(out_filename)
 
