@@ -126,15 +126,15 @@ class TestFilterFile(unittest.TestCase):
 
         os.remove(out_filename)
 
-    def _test_out_sample_rate_data_len_equality(self, orig_data, orig_sample_rate, out_filename):
+    def _test_out_sample_rate_data_len_equality(self, orig_data, orig_sample_rate, out_filename, sample_rate):
         out_reader = get_reader_from_filename(out_filename)
         out_sample_rate = out_reader.get_sample_rate()
         out_data = out_reader.get_all_data()
         out_reader.close()
         self.assertAlmostEqual(orig_sample_rate, out_sample_rate, 2,
                                msg="Sampling rate changed during filter_file, "
-                                   "when it should not. Was {0}, wanted {1}".format(
-                                   orig_sample_rate, out_sample_rate))
+                                   "when it should not. Was {0}, wanted {1}, got {2}".format(
+                                   orig_sample_rate, sample_rate, out_sample_rate))
         self.assertEqual(len(orig_data), len(orig_data),
                          msg="Filtering changed the number of channels. Was {0}, output {1}".format(len(orig_data),
                                                                                                     len(out_data)))
@@ -164,7 +164,7 @@ class TestFilterFile(unittest.TestCase):
             # filter the file, with negative sample rate
             out_filename = filter_file(filename, 10.e4, sample_rate, output_filename=set_out_filename)
 
-            self._test_out_sample_rate_data_len_equality(orig_data, orig_sample_rate, out_filename)
+            self._test_out_sample_rate_data_len_equality(orig_data, orig_sample_rate, out_filename, sample_rate)
 
             os.remove(out_filename)
 
