@@ -18,6 +18,8 @@ cythonize.dat
 version.py
 # eggs
 **/pypore.egg-info
+# dist files
+dist
 
 # any event files generated during testing
 src/pypore/test/testDataFiles/*Events*
