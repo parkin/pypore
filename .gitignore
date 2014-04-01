@@ -16,6 +16,8 @@ build
 cythonize.dat
 # version files
 version.py
+# eggs
+**/pypore.egg-info
 
 # any event files generated during testing
 src/pypore/test/testDataFiles/*Events*
