@@ -207,7 +207,8 @@ def setup_package():
         requires=['numpy', 'scipy', 'tables', 'PySide', 'pyqtgraph'],
         include_dirs=[numpy.get_include()],
         package_dir={'': 'src'},
-        test_suite='nose.collector'
+        test_suite='nose.collector',
+        tests_require=['nose']
     )
 
     if len(sys.argv) >= 2 and ('--help' in sys.argv[1:] or
