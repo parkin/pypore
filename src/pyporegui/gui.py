@@ -262,7 +262,7 @@ The current namespace should include:
             self.thread_pool.remove(w)
 
 
-def main():
+def start():
     app = QtGui.QApplication(sys.argv)
     pix_map = QtGui.QPixmap('splash.png')
     splash = QtGui.QSplashScreen(pix_map, QtCore.Qt.WindowStaysOnTopHint)
@@ -278,7 +278,7 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    start()
 else:
     # If we are running from a tests, name != main, and we'll need to import the long imports now.
     _long_imports()
