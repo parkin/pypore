@@ -54,9 +54,11 @@ Running the tests requires:
 Installing with pip
 +++++++++++++++++++
 
+(Note that Pypore is still pre-release, hence the **--pre**).
+
 .. code:: shell
 
-    pip install pypore
+    pip install pypore --pre
     
 Installing from source
 ++++++++++++++++++++++
