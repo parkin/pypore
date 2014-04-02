@@ -18,14 +18,77 @@ Pypore
 =======
 
 This project is for translocation event finding/analysis.
-The aim is to use only free tools, so it can be used/contributed to by anyone.
-It's written in Python, with numpy/scipy as a matlab replacement.
-The gui library is pyside, and pyqtgraph is used for plotting.
+It's written in Python, with `numpy <http://www.numpy.org/>`_/`scipy <http://www.scipy.org/>`_ as a Matlab replacement.
+The gui library is `pyside <http://qt-project.org/wiki/PySide>`_, and `pyqtgraph <http://www.pyqtgraph.org/>`_ is used for plotting.
 More information can be found `here <http://parkin.github.io/pypore>`_.
 
 **Note** that Pypore/PyporeGui are pre-alpha, major changes can happen at any time.
 
-Pull requests are `welcome! <https://github.com/parkin/pypore>`_
+Pull requests are welcome!
+
+Installing
+----------
+
+Dependencies
+++++++++++++
+
+Pypore has the following dependencies:
+
+* numpy
+* scipy
+* PyTables
+
+PyporeGui depends on all of the above and:
+
+* PySide
+* pyqtgraph
+
+Building from source additionally requires:
+
+* Cython
+
+Running the tests requires:
+
+* nose
+
+Installing with pip
++++++++++++++++++++
+
+.. code:: shell
+
+    pip install pypore
+    
+Installing from source
+++++++++++++++++++++++
+
+Clone or download the source. In the directory (with setup.py), run one of the following:
+
+.. code:: shell
+
+    python setup.py install
+    
+or
+
+.. code:: shell
+
+    pip install .
+    
+Running the tests:
+
+.. code:: shell
+
+    python setup.py tests
+    
+PyporeGui
+=========
+
+Start PyporeGui with:
+
+.. code:: python
+
+    import pyporegui
+    pyporegui.start()
+
 
 License
 =======
