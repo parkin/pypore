@@ -32,6 +32,7 @@ before_install:
   - df -h
   - python -V
   - pip -V
+  - travis_retry sudo apt-get update -qq
 
 install:
   - travis_retry sudo apt-get install libhdf5-serial-dev
