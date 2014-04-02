@@ -19,6 +19,7 @@ Submodules
    pypore.data_file_opener
    pypore.event_finder
    pypore.file_converter
+   pypore.version
 
 Module contents
 ---------------

@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pypore.io &mdash; Pypore 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/architect.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Pypore 0.0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+<link href="https://fonts.googleapis.com/css?family=Architects+Daughter" rel="stylesheet" type="text/css">
+
+  </head>
+  <body>
+<header>
+    <div class="inner">
+        <h1><a href="http://parkin.github.io/pypore/">Pypore</a></h1>
+
+        <h2></h2>
+        <a href="https://github.com/parkin/pypore" class="button">
+            <small>View project on</small>
+            GitHub</a>
+    </div>
+</header>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Pypore 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pypore.io</h1><div class="highlight"><pre>
+<span class="c"># TODO implement tests for this!</span>
+<div class="viewcode-block" id="get_reader_from_filename"><a class="viewcode-back" href="../../autodocs/pypore.io.html#pypore.io.get_reader_from_filename">[docs]</a><span class="k">def</span> <span class="nf">get_reader_from_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns an instance of an implementation of :py:class:`pypore.io.abstract_reader.AbstractReader` based on the</span>
+<span class="sd">    extension of filename.</span>
+
+<span class="sd">    :param string filename: Filename to get the reader for.</span>
+<span class="sd">    :returns: An open reader of an implementation of :py:class:`pypore.io.abstract_reader.AbstractReader` based on the\</span>
+<span class="sd">             extension of filename, for the following extensions.</span>
+
+<span class="sd">        - &#39;.h5&#39; extension: returns an instance of :py:class:`pypore.io.data_file_reader.DataFileReader`.</span>
+<span class="sd">        - &#39;.log&#39; extension: returns :py:class:`pypore.io.chimera_reader.ChimeraReader`.</span>
+
+<span class="sd">        If the file extension is not in the above list, None is returned.</span>
+
+<span class="sd">    :raise: Exception - this method opens a reader, which could throw an exception.</span>
+
+<span class="sd">    &gt;&gt;&gt; reader = get_reader_from_filename(&#39;test.h5&#39;) # Returns an open DataFileReader</span>
+<span class="sd">    &gt;&gt;&gt; data = reader.get_all_data()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># TODO implement for other file types</span>
+
+    <span class="c"># if &#39;.h5&#39; in filename:</span>
+    <span class="c">#     return open_pypore_file(filename, decimate)</span>
+    <span class="k">if</span> <span class="s">&#39;.h5&#39;</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">data_file_reader</span> <span class="kn">import</span> <span class="n">DataFileReader</span> <span class="k">as</span> <span class="n">ReaderClass</span>
+    <span class="k">elif</span> <span class="s">&#39;.log&#39;</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">chimera_reader</span> <span class="kn">import</span> <span class="n">ChimeraReader</span> <span class="k">as</span> <span class="n">ReaderClass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s">&quot;No default match for the extension of {0}. Default extensions include &#39;.h5&#39;, &#39;.log&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">ReaderClass</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">reader</span>
+
+    <span class="c"># elif &#39;.hkd&#39; in filename:</span>
+    <span class="c">#     return open_heka_file(filename, decimate)</span>
+    <span class="c"># elif &#39;.mat&#39; in filename:</span>
+    <span class="c">#     return open_gabys_file(filename, decimate)</span>
+    <span class="c">#</span>
+    <span class="c"># return {&#39;error&#39;: &#39;File not specified with correct extension. Possibilities are: \&#39;.log\&#39;, \&#39;.hkd\&#39;&#39;}</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Pypore 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Will Parkin.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

@@ -18,6 +18,7 @@ Submodules
    pyporegui.file_items
    pyporegui.gui
    pyporegui.my_threads
+   pyporegui.version
 
 Module contents
 ---------------

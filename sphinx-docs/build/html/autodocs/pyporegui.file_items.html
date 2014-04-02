@@ -50,6 +50,9 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="pyporegui.gui.html" title="pyporegui.gui module"
              accesskey="N">next</a> |</li>
         <li class="right" >
@@ -94,8 +97,195 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="pyporegui-file-items-module">
-<h1>pyporegui.file_items module<a class="headerlink" href="#pyporegui-file-items-module" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-pyporegui.file_items">
+<span id="pyporegui-file-items-module"></span><h1>pyporegui.file_items module<a class="headerlink" href="#module-pyporegui.file_items" title="Permalink to this headline">¶</a></h1>
+<p>&#64;author: <a class="reference external" href="https://github.com/parkin">&#64;parkin</a></p>
+<dl class="class">
+<dt id="pyporegui.file_items.DataFileListItem">
+<em class="property">class </em><tt class="descclassname">pyporegui.file_items.</tt><tt class="descname">DataFileListItem</tt><big>(</big><em>filename</em>, <em>params</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/file_items.html#DataFileListItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.file_items.DataFileListItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyporegui.file_items.FileListItem" title="pyporegui.file_items.FileListItem"><tt class="xref py py-class docutils literal"><span class="pre">pyporegui.file_items.FileListItem</span></tt></a></p>
+<p>Is a FileListItem with a parameter.</p>
+<dl class="method">
+<dt id="pyporegui.file_items.DataFileListItem.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>filename</em>, <em>params</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/file_items.html#DataFileListItem.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.file_items.DataFileListItem.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.file_items.DataFileListItem.get_param">
+<tt class="descname">get_param</tt><big>(</big><em>param</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/file_items.html#DataFileListItem.get_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.file_items.DataFileListItem.get_param" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>param</strong> &#8211; Key in the parameter dictionary, whose value should be returned.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Parameter value specified by the key &#8216;param&#8217;.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.file_items.DataFileListItem.get_params">
+<tt class="descname">get_params</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/file_items.html#DataFileListItem.get_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.file_items.DataFileListItem.get_params" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">DictType &#8211; Dictionary of the item&#8217;s parameters.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pyporegui.file_items.FileListItem">
+<em class="property">class </em><tt class="descclassname">pyporegui.file_items.</tt><tt class="descname">FileListItem</tt><big>(</big><em>filename</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/file_items.html#FileListItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.file_items.FileListItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtGui.QListWidgetItem</span></tt></p>
+<p>Subclass of QListWidgetItem to handle file names with long file paths.</p>
+<dl class="method">
+<dt id="pyporegui.file_items.FileListItem.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>filename</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/file_items.html#FileListItem.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.file_items.FileListItem.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.file_items.FileListItem.get_directory">
+<tt class="descname">get_directory</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/file_items.html#FileListItem.get_directory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.file_items.FileListItem.get_directory" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">StringType &#8211; the directory containing the file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.file_items.FileListItem.get_file_name">
+<tt class="descname">get_file_name</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/file_items.html#FileListItem.get_file_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.file_items.FileListItem.get_file_name" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">StringType &#8211; the file names with the file path included.
+ex /home/user/.../filename</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.file_items.FileListItem.get_simple_name">
+<tt class="descname">get_simple_name</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/file_items.html#FileListItem.get_simple_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.file_items.FileListItem.get_simple_name" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">StringType &#8211; the file name without the file path included.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pyporegui.file_items.FilterListItem">
+<em class="property">class </em><tt class="descclassname">pyporegui.file_items.</tt><tt class="descname">FilterListItem</tt><big>(</big><em>file_names</em>, <em>**params</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/file_items.html#FilterListItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.file_items.FilterListItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtGui.QListWidgetItem</span></tt></p>
+<p>Subclass of QListWidgetItem to handle filter list items.</p>
+<p>self.params contain the filter parameters specified by the user.</p>
+<dl class="method">
+<dt id="pyporegui.file_items.FilterListItem.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>file_names</em>, <em>**params</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/file_items.html#FilterListItem.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.file_items.FilterListItem.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>file_names</strong> (<em>ListType&lt;String&gt;</em>) &#8211; File names that define this FilterListItem.</li>
+<li><strong>params</strong> &#8211; A dictionary of the parameters for this FilterListItem.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.file_items.FilterListItem.get_file_name_at">
+<tt class="descname">get_file_name_at</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/file_items.html#FilterListItem.get_file_name_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.file_items.FilterListItem.get_file_name_at" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> (<em>IntType</em>) &#8211; Position of the item.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">String &#8211; Full filename (including path) of the file at index.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.file_items.FilterListItem.get_file_names">
+<tt class="descname">get_file_names</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/file_items.html#FilterListItem.get_file_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.file_items.FilterListItem.get_file_names" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List &#8211; list of the full file names of the files that make up this Item.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.file_items.FilterListItem.get_params">
+<tt class="descname">get_params</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/file_items.html#FilterListItem.get_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.file_items.FilterListItem.get_params" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Dict &#8211; dictionary of the parameters of this Item.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.file_items.FilterListItem.get_simple_name_at">
+<tt class="descname">get_simple_name_at</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/file_items.html#FilterListItem.get_simple_name_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.file_items.FilterListItem.get_simple_name_at" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> (<em>IntType</em>) &#8211; Index of the list item to get the simple name of.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">String &#8211; Simple name (i.e. no path/directory) of the file at index.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.file_items.FilterListItem.get_simple_names">
+<tt class="descname">get_simple_names</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/file_items.html#FilterListItem.get_simple_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.file_items.FilterListItem.get_simple_names" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List &#8211; list of the simple names (no path/directory) of the files that make up this Item.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 
@@ -110,6 +300,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="pyporegui.gui.html" title="pyporegui.gui module"
              >next</a> |</li>

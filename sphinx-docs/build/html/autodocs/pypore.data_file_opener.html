@@ -50,6 +50,9 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="pypore.event_finder.html" title="pypore.event_finder module"
              accesskey="N">next</a> |</li>
         <li class="right" >
@@ -94,8 +97,97 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="pypore-data-file-opener-module">
-<h1>pypore.data_file_opener module<a class="headerlink" href="#pypore-data-file-opener-module" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-pypore.data_file_opener">
+<span id="pypore-data-file-opener-module"></span><h1>pypore.data_file_opener module<a class="headerlink" href="#module-pypore.data_file_opener" title="Permalink to this headline">¶</a></h1>
+<p>Created on May 23, 2013</p>
+<p>&#64;author: parkin</p>
+<dl class="function">
+<dt id="pypore.data_file_opener.get_next_blocks">
+<tt class="descclassname">pypore.data_file_opener.</tt><tt class="descname">get_next_blocks</tt><big>(</big><big>)</big><a class="headerlink" href="#pypore.data_file_opener.get_next_blocks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the next n blocks (~5000 data points) of data from filename.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>datafile</strong> (<em>DataFile</em>) &#8211; An already open <a class="reference internal" href="pypore.filetypes.data_file.html#pypore.filetypes.data_file.DataFile" title="pypore.filetypes.data_file.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">pypore.filetypes.data_file.DataFile</span></tt></a>.</li>
+<li><strong>params</strong> (<em>DictType</em>) &#8211; <p>Parameters of the file, usually the ones returned from <a class="reference internal" href="#pypore.data_file_opener.prepare_data_file" title="pypore.data_file_opener.prepare_data_file"><tt class="xref py py-func docutils literal"><span class="pre">prepare_data_file()</span></tt></a>.</p>
+<ul>
+<li>Assumes &#8216;.h5&#8217; extension is Pypore HDF5 format.</li>
+<li>Assumes &#8216;.log&#8217; extension is Chimera data.  Chimera data requires a &#8216;.mat&#8217;            file with the same name to be in the same folder.</li>
+<li>Assumes &#8216;.hkd&#8217; extension is Heka data.</li>
+<li>Assumes &#8216;.mat&#8217; extension is Gaby&#8217;s format.</li>
+</ul>
+</li>
+<li><strong>n</strong> (<em>IntType</em>) &#8211; Number of blocks to read and return.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">ListType&lt;np.array&gt; &#8211; List of numpy arrays, one for each channel of the data.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pypore.data_file_opener.open_data">
+<tt class="descclassname">pypore.data_file_opener.</tt><tt class="descname">open_data</tt><big>(</big><big>)</big><a class="headerlink" href="#pypore.data_file_opener.open_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens a datafile and returns a dictionary with the data in &#8216;data&#8217;.
+If unable to return, will return an error message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> (<em>StringType</em>) &#8211; <p>Filename to open.</p>
+<ul>
+<li>Assumes &#8216;.h5&#8217; extension is Pypore HDF5 format.</li>
+<li>Assumes &#8216;.log&#8217; extension is Chimera data.  Chimera data requires a &#8216;.mat&#8217;            file with the same name to be in the same folder.</li>
+<li>Assumes &#8216;.hkd&#8217; extension is Heka data.</li>
+<li>Assumes &#8216;.mat&#8217; extension is Gaby&#8217;s format.</li>
+</ul>
+</li>
+<li><strong>decimate</strong> (<em>BooleanType</em>) &#8211; Whether or not to decimate the data. Default is False.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">DictType &#8211; dictionary with data in the &#8216;data&#8217; key. If there is an error, it will return a
+dictionary with &#8216;error&#8217; key containing a String error message.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pypore.data_file_opener.prepare_data_file">
+<tt class="descclassname">pypore.data_file_opener.</tt><tt class="descname">prepare_data_file</tt><big>(</big><big>)</big><a class="headerlink" href="#pypore.data_file_opener.prepare_data_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens a data file, reads relevant parameters, and returns then open file and parameters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>StringType</em>) &#8211; <p>Filename to open and read parameters.</p>
+<ul class="simple">
+<li>Assumes &#8216;.h5&#8217; extension is Pypore HDF5 format.</li>
+<li>Assumes &#8216;.log&#8217; extension is Chimera data.  Chimera data requires a &#8216;.mat&#8217;            file with the same name to be in the same folder.</li>
+<li>Assumes &#8216;.hkd&#8217; extension is Heka data.</li>
+<li>Assumes &#8216;.mat&#8217; extension is Gaby&#8217;s format.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">2 things:<ol class="arabic simple">
+<li>datafile &#8211; already opened <a class="reference internal" href="pypore.filetypes.data_file.html#pypore.filetypes.data_file.DataFile" title="pypore.filetypes.data_file.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">pypore.filetypes.data_file.DataFile</span></tt></a>.</li>
+<li>params &#8211; parameters read from the file.</li>
+</ol>
+<p>If there was an error opening the files, params will have &#8216;error&#8217; key with string description.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 
 
@@ -110,6 +202,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="pypore.event_finder.html" title="pypore.event_finder module"
              >next</a> |</li>

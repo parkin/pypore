@@ -50,6 +50,9 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="pyporegui.widgets.event_analysis_plot_widget.html" title="pyporegui.widgets.event_analysis_plot_widget module"
              accesskey="N">next</a> |</li>
         <li class="right" >
@@ -95,8 +98,88 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="pyporegui-widgets-base-tabs-module">
-<h1>pyporegui.widgets.base_tabs module<a class="headerlink" href="#pyporegui-widgets-base-tabs-module" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-pyporegui.widgets.base_tabs">
+<span id="pyporegui-widgets-base-tabs-module"></span><h1>pyporegui.widgets.base_tabs module<a class="headerlink" href="#module-pyporegui.widgets.base_tabs" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pyporegui.widgets.base_tabs.BaseQSplitter">
+<em class="property">class </em><tt class="descclassname">pyporegui.widgets.base_tabs.</tt><tt class="descname">BaseQSplitter</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/base_tabs.html#BaseQSplitter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.base_tabs.BaseQSplitter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">pyporegui._thread_manager._ThreadManager</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtGui.QSplitter</span></tt></p>
+<dl class="method">
+<dt id="pyporegui.widgets.base_tabs.BaseQSplitter.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/base_tabs.html#BaseQSplitter.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.base_tabs.BaseQSplitter.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.widgets.base_tabs.BaseQSplitter.set_on_status_update_callback">
+<tt class="descname">set_on_status_update_callback</tt><big>(</big><em>callback</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/base_tabs.html#BaseQSplitter.set_on_status_update_callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.base_tabs.BaseQSplitter.set_on_status_update_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets a callback for when the EventFinderTab&#8217;s status is updated. The status is a String of information
+about the current state of the EventFinderTab.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>callback</strong> (<em>MethodType</em>) &#8211; Callback method for when the EventFinderTab&#8217;s status is updated.
+This callback must accept one string parameter.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.widgets.base_tabs.BaseQSplitter.set_process_events_callback">
+<tt class="descname">set_process_events_callback</tt><big>(</big><em>callback</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/base_tabs.html#BaseQSplitter.set_process_events_callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.base_tabs.BaseQSplitter.set_process_events_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets a callback for when the EventFindingTab requests app.processEvents</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>callback</strong> (<em>MethodType</em>) &#8211; </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pyporegui.widgets.base_tabs.BaseQSplitter.staticMetaObject">
+<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x5d09b90&gt;</em><a class="headerlink" href="#pyporegui.widgets.base_tabs.BaseQSplitter.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pyporegui.widgets.base_tabs.BaseQSplitterDataFile">
+<em class="property">class </em><tt class="descclassname">pyporegui.widgets.base_tabs.</tt><tt class="descname">BaseQSplitterDataFile</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/base_tabs.html#BaseQSplitterDataFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.base_tabs.BaseQSplitterDataFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyporegui.widgets.base_tabs.BaseQSplitter" title="pyporegui.widgets.base_tabs.BaseQSplitter"><tt class="xref py py-class docutils literal"><span class="pre">pyporegui.widgets.base_tabs.BaseQSplitter</span></tt></a></p>
+<dl class="method">
+<dt id="pyporegui.widgets.base_tabs.BaseQSplitterDataFile.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/base_tabs.html#BaseQSplitterDataFile.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.base_tabs.BaseQSplitterDataFile.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.widgets.base_tabs.BaseQSplitterDataFile.open_data_files">
+<tt class="descname">open_data_files</tt><big>(</big><em>file_names=None</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/base_tabs.html#BaseQSplitterDataFile.open_data_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.base_tabs.BaseQSplitterDataFile.open_data_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Analyzes the files for correctness, then adds them to the list widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_names</strong> (<em>ListType&lt;StringType&gt;</em>) &#8211; The file names to be included in the list widget. If not included,
+this function will use a QtGui.QFileDialog.getOpenFileNames to open
+files.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">BooleanType &#8211; <strong>True</strong> if files were opened, <strong>False</strong> otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pyporegui.widgets.base_tabs.BaseQSplitterDataFile.staticMetaObject">
+<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x56e2e18&gt;</em><a class="headerlink" href="#pyporegui.widgets.base_tabs.BaseQSplitterDataFile.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
 
 
@@ -111,6 +194,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="pyporegui.widgets.event_analysis_plot_widget.html" title="pyporegui.widgets.event_analysis_plot_widget module"
              >next</a> |</li>

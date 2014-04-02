@@ -50,6 +50,9 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="pyporegui.widgets.event_viewing_tab.html" title="pyporegui.widgets.event_viewing_tab module"
              accesskey="N">next</a> |</li>
         <li class="right" >
@@ -95,8 +98,78 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="pyporegui-widgets-event-finding-tab-module">
-<h1>pyporegui.widgets.event_finding_tab module<a class="headerlink" href="#pyporegui-widgets-event-finding-tab-module" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-pyporegui.widgets.event_finding_tab">
+<span id="pyporegui-widgets-event-finding-tab-module"></span><h1>pyporegui.widgets.event_finding_tab module<a class="headerlink" href="#module-pyporegui.widgets.event_finding_tab" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pyporegui.widgets.event_finding_tab.EventFindingTab">
+<em class="property">class </em><tt class="descclassname">pyporegui.widgets.event_finding_tab.</tt><tt class="descname">EventFindingTab</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/event_finding_tab.html#EventFindingTab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.event_finding_tab.EventFindingTab" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="pyporegui.widgets.base_tabs.html#pyporegui.widgets.base_tabs.BaseQSplitterDataFile" title="pyporegui.widgets.base_tabs.BaseQSplitterDataFile"><tt class="xref py py-class docutils literal"><span class="pre">pyporegui.widgets.base_tabs.BaseQSplitterDataFile</span></tt></a></p>
+<p>A QtGui.QSplitter that contains event finding options on the left and a plot on the right.</p>
+<dl class="method">
+<dt id="pyporegui.widgets.event_finding_tab.EventFindingTab.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/event_finding_tab.html#EventFindingTab.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.event_finding_tab.EventFindingTab.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parent</strong> (<em>PySide.QtGui.QMainWindow</em>) &#8211; Parent main window (optional).</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.widgets.event_finding_tab.EventFindingTab.get_current_analysis_parameters">
+<tt class="descname">get_current_analysis_parameters</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/event_finding_tab.html#EventFindingTab.get_current_analysis_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.event_finding_tab.EventFindingTab.get_current_analysis_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the current analysis parameters from the gui and returns the results in a dictionary. Returns
+dictionary entry &#8216;error&#8217; with text of the error if one exists.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">DictType &#8211; the event analysis parameters. These include:<ul class="simple">
+<li>&#8216;error&#8217; - Text if there was an error</li>
+</ul>
+<p>OR</p>
+<ul class="simple">
+<li>&#8216;min_event_length&#8217;</li>
+<li>&#8216;max_event_length&#8217;</li>
+<li>&#8216;baseline_strategy&#8217;</li>
+<li>&#8216;baseline_filter_parameter&#8217;</li>
+<li>&#8216;baseline_current&#8217;</li>
+</ul>
+<p>etc...</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.widgets.event_finding_tab.EventFindingTab.open_data_files">
+<tt class="descname">open_data_files</tt><big>(</big><em>file_names=None</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/event_finding_tab.html#EventFindingTab.open_data_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.event_finding_tab.EventFindingTab.open_data_files" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyporegui.widgets.event_finding_tab.EventFindingTab.plot_data">
+<tt class="descname">plot_data</tt><big>(</big><em>plot_options</em><big>)</big><a class="reference internal" href="../_modules/pyporegui/widgets/event_finding_tab.html#EventFindingTab.plot_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyporegui.widgets.event_finding_tab.EventFindingTab.plot_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots waveform in datadict.
+:param DictType plot_options: Dictionary of plot options. Must contain:</p>
+<ul class="simple">
+<li>Data at plot_options[&#8216;data&#8217;][0]</li>
+<li>sample_rate at plot_options[&#8216;sample_rate&#8217;]</li>
+<li>plot_range at plot_options[&#8216;plot_range&#8217;]. This can be [start,stop], or
+&#8216;all&#8217; for 0:n.</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pyporegui.widgets.event_finding_tab.EventFindingTab.staticMetaObject">
+<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x5b4b098&gt;</em><a class="headerlink" href="#pyporegui.widgets.event_finding_tab.EventFindingTab.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
 
 
@@ -111,6 +184,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="pyporegui.widgets.event_viewing_tab.html" title="pyporegui.widgets.event_viewing_tab module"
              >next</a> |</li>

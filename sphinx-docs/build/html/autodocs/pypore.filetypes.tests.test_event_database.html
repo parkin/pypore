@@ -50,6 +50,9 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="pypore.filetypes.data_file.html" title="pypore.filetypes.data_file module"
              accesskey="N">next</a> |</li>
         <li class="right" >
@@ -96,8 +99,136 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="pypore-filetypes-tests-test-event-database-module">
-<h1>pypore.filetypes.tests.test_event_database module<a class="headerlink" href="#pypore-filetypes-tests-test-event-database-module" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-pypore.filetypes.tests.test_event_database">
+<span id="pypore-filetypes-tests-test-event-database-module"></span><h1>pypore.filetypes.tests.test_event_database module<a class="headerlink" href="#module-pypore.filetypes.tests.test_event_database" title="Permalink to this headline">¶</a></h1>
+<p>Created on Sep 13, 2013</p>
+<p>&#64;author: <a class="reference external" href="https://github.com/parkin">&#64;parkin</a></p>
+<dl class="class">
+<dt id="pypore.filetypes.tests.test_event_database.TestEventDatabase">
+<em class="property">class </em><tt class="descclassname">pypore.filetypes.tests.test_event_database.</tt><tt class="descname">TestEventDatabase</tt><big>(</big><em>methodName='runTest'</em><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/tests/test_event_database.html#TestEventDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.tests.test_event_database.TestEventDatabase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">unittest.case.TestCase</span></tt></p>
+<dl class="method">
+<dt id="pypore.filetypes.tests.test_event_database.TestEventDatabase.setUp">
+<tt class="descname">setUp</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/tests/test_event_database.html#TestEventDatabase.setUp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.tests.test_event_database.TestEventDatabase.setUp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pypore.filetypes.tests.test_event_database.TestEventDatabase.tearDown">
+<tt class="descname">tearDown</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/tests/test_event_database.html#TestEventDatabase.tearDown"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.tests.test_event_database.TestEventDatabase.tearDown" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pypore.filetypes.tests.test_event_database.TestEventDatabase.test_append_event">
+<tt class="descname">test_append_event</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/tests/test_event_database.html#TestEventDatabase.test_append_event"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.tests.test_event_database.TestEventDatabase.test_append_event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests appendEvent</p>
+<p>array_row, event_start, event_length, n_levels, raw_points_per_side,                    baseline, current_blockage, area, raw_data = None, levels = None, level_lengths = None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypore.filetypes.tests.test_event_database.TestEventDatabase.test_clean_database">
+<tt class="descname">test_clean_database</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/tests/test_event_database.html#TestEventDatabase.test_clean_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.tests.test_event_database.TestEventDatabase.test_clean_database" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests that cleanDatabase removing eventsTable, raw_data, levels, and levelData
+and initializing with empty table/matrices.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypore.filetypes.tests.test_event_database.TestEventDatabase.test_delete_event">
+<tt class="descname">test_delete_event</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/tests/test_event_database.html#TestEventDatabase.test_delete_event"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.tests.test_event_database.TestEventDatabase.test_delete_event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests deleting single events from eventTable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypore.filetypes.tests.test_event_database.TestEventDatabase.test_delete_events">
+<tt class="descname">test_delete_events</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/tests/test_event_database.html#TestEventDatabase.test_delete_events"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.tests.test_event_database.TestEventDatabase.test_delete_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test removing ranges of events from event table.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypore.filetypes.tests.test_event_database.TestEventDatabase.test_get_event_count">
+<tt class="descname">test_get_event_count</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/tests/test_event_database.html#TestEventDatabase.test_get_event_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.tests.test_event_database.TestEventDatabase.test_get_event_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests that getEventCount returns the correct value, even
+after events are added/deleted.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypore.filetypes.tests.test_event_database.TestEventDatabase.test_get_event_data_at">
+<tt class="descname">test_get_event_data_at</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/tests/test_event_database.html#TestEventDatabase.test_get_event_data_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.tests.test_event_database.TestEventDatabase.test_get_event_data_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests getting only the event points from raw_data</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypore.filetypes.tests.test_event_database.TestEventDatabase.test_get_event_row">
+<tt class="descname">test_get_event_row</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/tests/test_event_database.html#TestEventDatabase.test_get_event_row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.tests.test_event_database.TestEventDatabase.test_get_event_row" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that getEventRow returns correct row.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypore.filetypes.tests.test_event_database.TestEventDatabase.test_get_events_group">
+<tt class="descname">test_get_events_group</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/tests/test_event_database.html#TestEventDatabase.test_get_events_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.tests.test_event_database.TestEventDatabase.test_get_events_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the getter for /events</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypore.filetypes.tests.test_event_database.TestEventDatabase.test_get_level_lengths_at">
+<tt class="descname">test_get_level_lengths_at</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/tests/test_event_database.html#TestEventDatabase.test_get_level_lengths_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.tests.test_event_database.TestEventDatabase.test_get_level_lengths_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests that getLevelLengthsAt returns a numpy matrix of the 
+level_lengths corresponding to the event
+in row &#8216;i&#8217; of eventTable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypore.filetypes.tests.test_event_database.TestEventDatabase.test_get_levels_at">
+<tt class="descname">test_get_levels_at</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/tests/test_event_database.html#TestEventDatabase.test_get_levels_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.tests.test_event_database.TestEventDatabase.test_get_levels_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests that getLevelsAt returns a numpy matrix of the levels corresponding to the event
+in row &#8216;i&#8217; of eventTable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypore.filetypes.tests.test_event_database.TestEventDatabase.test_get_raw_data_at">
+<tt class="descname">test_get_raw_data_at</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/tests/test_event_database.html#TestEventDatabase.test_get_raw_data_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.tests.test_event_database.TestEventDatabase.test_get_raw_data_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests that get_raw_data_at returns correctly sized(event_length + 2*raw_points_per_side)
+numpy array with correct data.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypore.filetypes.tests.test_event_database.TestEventDatabase.test_get_sample_rate">
+<tt class="descname">test_get_sample_rate</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/tests/test_event_database.html#TestEventDatabase.test_get_sample_rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.tests.test_event_database.TestEventDatabase.test_get_sample_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that get_sample_rate returns root.events.eventTable.attrs.sample_rate</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypore.filetypes.tests.test_event_database.TestEventDatabase.test_initialize_database_with_existing_nodes">
+<tt class="descname">test_initialize_database_with_existing_nodes</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/tests/test_event_database.html#TestEventDatabase.test_initialize_database_with_existing_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.tests.test_event_database.TestEventDatabase.test_initialize_database_with_existing_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that calling initialize_c database with existing nodes does not
+throw an error (ie existing nodes ignored).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypore.filetypes.tests.test_event_database.TestEventDatabase.test_initialize_events_database">
+<tt class="descname">test_initialize_events_database</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/tests/test_event_database.html#TestEventDatabase.test_initialize_events_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.tests.test_event_database.TestEventDatabase.test_initialize_events_database" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pypore.filetypes.tests.test_event_database.TestEventDatabase.test_initialize_events_database_with_debug">
+<tt class="descname">test_initialize_events_database_with_debug</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/tests/test_event_database.html#TestEventDatabase.test_initialize_events_database_with_debug"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.tests.test_event_database.TestEventDatabase.test_initialize_events_database_with_debug" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pypore.filetypes.tests.test_event_database.TestEventDatabase.test_open_existing_empty_database">
+<tt class="descname">test_open_existing_empty_database</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/tests/test_event_database.html#TestEventDatabase.test_open_existing_empty_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.tests.test_event_database.TestEventDatabase.test_open_existing_empty_database" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests opening an existing h5 file with an empty 
+EventsDatabase structure.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pypore.filetypes.tests.test_event_database.TestEventDatabase.test_open_existing_full_database">
+<tt class="descname">test_open_existing_full_database</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pypore/filetypes/tests/test_event_database.html#TestEventDatabase.test_open_existing_full_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.filetypes.tests.test_event_database.TestEventDatabase.test_open_existing_full_database" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests opening an existing h5 file with events in
+the EventDatabase structure.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 
@@ -112,6 +243,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="pypore.filetypes.data_file.html" title="pypore.filetypes.data_file module"
              >next</a> |</li>

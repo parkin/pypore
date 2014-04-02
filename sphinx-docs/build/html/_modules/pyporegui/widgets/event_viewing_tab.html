@@ -1,0 +1,412 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyporegui.widgets.event_viewing_tab &mdash; Pypore 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/architect.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Pypore 0.0.1 documentation" href="../../../index.html" />
+    <link rel="up" title="pyporegui" href="../../pyporegui.html" />
+<link href="https://fonts.googleapis.com/css?family=Architects+Daughter" rel="stylesheet" type="text/css">
+
+  </head>
+  <body>
+<header>
+    <div class="inner">
+        <h1><a href="http://parkin.github.io/pypore/">Pypore</a></h1>
+
+        <h2></h2>
+        <a href="https://github.com/parkin/pypore" class="button">
+            <small>View project on</small>
+            GitHub</a>
+    </div>
+</header>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">Pypore 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../../pyporegui.html" accesskey="U">pyporegui</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyporegui.widgets.event_viewing_tab</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pyqtgraph</span> <span class="kn">as</span> <span class="nn">pg</span>
+<span class="kn">from</span> <span class="nn">pyqtgraph.widgets.LayoutWidget</span> <span class="kn">import</span> <span class="n">LayoutWidget</span>
+<span class="kn">from</span> <span class="nn">pypore.filetypes</span> <span class="kn">import</span> <span class="n">event_database</span> <span class="k">as</span> <span class="n">eD</span>
+<span class="kn">from</span> <span class="nn">pyporegui._thread_manager</span> <span class="kn">import</span> <span class="n">_ThreadManager</span>
+<span class="kn">from</span> <span class="nn">pyporegui.graphicsItems.my_plot_item</span> <span class="kn">import</span> <span class="n">MyPlotItem</span>
+<span class="kn">from</span> <span class="nn">pyporegui.file_items</span> <span class="kn">import</span> <span class="n">FileListItem</span>
+<span class="kn">from</span> <span class="nn">pyporegui.graphicsItems.path_item</span> <span class="kn">import</span> <span class="n">PathItem</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;EventViewingTab&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="EventViewingTab"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.event_viewing_tab.html#pyporegui.widgets.event_viewing_tab.EventViewingTab">[docs]</a><span class="k">class</span> <span class="nc">EventViewingTab</span><span class="p">(</span><span class="n">_ThreadManager</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QSplitter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A QtGui.Splitter that contains a file opener list on the left and plots on the right.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="EventViewingTab.__init__"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.event_viewing_tab.html#pyporegui.widgets.event_viewing_tab.EventViewingTab.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param PySide.QtGui.QMainWindow parent: Parent main window (optional).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">EventViewingTab</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">parent</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">open_directory_changed_callback</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="n">options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_event_viewer_options</span><span class="p">()</span>
+        <span class="n">plots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_event_viewer_plot_widget</span><span class="p">()</span>
+
+        <span class="c"># Put everything in baseline_filter_parameter scroll area</span>
+        <span class="n">scroll_plots</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QScrollArea</span><span class="p">()</span>
+        <span class="n">scroll_plots</span><span class="o">.</span><span class="n">setWidgetResizable</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="n">scroll_plots</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="n">plots</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">scroll_plots</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="EventViewingTab.open_event_databases"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.event_viewing_tab.html#pyporegui.widgets.event_viewing_tab.EventViewingTab.open_event_databases">[docs]</a>    <span class="k">def</span> <span class="nf">open_event_databases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_names</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds the files to the list widget.</span>
+
+<span class="sd">        :param ListType&lt;StringType&gt; file_names: (Optional) List of file names to be added to the list widget. If not</span>
+<span class="sd">                                                included, then a QtGui.QFileDialog will be opened to select files.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">file_names</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">file_names</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">getOpenFileNames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;Open event database&#39;</span><span class="p">,</span> <span class="s">&#39;.&#39;</span><span class="p">,</span> <span class="s">&#39;*.h5&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eventview_list_widget</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">file_names</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">FileListItem</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eventview_list_widget</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">_create_event_viewer_options</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">scroll_area</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QScrollArea</span><span class="p">()</span>
+        <span class="n">scroll_area</span><span class="o">.</span><span class="n">setWidgetResizable</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="c"># Create baseline_filter_parameter list for files want to analyze</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventview_list_widget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QListWidget</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventview_list_widget</span><span class="o">.</span><span class="n">itemDoubleClicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_eventview_file_item_doubleclick</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventview_list_widget</span><span class="o">.</span><span class="n">setMaximumHeight</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+
+        <span class="n">fixed_analysis_options</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFormLayout</span><span class="p">()</span>
+        <span class="n">fixed_analysis_options</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="s">&#39;Event Databases:&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">eventview_list_widget</span><span class="p">)</span>
+
+        <span class="n">vbox_left</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">()</span>
+        <span class="n">vbox_left</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">fixed_analysis_options</span><span class="p">)</span>
+
+        <span class="n">vbox_left_widget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QWidget</span><span class="p">()</span>
+        <span class="n">vbox_left_widget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">vbox_left</span><span class="p">)</span>
+
+        <span class="n">scroll_area</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="n">vbox_left_widget</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">scroll_area</span>
+
+    <span class="k">def</span> <span class="nf">_on_eventview_file_item_doubleclick</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_view_item</span> <span class="o">=</span> <span class="n">item</span>
+
+        <span class="n">h5file</span> <span class="o">=</span> <span class="n">eD</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">get_file_name</span><span class="p">())</span>
+
+        <span class="n">event_count</span> <span class="o">=</span> <span class="n">h5file</span><span class="o">.</span><span class="n">get_event_count</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">h5file</span><span class="o">.</span><span class="n">is_debug</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_debug</span><span class="p">(</span><span class="n">h5file</span><span class="p">)</span>
+
+        <span class="n">h5file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_display_edit</span><span class="o">.</span><span class="n">setMaxLength</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">event_count</span> <span class="o">/</span> <span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_display_edit</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIntValidator</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">event_count</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_display_edit</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_count_text</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;/&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">event_count</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_display_edit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_display_edit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;1&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EventViewingTab.plot_debug"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.event_viewing_tab.html#pyporegui.widgets.event_viewing_tab.EventViewingTab.plot_debug">[docs]</a>    <span class="k">def</span> <span class="nf">plot_debug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_database</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plots the data, baseline, and thresholds of the debug group in the event_database, if they exist,</span>
+<span class="sd">        in the main plot.</span>
+
+<span class="sd">        :param event_database: An already open\</span>
+<span class="sd">                :class:`EventDatabase &lt;pypore.filetypes.event_database.EventDatabase&gt;`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">event_database</span><span class="o">.</span><span class="n">is_debug</span><span class="p">():</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventview_plotwid</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+        <span class="n">sample_rate</span> <span class="o">=</span> <span class="n">event_database</span><span class="o">.</span><span class="n">get_sample_rate</span><span class="p">()</span>
+
+        <span class="c"># TODO remove the step_size.</span>
+        <span class="n">step_size</span> <span class="o">=</span> <span class="mi">1000</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">event_database</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">debug</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][::</span><span class="n">step_size</span><span class="p">]</span>
+
+        <span class="n">data_size</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span>
+        <span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">data_size</span> <span class="o">*</span><span class="mf">1.0</span><span class="o">/</span><span class="n">sample_rate</span><span class="p">,</span> <span class="n">data_size</span><span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">PathItem</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pg</span><span class="o">.</span><span class="n">mkPen</span><span class="p">(</span><span class="s">&#39;w&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventview_plotwid</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+        <span class="n">baseline</span> <span class="o">=</span> <span class="n">event_database</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">debug</span><span class="o">.</span><span class="n">baseline</span><span class="p">[</span><span class="mi">0</span><span class="p">][::</span><span class="n">step_size</span><span class="p">]</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">PathItem</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">baseline</span><span class="p">)</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pg</span><span class="o">.</span><span class="n">mkPen</span><span class="p">(</span><span class="s">&#39;y&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventview_plotwid</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+        <span class="n">threshold_p</span> <span class="o">=</span> <span class="n">event_database</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">debug</span><span class="o">.</span><span class="n">threshold_positive</span><span class="p">[</span><span class="mi">0</span><span class="p">][::</span><span class="n">step_size</span><span class="p">]</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">PathItem</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">threshold_p</span><span class="p">)</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pg</span><span class="o">.</span><span class="n">mkPen</span><span class="p">(</span><span class="s">&#39;g&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventview_plotwid</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+        <span class="n">threshold_n</span> <span class="o">=</span> <span class="n">event_database</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">debug</span><span class="o">.</span><span class="n">threshold_negative</span><span class="p">[</span><span class="mi">0</span><span class="p">][::</span><span class="n">step_size</span><span class="p">]</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">PathItem</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">threshold_n</span><span class="p">)</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pg</span><span class="o">.</span><span class="n">mkPen</span><span class="p">(</span><span class="s">&#39;g&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventview_plotwid</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="EventViewingTab.plot_single_events"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.event_viewing_tab.html#pyporegui.widgets.event_viewing_tab.EventViewingTab.plot_single_events">[docs]</a>    <span class="k">def</span> <span class="nf">plot_single_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plots the event on the plot with</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">h5file</span> <span class="o">=</span> <span class="n">eD</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event_view_item</span><span class="o">.</span><span class="n">get_file_name</span><span class="p">(),</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+
+        <span class="n">event_count</span> <span class="o">=</span> <span class="n">h5file</span><span class="o">.</span><span class="n">get_event_count</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+                <span class="n">pos</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="n">j</span>
+                <span class="k">if</span> <span class="n">pos</span> <span class="o">+</span> <span class="n">event</span> <span class="o">&gt;=</span> <span class="n">event_count</span> <span class="ow">or</span> <span class="n">pos</span> <span class="o">+</span> <span class="n">event</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">eventviewer_plots</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">eventviewer_plots</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span><span class="o">.</span><span class="n">setTitle</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">plot_single_event</span><span class="p">(</span><span class="n">h5file</span><span class="p">,</span> <span class="n">event</span> <span class="o">+</span> <span class="n">pos</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">eventviewer_plots</span><span class="p">[</span><span class="n">pos</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">eventviewer_plots</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span><span class="o">.</span><span class="n">setTitle</span><span class="p">(</span><span class="s">&#39;Event &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">event</span> <span class="o">+</span> <span class="n">pos</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="n">h5file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="EventViewingTab.plot_single_event"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.event_viewing_tab.html#pyporegui.widgets.event_viewing_tab.EventViewingTab.plot_single_event">[docs]</a>    <span class="k">def</span> <span class="nf">plot_single_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h5file</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">plot</span><span class="p">):</span>
+        <span class="n">sample_rate</span> <span class="o">=</span> <span class="n">h5file</span><span class="o">.</span><span class="n">get_sample_rate</span><span class="p">()</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">h5file</span><span class="o">.</span><span class="n">get_event_row</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+        <span class="n">array_row</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;array_row&#39;</span><span class="p">]</span>
+        <span class="n">event_length</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;event_length&#39;</span><span class="p">]</span>
+        <span class="n">raw_points_per_side</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;raw_points_per_side&#39;</span><span class="p">]</span>
+
+        <span class="n">raw_data</span> <span class="o">=</span> <span class="n">h5file</span><span class="o">.</span><span class="n">get_raw_data_at</span><span class="p">(</span><span class="n">array_row</span><span class="p">)</span>
+
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">raw_data</span><span class="p">)</span>
+
+        <span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">n</span> <span class="o">/</span> <span class="n">sample_rate</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+        <span class="n">plot</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">plot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">raw_data</span><span class="p">)</span>
+        <span class="c"># plot the event points in yellow</span>
+        <span class="n">plot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">raw_points_per_side</span><span class="p">:</span><span class="n">raw_points_per_side</span> <span class="o">+</span> <span class="n">event_length</span><span class="p">],</span>
+                  <span class="n">raw_data</span><span class="p">[</span><span class="n">raw_points_per_side</span><span class="p">:</span><span class="n">raw_points_per_side</span> <span class="o">+</span> <span class="n">event_length</span><span class="p">],</span> <span class="n">pen</span><span class="o">=</span><span class="s">&#39;y&#39;</span><span class="p">)</span>
+
+        <span class="c"># Plot the cusum levels</span>
+        <span class="n">n_levels</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;n_levels&#39;</span><span class="p">]</span>
+        <span class="n">baseline</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;baseline&#39;</span><span class="p">]</span>
+        <span class="c"># left, start-1, start,</span>
+        <span class="n">levels</span> <span class="o">=</span> <span class="n">h5file</span><span class="o">.</span><span class="n">get_levels_at</span><span class="p">(</span><span class="n">array_row</span><span class="p">)</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">h5file</span><span class="o">.</span><span class="n">get_level_lengths_at</span><span class="p">(</span><span class="n">array_row</span><span class="p">)</span>
+
+        <span class="n">level_times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n_levels</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">level_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n_levels</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span>
+
+        <span class="n">level_times</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">raw_points_per_side</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">sample_rate</span>
+        <span class="n">level_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">level_values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">baseline</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">n_levels</span><span class="p">):</span>
+            <span class="n">level_times</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">times</span><span class="p">[</span><span class="n">raw_points_per_side</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">length</span> <span class="o">/</span> <span class="n">sample_rate</span>
+            <span class="n">level_values</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">levels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">level_times</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">times</span><span class="p">[</span><span class="n">raw_points_per_side</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">length</span> <span class="o">+</span> <span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="n">sample_rate</span>
+            <span class="n">level_values</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">levels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">length</span> <span class="o">+=</span> <span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">level_times</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">times</span><span class="p">[</span><span class="n">raw_points_per_side</span> <span class="o">+</span> <span class="n">event_length</span><span class="p">]</span>
+        <span class="n">level_times</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">times</span><span class="p">[</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">level_values</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">level_values</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">baseline</span>
+
+        <span class="n">plot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">level_times</span><span class="p">,</span> <span class="n">level_values</span><span class="p">,</span> <span class="n">pen</span><span class="o">=</span><span class="s">&#39;g&#39;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="EventViewingTab.previous_clicked"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.event_viewing_tab.html#pyporegui.widgets.event_viewing_tab.EventViewingTab.previous_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">previous_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">move_event_display_by</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eventviewer_plots</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="EventViewingTab.next_clicked"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.event_viewing_tab.html#pyporegui.widgets.event_viewing_tab.EventViewingTab.next_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">next_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">move_event_display_by</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eventviewer_plots</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="EventViewingTab.move_event_display_by"><a class="viewcode-back" href="../../../autodocs/pyporegui.widgets.event_viewing_tab.html#pyporegui.widgets.event_viewing_tab.EventViewingTab.move_event_display_by">[docs]</a>    <span class="k">def</span> <span class="nf">move_event_display_by</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Changes the event displayed on the event display plot to</span>
+<span class="sd">        current value + count</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">h5_event_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">h5file</span> <span class="o">=</span> <span class="n">eD</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event_view_item</span><span class="o">.</span><span class="n">get_file_name</span><span class="p">())</span>
+            <span class="n">h5_event_count</span> <span class="o">=</span> <span class="n">h5file</span><span class="o">.</span><span class="n">get_event_count</span><span class="p">()</span>
+            <span class="n">h5file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">event_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event_display_edit</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">event_count</span> <span class="o">+</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="n">h5_event_count</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">event_display_edit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">event_count</span> <span class="o">+</span> <span class="n">count</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="c"># if we can&#39;t parse the event display text but there are events,</span>
+            <span class="c"># just set to zero</span>
+            <span class="k">if</span> <span class="n">h5_event_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">event_display_edit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;1&#39;</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">_event_display_edit_on_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">position</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event_display_edit</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_single_events</span><span class="p">(</span><span class="n">position</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_create_event_viewer_plot_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">wig</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">GraphicsLayoutWidget</span><span class="p">()</span>
+        <span class="n">wig2</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">GraphicsLayoutWidget</span><span class="p">()</span>
+
+        <span class="c"># Main plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventview_plotwid</span> <span class="o">=</span> <span class="n">MyPlotItem</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">&#39;Current Trace&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;Plot&#39;</span><span class="p">)</span>
+        <span class="n">wig</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eventview_plotwid</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventview_plotwid</span><span class="o">.</span><span class="n">enableAutoRange</span><span class="p">(</span><span class="s">&#39;xy&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+
+        <span class="n">wig</span><span class="o">.</span><span class="n">nextRow</span><span class="p">()</span>
+        <span class="c"># Create Qwt plot for concatenated events</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_concatevents</span> <span class="o">=</span> <span class="n">wig</span><span class="o">.</span><span class="n">addPlot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">&#39;Concatenated Events&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;Concat&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventviewer_plots</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c"># Now add 9 plots to view events in</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+            <span class="n">wig2</span><span class="o">.</span><span class="n">nextRow</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+                <span class="n">plot</span> <span class="o">=</span> <span class="n">wig2</span><span class="o">.</span><span class="n">addPlot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">&#39;Event &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">j</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;Single&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">j</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">eventviewer_plots</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">plot</span><span class="p">)</span>
+
+                <span class="c"># Tool bar for main plot.  Contains zoom button and different checkboxes</span>
+                <span class="c">#         self.plotToolBar = PlotToolBar(self)</span>
+                <span class="c">#         self.addToolBar(self.plotToolBar)</span>
+
+        <span class="n">event_select_toolbar</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QToolBar</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="o">.</span><span class="n">addToolBar</span><span class="p">(</span><span class="n">event_select_toolbar</span><span class="p">)</span>
+
+        <span class="n">button_previous</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="n">event_select_toolbar</span><span class="p">)</span>
+        <span class="n">button_previous</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&quot;Previous&quot;</span><span class="p">)</span>
+        <span class="n">button_previous</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">previous_clicked</span><span class="p">)</span>
+        <span class="n">event_select_toolbar</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">button_previous</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_display_edit</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_display_edit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;0&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_display_edit</span><span class="o">.</span><span class="n">setMaxLength</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_display_edit</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIntValidator</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_display_edit</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_display_edit</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_event_display_edit_on_change</span><span class="p">)</span>
+        <span class="n">event_select_toolbar</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event_display_edit</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_count_text</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QLabel</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_count_text</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;/&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">event_select_toolbar</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event_count_text</span><span class="p">)</span>
+
+        <span class="n">button_previous</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="n">event_select_toolbar</span><span class="p">)</span>
+        <span class="n">button_previous</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&quot;Next&quot;</span><span class="p">)</span>
+        <span class="n">button_previous</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">next_clicked</span><span class="p">)</span>
+        <span class="n">event_select_toolbar</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">button_previous</span><span class="p">)</span>
+
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QSplitter</span><span class="p">()</span>
+        <span class="n">frame</span><span class="o">.</span><span class="n">setOrientation</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Vertical</span><span class="p">)</span>
+        <span class="n">frame</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">wig</span><span class="p">)</span>
+        <span class="n">frame</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">wig2</span><span class="p">)</span>
+
+        <span class="n">event_finder_plots_layout</span> <span class="o">=</span> <span class="n">LayoutWidget</span><span class="p">()</span>
+        <span class="c"># event_finder_plots_layout.addWidget(self.plotToolBar, row=1, col=0, colspan=3)</span>
+        <span class="n">event_finder_plots_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">colspan</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">event_finder_plots_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">event_select_toolbar</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">colspan</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">event_finder_plots_layout</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">Pypore 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../../pyporegui.html" >pyporegui</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Will Parkin.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

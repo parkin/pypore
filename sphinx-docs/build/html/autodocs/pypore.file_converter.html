@@ -26,7 +26,7 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Pypore 0.0.1 documentation" href="../index.html" />
     <link rel="up" title="pypore package" href="pypore.html" />
-    <link rel="next" title="pyporegui package" href="pyporegui.html" />
+    <link rel="next" title="pypore.version module" href="pypore.version.html" />
     <link rel="prev" title="pypore.event_finder module" href="pypore.event_finder.html" />
 <link href="https://fonts.googleapis.com/css?family=Architects+Daughter" rel="stylesheet" type="text/css">
 
@@ -50,7 +50,10 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="pyporegui.html" title="pyporegui package"
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pypore.version.html" title="pypore.version module"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="pypore.event_finder.html" title="pypore.event_finder module"
@@ -66,8 +69,8 @@
   <p class="topless"><a href="pypore.event_finder.html"
                         title="previous chapter">pypore.event_finder module</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="pyporegui.html"
-                        title="next chapter">pyporegui package</a></p>
+  <p class="topless"><a href="pypore.version.html"
+                        title="next chapter">pypore.version module</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/autodocs/pypore.file_converter.txt"
@@ -94,8 +97,46 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="pypore-file-converter-module">
-<h1>pypore.file_converter module<a class="headerlink" href="#pypore-file-converter-module" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-pypore.file_converter">
+<span id="pypore-file-converter-module"></span><h1>pypore.file_converter module<a class="headerlink" href="#module-pypore.file_converter" title="Permalink to this headline">¶</a></h1>
+<p>Created on Jan 28, 2014</p>
+<p>&#64;author: <a class="reference external" href="https://github.com/parkin">&#64;parkin</a></p>
+<dl class="function">
+<dt id="pypore.file_converter.convert_file">
+<tt class="descclassname">pypore.file_converter.</tt><tt class="descname">convert_file</tt><big>(</big><em>filename</em>, <em>output_filename=None</em><big>)</big><a class="reference internal" href="../_modules/pypore/file_converter.html#convert_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.file_converter.convert_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a file to the pypore .h5 file format. Returns the new file&#8217;s name.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pypore.file_converter.filter_file">
+<tt class="descclassname">pypore.file_converter.</tt><tt class="descname">filter_file</tt><big>(</big><em>filename</em>, <em>filter_frequency</em>, <em>out_sample_rate</em>, <em>output_filename=None</em><big>)</big><a class="reference internal" href="../_modules/pypore/file_converter.html#filter_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pypore.file_converter.filter_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads data from the filename file and uses a Butterworth low-pass filter with cutoff at filter_frequency. Outputs
+the filtered waveform to a new <a class="reference internal" href="pypore.filetypes.data_file.html#pypore.filetypes.data_file.DataFile" title="pypore.filetypes.data_file.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">pypore.filetypes.data_file.DataFile</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> (<em>StringType</em>) &#8211; Filename containing data to be filtered.</li>
+<li><strong>filter_frequency</strong> (<em>DoubleType</em>) &#8211; Cutoff frequency for the low-pass Butterworth filter.</li>
+<li><strong>out_sample_rate</strong> (<em>DoubleType</em>) &#8211; After the data is filtered, it can be resampled to roughly out_sample_rate. If             out_sample_rate &lt;= 0, the data will not be resampled.</li>
+<li><strong>output_filename</strong> (<em>StringType</em>) &#8211; (Optional) Filename for the filtered data. If not specified,
+for an example filename=&#8217;test.mat&#8217;, the default output_filename would be &#8216;test_filtered.h5&#8217;</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">StringType &#8211; The output filename of the filtered data.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Usage:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pypore.file_converter</span> <span class="kn">as</span> <span class="nn">fC</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fC</span><span class="o">.</span><span class="n">filter_file</span><span class="p">(</span><span class="s">&quot;filename&quot;</span><span class="p">,</span> <span class="mf">1.e4</span><span class="p">,</span> <span class="s">&quot;output.h5&quot;</span><span class="p">)</span> <span class="o">//</span> <span class="nb">filter</span> <span class="n">at</span> <span class="mi">10</span><span class="n">kHz</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </div>
 
 
@@ -111,7 +152,10 @@
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="pyporegui.html" title="pyporegui package"
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pypore.version.html" title="pypore.version module"
              >next</a> |</li>
         <li class="right" >
           <a href="pypore.event_finder.html" title="pypore.event_finder module"
