@@ -22,16 +22,6 @@ Operating System :: MacOS
 with open('README.rst') as f:
     long_description = f.read()
 
-# extensions = []
-# if USE_CYTHON:
-#     extensions += [Extension('pypore.data_file_opener', ['pypore.data_file_opener.pyx']),
-#                    Extension('pypore.event_finder', ['pypore.event_finder.pyx'])]
-# else:
-#     extensions += [Extension('pypore.data_file_opener',
-#                              ['src/pypore/.pyxbld/temp.linux-x86_64-2.7/pyrex/pypore/data_file_opener.c']),
-#                    Extension('pypore.event_finder',
-#                              ['src/pypore/.pyxbld/temp.linux-x86_64-2.7/pyrex/pypore/event_finder.c'])]
-
 
 def is_package(path):
     return os.path.isfile(os.path.join(path, '__init__.py'))
