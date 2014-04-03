@@ -140,7 +140,7 @@ class TestCreateSpecifiedData(unittest.TestCase):
 
         sample_rate = 1.e5
         baseline = 1.0
-        n = 10000
+        n = 100000
         noise_scale = 1.
 
         create_specified_data(filename=filename, n=n, sample_rate=sample_rate, baseline=baseline,
