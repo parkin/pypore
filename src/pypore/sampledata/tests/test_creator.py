@@ -41,6 +41,32 @@ class TestCreateSpecifiedData(unittest.TestCase):
 
         os.remove(filename)
 
+    def test_opening_existing_filename_overwrite(self):
+        """
+        Tests that we can overwrite an existing filename if we use the overwrite parameter.
+        """
+        filename = os.path.join(DIRECTORY, TestCreateSpecifiedData.__name__ + "_test_opening_existing_filename.h5")
+
+        if os.path.exists(filename):
+            os.remove(filename)
+
+        # create a blank file
+        f = open(filename, mode='w')
+        f.close()
+
+        sample_rate = 1.e6
+        baseline = 0.2
+        n = 5000
+
+        data_should_be = np.zeros(n) + baseline
+
+        create_specified_data(filename=filename, n=n, sample_rate=sample_rate, baseline=baseline, noise_scale=0.0,
+                              events=[], overwrite=True)
+
+        self._test_params_equality(filename=filename, data_should_be=data_should_be, sample_rate=sample_rate)
+
+        os.remove(filename)
+
     def _test_params_equality(self, filename, data_should_be, sample_rate):
         reader = get_reader_from_filename(filename)
         data_all = reader.get_all_data()
