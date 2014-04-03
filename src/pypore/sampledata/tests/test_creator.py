@@ -7,7 +7,7 @@ from pypore.io import get_reader_from_filename
 from pypore.sampledata.creator import create_specified_data
 
 
-DIRECTORY = os.path.abspath(__file__)
+DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 
 class TestCreateSpecifiedData(unittest.TestCase):
@@ -17,7 +17,7 @@ class TestCreateSpecifiedData(unittest.TestCase):
         if os.path.exists(filename):
             os.remove(filename)
 
-        create_specified_data(filename)
+        create_specified_data(filename, n=100, sample_rate=10)
 
         self.assertTrue(os.path.exists(filename))
 
@@ -37,7 +37,7 @@ class TestCreateSpecifiedData(unittest.TestCase):
         f.close()
 
         # try to create a data set on the same file
-        self.assertRaises(IOError)
+        self.assertRaises(IOError, create_specified_data, filename, 100, 100.)
 
         os.remove(filename)
 
@@ -68,7 +68,8 @@ class TestCreateSpecifiedData(unittest.TestCase):
 
         data_should_be = np.zeros(n) + baseline
 
-        create_specified_data(n=n, sample_rate=sample_rate, baseline=baseline, noise_scale=0.0, events=np.zeros(0))
+        create_specified_data(filename=filename, n=n, sample_rate=sample_rate, baseline=baseline, noise_scale=0.0,
+                              events=[])
 
         self._test_params_equality(filename=filename, data_should_be=data_should_be, sample_rate=sample_rate)
 
@@ -95,7 +96,8 @@ class TestCreateSpecifiedData(unittest.TestCase):
         for event in events:
             data_should_be[event[0]:event[0] + event[1]] += event[2]
 
-        create_specified_data(n=n, sample_rate=sample_rate, baseline=baseline, noise_scale=0.0, events=events)
+        create_specified_data(filename=filename, n=n, sample_rate=sample_rate, baseline=baseline, noise_scale=0.0,
+                              events=events)
 
         self._test_params_equality(filename=filename, data_should_be=data_should_be, sample_rate=sample_rate)
 
@@ -112,10 +114,11 @@ class TestCreateSpecifiedData(unittest.TestCase):
 
         sample_rate = 1.e5
         baseline = 1.0
-        n = 5000
+        n = 10000
         noise_scale = 1.
 
-        create_specified_data(n=n, sample_rate=sample_rate, baseline=baseline, noise_scale=noise_scale, events=[])
+        create_specified_data(filename=filename, n=n, sample_rate=sample_rate, baseline=baseline,
+                              noise_scale=noise_scale, events=[])
 
         reader = get_reader_from_filename(filename)
         data_all = reader.get_all_data()
@@ -123,7 +126,7 @@ class TestCreateSpecifiedData(unittest.TestCase):
         reader.close()
 
         self.assertEqual(n, data.size, "Unexpected array size. Wanted {0}, got {1}.".format(n, data.size))
-        decimal = 2
+        decimal = 1
         mean = np.mean(data)
         self.assertAlmostEqual(baseline, mean, decimal,
                                "Unexpected baseline. Wanted {0}, got {1}. Tested to {2} decimals.".format(baseline,
