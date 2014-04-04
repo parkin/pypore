@@ -5,7 +5,7 @@ import numpy as np
 from pypore.io import get_reader_from_filename
 
 from pypore.sampledata.creator import create_specified_data
-#from pypore.sampledata.creator import create_random_data
+from pypore.sampledata.creator import create_random_data
 
 import inspect
 from functools import wraps
@@ -22,6 +22,7 @@ def _test_file_manager(directory):
 
     :param directory: Directory in which to save the file.
     """
+
     def real_dec(function):
         @wraps(function)
         def wrap(*args, **kwargs):
@@ -39,7 +40,9 @@ def _test_file_manager(directory):
             function(*args, filename=filename, **kwargs)
 
             os.remove(filename)
+
         return wrap
+
     return real_dec
 
 
@@ -59,84 +62,92 @@ def _test_params_equality(self, filename, data_should_be, sample_rate):
     np.testing.assert_array_equal(out_data, data_should_be)
 
 
-# class TestCreateRandomData(unittest.TestCase):
-#     def test_output_filename_correct(self):
-#         """
-#         Tests that the output filename is correct.
-#         """
-#         filename = TestCreateRandomData.__name__ + "_test_output_filename_correct.h5"
-#
-#         if os.path.exists(filename):
-#             os.remove(filename)
-#
-#         create_random_data(filename, n=100, sample_rate=10.)
-#
-#         self.assertTrue(os.path.exists(filename))
-#
-#         os.remove(filename)
-#
-#     def test_opening_existing_filename_raises(self):
-#         """
-#         Tests that trying to open an existing filename without setting overwrite=True will raise an IOError.
-#         """
-#         filename = os.path.join(DIRECTORY, TestCreateRandomData.__name__ + "_test_opening_existing_filename_raises.h5")
-#
-#         if os.path.exists(filename):
-#             os.remove(filename)
-#
-#         # create a blank file
-#         f = open(filename, mode='w')
-#         f.close()
-#
-#         self.assertRaises(IOError, create_random_data, filename, n=100, sample_rate=10.)
-#
-#         os.remove(filename)
-#
-#     def test_opening_existing_with_overwrite(self):
-#         """
-#         Tests that we can overwrite an existing file with overwrite=True
-#         """
-#         filename = os.path.join(DIRECTORY, TestCreateRandomData.__name__ + "_test_opening_existing_with_overwrite.h5")
-#
-#         if os.path.exists(filename):
-#             os.remove(filename)
-#
-#         # create a blank file
-#         f = open(filename, mode='w')
-#         f.close()
-#
-#         n = 100
-#         sample_rate = 1.e6
-#         baseline = 1.
-#
-#         data_should_be = np.zeros(n) + baseline
-#
-#         create_random_data(filename, n=n, sample_rate=sample_rate, overwrite=True)
-#
-#         _test_params_equality(filename=filename, data_should_be=data_should_be, sample_rate=sample_rate)
-#
-#         os.remove(filename)
-#
-#     def test_baseline_no_noise_no_events(self):
-#         """
-#         Tests that with only the baseline, we create the right data.
-#         """
-#         filename = os.path.join(DIRECTORY, TestCreateRandomData.__name__ + "_test_baseline_no_noise_no_events.h5")
-#
-#         if os.path.exists(filename):
-#             os.remove(filename)
-#
-#         n = 5000
-#         sample_rate = 1.e6
-#         baseline = 1.
-#
-#         data_should_be = np.zeros(n) + baseline
-#
-#         # TODO finish
+class TestCreateRandomData(unittest.TestCase):
+    @_test_file_manager('.')
+    def test_output_filename_correct(self, filename):
+        """
+        Tests that the output filename is correct.
+        """
+        create_random_data(filename, seconds=1., sample_rate=10.)
+
+        self.assertTrue(os.path.exists(filename))
+
+    @_test_file_manager(DIRECTORY)
+    def test_opening_existing_filename_raises(self, filename):
+        """
+        Tests that trying to open an existing filename without setting overwrite=True will raise an IOError.
+        """
+        # create a blank file
+        f = open(filename, mode='w')
+        f.close()
+
+        self.assertRaises(IOError, create_random_data, filename, seconds=1., sample_rate=10.)
+
+    @_test_file_manager(DIRECTORY)
+    def test_opening_existing_with_overwrite(self, filename):
+        """
+        Tests that we can overwrite an existing file with overwrite=True
+        """
+        # create a blank file
+        f = open(filename, mode='w')
+        f.close()
+
+        seconds = 1.
+        sample_rate = 1.
+        baseline = 1.
+
+        create_random_data(filename, seconds=seconds, sample_rate=sample_rate, baseline=baseline, overwrite=True)
+
+        self.assertTrue(os.path.exists(filename))
+
+    @_test_file_manager(DIRECTORY)
+    def test_baseline_no_noise_no_events(self, filename):
+        """
+        Tests that with only the baseline, we create the right data.
+        """
+        seconds = 1.
+        sample_rate = 1.e6
+        baseline = 1.
+
+        data_should_be = np.zeros(int(seconds / sample_rate)) + baseline
+
+        create_random_data(filename=filename, seconds=seconds, sample_rate=sample_rate, baseline=baseline)
+
+        _test_params_equality(self, filename, data_should_be, sample_rate)
+
+    @_test_file_manager(DIRECTORY)
+    def test_number_of_events(self, filename):
+        """
+        Tests that the number of events is roughly correct. The number of events should be random, which is why
+        only roughly.
+        """
+        seconds = 1.
+        sample_rate = 1.e6
+        baseline = 1.
+        event_rate = 10.
+
+        create_random_data(filename=filename, seconds=seconds, sample_rate=sample_rate, baseline=baseline,
+                           event_rate=event_rate)
+
+        from pypore.event_finder import find_events
+
+        event_database = find_events([filename])[0]
+
+        from pypore.filetypes.event_database import EventDatabase
+
+        ed = EventDatabase(event_database)
+
+        n_events = ed.get_event_table().nrows
+
+        n_events_should_be = event_rate * seconds
+
+        difference = abs(n_events - n_events_should_be)
+        self.assertLessEqual(difference, 3,
+                             "Unexpected number of events. Should be {0}, was {1}.".format(n_events_should_be,
+                                                                                           n_events))
 
 
 class TestCreateSpecifiedData(unittest.TestCase):
-
     @_test_file_manager('.')
     def test_output_filename_correct(self, filename):
         create_specified_data(filename, n=100, sample_rate=10)
