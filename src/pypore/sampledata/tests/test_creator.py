@@ -120,7 +120,7 @@ class TestCreateRandomData(unittest.TestCase):
         data_should_be = np.zeros(int(seconds * sample_rate)) + baseline
 
         create_random_data(filename=filename, seconds=seconds, sample_rate=sample_rate, baseline=baseline,
-                           event_rate=event_rate, event_duration=event_duration, event_depth=event_depth)
+                           event_rate=event_rate, event_durations=event_duration, event_depths=event_depth)
 
         _test_params_equality(self, filename, data_should_be, sample_rate)
 
@@ -140,8 +140,8 @@ class TestCreateRandomData(unittest.TestCase):
 
         n_events_returned = create_random_data(filename=filename, seconds=seconds, sample_rate=sample_rate,
                                                baseline=baseline, noise=noise,
-                                               event_rate=event_rate, event_duration=event_duration,
-                                               event_depth=event_depth)
+                                               event_rate=event_rate, event_durations=event_duration,
+                                               event_depths=event_depth)
 
         save_file_name = filename[:-len('.h5')] + 'Events.h5'
         if os.path.exists(save_file_name):
@@ -212,7 +212,7 @@ class TestCreateRandomData(unittest.TestCase):
 
         n_events_returned = create_random_data(filename, seconds=seconds, sample_rate=sample_rate,
                                                baseline=baseline, event_rate=event_rate,
-                                               event_duration=event_duration, event_depth=event_depth,
+                                               event_durations=event_duration, event_depths=event_depth,
                                                noise=noise)
 
         save_file_name = filename[:-len('.h5')] + 'Events.h5'
