@@ -143,7 +143,10 @@ class TestCreateRandomData(unittest.TestCase):
                                                event_rate=event_rate, event_duration=event_duration,
                                                event_depth=event_depth)
 
-        event_database = find_events([filename])[0]
+        save_file_name = filename[:-len('.h5')] + 'Events.h5'
+        if os.path.exists(save_file_name):
+            os.remove(save_file_name)
+        event_database = find_events([filename], save_file_names=[save_file_name])[0]
 
         ed = EventDatabase(event_database)
 
@@ -212,7 +215,10 @@ class TestCreateRandomData(unittest.TestCase):
                                                event_duration=event_duration, event_depth=event_depth,
                                                noise=noise)
 
-        event_database = find_events([filename])[0]
+        save_file_name = filename[:-len('.h5')] + 'Events.h5'
+        if os.path.exists(save_file_name):
+            os.remove(save_file_name)
+        event_database = find_events([filename], save_file_names=[save_file_name])[0]
 
         ed = EventDatabase(event_database)
 
