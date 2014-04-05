@@ -65,12 +65,14 @@ def create_random_data(filename, seconds, sample_rate, baseline=0.0, noise=None,
 
     event_count = 0
     if event_rate > 0:
+        i = 200
         mean_length = event_durations.mean() * sample_rate
         expected_events = seconds * event_rate
-        free_space = n_points - expected_events * mean_length
+        # Available space that is not events or the beginning of the data.
+        free_space = n_points - expected_events * mean_length - i
         event_probability = expected_events/free_space
+        # Use geometric distribution to find the next starting spot of an event.
         rv = geom(event_probability)
-        i = 200
         while i < n_points:
             # get next event start distance
             i += rv.rvs()
