@@ -158,9 +158,10 @@ class TestCreateRandomData(unittest.TestCase):
         self.assertLessEqual(difference, 30,
                              "Unexpected number of events. Should be {0}, was {1}.".format(n_events_should_be,
                                                                                            n_events))
-        self.assertEqual(n_events, n_events_returned,
-                         "Number of events returned from function different than actual value. "
-                         "Should be {0}, got {1}".format(n_events, n_events_returned))
+        diff = abs(n_events - n_events_returned)
+        self.assertLessEqual(diff, 1,
+                             "Number of events returned from function different than actual value. "
+                             "Should be {0}, got {1}".format(n_events, n_events_returned))
 
         ed.close()
         os.remove(event_database)
