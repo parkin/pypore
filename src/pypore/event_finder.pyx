@@ -473,10 +473,11 @@ cdef _lazy_load_find_events(AbstractReader reader, Parameters parameters, object
         event_cache_index = 0
 
     # Update the status_text one last time
-    recent_time = time.time() - time2
-    total_time = time.time() - time1
+    cdef double curr_time = time.time()
+    recent_time = curr_time - time2
+    total_time = curr_time - time1
     percent_done = 100. * (place_in_data + i) / points_per_channel_total
-    rate = (place_in_data + i - prev_i) / recent_time
+    rate = (place_in_data + i - prev_i + 1) / recent_time
     total_rate = (place_in_data + i) / total_time
     time_left = int((points_per_channel_total - (place_in_data + i)) / rate)
     status_text = "Event Count: %d Percent Done: %.2f Rate: %.2e pt/s Total Rate: %.2e pt/s Time Left: %s" % (
