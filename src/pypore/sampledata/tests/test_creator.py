@@ -130,10 +130,10 @@ class TestCreateRandomData(unittest.TestCase):
         Tests that the number of events is roughly correct. The number of events should be random, which is why
         only roughly.
         """
-        seconds = 1.
+        seconds = 5.
         sample_rate = 1.e6
         baseline = 1.
-        event_rate = 10.
+        event_rate = 50.
         event_duration = stats.norm(loc=100.e-6, scale=5.e-6)
         event_depth = stats.norm(loc=-1., scale=.05)
         noise = stats.norm(scale=0.02)
@@ -155,7 +155,7 @@ class TestCreateRandomData(unittest.TestCase):
         n_events_should_be = event_rate * seconds
 
         difference = abs(n_events - n_events_should_be)
-        self.assertLessEqual(difference, 3,
+        self.assertLessEqual(difference, 30,
                              "Unexpected number of events. Should be {0}, was {1}.".format(n_events_should_be,
                                                                                            n_events))
         self.assertEqual(n_events, n_events_returned,
