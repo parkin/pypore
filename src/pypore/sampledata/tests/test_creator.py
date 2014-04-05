@@ -1,11 +1,14 @@
 import unittest
 import os
 
+import scipy.stats as stats
 import numpy as np
 from pypore.io import get_reader_from_filename
 
 from pypore.sampledata.creator import create_specified_data
 from pypore.sampledata.creator import create_random_data
+from pypore.event_finder import find_events
+from pypore.filetypes.event_database import EventDatabase
 
 import inspect
 from functools import wraps
@@ -109,9 +112,15 @@ class TestCreateRandomData(unittest.TestCase):
         sample_rate = 1.e6
         baseline = 1.
 
+        event_rate = 0
+
+        event_duration = stats.norm(loc=100.e-6, scale=10.e-6)
+        event_depth = stats.norm(loc=.5, scale=.05)
+
         data_should_be = np.zeros(int(seconds / sample_rate)) + baseline
 
-        create_random_data(filename=filename, seconds=seconds, sample_rate=sample_rate, baseline=baseline)
+        create_random_data(filename=filename, seconds=seconds, sample_rate=sample_rate, baseline=baseline,
+                           event_rate=event_rate, event_duration=event_duration, event_depth=event_depth)
 
         _test_params_equality(self, filename, data_should_be, sample_rate)
 
@@ -125,19 +134,20 @@ class TestCreateRandomData(unittest.TestCase):
         sample_rate = 1.e6
         baseline = 1.
         event_rate = 10.
+        event_duration = stats.norm(loc=100.e-6, scale=5.e-6)
+        event_depth = stats.norm(loc=-1., scale=.05)
+        noise = stats.norm(scale=0.02)
 
-        create_random_data(filename=filename, seconds=seconds, sample_rate=sample_rate, baseline=baseline,
-                           event_rate=event_rate)
-
-        from pypore.event_finder import find_events
+        n_events_returned = create_random_data(filename=filename, seconds=seconds, sample_rate=sample_rate,
+                                               baseline=baseline, noise=noise,
+                                               event_rate=event_rate, event_duration=event_duration,
+                                               event_depth=event_depth)
 
         event_database = find_events([filename])[0]
 
-        from pypore.filetypes.event_database import EventDatabase
-
         ed = EventDatabase(event_database)
 
-        n_events = ed.get_event_table().nrows
+        n_events = ed.get_event_count()
 
         n_events_should_be = event_rate * seconds
 
@@ -145,6 +155,89 @@ class TestCreateRandomData(unittest.TestCase):
         self.assertLessEqual(difference, 3,
                              "Unexpected number of events. Should be {0}, was {1}.".format(n_events_should_be,
                                                                                            n_events))
+        self.assertEqual(n_events, n_events_returned,
+                         "Number of events returned from function different than actual value. "
+                         "Should be {0}, got {1}".format(n_events, n_events_returned))
+
+        ed.close()
+        os.remove(event_database)
+
+    @_test_file_manager(DIRECTORY)
+    def test_noise(self, filename):
+        """
+        Tests that the noise is added correctly(its mean and std_dev are correct).
+        """
+        seconds = 1.
+        sample_rate = 1.e6
+        baseline = 1.
+        noise_loc = 1.
+        noise_scale = 0.6
+        noise = stats.norm(loc=noise_loc, scale=noise_scale)
+
+        create_random_data(filename, seconds=seconds, sample_rate=sample_rate, baseline=baseline,
+                           noise=noise)
+
+        reader = get_reader_from_filename(filename)
+        data_all = reader.get_all_data()
+        data = data_all[0]
+
+        mean = np.mean(data)
+        mean_should_be = baseline + noise_loc
+        self.assertAlmostEqual(mean, mean_should_be, 1,
+                               "Unexpected mean. Wanted {0}, got {1}.".format(mean_should_be, mean))
+
+        std_dev = np.std(data)
+        self.assertAlmostEqual(noise_scale, std_dev, 1, "Unexpected standard deviation.  "
+                                                        "Wanted {0}, got {1}".format(noise_scale, std_dev))
+
+    @_test_file_manager(DIRECTORY)
+    def test_event_params(self, filename):
+        """
+        Tests that setting the event depth and duration give correct values.
+        """
+        seconds = 5.
+        sample_rate = 1.e6
+        baseline = 10.
+        event_rate = 100.
+        event_duration_loc = 1.e-4
+        event_duration_scale = 5.e-6
+        event_duration = stats.norm(loc=event_duration_loc, scale=event_duration_scale)
+        event_depth_loc = -1.
+        event_depth_scale = .05
+        event_depth = stats.norm(loc=-1., scale=.05)
+        noise = stats.norm(scale=0.01)
+
+        n_events_returned = create_random_data(filename, seconds=seconds, sample_rate=sample_rate,
+                                               baseline=baseline, event_rate=event_rate,
+                                               event_duration=event_duration, event_depth=event_depth,
+                                               noise=noise)
+
+        event_database = find_events([filename])[0]
+
+        ed = EventDatabase(event_database)
+
+        count = ed.get_event_count()
+        count_should_be = event_rate * seconds
+        diff = abs(count - count_should_be)
+        self.assertLessEqual(diff, 100, "Unexpected number of events. "
+                                        "Expected {0}, was {1}.".format(count_should_be, count))
+
+        table_sample_rate = ed.get_sample_rate()
+        durations = [x['event_length'] / table_sample_rate for x in ed.get_event_table().iterrows()]
+        depths = [x['current_blockage'] for x in ed.get_event_table().iterrows()]
+
+        mean_duration = np.mean(durations)
+        self.assertAlmostEqual(event_duration_loc, mean_duration, 5, "Unexpected mean event duration.  "
+                                                                     "Wanted {0}, got {1}.".format(event_duration_loc,
+                                                                                                   mean_duration))
+
+        mean_depth = np.mean(depths)
+        self.assertAlmostEqual(event_depth_loc, mean_depth, 1, "Unexpected mean event depth. "
+                                                               "Wanted {0}, got {1}.".format(event_depth_loc,
+                                                                                             mean_depth))
+
+        ed.close()
+        os.remove(event_database)
 
 
 class TestCreateSpecifiedData(unittest.TestCase):
