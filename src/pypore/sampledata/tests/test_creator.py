@@ -117,7 +117,7 @@ class TestCreateRandomData(unittest.TestCase):
         event_duration = stats.norm(loc=100.e-6, scale=10.e-6)
         event_depth = stats.norm(loc=.5, scale=.05)
 
-        data_should_be = np.zeros(int(seconds / sample_rate)) + baseline
+        data_should_be = np.zeros(int(seconds * sample_rate)) + baseline
 
         create_random_data(filename=filename, seconds=seconds, sample_rate=sample_rate, baseline=baseline,
                            event_rate=event_rate, event_duration=event_duration, event_depth=event_depth)
