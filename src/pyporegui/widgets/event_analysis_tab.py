@@ -83,7 +83,7 @@ class EventAnalysisTab(_ThreadManager, QtGui.QSplitter):
         items = self.list_filter_widget.selectedItems()
         for item in items:
             index = self.list_filter_widget.indexFromItem(item).row()
-            self.event_analysis_plot_widget.removeFilter(index)
+            self.event_analysis_plot_widget.remove_filter(index)
             self.list_filter_widget.takeItem(index)
 
     def _on_event_file_selection_changed(self):
