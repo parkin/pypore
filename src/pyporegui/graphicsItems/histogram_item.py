@@ -5,15 +5,14 @@ from pyqtgraph.graphicsItems.PlotCurveItem import PlotCurveItem
 
 
 class HistogramItem(PlotItem):
-
-    def __init__(self, *args, **kargs):
+    def __init__(self, *args, **kwargs):
         self.rotate = False
-        if 'rotate' in kargs:
-            self.rotate = kargs['rotate']
-            del kargs['rotate']  # if you don't delete, MyHistogramItem will start with
-                                # a PlotDataItem for some reason
+        if 'rotate' in kwargs:
+            self.rotate = kwargs['rotate']
+            del kwargs['rotate']  # if you don't delete, MyHistogramItem will start with
+            # a PlotDataItem for some reason
 
-        super(HistogramItem, self).__init__(*args, **kargs)
+        super(HistogramItem, self).__init__(*args, **kwargs)
 
         self.data_array = []
         self.bins = np.zeros(1)
@@ -49,7 +48,7 @@ class HistogramItem(PlotItem):
             self.minimum = minimum
             self.maximum = maximum
             self.n_bins = n_bins
-            self.bins = np.linspace(self.minimum, self.maximum, self.n_bins + 1)
+            self.bins = np.linspace(self.minimum, self.maximum, int(self.n_bins + 1))
 
         # re-plot the other histograms with this new
         # binning if needed
@@ -73,6 +72,7 @@ class HistogramItem(PlotItem):
         if color is None:
             color = QtGui.QColor(0, 0, 255, 128)
 
+        print "bins:", self.bins
         y, x = np.histogram(data, bins=self.bins)
 
         if self.rotate:
