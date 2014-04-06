@@ -5,15 +5,14 @@ from pyqtgraph.graphicsItems.PlotCurveItem import PlotCurveItem
 
 
 class HistogramItem(PlotItem):
-
-    def __init__(self, *args, **kargs):
+    def __init__(self, *args, **kwargs):
         self.rotate = False
-        if 'rotate' in kargs:
-            self.rotate = kargs['rotate']
-            del kargs['rotate']  # if you don't delete, MyHistogramItem will start with
-                                # a PlotDataItem for some reason
+        if 'rotate' in kwargs:
+            self.rotate = kwargs['rotate']
+            del kwargs['rotate']  # if you don't delete, MyHistogramItem will start with
+            # a PlotDataItem for some reason
 
-        super(HistogramItem, self).__init__(*args, **kargs)
+        super(HistogramItem, self).__init__(*args, **kwargs)
 
         self.data_array = []
         self.bins = np.zeros(1)
@@ -49,7 +48,7 @@ class HistogramItem(PlotItem):
             self.minimum = minimum
             self.maximum = maximum
             self.n_bins = n_bins
-            self.bins = np.linspace(self.minimum, self.maximum, self.n_bins + 1)
+            self.bins = np.linspace(self.minimum, self.maximum, int(self.n_bins + 1))
 
         # re-plot the other histograms with this new
         # binning if needed
@@ -73,7 +72,10 @@ class HistogramItem(PlotItem):
         if color is None:
             color = QtGui.QColor(0, 0, 255, 128)
 
-        y, x = np.histogram(data, bins=self.bins)
+        # Copy self.bins, otherwise it is returned as x, which we can accidentally modify
+        # by x *= -1, leaving self.bins modified.
+        bins = self.bins.copy()
+        y, x = np.histogram(data, bins=bins)
 
         if self.rotate:
             x *= -1.
@@ -88,7 +90,10 @@ class HistogramItem(PlotItem):
         self.bins = np.linspace(self.minimum, self.maximum, self.n_bins + 1)
         items = self.listDataItems()
         for i, item in enumerate(items):
-            y, x = np.histogram(self.data_array[i], bins=self.bins)
+            # Copy self.bins, otherwise it is returned as x, which we can accidentally modify
+            # by x *= -1, leaving self.bins modified.
+            bins = self.bins.copy()
+            y, x = np.histogram(self.data_array[i], bins=bins)
             if self.rotate:
                 x *= -1.
             item.setData(x, y)
