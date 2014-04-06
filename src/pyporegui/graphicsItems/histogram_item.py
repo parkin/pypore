@@ -72,8 +72,10 @@ class HistogramItem(PlotItem):
         if color is None:
             color = QtGui.QColor(0, 0, 255, 128)
 
-        print "bins:", self.bins
-        y, x = np.histogram(data, bins=self.bins)
+        # Copy self.bins, otherwise it is returned as x, which we can accidentally modify
+        # by x *= -1, leaving self.bins modified.
+        bins = self.bins.copy()
+        y, x = np.histogram(data, bins=bins)
 
         if self.rotate:
             x *= -1.
@@ -88,7 +90,10 @@ class HistogramItem(PlotItem):
         self.bins = np.linspace(self.minimum, self.maximum, self.n_bins + 1)
         items = self.listDataItems()
         for i, item in enumerate(items):
-            y, x = np.histogram(self.data_array[i], bins=self.bins)
+            # Copy self.bins, otherwise it is returned as x, which we can accidentally modify
+            # by x *= -1, leaving self.bins modified.
+            bins = self.bins.copy()
+            y, x = np.histogram(self.data_array[i], bins=bins)
             if self.rotate:
                 x *= -1.
             item.setData(x, y)
