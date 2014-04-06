@@ -18,7 +18,7 @@ class EventAnalysisTab(_ThreadManager, QtGui.QSplitter):
         self._parent = parent
 
         options = self._create_event_analysis_options()
-        self.event_analysis_widget = EventAnalysisPlotWidget()
+        self.event_analysis_plot_widget = EventAnalysisPlotWidget()
 
         # Put everything in baseline_filter_parameter scroll area
         scroll_options = QtGui.QScrollArea()
@@ -27,7 +27,7 @@ class EventAnalysisTab(_ThreadManager, QtGui.QSplitter):
         scroll_plots.setWidgetResizable(True)
 
         scroll_options.setWidget(options)
-        scroll_plots.setWidget(self.event_analysis_widget)
+        scroll_plots.setWidget(self.event_analysis_plot_widget)
 
         self.addWidget(scroll_options)
         self.addWidget(scroll_plots)
@@ -55,7 +55,7 @@ class EventAnalysisTab(_ThreadManager, QtGui.QSplitter):
         item = FilterListItem(file_names, **params)
         self.list_filter_widget.addItem(item)
 
-        self.event_analysis_widget.add_selections(file_names, params)
+        self.event_analysis_plot_widget.add_selections(file_names, params)
 
     def _get_current_event_analysis_params(self):
         params = {'color': self.event_color}
@@ -83,7 +83,7 @@ class EventAnalysisTab(_ThreadManager, QtGui.QSplitter):
         items = self.list_filter_widget.selectedItems()
         for item in items:
             index = self.list_filter_widget.indexFromItem(item).row()
-            self.event_analysis_widget.removeFilter(index)
+            self.event_analysis_plot_widget.removeFilter(index)
             self.list_filter_widget.takeItem(index)
 
     def _on_event_file_selection_changed(self):
