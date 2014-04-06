@@ -42,7 +42,8 @@ def _test_file_manager(directory):
 
             function(*args, filename=filename, **kwargs)
 
-            os.remove(filename)
+            if os.path.exists(filename):
+                os.remove(filename)
 
         return wrap
 
@@ -137,34 +138,52 @@ class TestCreateRandomData(unittest.TestCase):
         event_duration = stats.norm(loc=100.e-6, scale=5.e-6)
         event_depth = stats.norm(loc=-1., scale=.05)
         noise = stats.norm(scale=0.02)
-
-        n_events_returned = create_random_data(filename=filename, seconds=seconds, sample_rate=sample_rate,
-                                               baseline=baseline, noise=noise,
-                                               event_rate=event_rate, event_durations=event_duration,
-                                               event_depths=event_depth)
-
-        save_file_name = filename[:-len('.h5')] + 'Events.h5'
-        if os.path.exists(save_file_name):
-            os.remove(save_file_name)
-        event_database = find_events([filename], save_file_names=[save_file_name])[0]
-
-        ed = EventDatabase(event_database)
-
-        n_events = ed.get_event_count()
-
         n_events_should_be = event_rate * seconds
 
-        difference = abs(n_events - n_events_should_be)
-        self.assertLessEqual(difference, 30,
-                             "Unexpected number of events. Should be {0}, was {1}.".format(n_events_should_be,
-                                                                                           n_events))
-        diff = abs(n_events - n_events_returned)
-        self.assertLessEqual(diff, 1,
-                             "Number of events returned from function different than actual value. "
-                             "Should be {0}, got {1}".format(n_events, n_events_returned))
+        # Check that setting the event rate gives correct number of events.
 
-        ed.close()
-        os.remove(event_database)
+        n_events_returned_arr = []
+        n_events_found_arr = []
+        # create a list of file_names so we can average the number of events.
+        for i in xrange(10):
+            name = filename[:-len('.h5')] + '_' + str(i) + '.h5'
+            if os.path.exists(name):
+                os.remove(name)
+            n_e_r = create_random_data(filename=name, seconds=seconds, sample_rate=sample_rate,
+                                       baseline=baseline, noise=noise,
+                                       event_rate=event_rate, event_durations=event_duration,
+                                       event_depths=event_depth)
+            n_events_returned_arr.append(n_e_r)
+
+            save_file_name = name[:-len('.h5')] + '_Events.h5'
+            if os.path.exists(save_file_name):
+                os.remove(save_file_name)
+            event_database = find_events([name], save_file_names=[save_file_name])[0]
+
+            ed = EventDatabase(event_database)
+
+            n_events_found = ed.get_event_count()
+
+            n_events_found_arr.append(n_events_found)
+
+            os.remove(name)
+            ed.close()
+            os.remove(event_database)
+
+        mean_event_returned = np.mean(n_events_returned_arr)
+        difference = abs(mean_event_returned - n_events_should_be)
+        self.assertLessEqual(difference, 10,
+                             "Unexpected mean number of events returned from function. "
+                             "Should be {0}, was {1}.".format(n_events_should_be,
+                                                              mean_event_returned))
+
+        mean_events_found = np.mean(n_events_found_arr)
+        difference = abs(mean_events_found - mean_event_returned)
+        self.assertLessEqual(difference, 5,
+                             "Unexpected mean number of events found. "
+                             "Should be {0}, was {1}.".format(mean_event_returned,
+                                                              mean_events_found))
+
 
     @_test_file_manager(DIRECTORY)
     def test_noise(self, filename):
