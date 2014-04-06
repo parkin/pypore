@@ -193,6 +193,7 @@ class TestCreateRandomData(unittest.TestCase):
         std_dev = np.std(data)
         self.assertAlmostEqual(noise_scale, std_dev, 1, "Unexpected standard deviation.  "
                                                         "Wanted {0}, got {1}".format(noise_scale, std_dev))
+        reader.close()
 
     @_test_file_manager(DIRECTORY)
     def test_event_params(self, filename):
