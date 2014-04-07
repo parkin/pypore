@@ -3,51 +3,15 @@ import os
 
 import scipy.stats as stats
 import numpy as np
-from pypore.io import get_reader_from_filename
+from pypore.event_finder import find_events
 
+from pypore.io import get_reader_from_filename
 from pypore.sampledata.creator import create_specified_data
 from pypore.sampledata.creator import create_random_data
-from pypore.event_finder import find_events
 from pypore.filetypes.event_database import EventDatabase
-
-import inspect
-from functools import wraps
+from pypore.tests.util import _test_file_manager
 
 DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-
-
-def _test_file_manager(directory):
-    """
-    Decorator.
-
-    Creates a test filename based on the decorated function's name. Makes sure this file is removed before and after
-    the decorated function is called. Calls the decorated function with an extra named parameter filename.
-
-    :param directory: Directory in which to save the file.
-    """
-
-    def real_dec(function):
-        @wraps(function)
-        def wrap(*args, **kwargs):
-            arg_spec = inspect.getargspec(function)
-            filename = ""
-            if 'self' in arg_spec.args:
-                filename += args[0].__class__.__name__ + "_"
-            filename += function.__name__ + '.h5'
-
-            filename = os.path.join(directory, filename)
-
-            if os.path.exists(filename):
-                os.remove(filename)
-
-            function(*args, filename=filename, **kwargs)
-
-            if os.path.exists(filename):
-                os.remove(filename)
-
-        return wrap
-
-    return real_dec
 
 
 def _test_params_equality(self, filename, data_should_be, sample_rate):
