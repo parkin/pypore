@@ -34,8 +34,8 @@ class TestChimeraReader(unittest.TestCase):
         self.assertEqual(len(data_all), 1, 'Too many data channels returned.')
         data = data_all[0]
         self.assertEqual(data.size, 10, 'Wrong data size returned.')
-        self.assertAlmostEqual(data[0], 1.07818604, 7)
-        self.assertAlmostEqual(data[9], 1.11694336, 7)
+        self.assertAlmostEqual(data[0], 17.45518, 3)
+        self.assertAlmostEqual(data[9], 18.0743, 3)
 
     def test_open_chimera_data(self):
         # Make sure path to chimera file is correct.
