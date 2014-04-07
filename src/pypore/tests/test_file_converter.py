@@ -209,7 +209,7 @@ class TestFilterFile(unittest.TestCase):
         baseline = np.mean(data[:150])
 
         # Check at different filter frequencies and re-sample rates
-        for rates in ([1.e4, 1.e5], [1.e4, 0], [5.e5, 4.e6], [7.7e4, 1.e6]):
+        for rates in ([1.e4, 1.e6], [1.e4, 0], [5.e5, 4.e6], [7.7e4, 1.e6]):
             filter_freq = rates[0]
             re_sample_rate = rates[1]
 
