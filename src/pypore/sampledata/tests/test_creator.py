@@ -1,3 +1,4 @@
+from multiprocessing import Pool
 import unittest
 import os
 
@@ -28,6 +29,41 @@ def _test_params_equality(self, filename, data_should_be, sample_rate):
                      "Sample rates not equal. Wanted {0}, got {1}.".format(sample_rate, out_sample_rate))
 
     np.testing.assert_array_equal(out_data, data_should_be)
+
+
+def _test_number_of_events_help(name):
+    # Need to seed, otherwise each process will generate the same random data!
+    np.random.seed()
+    # Check that setting the event rate gives correct number of events.
+    seconds = 5.
+    sample_rate = 1.e6
+    baseline = 1.
+    event_rate = 50.
+    event_duration = stats.norm(loc=100.e-6, scale=5.e-6)
+    event_depth = stats.norm(loc=-1., scale=.05)
+    noise = stats.norm(scale=0.02)
+    # create a list of file_names so we can average the number of events.
+    if os.path.exists(name):
+        os.remove(name)
+    n_e_r = create_random_data(filename=name, seconds=seconds, sample_rate=sample_rate,
+                               baseline=baseline, noise=noise,
+                               event_rate=event_rate, event_durations=event_duration,
+                               event_depths=event_depth)
+
+    save_file_name = name[:-len('.h5')] + '_Events.h5'
+    if os.path.exists(save_file_name):
+        os.remove(save_file_name)
+    event_database = find_events([name], save_file_names=[save_file_name])[0]
+
+    ed = EventDatabase(event_database)
+
+    n_events_found = ed.get_event_count()
+
+    os.remove(name)
+    ed.close()
+    os.remove(event_database)
+
+    return n_e_r, n_events_found, name
 
 
 class TestCreateRandomData(unittest.TestCase):
@@ -108,31 +144,24 @@ class TestCreateRandomData(unittest.TestCase):
 
         n_events_returned_arr = []
         n_events_found_arr = []
+
+        trials = 10
+        p = Pool(trials)
+
+        args = []
         # create a list of file_names so we can average the number of events.
         for i in xrange(10):
             name = filename[:-len('.h5')] + '_' + str(i) + '.h5'
-            if os.path.exists(name):
-                os.remove(name)
-            n_e_r = create_random_data(filename=name, seconds=seconds, sample_rate=sample_rate,
-                                       baseline=baseline, noise=noise,
-                                       event_rate=event_rate, event_durations=event_duration,
-                                       event_depths=event_depth)
-            n_events_returned_arr.append(n_e_r)
+            args.append(name)
 
-            save_file_name = name[:-len('.h5')] + '_Events.h5'
-            if os.path.exists(save_file_name):
-                os.remove(save_file_name)
-            event_database = find_events([name], save_file_names=[save_file_name])[0]
+        x = p.map(_test_number_of_events_help, args)
 
-            ed = EventDatabase(event_database)
+        print "result:", x
 
-            n_events_found = ed.get_event_count()
-
-            n_events_found_arr.append(n_events_found)
-
-            os.remove(name)
-            ed.close()
-            os.remove(event_database)
+        for thing in x:
+            print "ner:", thing[0], "nef:", thing[1], "name:", thing[2]
+            n_events_returned_arr.append(thing[0])
+            n_events_found_arr.append(thing[1])
 
         mean_event_returned = np.mean(n_events_returned_arr)
         difference = abs(mean_event_returned - n_events_should_be)
@@ -147,7 +176,6 @@ class TestCreateRandomData(unittest.TestCase):
                              "Unexpected mean number of events found. "
                              "Should be {0}, was {1}.".format(mean_event_returned,
                                                               mean_events_found))
-
 
     @_test_file_manager(DIRECTORY)
     def test_noise(self, filename):
