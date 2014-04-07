@@ -131,6 +131,8 @@ class TestCreateRandomData(unittest.TestCase):
         Tests that the number of events is roughly correct. The number of events should be random, which is why
         only roughly.
         """
+        # NOTE: The below parameters are copied above in _test_number_of_events_help, so
+        # changing these below will not do anything! See above!
         seconds = 5.
         sample_rate = 1.e6
         baseline = 1.
