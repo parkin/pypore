@@ -56,7 +56,7 @@ def filter_file(filename, filter_frequency, out_sample_rate, output_filename=Non
     Usage:
 
     >>> import pypore.file_converter as fC
-    >>> fC.filter_file("filename", 1.e4, "output.h5") // filter at 10kHz
+    >>> fC.filter_file("filename", 1.e4, 1.e5, "output.h5") // filter at 10kHz, resample at 100kHz
     """
     reader = get_reader_from_filename(filename)
 
