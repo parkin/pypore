@@ -11,5 +11,8 @@ cdef class ChimeraReader(AbstractReader):
     # parameters from the specsfile
     cdef public long adc_bits
     cdef public double adc_v_ref
+    cdef public double current_offset
+    cdef public double tia_gain
+    cdef public double pre_adc_gain
     cdef public long bit_mask
     cdef public double decimate_sample_rate
