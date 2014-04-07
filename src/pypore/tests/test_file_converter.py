@@ -160,7 +160,7 @@ class TestFilterFile(unittest.TestCase):
         Tests that we can successfully set the output sample rate, and the number of data points changes correctly.
         """
         data_file_names = [os.path.join(self.directory, 'testDataFiles', 'chimera_1event.log'),
-                      os.path.join(self.directory, 'testDataFiles', 'chimera_1event_2levels.log')]
+                           os.path.join(self.directory, 'testDataFiles', 'chimera_1event_2levels.log')]
 
         for data_filename in data_file_names:
             # Open a reader and read the original sample rate
@@ -193,6 +193,42 @@ class TestFilterFile(unittest.TestCase):
                                                                                                       out_sample_rate))
 
                 os.remove(out_filename)
+
+    @_test_file_manager(DIRECTORY)
+    def test_filtered_baseline(self, filename):
+        """
+        Tests that the filtered baseline is the same as the unfiltered.
+        """
+        data_filename = os.path.join(DIRECTORY, 'testDataFiles', 'chimera_1event.log')
+
+        reader = get_reader_from_filename(data_filename)
+        data_all = reader.get_all_data()
+        data = data_all[0]
+        reader.close()
+
+        baseline = np.mean(data[:150])
+
+        # Check at different filter frequencies and re-sample rates
+        for rates in ([1.e4, 1.e6], [1.e4, 0], [5.e5, 4.e6], [7.7e4, 1.e6]):
+            filter_freq = rates[0]
+            re_sample_rate = rates[1]
+
+            out_filename = filter_file(data_filename, filter_frequency=filter_freq, out_sample_rate=re_sample_rate,
+                                       output_filename=filename)
+
+            reader = get_reader_from_filename(out_filename)
+            data2 = reader.get_all_data()[0]
+            reader.close()
+
+            # Note we re-sampled, which is why only take 30 data points.
+            baseline2 = np.mean(data2[:20])
+
+            ratio = abs((baseline - baseline2) / baseline)
+            print "ratio:", ratio
+            self.assertLessEqual(ratio, 0.05, "Filtered baseline different from original. "
+                                              "Should be {0}, got {1}.".format(baseline, baseline2))
+
+            os.remove(out_filename)
 
 
 if __name__ == "__main__":
