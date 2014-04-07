@@ -226,8 +226,10 @@ class TestFilterFile(unittest.TestCase):
             # Note we re-sampled, which is why only take 30 data points.
             baseline2 = np.mean(data2[:20])
 
-            self.assertAlmostEqual(baseline, baseline2, 1, "Filtered baseline different from original. "
-                                                           "Should be {0}, got {1}.".format(baseline, baseline2))
+            ratio = abs((baseline - baseline2) / baseline)
+            print "ratio:", ratio
+            self.assertLessEqual(ratio, 0.05, "Filtered baseline different from original. "
+                                              "Should be {0}, got {1}.".format(baseline, baseline2))
 
             os.remove(out_filename)
 
