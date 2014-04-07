@@ -9,6 +9,9 @@ from pypore.file_converter import convert_file
 
 import numpy as np
 from pypore.io.data_file_reader import DataFileReader
+from pypore.tests.util import _test_file_manager
+
+DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 
 class TestFileConverter(unittest.TestCase):
@@ -18,34 +21,30 @@ class TestFileConverter(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_convert_file_set_output_filename(self):
+    @_test_file_manager(DIRECTORY)
+    def test_convert_file_set_output_filename(self, filename):
         """
         Tests that the output filename can be set correctly.
         """
-        filename = os.path.dirname(os.path.realpath(__file__))
-        filename = os.path.join(filename, 'testDataFiles', 'chimera_1event.log')
+        data_filename = os.path.dirname(os.path.realpath(__file__))
+        data_filename = os.path.join(data_filename, 'testDataFiles', 'chimera_1event.log')
 
-        output_filename_set = "test_convert_file_set_output_filename.h5"
-
-        output_filename = convert_file(filename, output_filename=output_filename_set)
+        output_filename = convert_file(data_filename, output_filename=filename)
 
         # Test that we can set the output filename
-        self.assertEqual(output_filename, output_filename_set, "output_filename not correct")
+        self.assertEqual(output_filename, filename, "output_filename not correct")
 
-        os.remove(output_filename)
-
-    def test_convert_chimera_file_equality(self):
+    @_test_file_manager(DIRECTORY)
+    def test_convert_chimera_file_equality(self, filename):
         """
         Test that the original/converted matrices and sample rates are the same for one-channel data.
         """
-        filename = os.path.dirname(os.path.realpath(__file__))
-        filename = os.path.join(filename, 'testDataFiles', 'chimera_1event.log')
+        data_filename = os.path.dirname(os.path.realpath(__file__))
+        data_filename = os.path.join(data_filename, 'testDataFiles', 'chimera_1event.log')
 
-        output_filename_set = "test_convert_chimera_file_equality.h5"
+        output_filename = convert_file(data_filename, output_filename=filename)
 
-        output_filename = convert_file(filename, output_filename=output_filename_set)
-
-        orig_reader = get_reader_from_filename(filename)
+        orig_reader = get_reader_from_filename(data_filename)
         orig_data_all = orig_reader.get_all_data()
         orig_sample_rate = orig_reader.get_sample_rate()
 
@@ -69,8 +68,6 @@ class TestFileConverter(unittest.TestCase):
         orig_reader.close()
         out_reader.close()
 
-        os.remove(output_filename)
-
 
 from pypore.file_converter import filter_file
 
@@ -83,14 +80,14 @@ class TestFilterFile(unittest.TestCase):
         """
         Tests that the default output filename of :func:`filter_file <pypore.file_converter.filter_file>` is correct.
         """
-        filename = os.path.join(self.directory, 'testDataFiles', 'chimera_1event.log')
+        data_filename = os.path.join(self.directory, 'testDataFiles', 'chimera_1event.log')
 
         output_filename_should_be = os.path.join(self.directory, 'testDataFiles', 'chimera_1event_filtered.h5')
 
         if os.path.exists(output_filename_should_be):
             os.remove(output_filename_should_be)
 
-        out_filename = filter_file(filename, 10.e4, 100.e4)
+        out_filename = filter_file(data_filename, 10.e4, 100.e4)
 
         self.assertEqual(out_filename, output_filename_should_be,
                          msg="Default filename incorrect. Was {0}, should be {1}.".format(out_filename,
@@ -102,29 +99,22 @@ class TestFilterFile(unittest.TestCase):
 
         os.remove(out_filename)
 
-    def test_set_output_name(self):
+    @_test_file_manager(DIRECTORY)
+    def test_set_output_name(self, filename):
         """
         Tests that setting the output filename of :func:`filter_file <pypore.file_converter.filter_file>` is correct.
         """
-        filename = os.path.join(self.directory, 'testDataFiles', 'chimera_1event.log')
+        data_filename = os.path.join(self.directory, 'testDataFiles', 'chimera_1event.log')
 
-        set_out_filename = os.path.join(self.directory, 'testDataFiles', 'test_set_output_name.h5')
+        out_filename = filter_file(data_filename, 10.e4, 100.e4, output_filename=filename)
 
-        #remove if exists
-        if os.path.exists(set_out_filename):
-            os.remove(set_out_filename)
-
-        out_filename = filter_file(filename, 10.e4, 100.e4, output_filename=set_out_filename)
-
-        self.assertEqual(set_out_filename, out_filename,
-                         "Output filename not set correctly. Was {0}, should be {1}".format(set_out_filename,
+        self.assertEqual(filename, out_filename,
+                         "Output filename not set correctly. Was {0}, should be {1}".format(filename,
                                                                                             out_filename))
 
         # Make sure the file actually exists. Try opening it.
         f = open(out_filename)
         f.close()
-
-        os.remove(out_filename)
 
     def _test_out_sample_rate_data_len_equality(self, orig_data, orig_sample_rate, out_filename, sample_rate):
         out_reader = get_reader_from_filename(out_filename)
@@ -143,53 +133,45 @@ class TestFilterFile(unittest.TestCase):
                              orig_data[0].size, out_data[0].size))
         return out_data
 
-    def test_same_sample_rate_no_change(self):
+    @_test_file_manager(DIRECTORY)
+    def test_same_sample_rate_no_change(self, filename):
         """
         Tests that if we set the output sample rate to < 0, the sampling doesn't change, but the file is filtered.
         """
-        filename = os.path.join(self.directory, 'testDataFiles', 'chimera_1event.log')
-
-        set_out_filename = os.path.join(self.directory, 'testDataFiles', 'test_same_sample_rate_no_change.h5')
-
-        if os.path.exists(set_out_filename):
-            os.remove(set_out_filename)
+        data_filename = os.path.join(self.directory, 'testDataFiles', 'chimera_1event.log')
 
         # Open a reader and read the original sample rate
-        orig_reader = get_reader_from_filename(filename)
+        orig_reader = get_reader_from_filename(data_filename)
         orig_sample_rate = orig_reader.get_sample_rate()
         orig_data = orig_reader.get_all_data()
         orig_reader.close()
 
         for sample_rate in (-1, 0., orig_sample_rate, orig_sample_rate + 100.):
             # filter the file, with negative sample rate
-            out_filename = filter_file(filename, 10.e4, sample_rate, output_filename=set_out_filename)
+            out_filename = filter_file(data_filename, 10.e4, sample_rate, output_filename=filename)
 
             self._test_out_sample_rate_data_len_equality(orig_data, orig_sample_rate, out_filename, sample_rate)
 
             os.remove(out_filename)
 
-    def test_set_output_sample_rate(self):
+    @_test_file_manager(DIRECTORY)
+    def test_set_output_sample_rate(self, filename):
         """
         Tests that we can successfully set the output sample rate, and the number of data points changes correctly.
         """
-        file_names = [os.path.join(self.directory, 'testDataFiles', 'chimera_1event.log'),
+        data_file_names = [os.path.join(self.directory, 'testDataFiles', 'chimera_1event.log'),
                       os.path.join(self.directory, 'testDataFiles', 'chimera_1event_2levels.log')]
 
-        set_out_filename = os.path.join(self.directory, 'testDataFiles', 'test_set_output_sample_rate.h5')
-
-        if os.path.exists(set_out_filename):
-            os.remove(set_out_filename)
-
-        for filename in file_names:
+        for data_filename in data_file_names:
             # Open a reader and read the original sample rate
-            orig_reader = get_reader_from_filename(filename)
+            orig_reader = get_reader_from_filename(data_filename)
             orig_sample_rate = orig_reader.get_sample_rate()
             orig_data = orig_reader.get_all_data()
             n_orig = orig_data[0].size
             orig_reader.close()
 
             for out_sample_rate in (100.e4, 1.e6, 5.e5):
-                out_filename = filter_file(filename, 10.e4, out_sample_rate, output_filename=set_out_filename)
+                out_filename = filter_file(data_filename, 10.e4, out_sample_rate, output_filename=filename)
 
                 # The output number of data points should be int(np.ceil(n_orig * out_sample_rate / orig_sample_rate))
                 n_out = int(np.ceil(n_orig * out_sample_rate / orig_sample_rate))
