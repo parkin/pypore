@@ -2,6 +2,12 @@
 #   http://lint.travis-ci.org/
 language: python
 
+# whitelist
+branches:
+  only:
+    - master
+    - dev
+
 matrix:
   include:
     - python: "2.6"
