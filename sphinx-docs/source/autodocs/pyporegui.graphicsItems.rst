@@ -1,13 +1,6 @@
 pyporegui.graphicsItems package
 ===============================
 
-Subpackages
------------
-
-.. toctree::
-
-    pyporegui.graphicsItems.tests
-
 Submodules
 ----------
 

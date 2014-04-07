@@ -132,7 +132,7 @@ for an example filename=&#8217;test.mat&#8217;, the default output_filename woul
 </table>
 <p>Usage:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pypore.file_converter</span> <span class="kn">as</span> <span class="nn">fC</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fC</span><span class="o">.</span><span class="n">filter_file</span><span class="p">(</span><span class="s">&quot;filename&quot;</span><span class="p">,</span> <span class="mf">1.e4</span><span class="p">,</span> <span class="s">&quot;output.h5&quot;</span><span class="p">)</span> <span class="o">//</span> <span class="nb">filter</span> <span class="n">at</span> <span class="mi">10</span><span class="n">kHz</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fC</span><span class="o">.</span><span class="n">filter_file</span><span class="p">(</span><span class="s">&quot;filename&quot;</span><span class="p">,</span> <span class="mf">1.e4</span><span class="p">,</span> <span class="mf">1.e5</span><span class="p">,</span> <span class="s">&quot;output.h5&quot;</span><span class="p">)</span> <span class="o">//</span> <span class="nb">filter</span> <span class="n">at</span> <span class="mi">10</span><span class="n">kHz</span><span class="p">,</span> <span class="n">resample</span> <span class="n">at</span> <span class="mi">100</span><span class="n">kHz</span>
 </pre></div>
 </div>
 </dd></dl>

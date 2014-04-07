@@ -1,0 +1,250 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pypore.sampledata.creator &mdash; Pypore 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/architect.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Pypore 0.0.1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+<link href="https://fonts.googleapis.com/css?family=Architects+Daughter" rel="stylesheet" type="text/css">
+
+  </head>
+  <body>
+<header>
+    <div class="inner">
+        <h1><a href="http://parkin.github.io/pypore/">Pypore</a></h1>
+
+        <h2></h2>
+        <a href="https://github.com/parkin/pypore" class="button">
+            <small>View project on</small>
+            GitHub</a>
+    </div>
+</header>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">Pypore 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pypore.sampledata.creator</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for creating sample data.</span>
+
+<span class="sd">- Create a current trace with specified events using \</span>
+<span class="sd">    :func:`create_specified_data &lt;pypore.sampledata.creator.create_specified_data&gt;`.</span>
+<span class="sd">- Create a current trace with random events using \</span>
+<span class="sd">    :func:`create_random_data &lt;pypore.sampledata.creator.create_random_data&gt;`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">geom</span>
+
+<span class="kn">from</span> <span class="nn">pypore.filetypes.data_file</span> <span class="kn">import</span> <span class="n">open_file</span>
+
+
+<div class="viewcode-block" id="create_random_data"><a class="viewcode-back" href="../../../autodocs/pypore.sampledata.creator.html#pypore.sampledata.creator.create_random_data">[docs]</a><span class="k">def</span> <span class="nf">create_random_data</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">seconds</span><span class="p">,</span> <span class="n">sample_rate</span><span class="p">,</span> <span class="n">baseline</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">event_rate</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">event_durations</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                       <span class="n">event_depths</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates random sample data. Leaves the first 200 data points free of events.</span>
+
+<span class="sd">    :param str filename: Filename for the data. If the file already exists and overwrite=False, an IOError is raised.</span>
+<span class="sd">    :param float seconds: Number of seconds of data.</span>
+<span class="sd">    :param float sample_rate: The sampling rate of the data, in Hz.</span>
+<span class="sd">    :param float baseline: The baseline of the data, in uA.</span>
+<span class="sd">    :param scipy.stats.distributions.rv_frozen noise: A frozen :mod:`scipy.stats` probability distribution\</span>
+<span class="sd">            for the noise. An example normal distribution with mean 2 uA and std dev 3 uA is</span>
+<span class="sd">            ::</span>
+
+<span class="sd">                from scipy.stats import norm</span>
+<span class="sd">                noise = norm(loc=2, scale=3)</span>
+
+<span class="sd">            Default is no noise.</span>
+<span class="sd">    :param float event_rate: Rate of events in Hz.</span>
+<span class="sd">    :param scipy.stats.distributions.rv_frozen event_durations: A frozen :mod:`scipy.stats` probability distribution\</span>
+<span class="sd">            for the event duration (in seconds).</span>
+<span class="sd">    :param scipy.stats.distributions.rv_frozen event_depths: A frozen :mod:`scipy.stats` probability distribution\</span>
+<span class="sd">            for the event depth, in uA.</span>
+<span class="sd">    :param bool overwrite: Whether overwriting an existing file at filename is allowed. If false, and filename exists.\</span>
+<span class="sd">            an IOError will be raised.</span>
+<span class="sd">    :raises: :py:exc:`IOError` - If the filename already exists and overwrite=False.</span>
+
+<span class="sd">    &gt;&gt;&gt; from pypore.sampledata.creator import create_random_data</span>
+<span class="sd">    &gt;&gt;&gt; from scipy import stats</span>
+<span class="sd">    &gt;&gt;&gt; seconds = 1. # 1 second of data.</span>
+<span class="sd">    &gt;&gt;&gt; sample_rate = 1.e6 # 1 MHz sample rate.</span>
+<span class="sd">    &gt;&gt;&gt; event_rate = 100. # 100 events/sec, on average.</span>
+<span class="sd">    &gt;&gt;&gt; baseline = 10. # 10 uA baseline.</span>
+<span class="sd">    &gt;&gt;&gt; noise = stats.norm(scale=.5) # Normal distributed noise with mean of 0 std dev of 0.5 uA.</span>
+<span class="sd">    &gt;&gt;&gt; event_depths = stats.norm(loc=2., scale=1.) # Normal distributed events with mean of 2 and std dev of 1 uA.</span>
+<span class="sd">    &gt;&gt;&gt; event_durations = stats.norm(loc=100.e-6, scale=10.e-6) # Normal distributed event durations with mean of 100 us and std dev 10 us.</span>
+<span class="sd">    &gt;&gt;&gt; n_events = create_random_data(&#39;random_trace.h5&#39;, seconds, sample_rate, baseline, noise, event_rate, event_durations, event_depths)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">overwrite</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span>
+            <span class="s">&quot;File already exists. Use a different filename, or call with overwrite=True to over-write existing file.&quot;</span><span class="p">)</span>
+
+    <span class="n">n_points</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">seconds</span> <span class="o">*</span> <span class="n">sample_rate</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">open_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;w&#39;</span><span class="p">,</span> <span class="n">n_points</span><span class="o">=</span><span class="n">n_points</span><span class="p">,</span> <span class="n">sample_rate</span><span class="o">=</span><span class="n">sample_rate</span><span class="p">)</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_points</span><span class="p">)</span> <span class="o">+</span> <span class="n">baseline</span>
+
+    <span class="k">if</span> <span class="n">noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">+=</span> <span class="n">noise</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">n_points</span><span class="p">)</span>
+
+    <span class="n">event_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">event_rate</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">200</span>
+        <span class="n">mean_length</span> <span class="o">=</span> <span class="n">event_durations</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="n">sample_rate</span>
+        <span class="n">expected_events</span> <span class="o">=</span> <span class="n">seconds</span> <span class="o">*</span> <span class="n">event_rate</span>
+        <span class="c"># Available space that is not events or the beginning of the data.</span>
+        <span class="n">free_space</span> <span class="o">=</span> <span class="n">n_points</span> <span class="o">-</span> <span class="n">expected_events</span> <span class="o">*</span> <span class="n">mean_length</span> <span class="o">-</span> <span class="n">i</span>
+        <span class="n">event_probability</span> <span class="o">=</span> <span class="n">expected_events</span><span class="o">/</span><span class="n">free_space</span>
+        <span class="c"># Use geometric distribution to find the next starting spot of an event.</span>
+        <span class="n">rv</span> <span class="o">=</span> <span class="n">geom</span><span class="p">(</span><span class="n">event_probability</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n_points</span><span class="p">:</span>
+            <span class="c"># get next event start distance</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="n">rv</span><span class="o">.</span><span class="n">rvs</span><span class="p">()</span>
+            <span class="n">event_count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">event_length</span> <span class="o">=</span> <span class="n">event_durations</span><span class="o">.</span><span class="n">rvs</span><span class="p">()</span> <span class="o">*</span> <span class="n">sample_rate</span>
+            <span class="n">event_depth_i</span> <span class="o">=</span> <span class="n">event_depths</span><span class="o">.</span><span class="n">rvs</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">+</span> <span class="n">event_length</span> <span class="o">&gt;</span> <span class="n">n_points</span><span class="p">:</span>
+                <span class="n">event_length</span> <span class="o">=</span> <span class="n">n_points</span> <span class="o">-</span> <span class="n">i</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">event_length</span><span class="p">]</span> <span class="o">+=</span> <span class="n">event_depth_i</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="n">event_length</span>
+
+    <span class="n">f</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">data</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:]</span>
+
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">event_count</span>
+
+</div>
+<div class="viewcode-block" id="create_specified_data"><a class="viewcode-back" href="../../../autodocs/pypore.sampledata.creator.html#pypore.sampledata.creator.create_specified_data">[docs]</a><span class="k">def</span> <span class="nf">create_specified_data</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">sample_rate</span><span class="p">,</span> <span class="n">baseline</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">noise_scale</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">events</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">overwrite</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a :class:`DataFile &lt;pypore.filetypes.data_file.DataFile&gt;` with sample event data.</span>
+
+<span class="sd">    :param filename: The name for the new DataFile.</span>
+<span class="sd">    :param int n: The number of samples in the data set.</span>
+<span class="sd">    :param float sample_rate: The sample rate of the data set.</span>
+<span class="sd">    :param float baseline: The baseline of the data. Default is 0.0.</span>
+<span class="sd">    :param float noise_scale: Passed to :func:`numpy.random.normal`, it is the standard deviation of the Gaussian\</span>
+<span class="sd">            noise added to the signal. Default is 0.0.</span>
+<span class="sd">    :param events: A list of events to add to the baseline. Events are specified as\</span>
+<span class="sd">            [starting_point, length, current_change]. So for example</span>
+<span class="sd">            ::</span>
+
+<span class="sd">                events = [[100,200,-.1], [560, 100, .6]]</span>
+
+<span class="sd">            specifies 2 events:</span>
+
+<span class="sd">        #. Starts at data position 100, with length 200, and current change of -.1.</span>
+<span class="sd">        #. Starts at data position 560, with length of 100, and current change of +.6.</span>
+
+<span class="sd">        Default is no events added.</span>
+
+<span class="sd">    :param bool overwrite: Whether to overwrite an existing file at **filename**, if it exists. If **False**, and\</span>
+<span class="sd">            filename already exists, an IOError will be raised. Default **False**.</span>
+<span class="sd">    :raises: :exc:`IOError` - If the filename already exists and overwrite=False.</span>
+
+<span class="sd">    &gt;&gt;&gt; from pypore.sampledata.creator import create_specified_data as csd</span>
+<span class="sd">    &gt;&gt;&gt; filename = &quot;test.h5&quot;</span>
+<span class="sd">    &gt;&gt;&gt; n = 10000</span>
+<span class="sd">    &gt;&gt;&gt; events = [[100, 200, -.5], [3000, 1000, -.8]] # Creates an event starting at position 100, with length 200 and\</span>
+<span class="sd">                                                      #  baseline change of -0.5.</span>
+<span class="sd">    &gt;&gt;&gt; create_specified_data(filename, n, 1.e4, baseline=5.0, noise_scale=1.0, events=events)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">overwrite</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span>
+            <span class="s">&quot;File already exists. Use a different filename, or call with overwrite=True to over-write existing file.&quot;</span><span class="p">)</span>
+
+    <span class="n">f</span> <span class="o">=</span> <span class="n">open_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;w&#39;</span><span class="p">,</span> <span class="n">n_points</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">sample_rate</span><span class="o">=</span><span class="n">sample_rate</span><span class="p">)</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="n">baseline</span>
+
+    <span class="k">if</span> <span class="n">noise_scale</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="n">noise_scale</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">event</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">event</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">event</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">event</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="n">f</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">data</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:]</span>
+
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">Pypore 0.0.1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Will Parkin.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

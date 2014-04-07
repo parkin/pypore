@@ -1,13 +1,6 @@
 pyporegui.widgets package
 =========================
 
-Subpackages
------------
-
-.. toctree::
-
-    pyporegui.widgets.tests
-
 Submodules
 ----------
 

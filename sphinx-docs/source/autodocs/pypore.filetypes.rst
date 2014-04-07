@@ -1,13 +1,6 @@
 pypore.filetypes package
 ========================
 
-Subpackages
------------
-
-.. toctree::
-
-    pypore.filetypes.tests
-
 Submodules
 ----------
 

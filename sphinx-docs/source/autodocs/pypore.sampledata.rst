@@ -1,17 +1,17 @@
-pypore.io.tests package
-=======================
+pypore.sampledata package
+=========================
 
 Submodules
 ----------
 
 .. toctree::
 
-   pypore.io.tests.test_chimera_reader
+   pypore.sampledata.creator
 
 Module contents
 ---------------
 
-.. automodule:: pypore.io.tests
+.. automodule:: pypore.sampledata
     :members:
     :undoc-members:
     :show-inheritance:

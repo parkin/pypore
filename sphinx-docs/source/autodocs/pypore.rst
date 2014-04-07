@@ -8,8 +8,8 @@ Subpackages
 
     pypore.filetypes
     pypore.io
+    pypore.sampledata
     pypore.strategies
-    pypore.tests
 
 Submodules
 ----------

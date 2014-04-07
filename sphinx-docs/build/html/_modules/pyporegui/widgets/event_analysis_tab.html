@@ -99,7 +99,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">parent</span>
 
         <span class="n">options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_event_analysis_options</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">event_analysis_widget</span> <span class="o">=</span> <span class="n">EventAnalysisPlotWidget</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_analysis_plot_widget</span> <span class="o">=</span> <span class="n">EventAnalysisPlotWidget</span><span class="p">()</span>
 
         <span class="c"># Put everything in baseline_filter_parameter scroll area</span>
         <span class="n">scroll_options</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QScrollArea</span><span class="p">()</span>
@@ -108,7 +108,7 @@
         <span class="n">scroll_plots</span><span class="o">.</span><span class="n">setWidgetResizable</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
 
         <span class="n">scroll_options</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
-        <span class="n">scroll_plots</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event_analysis_widget</span><span class="p">)</span>
+        <span class="n">scroll_plots</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event_analysis_plot_widget</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">scroll_options</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">scroll_plots</span><span class="p">)</span>
@@ -136,7 +136,7 @@
         <span class="n">item</span> <span class="o">=</span> <span class="n">FilterListItem</span><span class="p">(</span><span class="n">file_names</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">list_filter_widget</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">event_analysis_widget</span><span class="o">.</span><span class="n">add_selections</span><span class="p">(</span><span class="n">file_names</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_analysis_plot_widget</span><span class="o">.</span><span class="n">add_selections</span><span class="p">(</span><span class="n">file_names</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
 </div>
     <span class="k">def</span> <span class="nf">_get_current_event_analysis_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;color&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_color</span><span class="p">}</span>
@@ -164,7 +164,7 @@
         <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_filter_widget</span><span class="o">.</span><span class="n">selectedItems</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
             <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_filter_widget</span><span class="o">.</span><span class="n">indexFromItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">row</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">event_analysis_widget</span><span class="o">.</span><span class="n">removeFilter</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">event_analysis_plot_widget</span><span class="o">.</span><span class="n">remove_filter</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">list_filter_widget</span><span class="o">.</span><span class="n">takeItem</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 </div>
     <span class="k">def</span> <span class="nf">_on_event_file_selection_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

@@ -7,7 +7,6 @@ Subpackages
 .. toctree::
 
     pyporegui.graphicsItems
-    pyporegui.tests
     pyporegui.widgets
 
 Submodules

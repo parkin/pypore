@@ -136,7 +136,7 @@
 <span class="sd">    Usage:</span>
 
 <span class="sd">    &gt;&gt;&gt; import pypore.file_converter as fC</span>
-<span class="sd">    &gt;&gt;&gt; fC.filter_file(&quot;filename&quot;, 1.e4, &quot;output.h5&quot;) // filter at 10kHz</span>
+<span class="sd">    &gt;&gt;&gt; fC.filter_file(&quot;filename&quot;, 1.e4, 1.e5, &quot;output.h5&quot;) // filter at 10kHz, resample at 100kHz</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">reader</span> <span class="o">=</span> <span class="n">get_reader_from_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 

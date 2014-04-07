@@ -1,13 +1,6 @@
 pypore.io package
 =================
 
-Subpackages
------------
-
-.. toctree::
-
-    pypore.io.tests
-
 Submodules
 ----------
 
