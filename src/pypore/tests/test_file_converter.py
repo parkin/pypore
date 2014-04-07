@@ -206,6 +206,8 @@ class TestFilterFile(unittest.TestCase):
         data = data_all[0]
         reader.close()
 
+        print "data:", data[:150]
+
         baseline = np.mean(data[:150])
 
         # Check at different filter frequencies and re-sample rates
@@ -218,9 +220,10 @@ class TestFilterFile(unittest.TestCase):
             out_filename = filter_file(data_filename, filter_frequency=filter_freq, out_sample_rate=re_sample_rate,
                                        output_filename=filename)
 
-            reader = get_reader_from_filename(filename)
+            reader = get_reader_from_filename(out_filename)
             data2 = reader.get_all_data()[0]
             print "in data size:", data.size, "out data size:", data2.size
+            print "data2:", data2[:20]
             reader.close()
 
             # Note we re-sampled, which is why only take 30 data points.
