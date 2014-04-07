@@ -61,7 +61,6 @@ def filter_file(filename, filter_frequency, out_sample_rate, output_filename=Non
     reader = get_reader_from_filename(filename)
 
     data = reader.get_all_data()[0]
-    print "pre filter data:", data[:10]
 
     sample_rate = reader.get_sample_rate()
     final_sample_rate = sample_rate
@@ -76,7 +75,6 @@ def filter_file(filename, filter_frequency, out_sample_rate, output_filename=Non
     b, a = sig.butter(6, wn)
 
     filtered = sig.filtfilt(b, a, data)[:]
-    print "post filter data:", filtered[:10]
 
     # resample the data, if requested.
     if 0 < out_sample_rate < sample_rate:
@@ -86,8 +84,6 @@ def filter_file(filename, filter_frequency, out_sample_rate, output_filename=Non
 
     save_file = data_file.open_file(output_filename, mode='w', sample_rate=final_sample_rate, n_points=filtered.size)
     save_file.root.data[:] = filtered[:]
-
-    print "post re-sampled data:", filtered[:10]
 
     save_file.flush()
     save_file.close()
