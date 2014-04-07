@@ -45,21 +45,20 @@ install:
   - pip install --upgrade pip setuptools  # Upgrade pip and setuptools to get ones with `wheel` support
   # apt Cython version too small, must use pip
   - pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel --use-mirrors Cython
+  # apt Scipy/Numpy versions too small, use pip
+  - pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel --use-mirrors nose numpy scipy;
   - if [ "${USE_APT}" == "true" ]; then
       echo "Using apt";
       if [ "${TRAVIS_PYTHON_VERSION}" == "2.7" ]; then
-        travis_retry sudo apt-get install -qq -y python-numpy python-scipy;
-        travis_retry sudo apt-get install python-pyside python-nose;
+        travis_retry sudo apt-get install python-pyside;
         travis_retry sudo apt-get install python-tables;
       else
-        travis_retry sudo apt-get install -qq -y python3-numpy python3-scipy;
-        travis_retry sudo apt-get install python3-pyside python3-nose;
+        travis_retry sudo apt-get install python3-pyside;
         pip install numexpr;
         pip install tables;
       fi;
     else
       echo "Using pip";
-      pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel --use-mirrors nose numpy scipy;
       pip install numexpr;
       pip install tables;
       pip install sphinx==1.1.3;

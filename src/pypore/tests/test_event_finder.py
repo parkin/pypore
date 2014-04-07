@@ -126,7 +126,7 @@ class TestEventFinder(unittest.TestCase):
         n_levels = event_table[0]['n_levels']
         self.assertEqual(n_levels, 1)
         levels = levels_matrix[0]
-        self.assertAlmostEqual(levels[0], 0.9332, 4)
+        self.assertAlmostEqual(levels[0], 15.13955, 3)
 
         # Check 1 event with 1 levelLength
         lengths_matrix = events.level_lengths
@@ -156,8 +156,8 @@ class TestEventFinder(unittest.TestCase):
         levels = levels_matrix[0]
         n_levels = event_table[0]['n_levels']
         self.assertEqual(n_levels, 2)
-        self.assertAlmostEqual(levels[0], 0.9332, 4)
-        self.assertAlmostEqual(levels[1], 0.78064, 4)
+        self.assertAlmostEqual(levels[0], 15.13955, 3)
+        self.assertAlmostEqual(levels[1], 12.70204, 3)
 
         levels_matrix = events.level_lengths
         self.assertEqual(levels_matrix.nrows, 1)
@@ -200,12 +200,12 @@ class TestEventFinder(unittest.TestCase):
         levels = levels_matrix[0]
         n_levels = event_table[0]['n_levels']
         self.assertEqual(n_levels, 1)
-        self.assertAlmostEqual(levels[0], 0.9332, 4)
+        self.assertAlmostEqual(levels[0], 15.1395, 2)
         # event 2
         levels = levels_matrix[1]
         n_levels_1 = event_table[1]['n_levels']
         self.assertEqual(n_levels_1, 1)
-        self.assertAlmostEqual(levels[0], 0.9332, 4)
+        self.assertAlmostEqual(levels[0], 15.1395, 2)
 
         # Check 2 events with 1 level -> 1 lengths
         lengths_matrix = events.level_lengths
