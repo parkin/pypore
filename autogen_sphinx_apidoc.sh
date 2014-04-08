@@ -16,7 +16,10 @@ rm -rf $SPHINX_AUTODOC_DIR/*
 # generate the autodoc stuff
 # -f: overwrite files if necessary (even though just deleted directory above!)
 # -e: put each module file in its own page
-sphinx-apidoc -o $SPHINX_AUTODOC_DIR $SOURCE_DIR -f -e
+# exclude the test directories
+TEST_PATHS=`find ${SOURCE_DIR} -name tests`
+sphinx-apidoc -o $SPHINX_AUTODOC_DIR $SOURCE_DIR -f -e -d 3 ${TEST_PATHS}
+
 
 # cd to the sphinx dir, clean, then build html
 cd $SPHINX_DIR
