@@ -130,6 +130,7 @@ def get_version_info():
         # Hopefully it increments better.
         # TODO change this to 'git describe' once we tag a version.
         if 'TRAVIS_PYTHON_VERSION' in os.environ:
+            import time
             time_str = time.strftime('%Y%m%d%H%M%s') + '-'
         else:
             time_str = ''
