@@ -126,7 +126,15 @@ def get_version_info():
         git_revision = "Unknown"
 
     if not IS_RELEASE:
-        full_version += '.dev-' + git_revision[:7]
+        # If we are deploying from the Travis CI server, then add a time string to the version,
+        # Hopefully it increments better.
+        # TODO change this to 'git describe' once we tag a version.
+        if 'TRAVIS_PYTHON_VERSION' in os.environ:
+            time_str = time.strftime('%Y%m%d%H%M%s') + '-'
+        else:
+            time_str = ''
+        import time
+        full_version += '.dev-' + time_str + git_revision[:7]
 
     return full_version, git_revision
 
