@@ -257,7 +257,7 @@ class TestEventFinder(unittest.TestCase):
 
     def test_passing_reader(self):
         """
-        Tests that passing an open subtype of :py:class:`pypore.io.abstract_reader.AbstractReader` works.
+        Tests that passing an open subtype of :py:class:`pypore.i_o.abstract_reader.AbstractReader` works.
         """
         filename = os.path.dirname(os.path.realpath(__file__))
         filename = os.path.join(filename, 'testDataFiles', 'chimera_nonoise_2events_1levels.log')

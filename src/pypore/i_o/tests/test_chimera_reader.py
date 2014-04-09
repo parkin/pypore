@@ -6,7 +6,7 @@ Created on Aug 19, 2013
 import unittest
 import os.path
 import numpy as np
-from pypore.io.chimera_reader import ChimeraReader
+from pypore.i_o.chimera_reader import ChimeraReader
 
 
 class TestChimeraReader(unittest.TestCase):

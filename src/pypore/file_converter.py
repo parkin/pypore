@@ -6,7 +6,7 @@ Created on Jan 28, 2014
 from filetypes import data_file
 import numpy as np
 import scipy.signal as sig
-from pypore.io import get_reader_from_filename
+from pypore.i_o import get_reader_from_filename
 
 
 def convert_file(filename, output_filename=None):

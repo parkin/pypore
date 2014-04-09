@@ -5,7 +5,7 @@ cimport numpy as np
 import os
 
 from cpython cimport bool
-from pypore.io.abstract_reader cimport AbstractReader
+from pypore.i_o.abstract_reader cimport AbstractReader
 
 ctypedef np.float_t DTYPE_t
 

@@ -10,7 +10,7 @@ from PySide import QtCore
 import time
 from multiprocessing import Process, Pipe
 from pypore.event_finder import find_events
-from pypore.io import get_reader_from_filename
+from pypore.i_o import get_reader_from_filename
 
 
 class PlotThread(QtCore.QThread):

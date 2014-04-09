@@ -4,11 +4,11 @@
 
 import unittest
 import os
-from pypore.io import get_reader_from_filename
+from pypore.i_o import get_reader_from_filename
 from pypore.file_converter import convert_file
 
 import numpy as np
-from pypore.io.data_file_reader import DataFileReader
+from pypore.i_o.data_file_reader import DataFileReader
 from pypore.tests.util import _test_file_manager
 
 DIRECTORY = os.path.dirname(os.path.abspath(__file__))

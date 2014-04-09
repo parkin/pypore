@@ -6,7 +6,7 @@ import scipy.stats as stats
 import numpy as np
 from pypore.event_finder import find_events
 
-from pypore.io import get_reader_from_filename
+from pypore.i_o import get_reader_from_filename
 from pypore.sampledata.creator import create_specified_data
 from pypore.sampledata.creator import create_random_data
 from pypore.filetypes.event_database import EventDatabase
