@@ -17,12 +17,12 @@ dev branch
 Pypore
 =======
 
-This project is for translocation event finding/analysis.
+This project is for nanopore-translocation event finding/analysis.
 It's written in Python, with `numpy <http://www.numpy.org/>`_/`scipy <http://www.scipy.org/>`_ as a Matlab replacement.
 The gui library is `pyside <http://qt-project.org/wiki/PySide>`_, and `pyqtgraph <http://www.pyqtgraph.org/>`_ is used for plotting.
 More information can be found `here <http://parkin.github.io/pypore>`_.
 
-**Note** that Pypore/PyporeGui are pre-alpha, major changes can happen at any time.
+**Note** that Pypore/PyporeGui are pre-release, major changes can happen at any time.
 
 Pull requests are welcome!
 
