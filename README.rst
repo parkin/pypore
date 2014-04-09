@@ -1,4 +1,4 @@
-master branch
+**master** branch
 
 .. image:: https://travis-ci.org/parkin/pypore.svg?branch=master 
     :target: https://travis-ci.org/parkin/pypore
@@ -6,13 +6,13 @@ master branch
 .. image:: https://coveralls.io/repos/parkin/pypore/badge.png?branch=master
     :target: https://coveralls.io/r/parkin/pypore?branch=master
 
-dev branch
+**develop** branch
 
-.. image:: https://travis-ci.org/parkin/pypore.svg?branch=dev 
+.. image:: https://travis-ci.org/parkin/pypore.svg?branch=develop
     :target: https://travis-ci.org/parkin/pypore
     
-.. image:: https://coveralls.io/repos/parkin/pypore/badge.png?branch=dev
-    :target: https://coveralls.io/r/parkin/pypore?branch=dev
+.. image:: https://coveralls.io/repos/parkin/pypore/badge.png?branch=develop
+    :target: https://coveralls.io/r/parkin/pypore?branch=develop
    
 Pypore
 =======
@@ -60,7 +60,7 @@ Pypore is currently pre-release, so we'll install with the **--pre** tag.
 
     pip install pypore --pre
     
-A new dev release is deployed with every push to the dev branch, so upgrade often!
+A new dev release is deployed with every push to the **develop** branch, so upgrade often!
 
 .. code:: shell
 
