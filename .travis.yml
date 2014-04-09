@@ -102,3 +102,13 @@ after_success:
 notifications:
   email: false
 
+deploy:
+  provider: pypi
+  user: parkin1
+  password:
+    secure: Gn+p0jPNajK4twiAAmuRwUBN7WckfOJD0rN3ISMqg6/bRfqAxqmDaKu1b6to68hVyGQohqz1os+4sWh10uTXZMFvn49JjGXiw84HfTSSP4DfbyKaIFkG/3dO6zaIy6ixTNUFi+WiL08jE30G3RLw9LxxdZeVhYMff2WUiklpFm0=
+  on:
+    repo: parkin/pypore
+    branch: dev
+    python: 2.7
+  skip-cleanup: True
