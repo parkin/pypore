@@ -1,15 +1,15 @@
 # TODO implement tests for this!
 def get_reader_from_filename(filename):
     """
-    Returns an instance of an implementation of :py:class:`pypore.io.abstract_reader.AbstractReader` based on the
+    Returns an instance of an implementation of :py:class:`pypore.i_o.abstract_reader.AbstractReader` based on the
     extension of filename.
 
     :param string filename: Filename to get the reader for.
-    :returns: An open reader of an implementation of :py:class:`pypore.io.abstract_reader.AbstractReader` based on the\
+    :returns: An open reader of an implementation of :py:class:`pypore.i_o.abstract_reader.AbstractReader` based on the\
              extension of filename, for the following extensions.
 
-        - '.h5' extension: returns an instance of :py:class:`pypore.io.data_file_reader.DataFileReader`.
-        - '.log' extension: returns :py:class:`pypore.io.chimera_reader.ChimeraReader`.
+        - '.h5' extension: returns an instance of :py:class:`pypore.i_o.data_file_reader.DataFileReader`.
+        - '.log' extension: returns :py:class:`pypore.i_o.chimera_reader.ChimeraReader`.
 
         If the file extension is not in the above list, None is returned.
 

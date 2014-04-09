@@ -6,7 +6,7 @@ cimport numpy as np
 
 import pypore.filetypes.data_file as df
 
-from pypore.io.abstract_reader cimport AbstractReader
+from pypore.i_o.abstract_reader cimport AbstractReader
 
 DTYPE = np.float
 ctypedef np.float_t DTYPE_t
@@ -17,7 +17,7 @@ cdef class DataFileReader(AbstractReader):
 
     cpdef _prepare_file(self, filename):
         """
-        Implementation of :py:func:`pypore.io.abstract_reader.AbstractReader._prepare_file`
+        Implementation of :py:func:`pypore.i_o.abstract_reader.AbstractReader._prepare_file`
         for Pypore HDF5 files.
         """
         self.datafile = df.open_file(filename, mode='r')
