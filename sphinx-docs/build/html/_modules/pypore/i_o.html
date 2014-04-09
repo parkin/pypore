@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pypore.io &mdash; Pypore 0.0.1 documentation</title>
+    <title>pypore.i_o &mdash; Pypore 0.0.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/architect.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -77,19 +77,19 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <h1>Source code for pypore.io</h1><div class="highlight"><pre>
+  <h1>Source code for pypore.i_o</h1><div class="highlight"><pre>
 <span class="c"># TODO implement tests for this!</span>
-<div class="viewcode-block" id="get_reader_from_filename"><a class="viewcode-back" href="../../autodocs/pypore.io.html#pypore.io.get_reader_from_filename">[docs]</a><span class="k">def</span> <span class="nf">get_reader_from_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+<div class="viewcode-block" id="get_reader_from_filename"><a class="viewcode-back" href="../../autodocs/pypore.i_o.html#pypore.i_o.get_reader_from_filename">[docs]</a><span class="k">def</span> <span class="nf">get_reader_from_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns an instance of an implementation of :py:class:`pypore.io.abstract_reader.AbstractReader` based on the</span>
+<span class="sd">    Returns an instance of an implementation of :py:class:`pypore.i_o.abstract_reader.AbstractReader` based on the</span>
 <span class="sd">    extension of filename.</span>
 
 <span class="sd">    :param string filename: Filename to get the reader for.</span>
-<span class="sd">    :returns: An open reader of an implementation of :py:class:`pypore.io.abstract_reader.AbstractReader` based on the\</span>
+<span class="sd">    :returns: An open reader of an implementation of :py:class:`pypore.i_o.abstract_reader.AbstractReader` based on the\</span>
 <span class="sd">             extension of filename, for the following extensions.</span>
 
-<span class="sd">        - &#39;.h5&#39; extension: returns an instance of :py:class:`pypore.io.data_file_reader.DataFileReader`.</span>
-<span class="sd">        - &#39;.log&#39; extension: returns :py:class:`pypore.io.chimera_reader.ChimeraReader`.</span>
+<span class="sd">        - &#39;.h5&#39; extension: returns an instance of :py:class:`pypore.i_o.data_file_reader.DataFileReader`.</span>
+<span class="sd">        - &#39;.log&#39; extension: returns :py:class:`pypore.i_o.chimera_reader.ChimeraReader`.</span>
 
 <span class="sd">        If the file extension is not in the above list, None is returned.</span>
 

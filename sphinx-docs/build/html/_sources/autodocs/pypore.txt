@@ -7,7 +7,7 @@ Subpackages
 .. toctree::
 
     pypore.filetypes
-    pypore.io
+    pypore.i_o
     pypore.sampledata
     pypore.strategies
 

@@ -1,7 +1,7 @@
-pypore.io.data_file_reader module
+pypore.i_o.abstract_reader module
 =================================
 
-.. automodule:: pypore.io.data_file_reader
+.. automodule:: pypore.i_o.abstract_reader
     :members:
     :undoc-members:
     :show-inheritance:

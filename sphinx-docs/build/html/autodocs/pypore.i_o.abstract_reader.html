@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pypore.io.abstract_reader module &mdash; Pypore 0.0.1 documentation</title>
+    <title>pypore.i_o.abstract_reader module &mdash; Pypore 0.0.1 documentation</title>
     
     <link rel="stylesheet" href="../_static/architect.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -25,9 +25,9 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Pypore 0.0.1 documentation" href="../index.html" />
-    <link rel="up" title="pypore.io package" href="pypore.io.html" />
-    <link rel="next" title="pypore.io.chimera_reader module" href="pypore.io.chimera_reader.html" />
-    <link rel="prev" title="pypore.io package" href="pypore.io.html" />
+    <link rel="up" title="pypore.i_o package" href="pypore.i_o.html" />
+    <link rel="next" title="pypore.i_o.chimera_reader module" href="pypore.i_o.chimera_reader.html" />
+    <link rel="prev" title="pypore.i_o package" href="pypore.i_o.html" />
 <link href="https://fonts.googleapis.com/css?family=Architects+Daughter" rel="stylesheet" type="text/css">
 
   </head>
@@ -53,28 +53,28 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="pypore.io.chimera_reader.html" title="pypore.io.chimera_reader module"
+          <a href="pypore.i_o.chimera_reader.html" title="pypore.i_o.chimera_reader module"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="pypore.io.html" title="pypore.io package"
+          <a href="pypore.i_o.html" title="pypore.i_o package"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Pypore 0.0.1 documentation</a> &raquo;</li>
           <li><a href="modules.html" >src</a> &raquo;</li>
           <li><a href="pypore.html" >pypore package</a> &raquo;</li>
-          <li><a href="pypore.io.html" accesskey="U">pypore.io package</a> &raquo;</li> 
+          <li><a href="pypore.i_o.html" accesskey="U">pypore.i_o package</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="pypore.io.html"
-                        title="previous chapter">pypore.io package</a></p>
+  <p class="topless"><a href="pypore.i_o.html"
+                        title="previous chapter">pypore.i_o package</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="pypore.io.chimera_reader.html"
-                        title="next chapter">pypore.io.chimera_reader module</a></p>
+  <p class="topless"><a href="pypore.i_o.chimera_reader.html"
+                        title="next chapter">pypore.i_o.chimera_reader module</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="../_sources/autodocs/pypore.io.abstract_reader.txt"
+    <li><a href="../_sources/autodocs/pypore.i_o.abstract_reader.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -98,19 +98,19 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-pypore.io.abstract_reader">
-<span id="pypore-io-abstract-reader-module"></span><h1>pypore.io.abstract_reader module<a class="headerlink" href="#module-pypore.io.abstract_reader" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-pypore.i_o.abstract_reader">
+<span id="pypore-i-o-abstract-reader-module"></span><h1>pypore.i_o.abstract_reader module<a class="headerlink" href="#module-pypore.i_o.abstract_reader" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="pypore.io.abstract_reader.AbstractReader">
-<em class="property">class </em><tt class="descclassname">pypore.io.abstract_reader.</tt><tt class="descname">AbstractReader</tt><a class="headerlink" href="#pypore.io.abstract_reader.AbstractReader" title="Permalink to this definition">¶</a></dt>
+<dt id="pypore.i_o.abstract_reader.AbstractReader">
+<em class="property">class </em><tt class="descclassname">pypore.i_o.abstract_reader.</tt><tt class="descname">AbstractReader</tt><a class="headerlink" href="#pypore.i_o.abstract_reader.AbstractReader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 <p>This is an abstract class showing the methods that subclasses must override.</p>
 <blockquote>
 <div>-Subclasses should implement opening full data files.
--Subclasses should implement lazy loading with            <tt class="xref py py-func docutils literal"><span class="pre">pypore.io.abstract_reader.get_next_blocks()</span></tt></div></blockquote>
+-Subclasses should implement lazy loading with            <tt class="xref py py-func docutils literal"><span class="pre">pypore.i_o.abstract_reader.get_next_blocks()</span></tt></div></blockquote>
 <dl class="attribute">
-<dt id="pypore.io.abstract_reader.AbstractReader.__init__">
-<tt class="descname">__init__</tt><a class="headerlink" href="#pypore.io.abstract_reader.AbstractReader.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="pypore.i_o.abstract_reader.AbstractReader.__init__">
+<tt class="descname">__init__</tt><a class="headerlink" href="#pypore.i_o.abstract_reader.AbstractReader.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Opens a data file, reads relevant parameters, and returns then open file and parameters.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -124,16 +124,16 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="pypore.io.abstract_reader.AbstractReader.close">
-<tt class="descname">close</tt><big>(</big><big>)</big><a class="headerlink" href="#pypore.io.abstract_reader.AbstractReader.close" title="Permalink to this definition">¶</a></dt>
+<dt id="pypore.i_o.abstract_reader.AbstractReader.close">
+<tt class="descname">close</tt><big>(</big><big>)</big><a class="headerlink" href="#pypore.i_o.abstract_reader.AbstractReader.close" title="Permalink to this definition">¶</a></dt>
 <dd><p>(Note this is a cpdef wrapper around the cdef method <tt class="xref py py-func docutils literal"><span class="pre">close_c()</span></tt>.
 If using Cython, you can directly call the cdef version.)</p>
 <p>Closes the file and the reader.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="pypore.io.abstract_reader.AbstractReader.get_all_data">
-<tt class="descname">get_all_data</tt><big>(</big><em>bool decimate=False</em><big>)</big><a class="headerlink" href="#pypore.io.abstract_reader.AbstractReader.get_all_data" title="Permalink to this definition">¶</a></dt>
+<dt id="pypore.i_o.abstract_reader.AbstractReader.get_all_data">
+<tt class="descname">get_all_data</tt><big>(</big><em>bool decimate=False</em><big>)</big><a class="headerlink" href="#pypore.i_o.abstract_reader.AbstractReader.get_all_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>(Note this is a cpdef wrapper around the cdef method <tt class="xref py py-func docutils literal"><span class="pre">get_all_data_c()</span></tt>.
 If using Cython, you can call the cdef version directly.)</p>
 <p>Reads and returns all of the data in the file.</p>
@@ -150,16 +150,16 @@ If using Cython, you can call the cdef version directly.)</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="pypore.io.abstract_reader.AbstractReader.get_filename">
-<tt class="descname">get_filename</tt><big>(</big><big>)</big><a class="headerlink" href="#pypore.io.abstract_reader.AbstractReader.get_filename" title="Permalink to this definition">¶</a></dt>
+<dt id="pypore.i_o.abstract_reader.AbstractReader.get_filename">
+<tt class="descname">get_filename</tt><big>(</big><big>)</big><a class="headerlink" href="#pypore.i_o.abstract_reader.AbstractReader.get_filename" title="Permalink to this definition">¶</a></dt>
 <dd><p>(Note this is a cpdef wrapper around the cdef method <tt class="xref py py-func docutils literal"><span class="pre">get_next_blocks_c()</span></tt>.
 If using Cython, you can call the cdef version directly.)
 :returns: the filename being read.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="pypore.io.abstract_reader.AbstractReader.get_next_blocks">
-<tt class="descname">get_next_blocks</tt><big>(</big><em>long n_blocks=1</em><big>)</big><a class="headerlink" href="#pypore.io.abstract_reader.AbstractReader.get_next_blocks" title="Permalink to this definition">¶</a></dt>
+<dt id="pypore.i_o.abstract_reader.AbstractReader.get_next_blocks">
+<tt class="descname">get_next_blocks</tt><big>(</big><em>long n_blocks=1</em><big>)</big><a class="headerlink" href="#pypore.i_o.abstract_reader.AbstractReader.get_next_blocks" title="Permalink to this definition">¶</a></dt>
 <dd><p>(Note this is a cpdef wrapper around the cdef method <tt class="xref py py-func docutils literal"><span class="pre">get_next_blocks_c()</span></tt>.
 If using Cython, you can call the cdef version directly.)</p>
 <p>Gets the next n_blocks (~5000 data points per block) of data from filename.</p>
@@ -176,8 +176,8 @@ If using Cython, you can call the cdef version directly.)</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="pypore.io.abstract_reader.AbstractReader.get_points_per_channel_total">
-<tt class="descname">get_points_per_channel_total</tt><big>(</big><big>)</big><a class="headerlink" href="#pypore.io.abstract_reader.AbstractReader.get_points_per_channel_total" title="Permalink to this definition">¶</a></dt>
+<dt id="pypore.i_o.abstract_reader.AbstractReader.get_points_per_channel_total">
+<tt class="descname">get_points_per_channel_total</tt><big>(</big><big>)</big><a class="headerlink" href="#pypore.i_o.abstract_reader.AbstractReader.get_points_per_channel_total" title="Permalink to this definition">¶</a></dt>
 <dd><p>(Note this is a cpdef wrapper around the cdef method <tt class="xref py py-func docutils literal"><span class="pre">get_next_blocks_c()</span></tt>.
 If using Cython, you can call the cdef version directly.)</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -191,8 +191,8 @@ If using Cython, you can call the cdef version directly.)</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="pypore.io.abstract_reader.AbstractReader.get_sample_rate">
-<tt class="descname">get_sample_rate</tt><big>(</big><big>)</big><a class="headerlink" href="#pypore.io.abstract_reader.AbstractReader.get_sample_rate" title="Permalink to this definition">¶</a></dt>
+<dt id="pypore.i_o.abstract_reader.AbstractReader.get_sample_rate">
+<tt class="descname">get_sample_rate</tt><big>(</big><big>)</big><a class="headerlink" href="#pypore.i_o.abstract_reader.AbstractReader.get_sample_rate" title="Permalink to this definition">¶</a></dt>
 <dd><p>(Note this is a cpdef wrapper around the cdef method <tt class="xref py py-func docutils literal"><span class="pre">get_next_blocks_c()</span></tt>.
 If using Cython, you can call the cdef version directly.)</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -206,13 +206,13 @@ If using Cython, you can call the cdef version directly.)</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="pypore.io.abstract_reader.AbstractReader.points_per_channel_total">
-<tt class="descname">points_per_channel_total</tt><a class="headerlink" href="#pypore.io.abstract_reader.AbstractReader.points_per_channel_total" title="Permalink to this definition">¶</a></dt>
+<dt id="pypore.i_o.abstract_reader.AbstractReader.points_per_channel_total">
+<tt class="descname">points_per_channel_total</tt><a class="headerlink" href="#pypore.i_o.abstract_reader.AbstractReader.points_per_channel_total" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="pypore.io.abstract_reader.AbstractReader.sample_rate">
-<tt class="descname">sample_rate</tt><a class="headerlink" href="#pypore.io.abstract_reader.AbstractReader.sample_rate" title="Permalink to this definition">¶</a></dt>
+<dt id="pypore.i_o.abstract_reader.AbstractReader.sample_rate">
+<tt class="descname">sample_rate</tt><a class="headerlink" href="#pypore.i_o.abstract_reader.AbstractReader.sample_rate" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -235,15 +235,15 @@ If using Cython, you can call the cdef version directly.)</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="pypore.io.chimera_reader.html" title="pypore.io.chimera_reader module"
+          <a href="pypore.i_o.chimera_reader.html" title="pypore.i_o.chimera_reader module"
              >next</a> |</li>
         <li class="right" >
-          <a href="pypore.io.html" title="pypore.io package"
+          <a href="pypore.i_o.html" title="pypore.i_o package"
              >previous</a> |</li>
         <li><a href="../index.html">Pypore 0.0.1 documentation</a> &raquo;</li>
           <li><a href="modules.html" >src</a> &raquo;</li>
           <li><a href="pypore.html" >pypore package</a> &raquo;</li>
-          <li><a href="pypore.io.html" >pypore.io package</a> &raquo;</li> 
+          <li><a href="pypore.i_o.html" >pypore.i_o package</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

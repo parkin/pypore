@@ -1,7 +1,7 @@
-pypore.io.abstract_reader module
+pypore.i_o.chimera_reader module
 ================================
 
-.. automodule:: pypore.io.abstract_reader
+.. automodule:: pypore.i_o.chimera_reader
     :members:
     :undoc-members:
     :show-inheritance:
