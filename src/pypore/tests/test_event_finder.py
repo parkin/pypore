@@ -10,6 +10,8 @@ import numpy as np
 import os
 import pypore.filetypes.event_database as ed
 
+import pypore.sampledata.testing_files as tf
+
 
 class TestEventFinder(unittest.TestCase):
     def setUp(self):
@@ -85,8 +87,7 @@ class TestEventFinder(unittest.TestCase):
         res = _get_data_range_test_wrapper(data_cache, -10, 210)
 
     def test_saving_files(self):
-        filename = os.path.dirname(os.path.realpath(__file__))
-        filename = os.path.join(filename, 'testDataFiles', 'chimera_1event.log')
+        filename = tf.get_abs_path('chimera_1event.log')
 
         event_database = find_events([filename], save_file_names=['_testSavingFiles_9238.h5'])[0]
 
@@ -102,8 +103,7 @@ class TestEventFinder(unittest.TestCase):
         os.remove(event_database)
 
     def test_chimera_no_noise_1event(self):
-        filename = os.path.dirname(os.path.realpath(__file__))
-        filename = os.path.join(filename, 'testDataFiles', 'chimera_nonoise_1event.log')
+        filename = tf.get_abs_path('chimera_nonoise_1event.log')
         event_database = find_events([filename], save_file_names=['_testChimera_nonoise_1Event_9238.h5'])[0]
 
         h5file = ed.open_file(event_database, mode='r')
@@ -167,8 +167,7 @@ class TestEventFinder(unittest.TestCase):
         self.assertEqual(levels[1], 750)
 
     def test_chimera_no_noise_1event_2levels(self):
-        filename = os.path.dirname(os.path.realpath(__file__))
-        filename = os.path.join(filename, 'testDataFiles', 'chimera_nonoise_1event_2levels.log')
+        filename = tf.get_abs_path('chimera_nonoise_1event_2levels.log')
         event_database = find_events([filename], save_file_names=['_testChimera_nonoise_1Event_2Levels_9238.h5'])[0]
 
         h5file = ed.open_file(event_database, mode='r')
@@ -219,8 +218,7 @@ class TestEventFinder(unittest.TestCase):
         self.assertEqual(lengths2[0], 1000)
 
     def test_chimera_no_noise_2events_1levels(self):
-        filename = os.path.dirname(os.path.realpath(__file__))
-        filename = os.path.join(filename, 'testDataFiles', 'chimera_nonoise_2events_1levels.log')
+        filename = tf.get_abs_path('chimera_nonoise_2events_1levels.log')
         event_databases = find_events([filename], save_file_names=['_testChimera_nonoise_2events_1levels_9238.h5'])
 
         self.assertEqual(len(event_databases), 1)
@@ -235,10 +233,8 @@ class TestEventFinder(unittest.TestCase):
         os.remove(event_database)
 
     def test_multiple_files(self):
-        filename1 = os.path.dirname(os.path.realpath(__file__))
-        filename1 = os.path.join(filename1, 'testDataFiles', 'chimera_nonoise_2events_1levels.log')
-        filename2 = os.path.dirname(os.path.realpath(__file__))
-        filename2 = os.path.join(filename2, 'testDataFiles', 'chimera_nonoise_1event_2levels.log')
+        filename1 = tf.get_abs_path('chimera_nonoise_2events_1levels.log')
+        filename2 = tf.get_abs_path('chimera_nonoise_1event_2levels.log')
         file_names = [filename1, filename2]
         event_databases = find_events(file_names,
                                       save_file_names=['_testMultipleFiles_1_9238.h5', '_testMultipleFiles_2_9238.h5'])
@@ -260,7 +256,7 @@ class TestEventFinder(unittest.TestCase):
         Tests that passing an open subtype of :py:class:`pypore.i_o.abstract_reader.AbstractReader` works.
         """
         filename = os.path.dirname(os.path.realpath(__file__))
-        filename = os.path.join(filename, 'testDataFiles', 'chimera_nonoise_2events_1levels.log')
+        filename = tf.get_abs_path('chimera_nonoise_2events_1levels.log')
 
         reader = get_reader_from_filename(filename)
         data = [reader]
@@ -276,7 +272,7 @@ class TestEventFinder(unittest.TestCase):
 
     def test_debug_option(self):
         filename = os.path.dirname(os.path.realpath(__file__))
-        filename = os.path.join(filename, 'testDataFiles', 'chimera_nonoise_2events_1levels.log')
+        filename = tf.get_abs_path('chimera_nonoise_2events_1levels.log')
 
         output_filename = '_test_debug_option.h5'
 

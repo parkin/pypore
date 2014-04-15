@@ -2,7 +2,7 @@
 recursive-include src *.py *.c *.h
 
 # include test files
-recursive-include src **/tests/testDataFiles/*
+recursive-include src **/sampledata/testDataFiles/*
 
 # Keep the splash
 include src/pyporegui/splash.png

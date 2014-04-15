@@ -11,23 +11,18 @@ import numpy as np
 from pypore.i_o.data_file_reader import DataFileReader
 from pypore.tests.util import _test_file_manager
 
+import pypore.sampledata.testing_files as tf
+
 DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 
 class TestFileConverter(unittest.TestCase):
-    def setUp(self):
-        pass
-
-    def tearDown(self):
-        pass
-
     @_test_file_manager(DIRECTORY)
     def test_convert_file_set_output_filename(self, filename):
         """
         Tests that the output filename can be set correctly.
         """
-        data_filename = os.path.dirname(os.path.realpath(__file__))
-        data_filename = os.path.join(data_filename, 'testDataFiles', 'chimera_1event.log')
+        data_filename = tf.get_abs_path('chimera_1event.log')
 
         output_filename = convert_file(data_filename, output_filename=filename)
 
@@ -39,8 +34,7 @@ class TestFileConverter(unittest.TestCase):
         """
         Test that the original/converted matrices and sample rates are the same for one-channel data.
         """
-        data_filename = os.path.dirname(os.path.realpath(__file__))
-        data_filename = os.path.join(data_filename, 'testDataFiles', 'chimera_1event.log')
+        data_filename = tf.get_abs_path('chimera_1event.log')
 
         output_filename = convert_file(data_filename, output_filename=filename)
 
@@ -80,9 +74,9 @@ class TestFilterFile(unittest.TestCase):
         """
         Tests that the default output filename of :func:`filter_file <pypore.file_converter.filter_file>` is correct.
         """
-        data_filename = os.path.join(self.directory, 'testDataFiles', 'chimera_1event.log')
+        data_filename = tf.get_abs_path('chimera_1event.log')
 
-        output_filename_should_be = os.path.join(self.directory, 'testDataFiles', 'chimera_1event_filtered.h5')
+        output_filename_should_be = os.path.join(tf.TEST_DATA_FOLDER_PATH, 'chimera_1event_filtered.h5')
 
         if os.path.exists(output_filename_should_be):
             os.remove(output_filename_should_be)
@@ -104,7 +98,7 @@ class TestFilterFile(unittest.TestCase):
         """
         Tests that setting the output filename of :func:`filter_file <pypore.file_converter.filter_file>` is correct.
         """
-        data_filename = os.path.join(self.directory, 'testDataFiles', 'chimera_1event.log')
+        data_filename = tf.get_abs_path('chimera_1event.log')
 
         out_filename = filter_file(data_filename, 10.e4, 100.e4, output_filename=filename)
 
@@ -138,7 +132,7 @@ class TestFilterFile(unittest.TestCase):
         """
         Tests that if we set the output sample rate to < 0, the sampling doesn't change, but the file is filtered.
         """
-        data_filename = os.path.join(self.directory, 'testDataFiles', 'chimera_1event.log')
+        data_filename = tf.get_abs_path('chimera_1event.log')
 
         # Open a reader and read the original sample rate
         orig_reader = get_reader_from_filename(data_filename)
@@ -159,8 +153,8 @@ class TestFilterFile(unittest.TestCase):
         """
         Tests that we can successfully set the output sample rate, and the number of data points changes correctly.
         """
-        data_file_names = [os.path.join(self.directory, 'testDataFiles', 'chimera_1event.log'),
-                           os.path.join(self.directory, 'testDataFiles', 'chimera_1event_2levels.log')]
+        data_file_names = [tf.get_abs_path('chimera_1event.log'),
+                           tf.get_abs_path('chimera_1event_2levels.log')]
 
         for data_filename in data_file_names:
             # Open a reader and read the original sample rate
@@ -199,7 +193,7 @@ class TestFilterFile(unittest.TestCase):
         """
         Tests that the filtered baseline is the same as the unfiltered.
         """
-        data_filename = os.path.join(DIRECTORY, 'testDataFiles', 'chimera_1event.log')
+        data_filename = tf.get_abs_path('chimera_1event.log')
 
         reader = get_reader_from_filename(data_filename)
         data_all = reader.get_all_data()

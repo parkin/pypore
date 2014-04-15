@@ -22,7 +22,7 @@ version.py
 dist
 
 # any event files generated during testing
-src/pypore/test/testDataFiles/*Events*
+src/pypore/sampledata/testDataFiles/*Events*
 
 # Cython generated files
 src/pypore/*.html
