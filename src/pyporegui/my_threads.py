@@ -136,7 +136,7 @@ class AnalyzeDataThread(QtCore.QThread):
             # If we are on windows, we can only fork a process if __name__ == '__main__'. Which
             # is not true here (because AnalyzeDataThread is imported).
             # So on Windows, just use this thread, don't use an additional separate process.
-            find_events(self.file_names, parameters=self.parameters, debug=self.debug, pipe=child_conn,
+            find_events(self.file_names, parameters=self.parameters, debug=self.debug,
                         save_file_names=self.save_file_names)
 
         self.cancelled = True
