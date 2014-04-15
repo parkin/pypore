@@ -3,21 +3,41 @@ import unittest
 
 import pypore.sampledata.testing_files as tf
 
+abs_path = os.path.abspath(__file__)
+abs_dir = os.path.dirname(abs_path)
+
+TEST_FILES_PATH = os.path.abspath(os.path.join(abs_dir, '..', 'testDataFiles'))
+
+
+class TestGetAbsPath(unittest.TestCase):
+    def test_correct_paths(self):
+        """
+        Tests that the returned files are correct.
+        """
+        full_names = tf.get_all_file_names(with_path=True)
+        short_names = tf.get_all_file_names(with_path=False)
+
+        for i, short_name in enumerate(short_names):
+            abs_path = tf.get_abs_path(short_name)
+            self.assertEqual(full_names[i], abs_path,
+                             msg="Absolute path not correct.\nShould be '{0}'.\nWas '{1}'.".format(full_names[i],
+                                                                                                   abs_path))
+
+    def test_not_exists_raises(self):
+        """
+        Test that an exception is raised if the filename is not present.
+        """
+        self.assertRaises(tf.TestFileDoesntExistError, tf.get_abs_path, 'blahblahblahblah.blahblahblah')
+
 
 class TestGetAllFileNames(unittest.TestCase):
-    def setUp(self):
-        abs_path = os.path.abspath(__file__)
-        abs_dir = os.path.dirname(abs_path)
-
-        self.test_files_path = os.path.abspath(os.path.join(abs_dir, '..', 'testDataFiles'))
-
     def test_with_path(self):
         """
         Tests that getting all of the file names returns the correct info.
         """
         file_names_should_be = []
 
-        for (dir_path, dir_names, file_names) in os.walk(self.test_files_path):
+        for (dir_path, dir_names, file_names) in os.walk(TEST_FILES_PATH):
             for i, filename in enumerate(file_names):
                 file_names[i] = os.path.join(dir_path, filename)
             file_names_should_be.extend(file_names)
@@ -52,7 +72,7 @@ class TestGetAllFileNames(unittest.TestCase):
         """
         file_names_should_be = []
 
-        for (dir_path, dir_names, file_names) in os.walk(self.test_files_path):
+        for (dir_path, dir_names, file_names) in os.walk(TEST_FILES_PATH):
             file_names_should_be.extend(file_names)
 
         file_names = tf.get_all_file_names(with_path=False)
@@ -81,7 +101,7 @@ class TestGetAllFileNames(unittest.TestCase):
         """
         file_names_should_be = []
 
-        for (dir_path, dir_names, file_names) in os.walk(self.test_files_path):
+        for (dir_path, dir_names, file_names) in os.walk(TEST_FILES_PATH):
             file_names_should_be.extend(file_names)
 
         file_names = tf.get_all_file_names(with_path=False)
