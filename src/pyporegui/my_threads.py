@@ -113,8 +113,8 @@ class AnalyzeDataThread(QtCore.QThread):
 
     def run(self):
         self.time1 = time.time()
-        self._pipe, child_conn = Pipe()
         if os.name == 'posix':
+            self._pipe, child_conn = Pipe()
             self.p = Process(target=find_events, args=(self.file_names,),
                              kwargs={'parameters': self.parameters, 'pipe': child_conn, 'debug': self.debug,
                                      'save_file_names': self.save_file_names})
@@ -122,21 +122,22 @@ class AnalyzeDataThread(QtCore.QThread):
             # child_conn needs to be closed in all processes before EOFError is thrown (on Linux)
             # So close it here immediately
             child_conn.close()
+            while True:
+                time.sleep(0)
+                try:
+                    data = self._pipe.recv()
+                    if 'status_text' in data:
+                        self.status_text = data['status_text']
+                    if 'Events' in data:
+                        self.events += data['Events']
+                except:
+                    break
         else:
+            # TODO add ability to listen for info from find_events on Windows.
             # If we are on windows, we can only fork a process if __name__ == '__main__'. Which
-            # is not true here (because AnalyzeDataThread has to be imported).
-            # So just use threading on Windows.
+            # is not true here (because AnalyzeDataThread is imported).
+            # So on Windows, just use this thread, don't use an additional separate process.
             find_events(self.file_names, parameters=self.parameters, debug=self.debug, pipe=child_conn,
                         save_file_names=self.save_file_names)
 
-        while True:
-            time.sleep(0)
-            try:
-                data = self._pipe.recv()
-                if 'status_text' in data:
-                    self.status_text = data['status_text']
-                if 'Events' in data:
-                    self.events += data['Events']
-            except:
-                break
         self.cancelled = True
