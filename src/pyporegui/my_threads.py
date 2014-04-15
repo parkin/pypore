@@ -56,6 +56,8 @@ class AnalyzeDataThread(QtCore.QThread):
 
     readyForEvents = True
 
+    p = None
+
     def __init__(self, file_names, parameters, debug, save_file_names=None):
         QtCore.QThread.__init__(self)
         self.parameters = parameters
