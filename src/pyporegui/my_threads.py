@@ -56,12 +56,13 @@ class AnalyzeDataThread(QtCore.QThread):
 
     readyForEvents = True
 
-    def __init__(self, file_names, parameters, debug):
+    def __init__(self, file_names, parameters, debug, save_file_names=None):
         QtCore.QThread.__init__(self)
         self.parameters = parameters
         self.debug = debug
 
         self.file_names = file_names
+        self.save_file_names = save_file_names
 
         self.event_count = 0
         self.timer = QtCore.QTimer()
@@ -83,6 +84,7 @@ class AnalyzeDataThread(QtCore.QThread):
         self.wait()
 
     def periodic_call(self):
+        print "periodic call"
         self.update_gui()
         if self.cancelled:
             self.dataReady.emit({'done': True})
@@ -114,7 +116,8 @@ class AnalyzeDataThread(QtCore.QThread):
         self._pipe, child_conn = Pipe()
         if os.name == 'posix':
             self.p = Process(target=find_events, args=(self.file_names,),
-                             kwargs={'parameters': self.parameters, 'pipe': child_conn, 'debug': self.debug})
+                             kwargs={'parameters': self.parameters, 'pipe': child_conn, 'debug': self.debug,
+                                     'save_file_names': self.save_file_names})
             self.p.start()
             # child_conn needs to be closed in all processes before EOFError is thrown (on Linux)
             # So close it here immediately
@@ -123,7 +126,8 @@ class AnalyzeDataThread(QtCore.QThread):
             # If we are on windows, we can only fork a process if __name__ == '__main__'. Which
             # is not true here (because AnalyzeDataThread has to be imported).
             # So just use threading on Windows.
-            find_events(self.file_names, parameters=self.parameters, debug=self.debug, pipe=child_conn)
+            find_events(self.file_names, parameters=self.parameters, debug=self.debug, pipe=child_conn,
+                        save_file_names=self.save_file_names)
 
         while True:
             time.sleep(0)
