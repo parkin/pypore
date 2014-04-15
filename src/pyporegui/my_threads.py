@@ -87,8 +87,9 @@ class AnalyzeDataThread(QtCore.QThread):
         self.update_gui()
         if self.cancelled:
             self.dataReady.emit({'done': True})
-            self.p.terminate()
-            self.p.join()
+            if self.p is not None:
+                self.p.terminate()
+                self.p.join()
             return
         self.timer.start(500)
 
