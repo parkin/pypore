@@ -597,7 +597,7 @@ def find_events(data, parameters=Parameters(), h5file=None, save_file_names=None
 
     :returns: List of String file names of the created EventDatabases.
 
-    >>> file_names = ['tests/testDataFiles/chimera_1event.log']
+    >>> file_names = ['testDataFiles/chimera_1event.log']
     >>> output_files = find_events(file_names)
     >>> # .... ....
     >>> output_files2 = find_events(file_names, parameters=Parameters(min_event_length=15.))

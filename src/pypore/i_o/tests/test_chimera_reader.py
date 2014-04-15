@@ -8,6 +8,8 @@ import os.path
 import numpy as np
 from pypore.i_o.chimera_reader import ChimeraReader
 
+import pypore.sampledata.testing_files as tf
+
 
 class TestChimeraReader(unittest.TestCase):
     def setUp(self):
@@ -17,14 +19,13 @@ class TestChimeraReader(unittest.TestCase):
         pass
 
     def test_constructor_no_mat_spec(self):
-        test_no_mat_chimera_files = ['testDataFiles/empty.log']
+        test_no_mat_chimera_files = tf.get_abs_path('chimera_empty.log')
         for filename in test_no_mat_chimera_files:
             self.assertRaises(IOError, ChimeraReader, filename)
 
     def test_get_all_data(self):
         # Make sure path to chimera file is correct.
-        directory = os.path.dirname(os.path.abspath(__file__))
-        filename = os.path.join(os.path.join(directory, 'testDataFiles'), 'smallChimera.log')
+        filename = tf.get_abs_path('chimera_small.log')
         chimera_reader = ChimeraReader(filename)
         data = chimera_reader.get_all_data(False)
         self._test_small_chimera_file_help(data)
@@ -39,8 +40,7 @@ class TestChimeraReader(unittest.TestCase):
 
     def test_open_chimera_data(self):
         # Make sure path to chimera file is correct.
-        directory = os.path.dirname(os.path.abspath(__file__))
-        filename = os.path.join(os.path.join(directory, 'testDataFiles'), 'smallChimera.log')
+        filename = tf.get_abs_path('chimera_small.log')
         chimera_reader = ChimeraReader(filename)
         data = chimera_reader.get_all_data(False)
         self._test_small_chimera_file_help(data)
@@ -50,8 +50,7 @@ class TestChimeraReader(unittest.TestCase):
         """
         Tests that the chimera data is scaled correctly, from a known test file.
         """
-        directory = os.path.dirname(os.path.abspath(__file__))
-        filename = os.path.join(directory, 'testDataFiles', 'spheres_20140114_154938_beginning.log')
+        filename = tf.get_abs_path('spheres_20140114_154938_beginning.log')
 
         reader = ChimeraReader(filename)
 
@@ -75,7 +74,7 @@ class TestChimeraReader(unittest.TestCase):
         Tests that the scaling of the decimated data is the same as the undecimated data.
         """
         directory = os.path.dirname(os.path.abspath(__file__))
-        filename = os.path.join(directory, 'testDataFiles', 'spheres_20140114_154938_beginning.log')
+        filename = tf.get_abs_path('spheres_20140114_154938_beginning.log')
 
         reader = ChimeraReader(filename)
 
