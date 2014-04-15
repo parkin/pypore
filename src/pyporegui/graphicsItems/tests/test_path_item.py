@@ -1,7 +1,7 @@
 """
 Created on Aug 27, 2013
 
-@author: parkin
+@author: `@parkin`_
 """
 import unittest
 from pyporegui.graphicsItems.path_item import PathItem
