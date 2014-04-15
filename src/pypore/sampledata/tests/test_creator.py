@@ -147,8 +147,8 @@ class TestCreateRandomData(unittest.TestCase):
         n_events_returned_arr = []
         n_events_found_arr = []
 
-        trials = 10
-        p = Pool(trials)
+        trials = 15
+        p = Pool()
 
         args = []
         # create a list of file_names so we can average the number of events.
