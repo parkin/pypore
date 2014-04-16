@@ -73,9 +73,6 @@ class ReaderTests(object):
         self.assertLessEqual(mean_percent_diff, 0.05,
                              "Decimated mean scaled wrong. Should be {0}, got {1}.".format(mean, mean_decimated))
 
-        std_dev = np.std(data)
-        std_dev_decimated = np.std(data_decimated)
-
     def reader_test_scaling_decimated_help(self):
         """
         Subclasses should override this method and return the filename used to check that the decimated and un-decimated
