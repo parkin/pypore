@@ -38,7 +38,7 @@ class TestChimeraReader(unittest.TestCase, ReaderTests):
         filename = tf.get_abs_path('spheres_20140114_154938_beginning.log')
         mean_should_be = 7.57604  # Value gotten from original MATLAB script
         std_should_be = 1.15445  # Value gotten from original MATLAB script
-        return filename, mean_should_be, 2, std_should_be, 2
+        return filename, mean_should_be, std_should_be
 
     def help_scaling_decimated(self):
         filename = tf.get_abs_path('spheres_20140114_154938_beginning.log')

@@ -24,7 +24,7 @@ class ReaderTests(object):
         """
         Tests that the data is scaled correctly, from a known test file.
         """
-        filename, mean_should_be, mean_places, std_dev_should_be, std_dev_places = self.help_scaling()
+        filename, mean_should_be, std_dev_should_be = self.help_scaling()
 
         reader = self.reader_class(filename)
 
@@ -33,13 +33,15 @@ class ReaderTests(object):
 
         mean = np.mean(data)
 
-        self.assertAlmostEqual(mean, mean_should_be, mean_places,
-                               "Data mean scaled wrong. Should be {0}, got {1}.".format(mean_should_be, mean))
+        mean_diff = abs((mean - mean_should_be) / mean_should_be)
+        self.assertLessEqual(mean_diff, 0.05,
+                             "Data mean scaled wrong. Should be {0}, got {1}.".format(mean_should_be, mean))
 
         std_dev = np.std(data)
 
-        self.assertAlmostEqual(std_dev, std_dev_should_be, std_dev_places,
-                               "Baseline scaled wrong. Should be {0}, got {1}.".format(std_dev_should_be, std_dev))
+        std_diff = abs((std_dev - std_dev_should_be) / std_dev_should_be)
+        self.assertLessEqual(std_diff, 0.05,
+                             "Baseline scaled wrong. Should be {0}, got {1}.".format(std_dev_should_be, std_dev))
 
     def help_scaling(self):
         """
@@ -48,9 +50,7 @@ class ReaderTests(object):
 
         #. filename of the test file.
         #. known mean of the data in the test file to check against the reader_class.
-        #. number of decimal places to compare the mean.
         #. known standard deviation of the data to check against the reader_class.
-        #. number of decimal places to compare the standard deviation.
 
         """
         raise NotImplementedError('Inheritors should override this method.')
