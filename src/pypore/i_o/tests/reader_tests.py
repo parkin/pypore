@@ -121,12 +121,19 @@ class ReaderTests(object):
             reader.close()
 
             mean = np.mean(data)
+            std = np.std(data)
+
             mean_decimated = np.mean(data_decimated)
 
-            mean_percent_diff = abs((mean - mean_decimated) / mean)
-            self.assertLessEqual(mean_percent_diff, 0.05,
+            # compare the means, using the same standard deviation
+            np_sqrt = np.sqrt(1.0 / data.size + 1.0 / data_decimated.size)
+            denominator = (std * np_sqrt)
+            # z test, check that less than 2 standard deviation difference.
+            z = abs(mean - mean_decimated) / denominator
+            self.assertLessEqual(z, 2,
                                  "Decimated mean in '{0}' scaled wrong. "
-                                 "Should be {1}, got {2}.".format(filename, mean, mean_decimated))
+                                 "Should be {1}, got {2}. Z statistic: {3}".format(filename, mean, mean_decimated,
+                                                                                   z))
 
     def help_scaling_decimated(self):
         """
