@@ -53,7 +53,7 @@ class ReaderTests(object):
         #. number of decimal places to compare the standard deviation.
 
         """
-        raise NotImplementedError
+        raise NotImplementedError('Inheritors should override this method.')
 
     def test_scaling_decimated(self):
         """
@@ -81,4 +81,4 @@ class ReaderTests(object):
 
         :returns: filename for testing decimated scaling.
         """
-        raise NotImplementedError
+        raise NotImplementedError('Inheritors should override this method.')
