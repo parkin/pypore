@@ -20,14 +20,51 @@ class ReaderTests(object):
 
     """
     reader_class = None
+    default_test_data_files = None
+
+    def test_get_all_data_returns_to_beginning(self):
+        """
+        Tests that calling :py:func:`get_all_data <pypore.i_o.abstract_reader.AbstractReader.get_all_data>` returns
+        all of the data, no matter if we've already used the reader for other things.
+        """
+        file_names = self.help_get_all_data_returns_to_beginning()
+
+        for filename in file_names:
+            reader = self.reader_class(filename)
+
+            orig_data = reader.get_all_data()[0]
+
+            # Test getting all data back to back works
+            data2 = reader.get_all_data()[0]
+
+            equal = np.array_equal(orig_data, data2)
+            self.assertTrue(equal, "get_all_data returns different data the 2nd time. "
+                                   "Original data: {0}, 2nd time: {1}.".format(orig_data, data2))
+
+            reader.close()
+
+            # Test getting all data after getting next blocks works.
+            reader = self.reader_class(filename)
+
+            b = reader.get_next_blocks()
+
+            data3 = reader.get_all_data()[0]
+            equal = np.array_equal(orig_data, data3)
+            self.assertTrue(equal, "get_all_data returns different data after calling get_next_blocks. "
+                                   "Original data: {0}, after gnb call: {1}.".format(orig_data, data3))
 
     def help_get_all_data_returns_to_beginning(self):
         """
-        Should be overridden by a subclass and return the following.
+        If the subclass does **not** set self.default_test_data_files to a list of test files, then
+        this method should be overridden.
 
-        :returns: Filename
+        :returns: List of file names to be tested.
         """
-        raise NotImplementedError('Inheritors should override this method.')
+        if self.default_test_data_files is not None:
+            return self.default_test_data_files
+        else:
+            raise NotImplementedError('Inheritors should override this method or set self.default_test_data_files'
+                                      ' to a list of test data files.')
 
     def test_scaling(self):
         """
@@ -93,9 +130,16 @@ class ReaderTests(object):
 
     def help_scaling_decimated(self):
         """
-        Subclasses should override this method and return the filename used to check that the decimated and un-decimated
+        Checks that the decimated and un-decimated
         data :py:func:`get_all_data <pypore.i_o.abstract_reader.AbstractReader.get_all_data>`.
 
-        :returns: filename for testing decimated scaling.
+        If the subclass does **not** set self.default_test_data_files to a list of test files, then
+        this method should be overridden.
+
+        :returns: list of file names for testing decimated scaling.
         """
-        raise NotImplementedError('Inheritors should override this method.')
+        if self.default_test_data_files is not None:
+            return self.default_test_data_files
+        else:
+            raise NotImplementedError('Inheritors should override this method or set self.default_test_data_files'
+                                      ' to a list of test data files.')

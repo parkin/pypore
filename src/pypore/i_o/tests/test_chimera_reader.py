@@ -11,6 +11,8 @@ import pypore.sampledata.testing_files as tf
 class TestChimeraReader(unittest.TestCase, ReaderTests):
     reader_class = ChimeraReader
 
+    default_test_data_files = [tf.get_abs_path('chimera_small.log')]
+
     def test_constructor_no_mat_spec(self):
         """
         Tests that an IOError is raised when no .mat spec file is next to the .log file.
