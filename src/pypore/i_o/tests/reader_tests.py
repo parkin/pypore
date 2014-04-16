@@ -14,8 +14,8 @@ class ReaderTests(object):
 
     The subclasses also **must** override the following methods:
 
-    #. :py:func:`help_test_scaling`
-    #. :py:func:`help_test_scaling_decimated`
+    #. :py:func:`help_scaling`
+    #. :py:func:`help_scaling_decimated`
 
     """
     reader_class = None
@@ -24,7 +24,7 @@ class ReaderTests(object):
         """
         Tests that the data is scaled correctly, from a known test file.
         """
-        filename, mean_should_be, mean_places, std_dev_should_be, std_dev_places = self.help_test_scaling()
+        filename, mean_should_be, mean_places, std_dev_should_be, std_dev_places = self.help_scaling()
 
         reader = self.reader_class(filename)
 
@@ -41,7 +41,7 @@ class ReaderTests(object):
         self.assertAlmostEqual(std_dev, std_dev_should_be, std_dev_places,
                                "Baseline scaled wrong. Should be {0}, got {1}.".format(std_dev_should_be, std_dev))
 
-    def help_test_scaling(self):
+    def help_scaling(self):
         """
         Subclasses should override this method and return the following, in the following order.
         :returns: The following, in order:
@@ -59,7 +59,7 @@ class ReaderTests(object):
         """
         Tests that the decimated data is scaled the same as the un-decimated data.
         """
-        filename = self.help_test_scaling_decimated()
+        filename = self.help_scaling_decimated()
 
         reader = self.reader_class(filename)
 
@@ -74,7 +74,7 @@ class ReaderTests(object):
         self.assertLessEqual(mean_percent_diff, 0.05,
                              "Decimated mean scaled wrong. Should be {0}, got {1}.".format(mean, mean_decimated))
 
-    def help_test_scaling_decimated(self):
+    def help_scaling_decimated(self):
         """
         Subclasses should override this method and return the filename used to check that the decimated and un-decimated
         data :py:func:`get_all_data <pypore.i_o.abstract_reader.AbstractReader.get_all_data>`.

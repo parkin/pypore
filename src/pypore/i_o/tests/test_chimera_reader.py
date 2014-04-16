@@ -34,13 +34,13 @@ class TestChimeraReader(unittest.TestCase, ReaderTests):
         self.assertAlmostEqual(data[0], 17.45518, 3)
         self.assertAlmostEqual(data[9], 18.0743, 3)
 
-    def help_test_scaling(self):
+    def help_scaling(self):
         filename = tf.get_abs_path('spheres_20140114_154938_beginning.log')
         mean_should_be = 7.57604  # Value gotten from original MATLAB script
         std_should_be = 1.15445  # Value gotten from original MATLAB script
         return filename, mean_should_be, 2, std_should_be, 2
 
-    def help_test_scaling_decimated(self):
+    def help_scaling_decimated(self):
         filename = tf.get_abs_path('spheres_20140114_154938_beginning.log')
         return filename
 
