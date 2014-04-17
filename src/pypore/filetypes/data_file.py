@@ -77,7 +77,7 @@ class DataFile(tb.file.File):
         :param kargs: Can pass in 'n_points': Maximum number of data points for an event to be added.
         """
 
-        filters = tb.Filters(complib='blosc', complevel=4)
+        filters = tb.Filters(complib='zlib', complevel=3)
         shape = (kargs['n_points'],)
         a = tb.FloatAtom()
         if not 'data' in self.root:
