@@ -240,7 +240,7 @@ class EventDatabase(tb.file.File):
             self.createTable(self.root.events, 'eventTable', _Event, 'Event parameters')
             self.event_row = None
 
-        filters = tb.Filters(complib='blosc', complevel=4)
+        filters = tb.Filters(complib='zlib', complevel=3)
         shape = (0, self.max_event_length)
         a = tb.FloatAtom()
         b = tb.IntAtom()

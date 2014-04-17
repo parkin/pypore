@@ -7,6 +7,7 @@ Created on May 23, 2013
 """
 #cython: embedsignature=True
 
+import numpy as np
 cimport numpy as np
 import tables as tb
 
