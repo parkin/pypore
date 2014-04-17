@@ -21,12 +21,12 @@ def get_reader_from_filename(filename):
 
     # TODO implement for other file types
 
-    # if '.h5' in filename:
-    #     return open_pypore_file(filename, decimate)
-    if '.h5' in filename:
+    if filename[-len('.h5'):] == '.h5':
         from data_file_reader import DataFileReader as ReaderClass
-    elif '.log' in filename:
+    elif filename[-len('.log'):] == '.log':
         from chimera_reader import ChimeraReader as ReaderClass
+    elif filename[-len('.hkd'):] == '.hkd':
+        from heka_reader import HekaReader as ReaderClass
     else:
         raise ValueError(
             "No default match for the extension of {0}. Default extensions include '.h5', '.log'.".format(filename))

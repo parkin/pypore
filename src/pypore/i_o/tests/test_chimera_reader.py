@@ -1,24 +1,22 @@
 """
-Created on Aug 19, 2013
-
 @author: `@parkin`_
 """
 import unittest
-import os.path
-import numpy as np
-from pypore.i_o.chimera_reader import ChimeraReader
 
+from pypore.i_o.chimera_reader import ChimeraReader
+from pypore.i_o.tests.reader_tests import ReaderTests
 import pypore.sampledata.testing_files as tf
 
 
-class TestChimeraReader(unittest.TestCase):
-    def setUp(self):
-        pass
+class TestChimeraReader(unittest.TestCase, ReaderTests):
+    reader_class = ChimeraReader
 
-    def tearDown(self):
-        pass
+    default_test_data_files = [tf.get_abs_path('chimera_small.log')]
 
     def test_constructor_no_mat_spec(self):
+        """
+        Tests that an IOError is raised when no .mat spec file is next to the .log file.
+        """
         test_no_mat_chimera_files = tf.get_abs_path('chimera_empty.log')
         for filename in test_no_mat_chimera_files:
             self.assertRaises(IOError, ChimeraReader, filename)
@@ -38,59 +36,17 @@ class TestChimeraReader(unittest.TestCase):
         self.assertAlmostEqual(data[0], 17.45518, 3)
         self.assertAlmostEqual(data[9], 18.0743, 3)
 
-    def test_open_chimera_data(self):
-        # Make sure path to chimera file is correct.
-        filename = tf.get_abs_path('chimera_small.log')
-        chimera_reader = ChimeraReader(filename)
-        data = chimera_reader.get_all_data(False)
-        self._test_small_chimera_file_help(data)
-        chimera_reader.close()
-
-    def test_scaling(self):
-        """
-        Tests that the chimera data is scaled correctly, from a known test file.
-        """
+    def help_scaling(self):
         filename = tf.get_abs_path('spheres_20140114_154938_beginning.log')
-
-        reader = ChimeraReader(filename)
-
-        data = reader.get_all_data()[0]
-        reader.close()
-
-        baseline = np.mean(data)
-        baseline_should_be = 7.57604  # Value gotten from original MATLAB script
-
-        self.assertAlmostEqual(baseline, baseline_should_be, 2,
-                               "Baseline scaled wrong. Should be {0}, got {1}.".format(baseline_should_be, baseline))
-
-        std = np.std(data)
+        mean_should_be = 7.57604  # Value gotten from original MATLAB script
         std_should_be = 1.15445  # Value gotten from original MATLAB script
+        return [filename], [mean_should_be], [std_should_be]
 
-        self.assertAlmostEqual(std, std_should_be, 2,
-                               "Baseline scaled wrong. Should be {0}, got {1}.".format(std_should_be, std))
-
-    def test_decimate_scaling(self):
-        """
-        Tests that the scaling of the decimated data is the same as the undecimated data.
-        """
-        directory = os.path.dirname(os.path.abspath(__file__))
+    def help_scaling_decimated(self):
         filename = tf.get_abs_path('spheres_20140114_154938_beginning.log')
-
-        reader = ChimeraReader(filename)
-
-        data = reader.get_all_data()[0]
-        data_decimated = reader.get_all_data(decimate=True)[0]
-        reader.close()
-
-        baseline = np.mean(data)
-        baseline_decimate = np.mean(data_decimated)
-
-        self.assertAlmostEqual(baseline, baseline_decimate, 2,
-                               "Decimated baseline scaled wrong. Should be {0}, got {1}.".format(baseline,
-                                                                                                 baseline_decimate))
+        return [filename]
 
 
 if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
 
