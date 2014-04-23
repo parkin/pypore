@@ -200,7 +200,7 @@ class EventFindingTab(BaseQSplitterDataFile):
         """
         selected_items = self.file_list_widget.selectedItems()
         if len(selected_items) > 0:
-            curr_item = selected_items[0]
+            curr_items = selected_items
         else:
             return
 
@@ -215,7 +215,7 @@ class EventFindingTab(BaseQSplitterDataFile):
         del self.events[:]
         # self.prev_concat_time = 0.
 
-        file_names = [str(curr_item.get_file_name())]
+        file_names = [str(x.get_file_name()) for x in curr_items]
 
         self._dispatch_status_update("Event Count: 0 Percent Done: 0")
 
@@ -292,6 +292,7 @@ class EventFindingTab(BaseQSplitterDataFile):
         scroll_area.setWidgetResizable(True)
 
         list_form_layout = super(EventFindingTab, self)._create_left_widget(parent)
+        self.file_list_widget.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
 
         # Other GUI controls
         #
