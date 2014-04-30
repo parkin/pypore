@@ -11,6 +11,7 @@ import os
 import pypore.filetypes.event_database as ed
 
 import pypore.sampledata.testing_files as tf
+from pypore.tests.util import _test_file_manager
 
 
 class TestEventFinder(unittest.TestCase):
@@ -301,6 +302,80 @@ class TestEventFinder(unittest.TestCase):
 
         os.remove(event_databases[0])
 
+
+DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+
+from pypore.event_finder import Parameters
+from pypore.strategies.absolute_change_threshold_strategy import AbsoluteChangeThresholdStrategy
+
+
+class TestEventFinderAbsoluteChangeThresholdStrategy(unittest.TestCase):
+    @_test_file_manager(DIRECTORY)
+    def test_too_large_start_threshold(self, filename):
+        """
+        Tests that we don't find events when the starting threshold is too large.
+        """
+        data_file = tf.get_abs_path('chimera_1event.log')
+
+        parameters = Parameters(threshold_strategy=AbsoluteChangeThresholdStrategy(100., 1.))
+
+        event_databases = find_events([data_file], parameters=parameters,
+                                      save_file_names=[filename], debug=True)
+
+        h5file = ed.open_file(filename, mode='r')
+
+        event_count = h5file.get_event_count()
+        self.assertEqual(event_count, 0, "Unexpected event count. Should be {0}, was {1}.".format(event_count, 0))
+
+        h5file.close()
+
+    @_test_file_manager(DIRECTORY)
+    def test_good_thresholds(self, filename):
+        """
+        Tests that we find the correct number of events when the starting and ending thresholds are appropriate.
+        """
+        data_file = tf.get_abs_path('chimera_1event.log')
+
+        parameters = Parameters(threshold_strategy=AbsoluteChangeThresholdStrategy(2., 1.))
+
+        event_databases = find_events([data_file], parameters=parameters,
+                                      save_file_names=[filename], debug=True)
+
+        h5file = ed.open_file(filename, mode='r')
+
+        #Check the number of events
+        event_count = h5file.get_event_count()
+        self.assertEqual(event_count, 1, "Unexpected event count. Should be {0}, was {1}.".format(event_count, 0))
+
+        #Check the event length
+        sample_rate = h5file.get_sample_rate()
+        event_length = h5file.get_event_row(0)['event_length']/sample_rate
+        event_length_should_be = 0.00024
+        percent_diff = abs(event_length - event_length_should_be) / event_length_should_be
+        self.assertLessEqual(percent_diff, 0.05,
+                             "Unexpected event length. Should be {0}, was {1}.".format(event_length_should_be,
+                                                                                       event_length))
+
+        h5file.close()
+
+    @_test_file_manager(DIRECTORY)
+    def test_too_large_end_threshold(self, filename):
+        """
+        Tests that we don't find events when the ending threshold is too large.
+        """
+        data_file = tf.get_abs_path('chimera_1event.log')
+
+        parameters = Parameters(threshold_strategy=AbsoluteChangeThresholdStrategy(2., 1000.))
+
+        event_databases = find_events([data_file], parameters=parameters,
+                                      save_file_names=[filename], debug=True)
+
+        h5file = ed.open_file(filename, mode='r')
+
+        event_count = h5file.get_event_count()
+        self.assertEqual(event_count, 0, "Unexpected event count. Should be {0}, was {1}.".format(event_count, 0))
+
+        h5file.close()
 
 
 if __name__ == "__main__":
