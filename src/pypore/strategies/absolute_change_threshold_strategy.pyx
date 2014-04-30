@@ -10,8 +10,13 @@ cdef class AbsoluteChangeThresholdStrategy(ThresholdStrategy):
         self.change_end = change_end
 
     cdef double compute_starting_threshold_c(self, double baseline, double variance):
-        # TODO figure out how to handle both positive and negative changes...
-        raise NotImplementedError
+        """
+        :returns: change_start from strategy initialization. 'baseline' and 'variance' parameters have no effect.
+        """
+        return self.change_start
 
     cdef double compute_ending_threshold_c(self, double baseline, double variance):
-        raise NotImplementedError
+        """
+        :returns: change_end from strategy initialization. 'baseline' and 'variance' parameters have no effect.
+        """
+        return self.change_end
