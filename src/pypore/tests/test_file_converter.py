@@ -4,6 +4,7 @@
 
 import unittest
 import os
+import datetime
 from pypore.i_o import get_reader_from_filename
 from pypore.file_converter import convert_file
 
@@ -223,6 +224,139 @@ class TestFilterFile(unittest.TestCase):
                                               "Should be {0}, got {1}.".format(baseline, baseline2))
 
             os.remove(out_filename)
+
+
+from pypore.file_converter import concat_files
+from pypore.file_converter import SamplingRatesMismatchError
+
+
+class TestConcatFiles(unittest.TestCase):
+    def test_default_output_filename(self):
+        """
+        Tests that the default output filename is correctly generated from the input file names.
+        """
+        file_names = [tf.get_abs_path('chimera_1event_2levels.log'), tf.get_abs_path('chimera_1event.log')]
+
+        output_filename = concat_files(file_names)
+
+        self.assertTrue(os.path.exists(output_filename))
+
+        # Check that it's saved in the current directory
+        self.assertEqual(output_filename[0:len('chimera_1event')], 'chimera_1event')
+
+        # Check the correct file extension
+        self.assertEqual(output_filename[-len('.h5'):], '.h5')
+
+        self.assertIn('_concatenated_', output_filename,
+                      "Default output filename ''{0}'' should contain ''_concatenated_''")
+
+        os.remove(output_filename)
+
+    @_test_file_manager(DIRECTORY)
+    def test_set_output_filename(self, filename):
+        file_names = [tf.get_abs_path('chimera_1event_2levels.log'), tf.get_abs_path('chimera_1event.log')]
+
+        output_filename = concat_files(file_names, output_filename=filename)
+
+        self.assertEqual(output_filename, filename)
+        self.assertTrue(os.path.exists(output_filename))
+
+    @_test_file_manager(DIRECTORY)
+    def test_different_sample_rate_no_resample(self, filename):
+        """
+        Tests that an error is thrown if the files have different sample rates and we do not want to resample.
+        """
+
+        file_names = [tf.get_abs_path('heka_1.5s_mean5.32p_std2.76p.hkd'), tf.get_abs_path('chimera_1event.log')]
+
+        self.assertRaises(SamplingRatesMismatchError, concat_files, file_names, output_filename=filename)
+
+    def test_single_file_fail(self):
+        """
+        Tests that an exception is thrown if less than 2 file names are passed in the list.
+        """
+        file_names = ['hi.txt']
+
+        self.assertRaises(ValueError, concat_files, file_names)
+        self.assertRaises(ValueError, concat_files, [])
+
+    @_test_file_manager(DIRECTORY)
+    def test_original_files_unmodified(self, filename):
+        file1 = tf.get_abs_path('chimera_1event_2levels.log')
+        file2 = tf.get_abs_path('chimera_1event.log')
+
+        reader1 = get_reader_from_filename(file1)
+        reader2 = get_reader_from_filename(file2)
+
+        sample_rate1_orig = reader1.get_sample_rate()
+        sample_rate2_orig = reader2.get_sample_rate()
+
+        data1_orig = reader1.get_all_data()[0]
+        data2_orig = reader2.get_all_data()[0]
+
+        reader1.close()
+        reader2.close()
+
+        concat_files([file1, file2], output_filename=filename)
+
+        reader1 = get_reader_from_filename(file1)
+        reader2 = get_reader_from_filename(file2)
+
+        reader_out = get_reader_from_filename(filename)
+
+        sample_rate1_final = reader1.get_sample_rate()
+        sample_rate2_final = reader2.get_sample_rate()
+
+        self.assertEqual(sample_rate1_final, sample_rate1_orig,
+                         "Sample rate changed. Was {0}, now {1}.".format(sample_rate1_orig, sample_rate1_final))
+        self.assertEqual(sample_rate2_final, sample_rate2_orig,
+                         "Sample rate changed. Was {0}, now {1}.".format(sample_rate2_orig, sample_rate2_final))
+
+        data1 = reader1.get_all_data()[0]
+        data2 = reader2.get_all_data()[0]
+
+        np.testing.assert_array_equal(data1, data1_orig)
+        np.testing.assert_array_equal(data2, data2_orig)
+
+        reader1.close()
+        reader2.close()
+        reader_out.close()
+
+    @_test_file_manager(DIRECTORY)
+    def test_correct_data(self, filename):
+        file1 = tf.get_abs_path('chimera_1event_2levels.log')
+        file2 = tf.get_abs_path('chimera_1event.log')
+
+        concat_files([file1, file2], output_filename=filename)
+
+        reader1 = get_reader_from_filename(file1)
+        reader2 = get_reader_from_filename(file2)
+
+        reader_out = get_reader_from_filename(filename)
+
+        sample_rate1 = reader1.get_sample_rate()
+        sample_rate2 = reader2.get_sample_rate()
+        sample_rate_out = reader_out.get_sample_rate()
+
+        self.assertEqual(sample_rate_out, sample_rate1,
+                         "Unexpected sample rate. Should be {0}, was {1}.".format(sample_rate1, sample_rate_out))
+        self.assertEqual(sample_rate_out, sample_rate2,
+                         "Unexpected sample rate. Should be {0}, was {1}.".format(sample_rate2, sample_rate_out))
+
+        data1 = reader1.get_all_data()[0]
+        data2 = reader2.get_all_data()[0]
+
+        data_out_should_be = np.zeros(data1.size + data2.size)
+        data_out_should_be[:data1.size] = data1[:]
+        data_out_should_be[data1.size:] = data2[:]
+
+        data_out = reader_out.get_all_data()[0]
+
+        np.testing.assert_array_equal(data_out, data_out_should_be)
+
+        reader1.close()
+        reader2.close()
+        reader_out.close()
 
 
 if __name__ == "__main__":
