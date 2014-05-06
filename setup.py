@@ -200,10 +200,7 @@ def setup_package():
         name='pypore',
         description='Pythonic/Cythonic Nanopore Translocation Analysis',
         long_description=long_description,
-        entry_points="""
-[console_scripts]
-filterfiles = pypore.filter_files:main
-""",
+        scripts=['bin/filterfiles'],
         author='Will Parkin',
         author_email='wmparkin@gmail.com',
         url='http://parkin.github.io/pypore/',
