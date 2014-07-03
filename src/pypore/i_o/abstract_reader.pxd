@@ -10,7 +10,7 @@ cdef class AbstractReader:
 
     """
 
-    cdef long block_size
+    cdef public long block_size
     cdef public double sample_rate
     cdef public long points_per_channel_total
     cdef object filename
@@ -34,3 +34,6 @@ cdef class AbstractReader:
 
     cpdef object get_filename(self)
     cdef object get_filename_c(self)
+
+    cpdef long get_block_size(self)
+    cdef long get_block_size_c(self)
