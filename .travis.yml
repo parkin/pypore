@@ -44,7 +44,7 @@ install:
   - pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel Cython
   - sudo apt-get install libblas-dev libatlas-dev liblapack-dev
   # apt Scipy/Numpy versions too small, use pip
-  - pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel nose numpy scipy;
+  - pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel --extra-index http://sunpy.cadair.com/wheelhouse/ nose numpy scipy;
   - if [ "${USE_APT}" == "true" ]; then
       echo "Using apt";
       if [ "${TRAVIS_PYTHON_VERSION}" == "2.7" ]; then
