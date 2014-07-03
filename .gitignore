@@ -3,6 +3,7 @@ data/*
 
 # python compiled byte code
 *.pyc
+*.pyd
 
 # sphinx files generated during build
 website/sphinx-docs/build/
