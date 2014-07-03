@@ -29,31 +29,29 @@ matrix:
     - python: "3.3"
     - python: "pypy"
 
-virtualenv:
-  system_site_packages: true
-
 before_install:
   - uname -a
   - free -m
   - df -h
   - python -V
   - pip -V
-  - travis_retry sudo apt-get update -qq
+  - sudo apt-get update -qq
 
 install:
-  - travis_retry sudo apt-get install libhdf5-serial-dev
+  - sudo apt-get install libhdf5-serial-dev
   - pip install --upgrade pip setuptools  # Upgrade pip and setuptools to get ones with `wheel` support
   # apt Cython version too small, must use pip
-  - pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel --use-mirrors Cython
+  - pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel Cython
+  - sudo apt-get install libblas liblapack libatlas
   # apt Scipy/Numpy versions too small, use pip
-  - pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel --use-mirrors nose numpy scipy;
+  - pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel nose numpy scipy;
   - if [ "${USE_APT}" == "true" ]; then
       echo "Using apt";
       if [ "${TRAVIS_PYTHON_VERSION}" == "2.7" ]; then
-        travis_retry sudo apt-get install python-pyside;
-        travis_retry sudo apt-get install python-tables;
+        sudo apt-get install python-pyside;
+        sudo apt-get install python-tables;
       else
-        travis_retry sudo apt-get install python3-pyside;
+        sudo apt-get install python3-pyside;
         pip install numexpr;
         pip install tables;
       fi;
