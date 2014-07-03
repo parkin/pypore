@@ -41,10 +41,10 @@ install:
   - sudo apt-get install libhdf5-serial-dev
   - pip install --upgrade pip setuptools  # Upgrade pip and setuptools to get ones with `wheel` support
   # apt Cython version too small, must use pip
-  - pip install Cython -i http://sunpy.cadair.com/wheelhouse/
+  - pip install Cython --find-links http://sunpy.cadair.com/wheelhouse/
   - sudo apt-get install libblas-dev libatlas-dev liblapack-dev
   # apt Scipy/Numpy versions too small, use pip
-  - pip install nose numpy scipy -i http://sunpy.cadair.com/wheelhouse/;
+  - pip install nose numpy scipy --find-links http://sunpy.cadair.com/wheelhouse/;
   - if [ "${USE_APT}" == "true" ]; then
       echo "Using apt";
       if [ "${TRAVIS_PYTHON_VERSION}" == "2.7" ]; then
