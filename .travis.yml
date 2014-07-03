@@ -11,7 +11,7 @@ branches:
 matrix:
   include:
     - python: "2.6"
-    - python: "2.7"
+    - python: "2.7_with_system_site_packages"
       env:
         - USE_APT=true
         - TESTMODE=full
@@ -42,7 +42,6 @@ install:
   - pip install --upgrade pip setuptools  # Upgrade pip and setuptools to get ones with `wheel` support
   # apt Cython version too small, must use pip
   - pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel Cython
-  - sudo apt-get install libblas-dev liblapack-dev libatlas-dev
   # apt Scipy/Numpy versions too small, use pip
   - pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel nose numpy scipy;
   - if [ "${USE_APT}" == "true" ]; then
