@@ -124,3 +124,11 @@ cdef class AbstractReader:
     cdef long get_points_per_channel_total_c(self):
         return self.points_per_channel_total
 
+    cpdef long get_block_size(self):
+        """
+        :return: block size used for lazy reading.
+        """
+        return self.get_block_size_c()
+
+    cdef long get_block_size_c(self):
+        return self.block_size

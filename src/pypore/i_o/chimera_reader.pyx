@@ -84,7 +84,7 @@ cdef class ChimeraReader(AbstractReader):
         cdef np.ndarray raw_values
         if decimate:
             # use 5000 for plot decimation
-            decimated_size = int(2 * self.points_per_channel_total / self.block_size)
+            decimated_size = 2 * int(self.points_per_channel_total / self.block_size)
             # will there be a block at the end with < block_size datapoints?
             if self.points_per_channel_total % self.block_size > 0:
                 decimated_size += 2

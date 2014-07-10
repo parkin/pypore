@@ -13,14 +13,9 @@ matrix:
     - python: "2.6"
     - python: "2.7"
       env:
-        - USE_APT=true
         - TESTMODE=full
     - python: "3.2"
-      env:
-        - USE_APT=true
     - python: "3.3"
-      env:
-        - USE_APT=true
     - python: "pypy"
 
   allow_failures:
@@ -29,45 +24,36 @@ matrix:
     - python: "3.3"
     - python: "pypy"
 
-virtualenv:
-  system_site_packages: true
-
 before_install:
   - uname -a
   - free -m
   - df -h
   - python -V
   - pip -V
-  - travis_retry sudo apt-get update -qq
+  - sudo apt-get update -qq
 
 install:
-  - travis_retry sudo apt-get install libhdf5-serial-dev
+  - sudo apt-get install libhdf5-serial-dev
   - pip install --upgrade pip setuptools  # Upgrade pip and setuptools to get ones with `wheel` support
   # apt Cython version too small, must use pip
-  - pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel --use-mirrors Cython
+  - pip install --no-index --find-links http://wheels2.astropy.org/ Cython
+  - sudo apt-get install libblas-dev libatlas-dev liblapack-dev
   # apt Scipy/Numpy versions too small, use pip
-  - pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel --use-mirrors nose numpy scipy;
-  - if [ "${USE_APT}" == "true" ]; then
-      echo "Using apt";
-      if [ "${TRAVIS_PYTHON_VERSION}" == "2.7" ]; then
-        travis_retry sudo apt-get install python-pyside;
-        travis_retry sudo apt-get install python-tables;
-      else
-        travis_retry sudo apt-get install python3-pyside;
-        pip install numexpr;
-        pip install tables;
-      fi;
-    else
-      echo "Using pip";
-      pip install numexpr;
-      pip install tables;
-      pip install sphinx==1.1.3;
-      sudo apt-get install -qq python${TRAVIS_PYTHON_VERSION}-dev;
-      sudo apt-get install libpython${TRAVIS_PYTHON_VERSION};
-      sudo apt-get install build-essential git cmake libqt4-dev libphonon-dev libxml2-dev libxslt1-dev qtmobility-dev;
-      pip install pyside;
-      pip install --upgrade sphinx;
-    fi;
+  - pip install --no-index --find-links http://wheels2.astropy.org/ numpy
+  - pip install --no-index --find-links http://wheels2.astropy.org/ scipy
+  # install PySide
+  - sudo apt-get install libqt4-dev
+  - pip install --no-index --find-links https://parkin.github.io/python-wheelhouse/ PySide
+  # Finish the PySide install, since we are in a virtualenv
+  - python ~/virtualenv/python${TRAVIS_PYTHON_VERSION}/bin/pyside_postinstall.py -install
+  # install tables
+  - pip install numexpr;
+  - pip install tables --no-index --find-links https://parkin.github.io/python-wheelhouse/
+  - pip install nose;
+  - pip install sphinx==1.1.3;
+  - sudo apt-get install -qq python${TRAVIS_PYTHON_VERSION}-dev;
+  - sudo apt-get install libpython${TRAVIS_PYTHON_VERSION};
+  - pip install --upgrade sphinx;
   - pip install pyqtgraph
   - if [ "${TESTMODE}" == "full" ]; then pip install coveralls; fi;
   - python setup.py -q install

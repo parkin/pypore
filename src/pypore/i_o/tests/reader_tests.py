@@ -150,3 +150,44 @@ class ReaderTests(object):
         else:
             raise NotImplementedError('Inheritors should override this method or set self.default_test_data_files'
                                       ' to a list of test data files.')
+
+    def help_decimated_shape(self):
+        """
+        Helper for :py:func:`test_decimated_shape`.
+
+        Subclasses **must** override this method and return the following.
+
+        :returns: list of file names for testing decimated shape.
+        """
+        if self.default_test_data_files is not None:
+            return self.default_test_data_files
+        else:
+            raise NotImplementedError('Inheritors should override this method or set self.default_test_data_files'
+                                      ' to a list of test data files.')
+
+    def test_decimated_shape(self):
+        """
+        Tests that the decimated shape is correct.
+        """
+
+        file_names = self.help_decimated_shape()
+
+        for filename in file_names:
+            reader = self.reader_class(filename)
+
+            decimated = reader.get_all_data(decimate=True)[0]
+
+            block_size = reader.get_block_size()
+
+            points_per_channel_total = reader.get_points_per_channel_total()
+
+            decimated_length = decimated.size
+
+            # Should have floor(ppct/block_size) + extra 2 points if spare block on the end.
+            decimated_length_should_be = 2 * int(points_per_channel_total / block_size)
+            if points_per_channel_total % block_size > 0:
+                decimated_length_should_be += 2
+
+            self.assertEqual(decimated_length_should_be, decimated_length,
+                             "Decimate length incorrect. Should be {0}. Was {1}.".format(decimated_length_should_be,
+                                                                                         decimated_length))

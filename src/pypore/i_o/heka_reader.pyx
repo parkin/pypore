@@ -54,7 +54,6 @@ cdef class HekaReader(AbstractReader):
     cdef long file_size
     cdef long num_blocks_in_file
     cdef long remainder
-    cdef long points_per_channel_per_block
 
     cpdef _prepare_file(self, filename):
         """
@@ -103,8 +102,8 @@ cdef class HekaReader(AbstractReader):
         if not remainder == 0:
             self.heka_file.close()
             raise IOError('Heka file ends with incomplete block')
-        self.points_per_channel_per_block = self.per_file_params['Points per block']
-        self.points_per_channel_total = self.points_per_channel_per_block * self.num_blocks_in_file
+        self.block_size = self.per_file_params['Points per block']
+        self.points_per_channel_total = self.block_size * self.num_blocks_in_file
 
         self.sample_rate = 1.0 / self.per_file_params['Sampling interval']
 
@@ -134,7 +133,7 @@ cdef class HekaReader(AbstractReader):
                     data[j][2 * i] = np.max(block[j])
                     data[j][2 * i + 1] = np.min(block[j])
                 else:
-                    data[j][i * self.points_per_channel_per_block:(i + 1) * self.points_per_channel_per_block] = block[
+                    data[j][i * self.block_size:(i + 1) * self.block_size] = block[
                         j]
 
         # if decimate:
@@ -160,7 +159,7 @@ cdef class HekaReader(AbstractReader):
             blocks.append(block)
             size = block[0].size
             totalsize = totalsize + size
-            if size < self.points_per_channel_per_block:  # did we reach the end?
+            if size < self.block_size:  # did we reach the end?
                 break
 
         # stitch the data together
@@ -199,7 +198,7 @@ cdef class HekaReader(AbstractReader):
         dt = np.dtype('>i2')  # int16
         cdef np.ndarray values
         for i in xrange(0, len(self.channel_list)):
-            values = np.fromfile(self.heka_file, dt, count=self.points_per_channel_per_block) * \
+            values = np.fromfile(self.heka_file, dt, count=self.block_size) * \
                      per_channel_block_params[i][
                          'Scale']
             # get rid of nan's
