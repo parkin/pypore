@@ -36,17 +36,19 @@ install:
   - sudo apt-get install libhdf5-serial-dev
   - pip install --upgrade pip setuptools  # Upgrade pip and setuptools to get ones with `wheel` support
   # apt Cython version too small, must use pip
-  - pip install --no-index --find-links http://wheels2.astropy.org/ Cython;
+  - pip install --no-index --find-links http://wheels2.astropy.org/ Cython
   - sudo apt-get install libblas-dev libatlas-dev liblapack-dev
   # apt Scipy/Numpy versions too small, use pip
-  - pip install --no-index --find-links http://wheels2.astropy.org/ numpy;
-  - pip install --no-index --find-links http://wheels2.astropy.org/ scipy;
+  - pip install --no-index --find-links http://wheels2.astropy.org/ numpy
+  - pip install --no-index --find-links http://wheels2.astropy.org/ scipy
   # install PySide
   - sudo apt-get install libqt4-dev
-  - pip install --no-index --find-links http://parkin.github.io/python-wheelhouse/ PySide;
+  - pip install --no-index --find-links https://parkin.github.io/python-wheelhouse/ PySide
+  # Finish the PySide install, since we are in a virtualenv
+  - python ~/virtualenv/python${TRAVIS_PYTHON_VERSION}/bin/pyside_postinstall.py -install
   # install tables
   - pip install numexpr;
-  - pip install tables;
+  - pip install tables --no-index --find-links https://parkin.github.io/python-wheelhouse/
   - pip install nose;
   - pip install sphinx==1.1.3;
   - sudo apt-get install -qq python${TRAVIS_PYTHON_VERSION}-dev;
