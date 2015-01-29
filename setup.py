@@ -131,10 +131,10 @@ def get_version_info():
         # TODO change this to 'git describe' once we tag a version.
         if 'TRAVIS_PYTHON_VERSION' in os.environ:
             import time
-            time_str = time.strftime('%Y%m%d%H%M%S') + '-'
+            time_str = time.strftime('%Y%m%d%H%M%S')
         else:
             time_str = ''
-        import time
+
         full_version += '.dev' + time_str
 
     return full_version, git_revision
