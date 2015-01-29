@@ -135,7 +135,7 @@ def get_version_info():
         else:
             time_str = ''
         import time
-        full_version += '.dev-' + time_str + git_revision[:7]
+        full_version += '.dev' + time_str
 
     return full_version, git_revision
 
