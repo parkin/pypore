@@ -162,11 +162,10 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
     def plot_single_event(self, h5file, position, plot):
         sample_rate = h5file.get_sample_rate()
         row = h5file.get_event_row(position)
-        array_row = row['array_row']
         event_length = row['event_length']
         raw_points_per_side = row['raw_points_per_side']
 
-        raw_data = h5file.get_raw_data_at(array_row)
+        raw_data = h5file.get_raw_data_at(position)
 
         n = len(raw_data)
 
@@ -182,8 +181,8 @@ class EventViewingTab(_ThreadManager, QtGui.QSplitter):
         n_levels = row['n_levels']
         baseline = row['baseline']
         # left, start-1, start,
-        levels = h5file.get_levels_at(array_row)
-        indices = h5file.get_level_lengths_at(array_row)
+        levels = h5file.get_levels_at(position)
+        indices = h5file.get_level_lengths_at(position)
 
         level_times = np.zeros(2 * n_levels + 4)
         level_values = np.zeros(2 * n_levels + 4)
