@@ -477,7 +477,83 @@ class TestEventDatabase(unittest.TestCase):
 
         self.assertEqual(self.database.get_sample_rate(), rate)
 
+    def test_to_csv_default_columns(self):
+        import csv
+
+        event_start = 2
+        event_length = 3
+        n_levels = 4
+        baseline = 10.0
+        current_blockage = 9.0
+
+        event_start_2 = 19
+        event_length_2 = 20
+        n_levels_2 = 8
+        baseline_2 = -12.
+        current_blockage_2 = 99.
+
+        self.database.append_event(array_row=0, event_start=event_start, event_length=event_length, n_levels=n_levels,
+                                   raw_points_per_side=5,
+                                   baseline=baseline,
+                                   current_blockage=current_blockage, area=8)
+        self.database.append_event(array_row=1, event_start=event_start_2, event_length=event_length_2,
+                                   n_levels=n_levels_2,
+                                   raw_points_per_side=5,
+                                   baseline=baseline_2,
+                                   current_blockage=current_blockage_2, area=16)
+        # raw_points_per_side=5
+        # def append_event(self, array_row, event_start, event_length, n_levels, raw_points_per_side, baseline,
+        # current_blockage, area, raw_data=None, levels=None, level_lengths=None):
+
+        sample_rate = 10.e4
+        self.database.get_event_table().attrs.sample_rate = sample_rate
+        self.database.flush()
+
+        output_filename = "blahblah.csv"
+        if os.path.exists(output_filename):
+            os.remove(output_filename)
+
+        self.database.to_csv(output_filename)
+
+        self.assertTrue(os.path.exists(output_filename))
+
+        ifile = open(output_filename, 'rb')
+        reader = csv.reader(ifile)
+
+        # get header
+        headers = next(reader, None)
+        headers_should_be = ['Start Time', 'Dwell Time', 'Blockage', 'Baseline', 'Inter Event Time', 'Number of Levels']
+
+        for i, header in enumerate(headers):
+            self.assertEqual(header, headers_should_be[i])
+
+        row_count = 0
+        row_should_be = [event_start / sample_rate, event_length / sample_rate, current_blockage, baseline,
+                         event_start / sample_rate,
+                         n_levels]
+        row_should_be_2 = [event_start_2 / sample_rate, event_length_2 / sample_rate, current_blockage_2, baseline_2,
+                           (event_start_2 - event_start) / sample_rate,
+                           n_levels_2]
+        row = next(reader, None)
+        self.assertEqual(len(row), len(row_should_be))
+        for i, el in enumerate(row):
+            self.assertAlmostEqual(float(el), row_should_be[i])
+        row_count += 1
+
+        row_2 = next(reader, None)
+        self.assertEqual(len(row_2), len(row_should_be_2))
+        for i, el in enumerate(row_2):
+            self.assertAlmostEqual(float(el), row_should_be_2[i])
+        row_count += 1
+
+        for row_i in reader:
+            row_count += 1
+
+        self.assertEqual(row_count, 2)
+
+        os.remove(output_filename)
+
 
 if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
+    # import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

@@ -5,6 +5,7 @@ Created on Sep 13, 2013
 """
 
 import tables as tb
+import csv
 
 
 # Description of events table
@@ -330,6 +331,26 @@ class EventDatabase(tb.file.File):
             else:
                 print "removeEvents FAILED: Removing all rows in table not currently supported."
         self.get_event_table().flush()
+
+    def to_csv(self, filename):
+        ofile = open(filename, 'wb')
+
+        writer = csv.writer(ofile, quoting=csv.QUOTE_NONNUMERIC)
+
+        # Write header
+        header = ['Start Time', 'Dwell Time', 'Blockage', 'Baseline', 'Inter Event Time', 'Number of Levels']
+        writer.writerow(header)
+
+        table = self.get_event_table()
+
+        sample_rate = self.get_sample_rate()
+
+        prev_event_start = 0.
+        for row in table.iterrows():
+            r = [row['event_start'] / sample_rate, row['event_length'] / sample_rate, row['current_blockage'],
+                 row['baseline'], (row['event_start'] - prev_event_start) / sample_rate, row['n_levels']]
+            writer.writerow(r)
+            prev_event_start = row['event_start']
 
 
 def open_file(*args, **kargs):
