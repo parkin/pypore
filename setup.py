@@ -106,7 +106,7 @@ def git_version():
 
 MAJOR = 0
 MINOR = 0
-MACRO = 2
+MACRO = 3
 IS_RELEASE = False
 VERSION = '%d.%d.%d' % (MAJOR, MINOR, MACRO)
 
@@ -181,7 +181,7 @@ def generate_cython():
                         cwd=cwd)
     if p != 0:
         raise RuntimeError("Running cythonize failed!")
-    
+
 
 def _get_version_from_py():
     """
