@@ -36,11 +36,11 @@ install:
   - sudo apt-get install libhdf5-serial-dev
   - pip install --upgrade pip setuptools  # Upgrade pip and setuptools to get ones with `wheel` support
   # apt Cython version too small, must use pip
-  - pip install --no-index --find-links http://wheels.astropy.org/ Cython
+  - pip install --no-index --find-links http://wheels.astropy.org/ Cython --trusted-host wheels.astropy.org
   - sudo apt-get install libblas-dev libatlas-dev liblapack-dev
   # apt Scipy/Numpy versions too small, use pip
-  - pip install --no-index --find-links http://wheels.astropy.org/ numpy
-  - pip install --no-index --find-links http://wheels.astropy.org/ scipy
+  - pip install --no-index --find-links http://wheels.astropy.org/ numpy --trusted-host wheels.astropy.org
+  - pip install --no-index --find-links http://wheels.astropy.org/ scipy --trusted-host wheels.astropy.org
   # install PySide
   - sudo apt-get install libqt4-dev
   - pip install --no-index --find-links https://parkin.github.io/python-wheelhouse/ PySide
