@@ -27,9 +27,11 @@ def get_reader_from_filename(filename):
         from chimera_reader import ChimeraReader as ReaderClass
     elif filename[-len('.hkd'):] == '.hkd':
         from heka_reader import HekaReader as ReaderClass
+    elif filename[-len('.hex'):] == '.hex':
+        from cnp2_reader import CNP2Reader as ReaderClass
     else:
         raise ValueError(
-            "No default match for the extension of {0}. Default extensions include '.h5', '.log'.".format(filename))
+            "No default match for the extension of {0}. Default extensions include '.h5', '.log', '.hkd', '.hex'.".format(filename))
 
     reader = ReaderClass(filename)
     return reader
