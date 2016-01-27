@@ -96,13 +96,12 @@ class MyMainWindow(QtGui.QMainWindow):
         file_names = QtGui.QFileDialog.getOpenFileNames(self,
                                                         'Open data file',
                                                         self.open_dir,
-                                                        "All types(*.h5 *.hex *.hkd *.log *.mat);;"
+                                                        "All files *(*);;"
                                                         "Pypore data files *.h5(*.h5);;"
                                                         "Heka files *.hkd(*.hkd);;"
                                                         "Chimera files *.log(*.log);;"
                                                         "Gabys files *.mat(*.mat);;"
-                                                        "CNP2 *.hex(*.hex);;""
-                                                        "All files *(*);;")[0]
+                                                        "CNP2 *.hex(*.hex)")[0]
         if len(file_names) > 0:
             self.main_tabwig.currentWidget().open_data_files(file_names)
 
