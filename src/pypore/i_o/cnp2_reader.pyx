@@ -33,6 +33,8 @@ cdef class CNP2Reader(AbstractReader):
         self.row_select = config_data['rowSelect']
         self.connect_electrode = config_data['connectElectrode']
 
+        self.AAFILTERGAIN = (51+620)/620.0*1.8*.51
+
         self.datafile = open(filename, 'rb')
 
         self.sample_rate = SAMPLE_RATE
@@ -77,7 +79,7 @@ cdef class CNP2Reader(AbstractReader):
 
         # Scale the data correctly
         fnal[fnal >= 2**(self.ADCBITS-1)] -= 2**(self.ADCBITS)
-        fnal /= (self.rdcfb * 2**(self.ADCBITS - 1))
+        fnal /= (2**(self.ADCBITS - 1) * self.rdcfb * self.AAFILTERGAIN)
         fnal -= self.idc_offset
 
         # scale to nA

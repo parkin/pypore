@@ -30,7 +30,9 @@ class TestChimeraReader(unittest.TestCase, ReaderTests):
         csv_filename = filename[:-4] + '.csv'
         csv_data = self._get_test_csv_data(csv_filename)
 
-        np.testing.assert_array_almost_equal(data, csv_data)
+        ratio = np.abs((csv_data-data) / csv_data)
+
+        np.testing.assert_array_almost_equal(ratio, np.zeros_like(data))
 
         cnp_reader.close()
 

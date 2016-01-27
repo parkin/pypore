@@ -22,6 +22,7 @@ cdef class CNP2Reader(AbstractReader):
     cdef public int row_select
     cdef public bool connect_electrode
     cdef public int ADCBITS
+    cdef public AAFILTERGAIN
 
     # Other
     cdef public object raw_dtype
