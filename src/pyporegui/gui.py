@@ -96,11 +96,13 @@ class MyMainWindow(QtGui.QMainWindow):
         file_names = QtGui.QFileDialog.getOpenFileNames(self,
                                                         'Open data file',
                                                         self.open_dir,
-                                                        "All types(*.h5 *.hkd *.log *.mat);;"
+                                                        "All types(*.h5 *.hex *.hkd *.log *.mat);;"
                                                         "Pypore data files *.h5(*.h5);;"
                                                         "Heka files *.hkd(*.hkd);;"
                                                         "Chimera files *.log(*.log);;"
-                                                        "Gabys files *.mat(*.mat)")[0]
+                                                        "Gabys files *.mat(*.mat);;"
+                                                        "CNP2 *.hex(*.hex);;""
+                                                        "All files *(*);;")[0]
         if len(file_names) > 0:
             self.main_tabwig.currentWidget().open_data_files(file_names)
 
@@ -138,7 +140,7 @@ class MyMainWindow(QtGui.QMainWindow):
 
         event_analysis_tab = EventAnalysisTab(self)
 
-        # Layout holding everything        
+        # Layout holding everything
         self.main_tabwig = QtGui.QTabWidget()
         self.main_tabwig.addTab(file_viewer_tab, 'File Viewer')
         self.main_tabwig.addTab(event_finding_tab, 'Event Finding')
