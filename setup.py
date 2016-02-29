@@ -46,7 +46,7 @@ def find_extensions(root):
                     full_name = os.path.join(path, filename)
                     module_name = filename[:-len('.c')]
                     full_module_name = get_package_name_from_path(path) + '.' + module_name
-                    yield Extension(full_module_name, sources=[full_name])
+                    yield Extension(full_module_name, sources=[full_name], include_dirs=[numpy.get_include()])
 
 
 def get_package_name_from_path(package_path):
@@ -106,7 +106,7 @@ def git_version():
 
 MAJOR = 0
 MINOR = 0
-MACRO = 3
+MACRO = 4
 IS_RELEASE = False
 VERSION = '%d.%d.%d' % (MAJOR, MINOR, MACRO)
 
