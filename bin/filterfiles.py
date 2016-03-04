@@ -54,8 +54,8 @@ def main():
     parser.add_argument('-osr', '--out-sample-rate', type=float, nargs=1,
                         help="output sample rate. Default is {0} Hz".format(re_sample_freq))
     parser.add_argument('-g', '--glob', type=str, nargs=1,
-                        help="Unix pattern to search for files in the directory. Default is *.log, which finds all"
-                             " files with a '.log' extension.")
+                        help="Unix pattern to search for files in the directory. Default is \'*.log\', which finds all"
+                             " files with a '.log' extension. Must surround with quotes.")
     parser.add_argument('-r', '--recursive', action='store_true',
                         help="search for files recursively.")
     args = parser.parse_args()
@@ -72,7 +72,8 @@ def main():
         re_sample_freq = args.out_sample_rate[0]
 
     if args.glob is not None:
-        glob_search = args.glob
+        glob_search = args.glob[0]
+    print glob_search
 
     # find all of the files in the current directory with .log extension.
     files = []
