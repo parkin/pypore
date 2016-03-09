@@ -52,6 +52,7 @@ class ReaderTests(object):
             equal = np.array_equal(orig_data, data3)
             self.assertTrue(equal, "get_all_data returns different data after calling get_next_blocks. "
                                    "Original data: {0}, after gnb call: {1}.".format(orig_data, data3))
+            reader.close()
 
     def help_get_all_data_returns_to_beginning(self):
         """
@@ -191,3 +192,4 @@ class ReaderTests(object):
             self.assertEqual(decimated_length_should_be, decimated_length,
                              "Decimate length incorrect. Should be {0}. Was {1}.".format(decimated_length_should_be,
                                                                                          decimated_length))
+            reader.close()
