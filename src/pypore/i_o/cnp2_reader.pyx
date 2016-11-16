@@ -56,13 +56,19 @@ cdef class CNP2Reader(AbstractReader):
 
     cdef np.ndarray _unpack_raw(self, np.ndarray raw):
         cdef np.ndarray ADCData
+        cdef np.ndarray ADCDataCompressed
         # Implement the Master FPGAType
         if self.column_select == 0:
             ADCData = np.bitwise_and(raw, 0xfff)
         elif self.column_select == 1:
             ADCData = np.bitwise_and(raw, 0xfff000) >> 12
+        elif self.column_select == 2: # TODO implement Slave FPGAType
+            ADCDataCompressed = np.bitwise_and(raw[0::2], 0xfffffffff)
+            ADCData = np.zeros((3*np.size(ADCDataCompressed),))
+            ADCData[0::3] = np.bitwise_and(ADCDataCompressed, 0xfff)
+            ADCData[1::3] = np.bitwise_and(ADCDataCompressed, 0xfff000) >> 12
+            ADCData[2::3] = np.bitwise_and(ADCDataCompressed, 0xfff000000) >> 24
 
-        # TODO implement Slave FPGAType
 
         return ADCData
 

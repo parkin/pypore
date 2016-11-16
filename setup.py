@@ -106,7 +106,7 @@ def git_version():
 
 MAJOR = 0
 MINOR = 0
-MACRO = 5
+MACRO = 6
 IS_RELEASE = False
 VERSION = '%d.%d.%d' % (MAJOR, MINOR, MACRO)
 
