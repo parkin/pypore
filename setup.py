@@ -2,16 +2,20 @@
 import os
 import sys
 
-import numpy
 import subprocess
+
+from setuptools import setup, find_packages
 
 CLASSIFIERS = """\
 Development Status :: 2 - Pre-Alpha
 Intended Audience :: Science/Research
 License :: OSI Approved :: Apache Software License
-Programming Language :: Python
-Programming Language :: Python :: 2.7
-Programming Language :: Cython
+'Programming Language :: Python :: 2',
+'Programming Language :: Python :: 2.7',
+'Programming Language :: Python :: 3',
+'Programming Language :: Python :: 3.3',
+'Programming Language :: Python :: 3.4',
+'Programming Language :: Python :: 3.5',
 Topic :: Scientific/Engineering
 Operating System :: Microsoft :: Windows
 Operating System :: POSIX
@@ -19,35 +23,16 @@ Operating System :: Unix
 Operating System :: MacOS
 """
 
-with open('README.rst') as f:
+# Use the README as the long description
+with open('README.md') as f:
     long_description = f.read()
 
-
 def is_package(path):
+    """
+    :param path: Path to check
+    :return: true if the path is a package, ie if it has an __init__.py
+    """
     return os.path.isfile(os.path.join(path, '__init__.py'))
-
-
-def find_extensions(root):
-    """
-    Find all the .c files under root directory.
-    yields Extension's
-
-    Only yields C files that are in a python package (aka in dir with __init__.py).
-
-    :param string root: root directory to search.
-    :returns: Yields a distutils.extension.Extension every time it finds a C file.
-    """
-    from distutils.extension import Extension
-
-    for path, directories, files in os.walk(root):
-        if is_package(path):
-            for filename in files:
-                if filename.endswith('.c'):
-                    full_name = os.path.join(path, filename)
-                    module_name = filename[:-len('.c')]
-                    full_module_name = get_package_name_from_path(path) + '.' + module_name
-                    yield Extension(full_module_name, sources=[full_name], include_dirs=[numpy.get_include()])
-
 
 def get_package_name_from_path(package_path):
     """
@@ -63,18 +48,6 @@ def get_package_name_from_path(package_path):
         up_path, end = os.path.split(up_path)
         ret = end + '.' + ret
     return ret
-
-
-def find_packages(root):
-    """
-    Find all the packages under root directory.
-
-    :param string root: root directory to search
-    """
-    for path, directories, files in os.walk(root):
-        if is_package(path):
-            yield get_package_name_from_path(path)
-
 
 def git_version():
     """
@@ -104,23 +77,24 @@ def git_version():
     return git_revision
 
 
-MAJOR = 0
+MAJOR = 1
 MINOR = 0
-MACRO = 6
+MACRO = 0
+PRERELEASE = '.a1'
 IS_RELEASE = False
-VERSION = '%d.%d.%d' % (MAJOR, MINOR, MACRO)
+VERSION = '%d.%d.%d%s' % (MAJOR, MINOR, MACRO, PRERELEASE)
 
 
 def get_version_info():
     full_version = VERSION
     if os.path.exists('.git'):
         git_revision = git_version()
-    elif os.path.exists('src/pypore/version.py'):
+    elif os.path.exists('pypore/version.py'):
         # must be a source distribution, use existing version file.
         # load it as a separate module to not load pypore/__init__.py
         import imp
 
-        version = imp.load_source('pypore.version', 'src/pypore/version.py')
+        version = imp.load_source('pypore.version', 'pypore/version.py')
         git_revision = version.git_revision
     else:
         git_revision = "Unknown"
@@ -131,18 +105,18 @@ def get_version_info():
         # TODO change this to 'git describe' once we tag a version.
         if 'TRAVIS_PYTHON_VERSION' in os.environ:
             import time
-            time_str = time.strftime('%Y%m%d%H%M%S')
+            time_str = time.strftime('%Y%m%d%H%M%S') + '-'
         else:
             time_str = ''
-
-        full_version += '.dev' + time_str
+        import time
+        full_version += '.dev-' + time_str + git_revision[:7]
 
     return full_version, git_revision
 
 
-def write_version_py(filename_pypore='src/pypore/version.py', filename_pyporegui='src/pyporegui/version.py'):
+def write_version_py(filename_pypore='pypore/version.py'):
     """
-    Rewrites the src/pypore/version.py and src/pyporegui/version.py files.
+    Rewrites the pypore/version.py files.
     """
     text = """
 # THIS FILE IS GENERATED FROM SETUP.PY
@@ -157,7 +131,7 @@ if not release:
 """
     full_version, git_revision = get_version_info()
 
-    for filename in (filename_pypore, filename_pyporegui):
+    for filename in [filename_pypore]:
 
         a = open(filename, 'w')
         try:
@@ -169,26 +143,12 @@ if not release:
             a.close()
 
 
-def generate_cython():
-    """
-    Calls tools/cythonize.py to Cythonize .pyx files to C files.
-    """
-    cwd = os.path.abspath(os.path.dirname(__file__))
-    print("Cythonizing sources")
-    p = subprocess.call([sys.executable,
-                         os.path.join(cwd, 'tools', 'cythonize.py'),
-                         'src/pypore'],
-                        cwd=cwd)
-    if p != 0:
-        raise RuntimeError("Running cythonize failed!")
-
-
 def _get_version_from_py():
     """
     Reads the 'version' from the python file.
     """
     import imp
-    module = imp.load_source('pypore.version', 'src/pypore/version.py')
+    module = imp.load_source('pypore.version', 'pypore/version.py')
     return module.version
 
 
@@ -198,48 +158,19 @@ def setup_package():
 
     metadata = dict(
         name='pypore',
-        description='Pythonic/Cythonic Nanopore Translocation Analysis',
+        description='Pythonic Nanopore Translocation Analysis',
+        license='MIT',
         long_description=long_description,
-        scripts=['bin/filterfiles.py', 'bin/pypore_batch_csv.py'],
         author='Will Parkin',
         author_email='wmparkin@gmail.com',
-        url='http://parkin.github.io/pypore/',
-        requires=['numpy', 'scipy', 'tables', 'PySide', 'pyqtgraph'],
-        include_dirs=[numpy.get_include()],
-        package_dir={'': 'src'},
+        url='http://www.github.com/parkin/pypore',
+        install_requires=['numpy'],
+        # include_dirs=[numpy.get_include()],
+        packages=find_packages(),
         test_suite='nose.collector',
-        tests_require=['nose']
+        tests_require=['nose', 'scipy'],
+        version=_get_version_from_py()
     )
-
-    if len(sys.argv) >= 2 and ('--help' in sys.argv[1:] or
-                                       sys.argv[1] in ('--help-commands', 'egg_info', '--version',
-                                                       'clean')):
-        # for these actions, a full build is not required.
-        fullversion, git_revision = get_version_info()
-        metadata['version'] = fullversion
-    else:
-        if len(sys.argv) >= 2 and sys.argv[1] == 'bdist_wheel':
-            # bdist_wheel needs setuptools
-            import setuptools
-
-        cwd = os.path.abspath(os.path.dirname(__file__))
-        if not os.path.exists(os.path.join(cwd, 'PKG-INFO')):
-            # Generate Cython sources, unless building from source release
-            generate_cython()
-
-        # a pypore.version should exist
-        metadata['version'] = _get_version_from_py()
-
-    try:
-        from setuptools import setup
-    except ImportError:
-        from distutils.core import setup
-
-    packages = list(find_packages('src'))
-    metadata['packages'] = packages
-
-    ext_modules = list(find_extensions('src'))
-    metadata['ext_modules'] = ext_modules
 
     setup(**metadata)
 

@@ -6,7 +6,7 @@ It can be run from the command line by one of the following::
     $ ./tools/cythonize.py [root_dir]
     $ python tools/cythonize.py [root_dir]
 
-Default root_dir: 'src/pypore'
+Default root_dir: 'pypore'
 
 Note that it must be run from the project root's directory.
 
@@ -26,7 +26,7 @@ import sys
 import subprocess
 
 HASH_FILE = 'cythonize.dat'
-DEFAULT_ROOT = 'src/pypore'
+DEFAULT_ROOT = 'pypore'
 
 
 def load_hashes(filename):
@@ -100,13 +100,13 @@ def process(path, from_file, to_file, hash_db):
     full_to_path = os.path.join(path, to_file)
     current_hash = get_hash(full_from_path, full_to_path)
     if current_hash == hash_db.get(norm_path(full_from_path), None):
-        print '{0} has not changed'.format(full_from_path)
+        print('{0} has not changed'.format(full_from_path))
         return
 
     orig_cwd = os.getcwd()
     try:
         os.chdir(path)
-        print 'Processing {0}'.format(full_from_path)
+        print('Processing {0}'.format(full_from_path))
         process_pyx(from_file, to_file)
     finally:
         os.chdir(orig_cwd)

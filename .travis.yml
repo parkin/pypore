@@ -31,35 +31,18 @@ before_install:
   - sudo apt-get update -qq
 
 install:
-  - sudo apt-get install libhdf5-serial-dev
   - pip install --upgrade pip setuptools  # Upgrade pip and setuptools to get ones with `wheel` support
   # apt Cython version too small, must use pip
-  - pip install --no-index --find-links https://parkin.github.io/python-wheelhouse/ Cython
   - sudo apt-get install libblas-dev libatlas-dev liblapack-dev
   # apt Scipy/Numpy versions too small, use pip
   - pip install --no-index --find-links https://parkin.github.io/python-wheelhouse/ numpy
   - pip install --no-index --find-links https://parkin.github.io/python-wheelhouse/ scipy
-  # install PySide
-  - sudo apt-get install libqt4-dev
-  - pip install --no-index --find-links https://parkin.github.io/python-wheelhouse/ PySide
-  # Finish the PySide install, since we are in a virtualenv
-  - python ~/virtualenv/python${TRAVIS_PYTHON_VERSION}/bin/pyside_postinstall.py -install
-  # install tables
-  - pip install numexpr;
-  - pip install tables --no-index --find-links https://parkin.github.io/python-wheelhouse/
+  - pip install scipy numpy
   - pip install nose;
-  - pip install sphinx==1.1.3;
   - sudo apt-get install -qq python${TRAVIS_PYTHON_VERSION}-dev;
   - sudo apt-get install libpython${TRAVIS_PYTHON_VERSION};
-  - pip install --upgrade sphinx;
-  - pip install pyqtgraph
   - if [ "${TESTMODE}" == "full" ]; then pip install coveralls; fi;
   - python setup.py -q install
-
-before_script:
-  # We need to create a (fake) display on Travis, let's use a funny resolution
-  - export DISPLAY=:99.0
-  - /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -screen 0 1400x900x24 -ac +extension GLX +render
 
 script:
   # Test installing with pip
@@ -85,14 +68,3 @@ after_success:
 
 notifications:
   email: false
-
-deploy:
-  provider: pypi
-  user: parkin1
-  password:
-    secure: Gn+p0jPNajK4twiAAmuRwUBN7WckfOJD0rN3ISMqg6/bRfqAxqmDaKu1b6to68hVyGQohqz1os+4sWh10uTXZMFvn49JjGXiw84HfTSSP4DfbyKaIFkG/3dO6zaIy6ixTNUFi+WiL08jE30G3RLw9LxxdZeVhYMff2WUiklpFm0=
-  on:
-    repo: parkin/pypore
-    branch: develop
-    python: 2.7
-  skip-cleanup: True

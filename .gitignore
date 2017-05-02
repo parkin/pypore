@@ -1,34 +1,8 @@
-# directory for local data files
-data/*
-
-# python compiled byte code
-*.pyc
-*.pyd
-
-# sphinx files generated during build
-website/sphinx-docs/build/
-website/sphinx-docs/source/autodocs
-
-# setup.py generated files #
-############################
-# setup.py working directory
-build
-# hash database for cython compiled files
-cythonize.dat
-# version files
-version.py
-# eggs
-**/pypore.egg-info
-# dist files
-dist
-
-# any event files generated during testing
-src/pypore/sampledata/testDataFiles/*Events*
-
-# Cython generated files
-src/pypore/*.html
+# general things to ignore
+build/
+dist/
+*.egg-info/
+*.egg
+*.py[cod]
+__pycache__/
 *.so
-*.c
-
-# intellij stuff
-.idea/
