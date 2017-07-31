@@ -141,6 +141,28 @@ cdef class HekaReader(AbstractReader):
 
         return data
 
+    def get_all_voltages(self):
+        """
+        Returns a time series of the voltage
+        """
+        # return to the start of the file
+        self.heka_file.seek(self.per_file_header_length)
+
+        data = []
+        for _ in self.channel_list:
+            data.append(np.empty(self.points_per_channel_total))  # initialize_c array
+
+        for i in xrange(0, self.num_blocks_in_file):
+            block = self._read_heka_next_block_voltages()
+            for j in xrange(len(block)):
+                data[j][i * self.block_size:(i + 1) * self.block_size] = block[
+                        j]
+
+        # if decimate:
+        #     self.decimate_sample_rate = self.sample_rate * 2 / self.points_per_channel_per_block  # we are downsampling
+
+        return data
+
     cdef object get_next_blocks_c(self, long n_blocks=1):
         """
         Get the next n blocks of data.
@@ -172,6 +194,36 @@ cdef class HekaReader(AbstractReader):
             for i in xrange(0, len(self.channel_list)):
                 data[i][index[i]:index[i] + block[i].size] = block[i]
                 index[i] = index[i] + block[i].size
+
+        return data
+
+    cdef _read_heka_next_block_voltages(self):
+        """
+        Reads the next block of heka voltages.
+        Returns a dictionary with 'data', 'per_block_params', and 'per_channel_params'.
+        """  # Read block header
+        per_block_params = self._read_heka_header_params(self.per_block_param_list)
+        if per_block_params is None:
+            return [np.empty(0)]
+
+        # Read per channel header
+        per_channel_block_params = []
+        for _ in self.channel_list:  # underscore used for discarded parameters
+            channel_params = {}
+            # i[0] = name, i[1] = datatype
+            for i in self.per_channel_param_list:
+                channel_params[i[0]] = np.fromfile(self.heka_file, i[1], 1)[0]
+            per_channel_block_params.append(channel_params)
+
+        # Read data
+        data = []
+        dt = np.dtype('>i2')  # int16
+        cdef np.ndarray values
+        for i in xrange(0, len(self.channel_list)):
+            values = np.ones(self.block_size) * per_channel_block_params[i]['Voltage']
+            # get rid of nan's
+            #         values[np.isnan(values)] = 0
+            data.append(values)
 
         return data
 
