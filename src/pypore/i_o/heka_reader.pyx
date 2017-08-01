@@ -219,10 +219,12 @@ cdef class HekaReader(AbstractReader):
         data = []
         dt = np.dtype('>i2')  # int16
         cdef np.ndarray values
+        cdef np.ndarray tmp
         for i in xrange(0, len(self.channel_list)):
-            values = np.ones(self.block_size) * per_channel_block_params[i]['Voltage']
+            values = 1.0 * np.ones(self.block_size) * per_channel_block_params[i]['Voltage']
             # get rid of nan's
             #         values[np.isnan(values)] = 0
+            tmp = np.fromfile(self.heka_file, dt, count=self.block_size)
             data.append(values)
 
         return data
