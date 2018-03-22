@@ -44,7 +44,7 @@ install:
   - pip install scipy
   # install PySide
   - sudo apt-get install libqt4-dev
-  - pip install --no-index --find-links https://parkin.github.io/python-wheelhouse/ PySide=3.1.1
+  - pip install --no-index --find-links http://parkin.github.io/python-wheelhouse/ PySide==1.2.2 --trusted-host parkin.github.io
   # Finish the PySide install, since we are in a virtualenv
   - python ~/virtualenv/python${TRAVIS_PYTHON_VERSION}/bin/pyside_postinstall.py -install
   # install tables
