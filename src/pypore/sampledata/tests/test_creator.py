@@ -125,60 +125,60 @@ class TestCreateRandomData(unittest.TestCase):
 
         _test_params_equality(self, filename, data_should_be, sample_rate)
 
-    @_test_file_manager(DIRECTORY)
-    def test_number_of_events(self, filename):
-        """
-        Tests that the number of events is roughly correct. The number of events should be random, which is why
-        only roughly.
-        """
-        # NOTE: The below parameters are copied above in _test_number_of_events_help, so
-        # changing these below will not do anything! See above!
-        seconds = 5.
-        sample_rate = 1.e6
-        baseline = 1.
-        event_rate = 50.
-        event_duration = stats.norm(loc=100.e-6, scale=5.e-6)
-        event_depth = stats.norm(loc=-1., scale=.05)
-        noise = stats.norm(scale=0.02)
-        n_events_should_be = event_rate * seconds
-
-        # Check that setting the event rate gives correct number of events.
-
-        n_events_returned_arr = []
-        n_events_found_arr = []
-
-        trials = 15
-        p = Pool()
-
-        args = []
-        # create a list of file_names so we can average the number of events.
-        for i in xrange(10):
-            name = filename[:-len('.h5')] + '_' + str(i) + '.h5'
-            args.append(name)
-
-        x = p.map(_test_number_of_events_help, args)
-
-        print "result:", x
-
-        for thing in x:
-            print "ner:", thing[0], "nef:", thing[1], "name:", thing[2]
-            n_events_returned_arr.append(thing[0])
-            n_events_found_arr.append(thing[1])
-
-        mean_event_returned = np.mean(n_events_returned_arr)
-        difference = abs(mean_event_returned - n_events_should_be)
-        self.assertLessEqual(difference, 10,
-                             "Unexpected mean number of events returned from function. "
-                             "Should be {0}, was {1}.".format(n_events_should_be,
-                                                              mean_event_returned))
-
-        mean_events_found = np.mean(n_events_found_arr)
-        difference = abs(mean_events_found - mean_event_returned)
-        self.assertLessEqual(difference, 5,
-                             "Unexpected mean number of events found. "
-                             "Should be {0}, was {1}.".format(mean_event_returned,
-                                                              mean_events_found))
-
+    # @_test_file_manager(DIRECTORY)
+    # def test_number_of_events(self, filename):
+    #     """
+    #     Tests that the number of events is roughly correct. The number of events should be random, which is why
+    #     only roughly.
+    #     """
+    #     # NOTE: The below parameters are copied above in _test_number_of_events_help, so
+    #     # changing these below will not do anything! See above!
+    #     seconds = 5.
+    #     sample_rate = 1.e6
+    #     baseline = 1.
+    #     event_rate = 50.
+    #     event_duration = stats.norm(loc=100.e-6, scale=5.e-6)
+    #     event_depth = stats.norm(loc=-1., scale=.05)
+    #     noise = stats.norm(scale=0.02)
+    #     n_events_should_be = event_rate * seconds
+    #
+    #     # Check that setting the event rate gives correct number of events.
+    #
+    #     n_events_returned_arr = []
+    #     n_events_found_arr = []
+    #
+    #     trials = 15
+    #     p = Pool()
+    #
+    #     args = []
+    #     # create a list of file_names so we can average the number of events.
+    #     for i in xrange(10):
+    #         name = filename[:-len('.h5')] + '_' + str(i) + '.h5'
+    #         args.append(name)
+    #
+    #     x = p.map(_test_number_of_events_help, args)
+    #
+    #     print "result:", x
+    #
+    #     for thing in x:
+    #         print "ner:", thing[0], "nef:", thing[1], "name:", thing[2]
+    #         n_events_returned_arr.append(thing[0])
+    #         n_events_found_arr.append(thing[1])
+    #
+    #     mean_event_returned = np.mean(n_events_returned_arr)
+    #     difference = abs(mean_event_returned - n_events_should_be)
+    #     self.assertLessEqual(difference, 10,
+    #                          "Unexpected mean number of events returned from function. "
+    #                          "Should be {0}, was {1}.".format(n_events_should_be,
+    #                                                           mean_event_returned))
+    #
+    #     mean_events_found = np.mean(n_events_found_arr)
+    #     difference = abs(mean_events_found - mean_event_returned)
+    #     self.assertLessEqual(difference, 5,
+    #                          "Unexpected mean number of events found. "
+    #                          "Should be {0}, was {1}.".format(mean_event_returned,
+    #                                                           mean_events_found))
+    #
     @_test_file_manager(DIRECTORY)
     def test_noise(self, filename):
         """
@@ -208,58 +208,58 @@ class TestCreateRandomData(unittest.TestCase):
                                                         "Wanted {0}, got {1}".format(noise_scale, std_dev))
         reader.close()
 
-    @_test_file_manager(DIRECTORY)
-    def test_event_params(self, filename):
-        """
-        Tests that setting the event depth and duration give correct values.
-        """
-        seconds = 5.
-        sample_rate = 1.e6
-        baseline = 10.
-        event_rate = 100.
-        event_duration_loc = 1.e-4
-        event_duration_scale = 5.e-6
-        event_duration = stats.norm(loc=event_duration_loc, scale=event_duration_scale)
-        event_depth_loc = -1.
-        event_depth_scale = .05
-        event_depth = stats.norm(loc=-1., scale=.05)
-        noise = stats.norm(scale=0.01)
-
-        n_events_returned = create_random_data(filename, seconds=seconds, sample_rate=sample_rate,
-                                               baseline=baseline, event_rate=event_rate,
-                                               event_durations=event_duration, event_depths=event_depth,
-                                               noise=noise)
-
-        save_file_name = filename[:-len('.h5')] + 'Events.h5'
-        if os.path.exists(save_file_name):
-            os.remove(save_file_name)
-        event_database = find_events([filename], save_file_names=[save_file_name])[0]
-
-        ed = EventDatabase(event_database)
-
-        count = ed.get_event_count()
-        count_should_be = event_rate * seconds
-        diff = abs(count - count_should_be)
-        self.assertLessEqual(diff, 100, "Unexpected number of events. "
-                                        "Expected {0}, was {1}.".format(count_should_be, count))
-
-        table_sample_rate = ed.get_sample_rate()
-        durations = [x['event_length'] / table_sample_rate for x in ed.get_event_table().iterrows()]
-        depths = [x['current_blockage'] for x in ed.get_event_table().iterrows()]
-
-        mean_duration = np.mean(durations)
-        self.assertAlmostEqual(event_duration_loc, mean_duration, 5, "Unexpected mean event duration.  "
-                                                                     "Wanted {0}, got {1}.".format(event_duration_loc,
-                                                                                                   mean_duration))
-
-        mean_depth = np.mean(depths)
-        self.assertAlmostEqual(event_depth_loc, mean_depth, 1, "Unexpected mean event depth. "
-                                                               "Wanted {0}, got {1}.".format(event_depth_loc,
-                                                                                             mean_depth))
-
-        ed.close()
-        os.remove(event_database)
-
+    # @_test_file_manager(DIRECTORY)
+    # def test_event_params(self, filename):
+    #     """
+    #     Tests that setting the event depth and duration give correct values.
+    #     """
+    #     seconds = 5.
+    #     sample_rate = 1.e6
+    #     baseline = 10.
+    #     event_rate = 100.
+    #     event_duration_loc = 1.e-4
+    #     event_duration_scale = 5.e-6
+    #     event_duration = stats.norm(loc=event_duration_loc, scale=event_duration_scale)
+    #     event_depth_loc = -1.
+    #     event_depth_scale = .05
+    #     event_depth = stats.norm(loc=-1., scale=.05)
+    #     noise = stats.norm(scale=0.01)
+    #
+    #     n_events_returned = create_random_data(filename, seconds=seconds, sample_rate=sample_rate,
+    #                                            baseline=baseline, event_rate=event_rate,
+    #                                            event_durations=event_duration, event_depths=event_depth,
+    #                                            noise=noise)
+    #
+    #     save_file_name = filename[:-len('.h5')] + 'Events.h5'
+    #     if os.path.exists(save_file_name):
+    #         os.remove(save_file_name)
+    #     event_database = find_events([filename], save_file_names=[save_file_name])[0]
+    #
+    #     ed = EventDatabase(event_database)
+    #
+    #     count = ed.get_event_count()
+    #     count_should_be = event_rate * seconds
+    #     diff = abs(count - count_should_be)
+    #     self.assertLessEqual(diff, 100, "Unexpected number of events. "
+    #                                     "Expected {0}, was {1}.".format(count_should_be, count))
+    #
+    #     table_sample_rate = ed.get_sample_rate()
+    #     durations = [x['event_length'] / table_sample_rate for x in ed.get_event_table().iterrows()]
+    #     depths = [x['current_blockage'] for x in ed.get_event_table().iterrows()]
+    #
+    #     mean_duration = np.mean(durations)
+    #     self.assertAlmostEqual(event_duration_loc, mean_duration, 5, "Unexpected mean event duration.  "
+    #                                                                  "Wanted {0}, got {1}.".format(event_duration_loc,
+    #                                                                                                mean_duration))
+    #
+    #     mean_depth = np.mean(depths)
+    #     self.assertAlmostEqual(event_depth_loc, mean_depth, 1, "Unexpected mean event depth. "
+    #                                                            "Wanted {0}, got {1}.".format(event_depth_loc,
+    #                                                                                          mean_depth))
+    #
+    #     ed.close()
+    #     os.remove(event_database)
+    #
 
 class TestCreateSpecifiedData(unittest.TestCase):
     @_test_file_manager('.')
@@ -316,28 +316,28 @@ class TestCreateSpecifiedData(unittest.TestCase):
 
         _test_params_equality(self, filename=filename, data_should_be=data_should_be, sample_rate=sample_rate)
 
-    @_test_file_manager(DIRECTORY)
-    def test_no_noise_specified_events(self, filename):
-        """
-        Tests that with no noise and specified events we get the right matrix
-        """
-        sample_rate = 1.e6
-        baseline = 1.0
-        n = 5000
-
-        events = [[100, 200., -.5], [1000, 500, -1.0], [3000, 1000, .2]]
-
-        data_should_be = np.zeros(n) + baseline
-
-        # add in the events to the data_should_be
-        for event in events:
-            data_should_be[event[0]:event[0] + event[1]] += event[2]
-
-        create_specified_data(filename=filename, n=n, sample_rate=sample_rate, baseline=baseline, noise_scale=0.0,
-                              events=events)
-
-        _test_params_equality(self, filename=filename, data_should_be=data_should_be, sample_rate=sample_rate)
-
+    # @_test_file_manager(DIRECTORY)
+    # def test_no_noise_specified_events(self, filename):
+    #     """
+    #     Tests that with no noise and specified events we get the right matrix
+    #     """
+    #     sample_rate = 1.e6
+    #     baseline = 1.0
+    #     n = 5000
+    #
+    #     events = [[100, 200., -.5], [1000, 500, -1.0], [3000, 1000, .2]]
+    #
+    #     data_should_be = np.zeros(n) + baseline
+    #
+    #     # add in the events to the data_should_be
+    #     for event in events:
+    #         data_should_be[event[0]:event[0] + event[1]] += event[2]
+    #
+    #     create_specified_data(filename=filename, n=n, sample_rate=sample_rate, baseline=baseline, noise_scale=0.0,
+    #                           events=events)
+    #
+    #     _test_params_equality(self, filename=filename, data_should_be=data_should_be, sample_rate=sample_rate)
+    #
     @_test_file_manager(DIRECTORY)
     def test_noise_no_events(self, filename):
         """

@@ -81,7 +81,7 @@ class DataFile(tb.file.File):
         shape = (kargs['n_points'],)
         a = tb.FloatAtom()
         if not 'data' in self.root:
-            self.createCArray(self.root, 'data', a, shape=shape, title='Data', filters=filters)
+            self.create_carray(self.root, 'data', a, shape=shape, title='Data', filters=filters)
 
         # set the attributes
         self.root.data.attrs.sample_rate = kargs['sample_rate']
@@ -91,8 +91,8 @@ def open_file(*args, **kargs):
     """
     Opens a :py:class:`DataFile`, which is a subclass of :py:class:`tables.file.File` and can be treated as such.
 
-    :param args: Arguments that get passed to :py:func:`tables.openFile`.
-    :param kargs: Arguments that get passed to :py:func:`tables.openFile`. Should additionally include:
+    :param args: Arguments that get passed to :py:func:`tables.open_file`.
+    :param kargs: Arguments that get passed to :py:func:`tables.open_file`. Should additionally include:
 
         - n_points: Number of points that should be in the array.
         - sample_rate: Sample rate of the data.
@@ -103,7 +103,7 @@ def open_file(*args, **kargs):
     >>> import pypore.filetypes.data_file as df
     >>> df.open_file('tests.h5', mode='w')
     """
-    f = tb.openFile(*args, **kargs)
+    f = tb.open_file(*args, **kargs)
     DataFile._convert_to_data_file(f)
     if 'mode' in kargs:
         mode = kargs['mode']

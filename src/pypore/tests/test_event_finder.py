@@ -292,7 +292,7 @@ class TestEventFinder(unittest.TestCase):
         self._test_chimera_no_noise_2events_1levels_wrapper(h5file)
 
         # check that the file has the correct groups
-        groups = [x._v_name for x in h5file.walkGroups()]
+        groups = [x._v_name for x in h5file.walk_groups()]
         self.assertIn('debug', groups, "No debug group in debug file.")
 
         print "data:", h5file.root.debug.data[:]

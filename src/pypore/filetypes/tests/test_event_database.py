@@ -29,7 +29,7 @@ class TestEventDatabase(unittest.TestCase):
         if file_h is None:
             file_h = self.database
 
-        names = [x._v_name for x in file_h.walkGroups()]
+        names = [x._v_name for x in file_h.walk_groups()]
         self.assertIn('/', names, 'file missing root group')
         self.assertIn('events', names, "file missing event group.")
 
@@ -45,9 +45,9 @@ class TestEventDatabase(unittest.TestCase):
         # Check the events group has the correct nodes
         # Should be events, eventTable, eventData, raw_data
         names = []
-        for node in database.walkNodes(events_group):
+        for node in database.walk_nodes(events_group):
             names.append(node._v_name)
-        names = [x._v_name for x in database.walkNodes(events_group)]
+        names = [x._v_name for x in database.walk_nodes(events_group)]
         names_should_be = ['events', 'eventTable', 'raw_data', 'levels', 'level_lengths']
         self.assertEqual(len(names), len(names_should_be))
         self.assertEqual(sorted(names), sorted(names_should_be))  # i don't care what order these lists are
@@ -258,13 +258,13 @@ class TestEventDatabase(unittest.TestCase):
         self.assertTrue(database.is_debug())
 
         # Make sure the debug group is there.
-        names = [x._v_name for x in database.walkGroups()]
+        names = [x._v_name for x in database.walk_groups()]
         self.assertIn('debug', names, 'No debug group.')
 
         debug_group = database.root.debug
 
         # Make sure the debug group
-        debug_group_names = [x._v_name for x in database.walkNodes(debug_group)]
+        debug_group_names = [x._v_name for x in database.walk_nodes(debug_group)]
         print debug_group_names
         self.assertIn('data', debug_group_names, 'No data matrix.')
         self.assertIn('baseline', debug_group_names, 'No baseline matrix.')

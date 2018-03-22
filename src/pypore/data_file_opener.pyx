@@ -54,7 +54,7 @@ cpdef prepare_data_file(filename):
             file with the same name to be in the same folder.
         - Assumes '.hkd' extension is Heka data.
         - Assumes '.mat' extension is Gaby's format.
-    
+
     :returns: 2 things:
 
         #. datafile -- already opened :py:class:`pypore.filetypes.data_file.DataFile`.
@@ -76,7 +76,7 @@ cpdef prepare_data_file(filename):
 cpdef get_next_blocks(datafile, params, int n=1):
     """
     Gets the next n blocks (~5000 data points) of data from filename.
-    
+
     :param DataFile datafile: An already open :py:class:`pypore.filetypes.data_file.DataFile`.
     :param DictType params: Parameters of the file, usually the ones returned from :py:func:`prepare_data_file`.
 
@@ -107,9 +107,9 @@ cdef prepare_gabys_file(filename):
     The file is a Matlab > 7.3 file, which is
     an HDF file and can be opened with pytables.
     """
-    datafile = tb.openFile(filename, mode='r')
+    datafile = tb.open_file(filename, mode='r')
 
-    group = datafile.getNode('/#refs#').b
+    group = datafile.get_node('/#refs#').b
 
     cdef int points_per_channel_per_block = 10000
 
@@ -140,7 +140,7 @@ cdef open_gabys_file(filename, decimate=False):
     return specs_file
 
 cdef get_next_gabys_blocks(datafile, params, int n):
-    group = datafile.getNode('/#refs#').b
+    group = datafile.get_node('/#refs#').b
 
     cdef long next_to_send_2 = params['nextToSend']
     cdef long points_per_block2 = params['points_per_channel_per_block']

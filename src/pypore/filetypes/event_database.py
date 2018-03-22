@@ -235,10 +235,10 @@ class EventDatabase(tb.file.File):
             if kargs['maxEventLength'] > self.max_event_length:
                 self.max_event_length = kargs['maxEventLength']
         if 'events' not in self.root:
-            self.createGroup(self.root, 'events', 'Events')
+            self.create_group(self.root, 'events', 'Events')
 
         if not 'eventTable' in self.root.events:
-            self.createTable(self.root.events, 'eventTable', _Event, 'Event parameters')
+            self.create_table(self.root.events, 'eventTable', _Event, 'Event parameters')
             self.event_row = None
 
         filters = tb.Filters(complib='zlib', complevel=3)
@@ -247,19 +247,19 @@ class EventDatabase(tb.file.File):
         b = tb.IntAtom()
 
         if not 'raw_data' in self.root.events:
-            self.createEArray(self.root.events, 'raw_data',
+            self.create_earray(self.root.events, 'raw_data',
                               a, shape=shape,
                               title="Raw data points",
                               filters=filters)
 
         if not 'levels' in self.root.events:
-            self.createEArray(self.root.events, 'levels',
+            self.create_earray(self.root.events, 'levels',
                               a, shape=shape,
                               title="Cusum levels",
                               filters=filters)
 
         if not 'level_lengths' in self.root.events:
-            self.createEArray(self.root.events, 'level_lengths',
+            self.create_earray(self.root.events, 'level_lengths',
                               b, shape=shape,
                               title="Lengths of the cusum levels",
                               filters=filters)
@@ -267,28 +267,28 @@ class EventDatabase(tb.file.File):
         # Create/init the debug group if needed.
         if 'debug' in kargs and kargs['debug']:
             if not 'debug' in self.root:
-                self.createGroup(self.root, 'debug', 'Debug')
+                self.create_group(self.root, 'debug', 'Debug')
             debug_shape = (kargs['n_channels'], kargs['n_points'])
             if not 'data' in self.root.debug:
-                self.createCArray(self.root.debug, 'data',
+                self.create_carray(self.root.debug, 'data',
                                   a, shape=debug_shape,
                                   title="Raw data",
                                   filters=filters)
 
             if not 'baseline' in self.root.debug:
-                self.createCArray(self.root.debug, 'baseline',
+                self.create_carray(self.root.debug, 'baseline',
                                   a, shape=debug_shape,
                                   title="Baseline data",
                                   filters=filters)
 
             if not 'threshold_positive' in self.root.debug:
-                self.createCArray(self.root.debug, 'threshold_positive',
+                self.create_carray(self.root.debug, 'threshold_positive',
                                   a, shape=debug_shape,
                                   title="Raw data",
                                   filters=filters)
 
             if not 'threshold_negative' in self.root.debug:
-                self.createCArray(self.root.debug, 'threshold_negative',
+                self.create_carray(self.root.debug, 'threshold_negative',
                                   a, shape=debug_shape,
                                   title="Raw data",
                                   filters=filters)
@@ -327,7 +327,7 @@ class EventDatabase(tb.file.File):
         if 0 <= i < event_count and i < j <= event_count:
             # Currently cannot delete EVERY row in a table.
             if j - i < event_count:
-                self.get_event_table().removeRows(i, j)
+                self.get_event_table().remove_rows(i, j)
             else:
                 print "removeEvents FAILED: Removing all rows in table not currently supported."
         self.get_event_table().flush()
@@ -355,7 +355,7 @@ class EventDatabase(tb.file.File):
 
 def open_file(*args, **kargs):
     """
-    Opens an EventDatabase by calling tables.openFile and then
+    Opens an EventDatabase by calling tables.open_file and then
     copying the __dict__ to a new EventDatabase instance.
     
     :param kargs: Pass in the following named parameters.
@@ -374,7 +374,7 @@ def open_file(*args, **kargs):
             - threshold_negative: boolean -- True if you need an array allocated to keep negative threshold data.
 
     """
-    f = tb.openFile(*args, **kargs)
+    f = tb.open_file(*args, **kargs)
     EventDatabase._convert_to_event_database(f)
     if 'mode' in kargs:
         mode = kargs['mode']
